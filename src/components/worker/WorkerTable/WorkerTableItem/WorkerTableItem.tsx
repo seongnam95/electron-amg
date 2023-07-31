@@ -67,9 +67,6 @@ const WorkerTable = ({ className, onClick }: WorkerTableProps) => {
               <td>{worker.name}</td>
               <td>{worker.phone}</td>
               <td>알바</td>
-              <td>
-                <button>출근</button>
-              </td>
             </tr>
           );
         })}

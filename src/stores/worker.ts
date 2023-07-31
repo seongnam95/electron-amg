@@ -1,4 +1,4 @@
-import { atom } from 'recoil';
+import { atom, selector, selectorFamily } from 'recoil';
 
 import { WorkerData } from '~/types/worker';
 
@@ -29,4 +29,14 @@ const initWorker: WorkerData[] = [
 export const workerStore = atom<WorkerData[]>({
   key: 'workerState',
   default: initWorker,
+});
+
+export const workerSelector = selectorFamily<WorkerData | undefined, { userId: string }>({
+  key: 'workerSelector',
+  get:
+    ({ userId }) =>
+    ({ get }) => {
+      const workerList = get(workerStore);
+      return workerList.find(worker => worker.id === userId);
+    },
 });

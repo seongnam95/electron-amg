@@ -523,4 +523,8 @@ export const InitGlobalStyled = memo(createGlobalStyle`
       margin-right: 3px;
     }
   }
+
+  p {
+    margin: 0;
+  }
 `);

@@ -1,3 +1,5 @@
+import { Dayjs } from 'dayjs';
+
 export interface ContractData {
   company: string;
   date: string;
@@ -12,4 +14,12 @@ export interface WorkerData {
   genderCode: number;
   residence: string;
   contract?: ContractData;
+}
+
+export interface CommuteData {
+  id: string;
+  workerId: string;
+  workingDay: string;
+  startTimeStamp: number;
+  endTimeStamp: number;
 }

@@ -24,9 +24,14 @@ const Sidebar = ({ className }: SidebarProps) => {
         title: '매니저',
         items: [
           {
-            icon: 'bxs-user',
+            icon: 'bx-user',
             link: '/manager/worker',
             text: '직원 관리',
+          },
+          {
+            icon: 'bx-time',
+            link: '/manager/tracker',
+            text: '근태',
           },
         ],
       },

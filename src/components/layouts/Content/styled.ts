@@ -1,6 +1,9 @@
 import styled from 'styled-components';
 
 export const ContentStyled = styled.div`
+  display: flex;
+  flex-direction: column;
+
   width: calc(100% - 200px);
   background-color: ${props => props.theme.colors.contentBG};
   border-top-left-radius: 15px;
@@ -37,9 +40,11 @@ export const ContentStyled = styled.div`
   }
 
   > .content {
-    padding: 3rem 2rem;
+    flex: 1;
     overflow-y: auto;
-    max-height: calc(100% - 73px - 10px);
-    margin: 5px 5px 5px 0;
+
+    > div {
+      height: 100%;
+    }
   }
 `;
