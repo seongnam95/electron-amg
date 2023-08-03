@@ -3,16 +3,19 @@ import { useEffect, useState } from 'react';
 import dayjs, { Dayjs } from 'dayjs';
 import { useRecoilState, useRecoilValue } from 'recoil';
 
-import { commuteSelector, commuteStore, workingDayStore } from '~/stores/commute';
+import { commuteStore, workingDayStore } from '~/stores/commute';
 import { workerSelector } from '~/stores/worker';
+import { CommuteData } from '~/types/worker';
 
 import { DayTableStyled } from './styled';
 
 export interface DayTableProps {}
 
 const DayTable = ({}: DayTableProps) => {
-  const [day] = useRecoilState(workingDayStore);
-  const c = useRecoilValue(commuteSelector({ workingDay: '' }));
+  // const workingDay = useRecoilValue(workingDayStore);
+  // const commutes: CommuteData[] = useRecoilValue(
+  //   commuteSelector({ day: workingDay.format('YYMMDD') }),
+  // );
 
   return (
     <DayTableStyled className="DayTable">
@@ -23,7 +26,7 @@ const DayTable = ({}: DayTableProps) => {
           <th>퇴근 시간</th>
         </tr>
       </thead>
-      <tbody>
+      {/* <tbody>
         {commutes.map(commute => {
           const worker = useRecoilValue(workerSelector({ userId: commute.workerId }));
           if (worker)
@@ -35,7 +38,7 @@ const DayTable = ({}: DayTableProps) => {
               </tr>
             );
         })}
-      </tbody>
+      </tbody> */}
     </DayTableStyled>
   );
 };

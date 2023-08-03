@@ -25,7 +25,7 @@ const Titlebar = ({ className }: TitlebarProps) => {
     <TitlebarStyled className={clsx('Titlebar', className)}>
       <div className="logo">
         <img src={logo} alt="logo" width={20} />
-        EUM - 중개사 플렛폼
+        AMG
       </div>
       <div className="controls">
         {developerMode && (

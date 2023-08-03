@@ -13,6 +13,7 @@ export interface WorkerData {
   phone: string;
   genderCode: number;
   residence: string;
+  positionCode: number;
   contract?: ContractData;
 }
 

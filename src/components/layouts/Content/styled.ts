@@ -41,7 +41,7 @@ export const ContentStyled = styled.div`
 
   > .content {
     flex: 1;
-    overflow-y: auto;
+    overflow: hidden;
 
     > div {
       height: 100%;

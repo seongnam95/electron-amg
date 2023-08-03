@@ -12,8 +12,8 @@ export const sizes = {
 };
 
 const _colors = {
-  primary: '#f27373',
-  secondary: '#333333',
+  primary: '#333333',
+  secondary: '#f27373',
 
   titleBg: '#1E1E1E',
   titleBgHover: '#2C2C2C',
@@ -25,7 +25,8 @@ const _colors = {
   sidebarSelected: '',
   selectedBG: '',
 
-  contentBG: '#f9f9f9',
+  underBg: '#f9f9f9',
+  contentBG: '#ffffff',
   formFieldBG: '#ffffff',
 
   borderColor: '#F0F0F0',
