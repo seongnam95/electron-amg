@@ -10,7 +10,8 @@ import { useDragScroll } from '~/hooks/useDragScroll';
 import { WorkerTrackerPageStyled } from '~/styles/pageStyled/workerTrackerPageStyled';
 
 const WorkerTracker = () => {
-  const tableRef = useDragScroll();
+  const dragRef = useDragScroll();
+
   const [selectedDay, setSelectedDay] = useState<Dayjs>(dayjs());
   const [viewType, setViewType] = useState<'month' | 'day'>('month');
 
@@ -50,19 +51,20 @@ const WorkerTracker = () => {
           onChange={handleOnChangeDate}
         />
       </div>
+
       <div className="color-hint-wrap">
         <span>
           직원
-          <span className="color-bar" style={{ backgroundColor: '#ef5285' }} />
+          <span className="color-bar" style={{ backgroundColor: '#29B6F6' }} />
         </span>
         <span>
           알바
-          <span className="color-bar" style={{ backgroundColor: '#60c5ba' }} />
+          <span className="color-bar" style={{ backgroundColor: '#FFA726' }} />
         </span>
       </div>
 
-      <div className="table-wrap" ref={tableRef}>
-        {viewType === 'month' ? <MonthTable day={selectedDay} /> : <DayTable />}
+      <div className="table-wrap" ref={dragRef}>
+        {viewType === 'month' ? <MonthTable selectedDay={selectedDay} /> : <DayTable />}
       </div>
     </WorkerTrackerPageStyled>
   );

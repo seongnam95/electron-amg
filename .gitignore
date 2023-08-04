@@ -9,3 +9,6 @@ dist
 chrome_data
 release
 dist-electron
+
+backend/venv
+secrets.json

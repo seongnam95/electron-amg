@@ -11,8 +11,7 @@ export const WorkerTrackerPageStyled = styled.div`
     gap: 2.4rem;
 
     height: 6.4rem;
-    padding: 0 2.4rem;
-    border-bottom: 1px solid ${p => p.theme.colors.borderColor};
+    padding: 0 2rem;
 
     .ant-radio-group,
     .ant-picker {
@@ -20,19 +19,11 @@ export const WorkerTrackerPageStyled = styled.div`
     }
   }
 
-  .table-wrap {
-    width: 100%;
-    height: calc(100% - 7rem);
-
-    overflow: auto;
-    margin: 1.2rem;
-  }
-
   .color-hint-wrap {
     display: flex;
     justify-content: right;
     gap: 1.6rem;
-    padding: 1.4rem 1.6rem 0rem 0;
+    padding: 0.4rem 2rem 0rem 0;
 
     > span {
       display: flex;
@@ -50,5 +41,13 @@ export const WorkerTrackerPageStyled = styled.div`
         border-radius: 0.2rem;
       }
     }
+  }
+
+  .table-wrap {
+    max-width: 100%;
+    height: calc(100% - 7rem);
+
+    overflow: auto;
+    margin: 0.4rem 1.4rem;
   }
 `;

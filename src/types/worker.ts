@@ -1,5 +1,3 @@
-import { Dayjs } from 'dayjs';
-
 export interface ContractData {
   company: string;
   date: string;

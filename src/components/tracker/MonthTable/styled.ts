@@ -7,6 +7,8 @@ export const MonthTableStyled = styled.table`
   white-space: nowrap;
   color: ${p => p.theme.colors.textColor1};
 
+  overflow: auto;
+
   tr {
     height: 3.6rem;
     border-bottom: 1px solid ${p => p.theme.colors.borderColor};
