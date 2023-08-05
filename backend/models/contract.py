@@ -15,5 +15,6 @@ class Contract(Base):
     start_date = Column(DateTime(timezone=True), nullable=False)  # 계약 시작일
     end_date = Column(DateTime(timezone=True), nullable=False)  # 계약 종료일
 
+    # TODO: 계약서가 Worker 하나당 하나만 존재해야 하는지 검토 (unique=True)
     worker_id = Column(Integer, ForeignKey("worker.id"))
     worker = relationship("Worker", back_populates="contract")

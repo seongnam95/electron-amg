@@ -1,24 +1,9 @@
-from sqlalchemy import Column, Integer, String, DateTime, Enum
+from sqlalchemy import Column, Integer, String, DateTime
 from db.base_class import Base
 from datetime import datetime
-from enum import Enum as PyEnum
 from sqlalchemy.orm import relationship
 
 
-# 성별 코드 [0: 남자, 1: 여자]
-class Gender(PyEnum):
-    MALE = 0
-    FEMALE = 1
-
-
-# 직위 코드 [0: 직원, 1: 알바, 2: 기타]
-class Position(PyEnum):
-    STAFF = 0
-    PART_TIME = 1
-    ETC = 2
-
-
-# 근로자
 class Worker(Base):
     __tablename__ = "worker"
 
@@ -27,9 +12,8 @@ class Worker(Base):
     name = Column(String, nullable=False)  # 이름
     phone = Column(String, nullable=False)  # 연락처
     residence = Column(String, nullable=False)  # 거주지
-
-    gender_code = Column(Enum(Gender), nullable=False)  # 성별 코드
-    position_code = Column(Enum(Position), nullable=False)  # 직위 코드
+    gender_code = Column(Integer, nullable=False)  # 성별 코드
+    position_code = Column(Integer, nullable=False)  # 직위 코드
 
     create_date = Column(DateTime(timezone=True), nullable=False, default=datetime.now)
 

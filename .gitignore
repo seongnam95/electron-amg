@@ -10,5 +10,13 @@ chrome_data
 release
 dist-electron
 
+*.log
+*.pot
+*.pyc
+__pycache__
+__pycache__/
+__pycache__/*
+*.pyc
+*.py[cod]
 backend/venv
 secrets.json

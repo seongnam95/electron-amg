@@ -4,7 +4,6 @@ from datetime import datetime
 
 
 class ContractBase(BaseModel):
-    worker_id: int
     company: str
     daily_pay: int
     start_date: datetime
@@ -30,6 +29,7 @@ class ContractUpdate(BaseModel):
 
 class Contract(ContractBase):
     id: int
+    worker_id: int
 
     class Config:
-        from_attributes = True
+        orm_mode = True

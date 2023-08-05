@@ -11,7 +11,7 @@ router = APIRouter()
 
 
 @router.get("/", response_model=schemas.Personal)
-def read_personal(db: Session = Depends(deps.get_db), worker_id=int):
+def read_personal(worker_id=int, db: Session = Depends(deps.get_db)):
     personal = crud.personal.get_individual(db=db, worker_id=worker_id)
 
     if not personal:
