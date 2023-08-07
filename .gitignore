@@ -9,10 +9,12 @@ dist
 chrome_data
 release
 dist-electron
+.vscode
 
 *.log
 *.pot
 *.pyc
+**/__pycache__
 __pycache__
 __pycache__/
 __pycache__/*

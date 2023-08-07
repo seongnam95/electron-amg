@@ -9,10 +9,6 @@ import crud, schemas
 router = APIRouter()
 
 
-class WorkerNotFoundError(Exception):
-    pass
-
-
 @router.get("/", response_model=schemas.Contract)
 def read_contract(worker_id: int = Path(...), db: Session = Depends(deps.get_db)):
     worker = crud.worker.get(db=db, id=worker_id)

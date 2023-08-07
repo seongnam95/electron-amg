@@ -15,5 +15,5 @@ class Personal(Base):
 
     sign_enc = Column(Text, nullable=False)  # 서명 Base64
 
-    worker_id = Column(Integer, ForeignKey("worker.id"))
+    worker_id = Column(Integer, ForeignKey("worker.id"), unique=True)
     worker = relationship("Worker", back_populates="personal")

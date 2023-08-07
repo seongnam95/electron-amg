@@ -20,44 +20,14 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
     def get(self, db: Session, id: Any) -> Optional[ModelType]:
         return db.query(self.model).filter(self.model.id == id).first()
 
-    def get_for_worker(
-        self,
-        db: Session,
-        worker_id: Any,
-    ) -> Optional[ModelType]:
-        return db.query(self.model).filter(self.model.worker_id == worker_id).first()
-
     def get_multi(
         self, db: Session, *, skip: int = 0, limit: int = 100
     ) -> List[ModelType]:
         return db.query(self.model).offset(skip).limit(limit).all()
 
-    def get_multi_for_worker(
-        self, db: Session, worker_id: Any, skip: int = 0, limit: int = 100
-    ) -> List[ModelType]:
-        return (
-            db.query(self.model)
-            .filter(self.model.worker_id == worker_id)
-            .offset(skip)
-            .limit(limit)
-            .all()
-        )
-
     def create(self, db: Session, *, obj_in: CreateSchemaType) -> ModelType:
         obj_in_data = jsonable_encoder(obj_in)
         db_obj = self.model(**obj_in_data)  # type: ignore
-
-        db.add(db_obj)
-        db.commit()
-        db.refresh(db_obj)
-        return db_obj
-
-    def create_for_worker(
-        self, db: Session, *, obj_in: CreateSchemaType, worker_id: int
-    ) -> ModelType:
-        obj_in_data = obj_in.dict()
-        obj_in_data["worker_id"] = worker_id
-        db_obj = self.model(**obj_in_data)
 
         db.add(db_obj)
         db.commit()
@@ -92,3 +62,47 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         db.delete(obj)
         db.commit()
         return obj
+
+    # For Worker
+
+    def get_for_worker(
+        self,
+        db: Session,
+        worker_id: Any,
+    ) -> Optional[ModelType]:
+        return db.query(self.model).filter(self.model.worker_id == worker_id).first()
+
+    def get_multi_for_worker(
+        self, db: Session, worker_id: Any, skip: int = 0, limit: int = 100
+    ) -> List[ModelType]:
+        return (
+            db.query(self.model)
+            .filter(self.model.worker_id == worker_id)
+            .offset(skip)
+            .limit(limit)
+            .all()
+        )
+
+    def create_for_worker(
+        self, db: Session, *, obj_in: CreateSchemaType, worker_id: int
+    ) -> ModelType:
+        obj_in_data = obj_in.dict()
+        obj_in_data["worker_id"] = worker_id
+        db_obj = self.model(**obj_in_data)
+
+        db.add(db_obj)
+        db.commit()
+        db.refresh(db_obj)
+        return db_obj
+
+    def remove_for_worker(self, db: Session, *, worker_id: int) -> ModelType:
+        objs_to_delete = (
+            db.query(self.model).filter(self.model.worker_id == worker_id).all()
+        )
+
+        for obj in objs_to_delete:
+            db.delete(obj)
+
+        db.commit()
+
+        return len(objs_to_delete)

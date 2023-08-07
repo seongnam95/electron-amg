@@ -3,7 +3,6 @@ from typing import Optional
 
 
 class PersonalBase(BaseModel):
-    worker_id: int
     bank: str
     bank_number_enc: str
     ssn_enc: str
@@ -30,4 +29,4 @@ class Personal(PersonalBase):
     id: int
 
     class Config:
-        orm_mode = True
+        from_attributes = True
