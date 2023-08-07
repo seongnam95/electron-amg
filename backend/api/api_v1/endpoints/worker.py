@@ -1,7 +1,10 @@
-from typing import Any, List
+from typing import Any, List, Optional
 
 from fastapi import APIRouter, HTTPException, Depends
+from fastapi.responses import JSONResponse
+from pydantic import BaseModel
 from sqlalchemy.orm import Session
+
 from ... import deps
 
 
@@ -17,8 +20,8 @@ def read_all_worker(
     skip: int = 0,
     limit: int = 100,
 ):
-    workers = crud.worker.get_multi(db, skip=skip, limit=limit)
-    return workers
+    worker = crud.worker.get_multi(db, skip=skip, limit=limit)
+    return worker
 
 
 @router.post("/", response_model=schemas.Worker)

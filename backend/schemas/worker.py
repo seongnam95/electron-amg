@@ -1,5 +1,6 @@
 from typing import Optional
-from pydantic import BaseModel, model_validator, field_validator
+from pydantic import BaseModel, Field, model_validator, field_validator
+from schemas.common import check_update_fields
 
 from exceptions import InvalidCodeError
 
@@ -37,18 +38,8 @@ class WorkerUpdate(BaseModel):
     position_code: Optional[int] = None
 
     @model_validator(mode="before")
-    def check_update_fields(cls, values: dict):
-        allowed_fields = {"phone", "residence", "position_code"}
-
-        for key in values.keys():
-            if key not in allowed_fields:
-                print("진입")
-                raise ValueError(f"The field '{key}' cannot be updated")
-
-        if all(value is None for value in values.values()):
-            raise ValueError("At least one field to update must be provided")
-
-        return values
+    def check_fields(cls, values: dict):
+        return check_update_fields(cls, values)
 
 
 class Worker(WorkerBase):

@@ -1,19 +1,21 @@
 """empty message
 
-Revision ID: b8d1d2420037
+Revision ID: c3028caa4657
 Revises: 
-Create Date: 2023-08-06 00:33:49.501821
+Create Date: 2023-08-07 21:31:26.537558
 
 """
+from typing import Sequence, Union
+
 from alembic import op
 import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'b8d1d2420037'
-down_revision = None
-branch_labels = None
-depends_on = None
+revision: str = 'c3028caa4657'
+down_revision: Union[str, None] = None
+branch_labels: Union[str, Sequence[str], None] = None
+depends_on: Union[str, Sequence[str], None] = None
 
 
 def upgrade() -> None:
@@ -31,10 +33,12 @@ def upgrade() -> None:
     op.create_index(op.f('ix_worker_id'), 'worker', ['id'], unique=False)
     op.create_table('contract',
     sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('company', sa.String(), nullable=False),
-    sa.Column('daily_pay', sa.Integer(), nullable=False),
+    sa.Column('company_name', sa.String(), nullable=False),
+    sa.Column('default_daily_wage', sa.Integer(), nullable=False),
     sa.Column('start_date', sa.DateTime(timezone=True), nullable=False),
     sa.Column('end_date', sa.DateTime(timezone=True), nullable=False),
+    sa.Column('valid', sa.Boolean(), nullable=False),
+    sa.Column('create_date', sa.DateTime(timezone=True), nullable=False),
     sa.Column('worker_id', sa.Integer(), nullable=True),
     sa.ForeignKeyConstraint(['worker_id'], ['worker.id'], ),
     sa.PrimaryKeyConstraint('id')
@@ -45,17 +49,18 @@ def upgrade() -> None:
     sa.Column('bank', sa.String(), nullable=False),
     sa.Column('bank_number_enc', sa.Text(), nullable=False),
     sa.Column('ssn_enc', sa.Text(), nullable=False),
-    sa.Column('sign_enc', sa.Text(), nullable=False),
+    sa.Column('sign_base64', sa.Text(), nullable=False),
     sa.Column('worker_id', sa.Integer(), nullable=True),
     sa.ForeignKeyConstraint(['worker_id'], ['worker.id'], ),
-    sa.PrimaryKeyConstraint('id')
+    sa.PrimaryKeyConstraint('id'),
+    sa.UniqueConstraint('worker_id')
     )
     op.create_index(op.f('ix_personal_id'), 'personal', ['id'], unique=False)
     op.create_table('worklog',
     sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('working_date', sa.DateTime(), nullable=False),
-    sa.Column('start_time', sa.DateTime(), nullable=True),
-    sa.Column('end_time', sa.DateTime(), nullable=True),
+    sa.Column('start_datetime', sa.DateTime(), nullable=True),
+    sa.Column('end_datetime', sa.DateTime(), nullable=True),
+    sa.Column('daily_wage', sa.Integer(), nullable=True),
     sa.Column('worker_id', sa.Integer(), nullable=True),
     sa.ForeignKeyConstraint(['worker_id'], ['worker.id'], ),
     sa.PrimaryKeyConstraint('id')

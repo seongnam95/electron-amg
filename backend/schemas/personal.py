@@ -1,4 +1,4 @@
-from pydantic import BaseModel, validator
+from pydantic import BaseModel, validator, Field
 from typing import Optional
 
 
@@ -6,7 +6,7 @@ class PersonalBase(BaseModel):
     bank: str
     bank_number_enc: str
     ssn_enc: str
-    sign_enc: str
+    sign_base64: str
 
 
 class PersonalCreate(PersonalBase):
@@ -16,7 +16,7 @@ class PersonalCreate(PersonalBase):
 class PersonalUpdate(BaseModel):
     bank: Optional[str] = None
     bank_number_enc: Optional[str] = None
-    sign_enc: Optional[str] = None
+    ssn_enc: Optional[str] = None
 
     @validator("*", pre=True, always=True)
     def check_update_fields(cls, v, values, **kwargs):
@@ -27,6 +27,7 @@ class PersonalUpdate(BaseModel):
 
 class Personal(PersonalBase):
     id: int
+    worker_id: int
 
     class Config:
         from_attributes = True

@@ -19,13 +19,10 @@ class Worker(Base):
 
     personal = relationship(
         "Personal",
-        uselist=False,  # Worker 와 1:1 관계
         back_populates="worker",
-        cascade="all, delete-orphan",  # Worker 삭제 될 경우 함께 삭제
+        cascade="all, delete-orphan",
     )
-    contract = relationship(
-        "Contract", uselist=False, back_populates="worker", cascade="all, delete-orphan"
-    )
+    contract = relationship("Contract", uselist=False, back_populates="worker")
     worklogs = relationship(
         "WorkLog", back_populates="worker", cascade="all, delete-orphan"
     )

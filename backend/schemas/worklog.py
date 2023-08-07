@@ -4,11 +4,10 @@ from datetime import datetime
 
 
 class WorkLogBase(BaseModel):
-    worker_id: int
-
     working_date: datetime
-    start_time: Optional[datetime] = None
-    end_time: Optional[datetime] = None
+    start_datetime: Optional[datetime] = None
+    end_datetime: Optional[datetime] = None
+    daily_wage: Optional[int] = None
 
 
 class WorkLogCreate(WorkLogBase):
@@ -16,8 +15,9 @@ class WorkLogCreate(WorkLogBase):
 
 
 class WorkLogUpdate(BaseModel):
-    start_time: Optional[datetime] = None
-    end_time: Optional[datetime] = None
+    start_datetime: Optional[datetime] = None
+    end_datetime: Optional[datetime] = None
+    daily_wage: Optional[int] = None
 
     @validator("*", pre=True, always=True)
     def check_update_fields(cls, v, values, **kwargs):
@@ -28,6 +28,7 @@ class WorkLogUpdate(BaseModel):
 
 class WorkLog(WorkLogBase):
     id: int
+    worker_id: int
 
     class Config:
         from_attributes = True
