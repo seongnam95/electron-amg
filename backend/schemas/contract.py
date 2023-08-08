@@ -1,5 +1,5 @@
 from pydantic import BaseModel, model_validator
-from typing import Optional, List
+from typing import List, Optional
 from datetime import datetime
 
 from schemas.common import check_update_fields
@@ -38,7 +38,7 @@ class Contract(ContractBase):
         from_attributes = True
 
 
-class ContractResponse(BaseModel):
+class WorkerContractModel(BaseModel):
     valid_contract: Contract
     prev_contract_count: int
     prev_contracts: List[Contract]

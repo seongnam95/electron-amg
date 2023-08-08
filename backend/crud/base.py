@@ -15,7 +15,6 @@ UpdateSchemaType = TypeVar("UpdateSchemaType", bound=BaseModel)
 class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
     def __init__(self, model: Type[ModelType]):
         self.model = model
-        self.worker_model = Worker
 
     def get(self, db: Session, id: Any) -> Optional[ModelType]:
         return db.query(self.model).filter(self.model.id == id).first()
@@ -46,7 +45,7 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         if isinstance(obj_in, dict):
             update_data = obj_in
         else:
-            update_data = obj_in.dict(exclude_unset=True)
+            update_data = obj_in.model_dump(exclude_unset=True)
 
         for field in obj_data:
             if field in update_data:
@@ -82,27 +81,3 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
             .limit(limit)
             .all()
         )
-
-    def create_for_worker(
-        self, db: Session, *, obj_in: CreateSchemaType, worker_id: int
-    ) -> ModelType:
-        obj_in_data = obj_in.dict()
-        obj_in_data["worker_id"] = worker_id
-        db_obj = self.model(**obj_in_data)
-
-        db.add(db_obj)
-        db.commit()
-        db.refresh(db_obj)
-        return db_obj
-
-    def remove_for_worker(self, db: Session, *, worker_id: int) -> ModelType:
-        objs_to_delete = (
-            db.query(self.model).filter(self.model.worker_id == worker_id).all()
-        )
-
-        for obj in objs_to_delete:
-            db.delete(obj)
-
-        db.commit()
-
-        return len(objs_to_delete)

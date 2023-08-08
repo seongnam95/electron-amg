@@ -10,6 +10,7 @@ chrome_data
 release
 dist-electron
 .vscode
+settings.json
 
 *.log
 *.pot

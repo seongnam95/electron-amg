@@ -19,4 +19,5 @@ def get_worker(worker_id: int, db: Session = Depends(get_db)) -> schemas.Worker:
 
     if not worker:
         raise HTTPException(status_code=404, detail="worker not found")
+
     return worker
