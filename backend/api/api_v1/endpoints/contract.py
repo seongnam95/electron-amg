@@ -8,36 +8,36 @@ from response_model import BaseResponse, ListResponse
 router = APIRouter()
 
 
-def get_contract(contract_id: int, db: Session = Depends(deps.get_db)):
+def get_contract(*, contract_id: int, db: Session = Depends(deps.get_db)):
     contract = crud.contract.get(db=db, id=contract_id)
     if not contract:
         raise HTTPException(status_code=404, detail="존재하지 않는 계약서입니다.")
     return contract
 
 
+# TODO : 추후 필요 없다면 삭제
+# 전체 계약서 불러오기
+@router.get("/", response_model=ListResponse[schemas.Contract])
+def read_all_contract(
+    *,
+    db: Session = Depends(deps.get_db),
+):
+    contracts = crud.contract.get_multi(db=db)
+    return ListResponse(success=True, count=len(contracts), result=contracts)
+
+
+# TODO : 추후 필요 없다면 삭제
 # 계약서 불러오기
-@router.get("/contract/{contract_id}", response_model=BaseResponse[schemas.Contract])
+@router.get("/{contract_id}", response_model=BaseResponse[schemas.Contract])
 def read_contract(
+    *,
     contract: schemas.Contract = Depends(get_contract),
 ):
     return BaseResponse(success=True, result=contract)
 
 
-# 전체 계약서 불러오기
-@router.get("/contract", response_model=ListResponse[schemas.Contract])
-def read_all_contract(
-    db: Session = Depends(deps.get_db),
-):
-    contracts = crud.contract.get_multi(db=db)
-
-    if not contracts:
-        raise HTTPException(status_code=404, detail="작성 된 계약서가 없습니다.")
-
-    return ListResponse(success=True, count=len(contracts), result=contracts)
-
-
 # 계약서 삭제
-@router.delete("/contract/{contract_id}", response_model=BaseResponse[schemas.Contract])
+@router.delete("/{contract_id}", response_model=BaseResponse[schemas.Contract])
 def delete_contract(
     *,
     contract: schemas.Contract = Depends(get_contract),
@@ -48,7 +48,7 @@ def delete_contract(
 
 
 # 계약서 데이터 변경
-@router.put("/contract/{contract_id}", response_model=BaseResponse[schemas.Contract])
+@router.put("/{contract_id}", response_model=BaseResponse[schemas.Contract])
 def update_contract(
     *,
     contract: schemas.Contract = Depends(get_contract),
@@ -60,9 +60,7 @@ def update_contract(
 
 
 # 해당 근로자 계약서 생성
-@router.post(
-    "/worker/{worker_id}/contract", response_model=BaseResponse[schemas.Contract]
-)
+@router.post("/", response_model=BaseResponse[schemas.Contract])
 def create_contract_for_worker(
     *,
     worker: schemas.Worker = Depends(deps.get_worker),
@@ -81,6 +79,7 @@ def create_contract_for_worker(
     response_model=BaseResponse[schemas.WorkerContractModel],
 )
 def read_all_contract_for_worker(
+    *,
     worker: schemas.Worker = Depends(deps.get_worker),
     db: Session = Depends(deps.get_db),
 ):

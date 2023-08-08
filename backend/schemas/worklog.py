@@ -1,29 +1,22 @@
-from pydantic import BaseModel, validator
+from pydantic import BaseModel, model_validator
 from typing import Optional
 from datetime import datetime
+from schemas.common import check_update_fields
 
 
 class WorkLogBase(BaseModel):
-    working_date: datetime
-    start_datetime: Optional[datetime] = None
-    end_datetime: Optional[datetime] = None
-    daily_wage: Optional[int] = None
+    date_str: Optional[str] = None
+    remarks: Optional[str] = None
 
 
 class WorkLogCreate(WorkLogBase):
     pass
 
 
-class WorkLogUpdate(BaseModel):
-    start_datetime: Optional[datetime] = None
-    end_datetime: Optional[datetime] = None
-    daily_wage: Optional[int] = None
-
-    @validator("*", pre=True, always=True)
-    def check_update_fields(cls, v, values, **kwargs):
-        if not values:
-            raise ValueError("At least one field to update must be provided")
-        return v
+class WorkLogUpdate(WorkLogBase):
+    @model_validator(mode="before")
+    def check_fields(cls, values: dict):
+        return check_update_fields(cls, values)
 
 
 class WorkLog(WorkLogBase):

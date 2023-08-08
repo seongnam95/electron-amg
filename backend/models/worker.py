@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, DateTime
+from sqlalchemy import Column, ForeignKey, Integer, String, DateTime
 from db.base_class import Base
 from datetime import datetime
 from sqlalchemy.orm import relationship
@@ -16,6 +16,9 @@ class Worker(Base):
     position_code = Column(Integer, nullable=False)  # 직위 코드
 
     create_date = Column(DateTime(timezone=True), nullable=False, default=datetime.now)
+
+    group_id = Column(Integer, ForeignKey("group.id"), nullable=True)
+    group = relationship("Group", back_populates="worker")
 
     personal = relationship(
         "Personal",

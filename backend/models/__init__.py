@@ -1,3 +1,4 @@
+from .group import Group
 from .worker import Worker
 from .personal import Personal
 from .contract import Contract

@@ -1,5 +1,7 @@
-from pydantic import BaseModel, validator, Field
+from pydantic import BaseModel, model_validator
 from typing import Optional
+
+from schemas.common import check_update_fields
 
 
 class PersonalBase(BaseModel):
@@ -16,13 +18,11 @@ class PersonalCreate(PersonalBase):
 class PersonalUpdate(BaseModel):
     bank: Optional[str] = None
     bank_number_enc: Optional[str] = None
-    ssn_enc: Optional[str] = None
+    sign_base64: Optional[str] = None
 
-    @validator("*", pre=True, always=True)
-    def check_update_fields(cls, v, values, **kwargs):
-        if not values:
-            raise ValueError("At least one field to update must be provided")
-        return v
+    @model_validator(mode="before")
+    def check_fields(cls, values: dict):
+        return check_update_fields(cls, values)
 
 
 class Personal(PersonalBase):

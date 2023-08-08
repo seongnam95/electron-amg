@@ -1,24 +1,27 @@
 import { useState } from 'react';
 
+import { useRecoilValue } from 'recoil';
+
 import LayoutConfig from '~/components/layouts/LayoutConfig/LayoutConfig';
-import WorkerModal from '~/components/worker/WorkerModal/WorkerModal';
 import WorkerTable from '~/components/worker/WorkerTable/WorkerTable';
+import { workerQuery } from '~/stores/worker';
 import { WorkerPageStyled } from '~/styles/pageStyled/workerPageStyled';
 import { WorkerData } from '~/types/worker';
 
 const Worker = () => {
   const [worker, setWorker] = useState<WorkerData>();
   const [showModal, setShowModal] = useState<boolean>(false);
+  const workers = useRecoilValue(workerQuery);
 
-  const handleOnClickWorker = (w: WorkerData) => {
-    setWorker(w);
+  const handleOnClickWorker = (worker: WorkerData) => {
+    setWorker(worker);
     setShowModal(true);
   };
 
   return (
     <WorkerPageStyled className="WorkerPage">
       <LayoutConfig breadcrumbs={[' 매니저', '직원 관리']} />
-      <WorkerTable onClick={handleOnClickWorker} />
+      <WorkerTable items={workers} onClick={handleOnClickWorker} />
       {/* {showModal && worker && <WorkerModal worker={worker} />} */}
     </WorkerPageStyled>
   );

@@ -1,86 +1,108 @@
-from typing import Any, List, Optional
-
+from datetime import datetime
+from typing import Optional
 from fastapi import APIRouter, HTTPException, Depends
 from sqlalchemy.orm import Session
 from ... import deps
 
 import crud, schemas
+from response_model import BaseResponse, ListResponse
 
 
 router = APIRouter()
 
 
-# 전체 로그 조회
-@router.get("/", response_model=List[schemas.WorkLog])
+def get_worklog(worklog_id: int, db: Session = Depends(deps.get_db)):
+    worklog = crud.worklog.get(db=db, id=worklog_id)
+    if not worklog:
+        raise HTTPException(status_code=404, detail="존재하지 않는 로그입니다.")
+    return worklog
+
+
+# 전체 근무로그 조회
+@router.get("/worklog", response_model=ListResponse[schemas.WorkLog])
 def read_all_worklog(
+    date: Optional[str] = None,
     db: Session = Depends(deps.get_db),
     skip: int = 0,
     limit: int = 100,
 ):
-    worklogs = crud.worklog.get_multi(db, skip=skip, limit=limit)
-    return worklogs
+    if date:
+        worklogs = crud.worklog.get_all_worklog_by_date(
+            db, skip=skip, limit=limit, date_str=date
+        )
+    else:
+        worklogs = crud.worklog.get_multi(db, skip=skip, limit=limit)
+
+    return ListResponse(success=True, count=len(worklogs), result=worklogs)
 
 
-# WorkLog ID로 조회
-@router.get("/{worklog_id}", response_model=schemas.WorkLog)
-def read_worklog(db: Session = Depends(deps.get_db), id=int):
-    worklog = crud.worklog.get(db=db, id=id)
-
-    if not worklog:
-        raise HTTPException(status_code=404, detail="worklog not found")
-
-    return worklog
+# 근무로그 조회
+@router.get("/worklog/{worklog_id}", response_model=BaseResponse[schemas.WorkLog])
+def read_worklog(worklog: schemas.WorkLog = Depends(get_worklog)):
+    return BaseResponse(success=True, result=worklog)
 
 
-# 해당하는 근무자(Worker) ID로 조회
-# @router.get("/{worker_id}", response_model=schemas.WorkLog)
-# def read_worker_worklog(
-#     db: Session = Depends(deps.get_db), worker_id=int, working_date=Optional[str]
-# ):
-#     worklogs = crud.worklog.get_worker_worklog(
-#         db=db, worker_id=worker_id, working_date=working_date
-#     )
-
-#     return worklogs
-
-
-# 출, 퇴근 로그 생성
-@router.post("/", response_model=schemas.WorkLog)
+# 근무로그 생성 (날짜 중복 불가)
+@router.post(
+    "/worker/{worker_id}/worklog", response_model=BaseResponse[schemas.WorkLog]
+)
 def create_worklog(
-    *, db: Session = Depends(deps.get_db), worklog_in: schemas.WorkLogCreate
+    *,
+    worker: schemas.Worker = Depends(deps.get_worker),
+    db: Session = Depends(deps.get_db),
+    worklog_in: schemas.WorkLogCreate,
 ):
-    worklog = crud.worklog.create(db=db, obj_in=worklog_in)
-    return worklog
+    date_str = worklog_in.working_date_str
+
+    if not date_str:
+        current_datetime = datetime.now().date()
+        date_str = current_datetime.strftime("%Y%m%d")
+
+    existing_worklog = crud.worklog.get_worklog_for_worker_by_date(
+        db=db, worker_id=worker.id, date_str=date_str
+    )
+
+    if existing_worklog:
+        raise HTTPException(status_code=404, detail="근무로그가 이미 존재합니다.")
+
+    worklog = crud.worklog.create_for_worker(
+        db=db, obj_in=worklog_in, worker_id=worker.id
+    )
+    return BaseResponse(success=True, result=worklog)
 
 
-# 출, 퇴근 업데이트
-@router.put("/{worklog_id}", response_model=schemas.WorkLog)
+# 근무로그 업데이트
+@router.put("/worklog/{worklog_id}", response_model=BaseResponse[schemas.WorkLog])
 def update_worklog(
     *,
+    worklog: schemas.WorkLog = Depends(get_worklog),
     db: Session = Depends(deps.get_db),
-    id: int,
     worklog_in: schemas.WorkLogUpdate,
-) -> Any:
-    worklog = crud.worklog.get(db=db, id=id)
-
-    if not worklog:
-        raise HTTPException(status_code=404, detail="worklog not found")
-
+):
     worklog = crud.worklog.update(db=db, db_obj=worklog, obj_in=worklog_in)
-    return worklog
+    return BaseResponse(success=True, result=worklog)
 
 
 # 출, 퇴근 로그 삭제
-@router.delete("/{worklog_id}", response_model=schemas.WorkLog)
+@router.delete("/worklog/{worklog_id}", response_model=schemas.WorkLog)
 def delete_worklog(
     *,
+    worklog: schemas.WorkLog = Depends(get_worklog),
     db: Session = Depends(deps.get_db),
-    id: int,
 ):
-    worklog = crud.worklog.get(db=db, id=id)
-
-    if not worklog:
-        raise HTTPException(status_code=404, detail="worklog not found")
-
-    worklog = crud.worklog.remove(db=db, id=id)
+    worklog = crud.worklog.remove(db=db, id=worklog.id)
     return worklog
+
+
+# 근로자 전체 근무로그 조회
+@router.get("/worker/{worker_id}/worklog", response_model=ListResponse[schemas.WorkLog])
+def read_all_worklog_for_worker(
+    worker: schemas.Worker = Depends(deps.get_worker),
+    db: Session = Depends(deps.get_db),
+    skip: int = 0,
+    limit: int = 100,
+):
+    worklogs = crud.worklog.get_multi_for_worker(
+        db, worker_id=worker.id, skip=skip, limit=limit
+    )
+    return ListResponse(success=True, count=len(worklogs), result=worklogs)

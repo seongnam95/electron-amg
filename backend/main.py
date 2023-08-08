@@ -1,41 +1,24 @@
-import json
-from typing import Any, Optional
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import JSONResponse
-from pydantic import BaseModel
 from api.api_v1.api import api_router
-from exception_handlers import handle_invalid_code_error  # , handle_required_exception
+from exception_handlers import handle_invalid_code_error
 from exceptions import InvalidCodeError
-from starlette.middleware.base import BaseHTTPMiddleware
-from response_model import BaseResponse
+
+from fastapi.middleware.cors import CORSMiddleware
 
 
-class CommonResponse(JSONResponse):
-    def __init__(self, success, content, **kwargs):
-        response_content = {
-            "success": success,
-            "result": content,
-        }
-        super().__init__(content=response_content, **kwargs)
+app = FastAPI()
+origins = [
+    "http://localhost:3000",  # 프론트엔드 서버의 주소
+]
 
-
-class CommonResponseMiddleware(BaseHTTPMiddleware):
-    async def dispatch(self, request, call_next):
-        response = await call_next(request)
-        success = response.status_code < 400
-        print(type(response))
-        # response_body = b""
-        # async for chunk in response.body_iterator:
-        #     response_body += chunk
-
-        # print(response_body)
-        # content = json.loads(response_body.decode())
-
-        return response
-
-
-app = FastAPI()  # (default_response_class=CommonResponse)
-# app.add_middleware(CommonResponseMiddleware)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 app.include_router(api_router, prefix="/api/v1")
 
 # 예외 핸들러

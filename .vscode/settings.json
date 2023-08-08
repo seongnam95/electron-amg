@@ -13,6 +13,7 @@
   "cSpell.words": [
     "autoflush",
     "backref",
+    "clsx",
     "Cryptodome",
     "fastapi",
     "jsonable",

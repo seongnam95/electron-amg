@@ -1,5 +1,5 @@
 from sqlalchemy.orm import relationship
-from sqlalchemy import Column, Integer, DateTime, ForeignKey, TIMESTAMP
+from sqlalchemy import Column, Integer, DateTime, ForeignKey, String
 from db.base_class import Base
 from datetime import datetime
 
@@ -10,6 +10,7 @@ class WorkLog(Base):
 
     id = Column(Integer, primary_key=True, index=True)  # PK
 
+    working_date_str = Column(String, nullable=False)  # 근무일 (YYYYMMDD)
     start_datetime = Column(DateTime, nullable=True, default=datetime.now)  # 출근 타임
     end_datetime = Column(DateTime, nullable=True)  # 퇴근 타임
     daily_wage = Column(Integer, nullable=True)  # 일당

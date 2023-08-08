@@ -7,12 +7,12 @@ export interface ContractData {
 export interface WorkerData {
   id: string;
   name: string;
-  age: number;
   phone: string;
-  genderCode: number;
   residence: string;
+  genderCode: number;
   positionCode: number;
-  contract?: ContractData;
+  createDate: string;
+  groupId: number;
 }
 
 export interface CommuteData {

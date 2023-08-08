@@ -81,3 +81,15 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
             .limit(limit)
             .all()
         )
+
+    def create_for_worker(
+        self, db: Session, *, obj_in: CreateSchemaType, worker_id: int
+    ) -> ModelType:
+        obj_in_data = obj_in.model_dump()
+        obj_in_data["worker_id"] = worker_id
+        db_obj = self.model(**obj_in_data)
+
+        db.add(db_obj)
+        db.commit()
+        db.refresh(db_obj)
+        return db_obj
