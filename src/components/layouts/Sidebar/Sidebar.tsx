@@ -5,7 +5,6 @@ import clsx from 'clsx';
 import { motion, LayoutGroup, AnimatePresence } from 'framer-motion';
 import { useRecoilValue } from 'recoil';
 
-import logo from '~/assets/images/logo@256.png';
 import { configStore } from '~/stores/config';
 
 import { SidebarStyled } from './styled';
@@ -95,7 +94,6 @@ const Sidebar = ({ className }: SidebarProps) => {
                               }}
                             />
                           )}
-
                           <i className={`bx ${item.icon}`} />
                           <span>{item.text}</span>
                         </Link>

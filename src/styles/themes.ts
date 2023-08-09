@@ -12,8 +12,8 @@ export const sizes = {
 };
 
 const _colors = {
-  primary: '#333333',
-  secondary: '#f27373',
+  primary: '#326CF9',
+  secondary: '#333333',
 
   titleBg: '#1E1E1E',
   titleBgHover: '#2C2C2C',
@@ -40,6 +40,7 @@ const _colors = {
 
   textColor1: '#191919',
   textColor2: '#767676',
+  textColor3: '#999999',
   textColorWhite1: '',
   textColorWhite2: '',
 

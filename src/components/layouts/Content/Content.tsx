@@ -14,26 +14,10 @@ export interface ContentProps {
 }
 
 const Content = ({ className, children }: ContentProps) => {
-  const { breadcrumbs } = useRecoilValue(layoutStore);
   const { pathname } = useLocation();
 
   return (
     <ContentStyled className={clsx('Content', className)}>
-      <div className="header">
-        <i className="bx bx-hash" />
-
-        <motion.span
-          initial={{ opacity: 0, x: 3 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.3 }}
-          key={pathname}
-        >
-          {breadcrumbs.map((text, i) => (
-            <span key={text + i}>{text}</span>
-          ))}
-        </motion.span>
-      </div>
-
       <div className="content">
         <motion.div
           key={pathname}
