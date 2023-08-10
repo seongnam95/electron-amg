@@ -4,7 +4,7 @@ import Checkbox, { CheckboxChangeEvent } from 'antd/es/checkbox';
 import clsx from 'clsx';
 import { useRecoilState } from 'recoil';
 
-import { workerStore } from '~/stores/worker';
+import { workerState } from '~/stores/worker';
 import { WorkerData } from '~/types/worker';
 
 import { WorkerTableStyled } from './styled';
@@ -17,7 +17,7 @@ export interface WorkerTableProps {
 const WorkerTable = ({ className, onClick }: WorkerTableProps) => {
   const [allSelected, setAllSelected] = useState<boolean>(false);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
-  const [workers, setWorkers] = useRecoilState(workerStore);
+  const [workers, setWorkers] = useRecoilState(workerState);
 
   useEffect(() => {
     setAllSelected(selectedIds.length === workers.length);

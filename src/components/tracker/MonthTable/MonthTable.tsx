@@ -4,7 +4,7 @@ import { useRecoilValue } from 'recoil';
 import styled, { css } from 'styled-components';
 
 import { commuteMonthlySelector } from '~/stores/commute';
-import { workerStore } from '~/stores/worker';
+import { workerState } from '~/stores/worker';
 import { CommuteData, WorkerData } from '~/types/worker';
 import { findWorkingRanges, groupDataByWorker } from '~/utils/commuteRange';
 
@@ -15,7 +15,7 @@ export interface MonthTableProps {
 }
 
 const MonthTable = ({ selectedDay }: MonthTableProps) => {
-  const workers = useRecoilValue(workerStore);
+  const workers = useRecoilValue(workerState);
   const commutes = useRecoilValue(commuteMonthlySelector(selectedDay.format('YYYYMM')));
 
   const dayCount = selectedDay.daysInMonth();

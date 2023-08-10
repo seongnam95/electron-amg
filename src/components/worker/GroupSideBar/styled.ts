@@ -1,30 +1,39 @@
 import styled from 'styled-components';
 
 export const GroupSideBarStyled = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
   height: 100%;
-  width: 20rem;
+  width: 24rem;
+
+  padding: 1.8rem 1.8rem 3rem;
 
   border-right: 1px solid ${p => p.theme.colors.borderColor};
 
   > .menus {
-    > .item {
-      padding: 0.8rem 2rem;
+    overflow-y: auto;
+    margin: 0;
+  }
 
-      color: ${p => p.theme.colors.textColor3};
-      font-size: ${p => p.theme.sizes.textMedium};
+  .group-item {
+    display: flex;
+    padding: 1rem 0;
 
-      transition: all 140ms;
+    color: ${p => p.theme.colors.textColor2};
+    font-size: ${p => p.theme.sizes.textMedium};
 
-      cursor: pointer;
+    transition: all 140ms;
 
-      &.active {
-        font-weight: bold;
-        color: ${p => p.theme.colors.primary};
-      }
+    cursor: pointer;
 
-      :not(.active):hover {
-        color: ${p => p.theme.colors.textColor2};
-      }
+    &.active {
+      font-weight: bold;
+      color: ${p => p.theme.colors.primary};
+    }
+
+    :not(.active):hover {
+      color: ${p => p.theme.colors.textColor1};
     }
   }
 `;

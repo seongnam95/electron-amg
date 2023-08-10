@@ -1,18 +1,48 @@
-import { atom, selector, selectorFamily } from 'recoil';
+import { atom } from 'recoil';
 
 import { fetchGroups } from '~/api/groupApi';
 import { GroupData } from '~/types/group';
 
-export const groupStore = atom<GroupData[]>({
-  key: 'groupState',
-  default: [],
+const mapGroupDataFromResponse = (group: any): GroupData => ({
+  id: group.id.toString(),
+  name: group.name,
+  explanation: group.explanation,
+  hexColor: group.hex_color,
+  wage: group.wage,
+  createDate: group.create_date,
 });
 
-export const groupQuery = selector<GroupData[]>({
-  key: 'groupQuery',
-  get: async () => {
-    const response = await fetchGroups();
-    if (response.success) return response.result;
-    else return [];
-  },
+const groupState = atom<GroupData[]>({
+  key: 'groupState',
+  default: [],
+  effects_UNSTABLE: [
+    ({ setSelf }) => {
+      fetchGroups().then(response => {
+        if (response.success) {
+          const groups = response.result.map(mapGroupDataFromResponse);
+          setSelf(groups);
+        }
+      });
+    },
+  ],
 });
+
+// const filteredWorkerState = selectorFamily<GroupData[], string>({
+//   key: 'filteredWorkerState',
+//   get:
+//     groupId =>
+//     ({ get }) => {
+//       const workers = get(workerState);
+
+//       switch (groupId) {
+//         case 'all':
+//           return workers;
+//         case 'etc':
+//           return workers.filter(worker => worker.groupId === null);
+//         default:
+//           return workers.filter(worker => worker.groupId === parseInt(groupId));
+//       }
+//     },
+// });
+
+export { groupState };

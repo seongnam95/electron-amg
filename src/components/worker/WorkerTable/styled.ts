@@ -17,4 +17,10 @@ export const WorkerTableStyled = styled.table`
     font-size: ${p => p.theme.sizes.textSmall};
     color: ${p => p.theme.colors.textColor1};
   }
+
+  .group-color-bar {
+    width: 8px;
+    border-radius: 2px;
+    margin: 3px 10px 3px 0;
+  }
 `;

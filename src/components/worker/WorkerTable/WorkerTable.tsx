@@ -2,21 +2,25 @@ import { useEffect, useState } from 'react';
 
 import Checkbox, { CheckboxChangeEvent } from 'antd/es/checkbox';
 import clsx from 'clsx';
+import { useRecoilValue } from 'recoil';
 
+import { groupState } from '~/stores/group';
 import { WorkerData } from '~/types/worker';
 
 import { WorkerTableStyled } from './styled';
 
 export interface WorkerTableProps {
+  allWorker?: boolean;
   items?: WorkerData[];
   className?: string;
   onClick?: (worker: WorkerData) => void;
 }
 
-const WorkerTable = ({ items, className, onClick }: WorkerTableProps) => {
+const WorkerTable = ({ items, allWorker, className, onClick }: WorkerTableProps) => {
   const [allSelected, setAllSelected] = useState<boolean>(false);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [workers, setWorkers] = useState<WorkerData[]>(items ?? []);
+  const groups = useRecoilValue(groupState);
 
   useEffect(() => setWorkers(items ?? []), [items]);
 
@@ -54,6 +58,9 @@ const WorkerTable = ({ items, className, onClick }: WorkerTableProps) => {
       </thead>
       <tbody>
         {workers.map(worker => {
+          const color = groups.find(group => group.id === worker.groupId)?.hexColor;
+          console.log(allWorker);
+
           return (
             <tr key={worker.id} onClick={() => onClick?.(worker)}>
               <td>
@@ -64,7 +71,12 @@ const WorkerTable = ({ items, className, onClick }: WorkerTableProps) => {
                   onChange={handleOnChangeChecked}
                 />
               </td>
-              <td>{worker.name}</td>
+              <td>
+                {allWorker && (
+                  <span className="group-color-bar" style={{ backgroundColor: color }} />
+                )}
+                {worker.name}
+              </td>
               <td>{worker.phone}</td>
               <td>{worker.positionCode === 0 ? '직원' : '알바'}</td>
               <td>

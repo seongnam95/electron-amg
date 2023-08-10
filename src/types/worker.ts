@@ -12,7 +12,7 @@ export interface WorkerData {
   genderCode: number;
   positionCode: number;
   createDate: string;
-  groupId: number;
+  groupId?: string;
 }
 
 export interface CommuteData {

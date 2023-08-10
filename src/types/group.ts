@@ -1,8 +1,8 @@
 export interface GroupData {
   id: string;
   name: string;
-  hex_color: string;
+  hexColor: string;
   wage: string;
   explanation: string;
-  create_date: string;
+  createDate: string;
 }
