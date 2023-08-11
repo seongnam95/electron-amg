@@ -33,7 +33,7 @@ export const WorkerPageStyled = styled.div`
     }
   }
 
-  .group-color-bar {
+  .color-bar {
     width: 8px;
     border-radius: 2px;
     margin: 3px 10px 3px 0;

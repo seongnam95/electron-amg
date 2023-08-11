@@ -1,12 +1,14 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
-import { Divider } from 'antd';
+import { Divider, Menu } from 'antd';
 import clsx from 'clsx';
 import { useRecoilValue } from 'recoil';
 
 import Button from '~/components/common/Button';
 import { groupState } from '~/stores/group';
 
+import WorkerModal from '../WorkerModal/WorkerModal';
+import GroupItem from './GroupItem/GroupItem';
 import { GroupSideBarStyled } from './styled';
 
 export interface GroupSideBarProps {
@@ -16,53 +18,56 @@ export interface GroupSideBarProps {
 
 const GroupSideBar = ({ className, onChange }: GroupSideBarProps) => {
   const [selectedId, setSelectedId] = useState<string>('all');
+  const [isEditing, setIsEditing] = useState<boolean>(false);
+
   const groups = useRecoilValue(groupState);
-  console.log(groups);
+
   const handleOnClickGroup = (id: string) => {
-    setSelectedId(id);
-    onChange?.(id);
+    if (isEditing) {
+    } else {
+      setSelectedId(id);
+      onChange?.(id);
+    }
   };
 
   return (
-    <GroupSideBarStyled className={clsx('GroupSideBar', className)}>
-      <div className="menu-wrap">
-        <li
-          className={clsx('group-item', selectedId === 'all' && 'active')}
-          onClick={() => handleOnClickGroup('all')}
-        >
-          전체
-        </li>
+    <GroupSideBarStyled className={clsx('GroupSideBar', isEditing && 'editing')}>
+      <ul className="menus">
+        <GroupItem
+          id="all"
+          label="전체"
+          activated={selectedId === 'all'}
+          onClick={handleOnClickGroup}
+        />
 
-        <ul className="menus">
-          <Divider style={{ margin: '12px 0' }} />
-          {groups ? (
-            groups.map(group => (
-              <li
-                id={group.id}
-                key={group.id}
-                className={clsx('group-item', selectedId === group.id && 'active')}
-                onClick={() => handleOnClickGroup(group.id)}
-              >
-                <span className="group-color-bar" style={{ backgroundColor: group.hexColor }} />
-                {group.name}
-              </li>
-            ))
-          ) : (
-            <li className="group-item blank-label">그룹 없음</li>
-          )}
-          <Divider style={{ margin: '12px 0' }} />
-        </ul>
+        <Divider style={{ margin: '12px 0' }} />
 
-        <li
+        {groups ? (
+          groups.map(group => (
+            <GroupItem
+              id={group.id}
+              key={group.id}
+              color={group.hexColor}
+              label={group.name}
+              activated={selectedId === group.id}
+              onClick={handleOnClickGroup}
+            />
+          ))
+        ) : (
+          <li className="item blank-label">그룹 없음</li>
+        )}
+
+        <Divider style={{ margin: '12px 0' }} />
+
+        <GroupItem
           id="etc"
-          className={clsx('group-item', selectedId === 'etc' && 'active')}
-          onClick={() => handleOnClickGroup('etc')}
-        >
-          기타
-        </li>
-      </div>
+          label="기타"
+          activated={selectedId === 'etc'}
+          onClick={handleOnClickGroup}
+        />
+      </ul>
 
-      <Button styled={{ fullWidth: true }}>
+      <Button styled={{ fullWidth: true }} onClick={() => setIsEditing(!isEditing)}>
         그룹 편집
         <i className="bx bx-edit" />
       </Button>

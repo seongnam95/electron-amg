@@ -5,7 +5,7 @@ from exception_handlers import handle_invalid_code_error
 from exceptions import InvalidCodeError
 
 from fastapi.middleware.cors import CORSMiddleware
-
+import uvicorn
 
 app = FastAPI()
 origins = [

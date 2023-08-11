@@ -8,6 +8,8 @@ export interface ButtonStyledProps {
 export const ButtonStyled = styled.button<ButtonStyledProps>`
   --color: ${p => (p.variations === 'primary' ? 'white' : p.theme.colors.primary)};
   --bgColor: ${p => (p.variations === 'primary' ? p.theme.colors.primary : 'transparent')};
+  --hoverColor: ${p =>
+    p.variations === 'primary' ? p.theme.colors.buttonHover : p.theme.colors.underBg};
 
   display: flex;
   justify-content: center;
@@ -32,6 +34,7 @@ export const ButtonStyled = styled.button<ButtonStyledProps>`
   cursor: pointer;
 
   :hover {
-    background-color: ${p => (p.variations === 'primary' ? '' : p.theme.colors.underBg)};
+    background-color: var(--hoverColor);
+    transform: translateY(-1px);
   }
 `;

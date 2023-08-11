@@ -1,6 +1,8 @@
 import styled from 'styled-components';
 
 export const GroupSideBarStyled = styled.div`
+  position: relative;
+
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -14,26 +16,26 @@ export const GroupSideBarStyled = styled.div`
   > .menus {
     overflow-y: auto;
     margin: 0;
-  }
 
-  .group-item {
-    display: flex;
-    padding: 1rem 0;
+    .item {
+      display: flex;
+      padding: 1rem 0;
 
-    color: ${p => p.theme.colors.textColor2};
-    font-size: ${p => p.theme.sizes.textMedium};
+      color: ${p => p.theme.colors.textColor2};
+      font-size: ${p => p.theme.sizes.textMedium};
 
-    transition: all 140ms;
+      transition: all 140ms;
 
-    cursor: pointer;
+      cursor: pointer;
 
-    &.active {
-      font-weight: bold;
-      color: ${p => p.theme.colors.primary};
-    }
+      &.active {
+        font-weight: bold;
+        color: ${p => p.theme.colors.primary};
+      }
 
-    :not(.active):hover {
-      color: ${p => p.theme.colors.textColor1};
+      :not(.active):hover {
+        color: ${p => p.theme.colors.textColor1};
+      }
     }
   }
 `;

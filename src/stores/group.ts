@@ -1,4 +1,4 @@
-import { atom } from 'recoil';
+import { atom, selectorFamily } from 'recoil';
 
 import { fetchGroups } from '~/api/groupApi';
 import { GroupData } from '~/types/group';
@@ -27,22 +27,14 @@ const groupState = atom<GroupData[]>({
   ],
 });
 
-// const filteredWorkerState = selectorFamily<GroupData[], string>({
-//   key: 'filteredWorkerState',
-//   get:
-//     groupId =>
-//     ({ get }) => {
-//       const workers = get(workerState);
+const filteredGroupState = selectorFamily<GroupData, string>({
+  key: 'filteredWorkerState',
+  get:
+    groupId =>
+    ({ get }) => {
+      const groups = get(groupState);
+      return groups.filter(group => group.id === groupId)[0];
+    },
+});
 
-//       switch (groupId) {
-//         case 'all':
-//           return workers;
-//         case 'etc':
-//           return workers.filter(worker => worker.groupId === null);
-//         default:
-//           return workers.filter(worker => worker.groupId === parseInt(groupId));
-//       }
-//     },
-// });
-
-export { groupState };
+export { groupState, filteredGroupState };

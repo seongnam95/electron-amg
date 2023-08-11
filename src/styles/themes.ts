@@ -32,7 +32,7 @@ const _colors = {
   borderColor: '#F0F0F0',
   borderColorDark: '#333333',
 
-  buttonBG: '#333333',
+  buttonBG: '#326CF9',
   buttonHover: '',
 
   scrollTrackBG: '#f9f9f9',
