@@ -11,6 +11,12 @@ export const WorkerPageStyled = styled.div`
     display: flex;
     flex-direction: column;
 
+    .header-text {
+      padding: 2rem;
+      font-weight: bold;
+      font-size: 2.2rem;
+    }
+
     .worker-control-bar {
       display: flex;
       padding: 0 2rem;

@@ -8,8 +8,7 @@ from schemas.common import check_update_fields
 class GroupBase(BaseModel):
     name: str
     hex_color: str
-    wage: int
-    explanation: Optional[str] = None
+    explanation: str
 
 
 class GroupCreate(GroupBase):
@@ -19,7 +18,6 @@ class GroupCreate(GroupBase):
 class GroupUpdate(BaseModel):
     name: Optional[str] = None
     hex_color: Optional[str] = None
-    wage: Optional[int] = None
     explanation: Optional[str] = None
 
     @model_validator(mode="before")

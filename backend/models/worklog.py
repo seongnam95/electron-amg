@@ -10,10 +10,15 @@ class WorkLog(Base):
 
     id = Column(Integer, primary_key=True, index=True)  # PK
 
+    group_id = Column(Integer, nullable=False)  # 그룹 ID
+    position = Column(Integer, nullable=False)  # 포지션
+
+    wage = Column(Integer, nullable=False)  # 일당
     working_date_str = Column(String, nullable=False)  # 근무일 (YYYYMMDD)
-    start_datetime = Column(DateTime, nullable=True, default=datetime.now)  # 출근 타임
-    end_datetime = Column(DateTime, nullable=True)  # 퇴근 타임
-    daily_wage = Column(Integer, nullable=True)  # 일당
 
     worker_id = Column(Integer, ForeignKey("worker.id"))
     worker = relationship("Worker", back_populates="worklogs")
+
+    adjustment = relationship(
+        "Adjustment", back_populates="adjustments", cascade="all, delete-orphan"
+    )
