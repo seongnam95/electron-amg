@@ -11,16 +11,10 @@ export const WorkerPageStyled = styled.div`
     display: flex;
     flex-direction: column;
 
-    .content-header {
-      font-weight: bold;
-      font-size: 2.2rem;
-      padding: 2rem 0 0 2rem;
-    }
-
     .worker-control-bar {
       display: flex;
-      padding: 2rem;
-      align-items: center;
+      padding: 0 2rem;
+      align-items: end;
       justify-content: space-between;
       border-bottom: 1px solid ${p => p.theme.colors.borderColor};
 

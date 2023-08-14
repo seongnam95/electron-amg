@@ -1,31 +1,67 @@
 import styled from 'styled-components';
 
-export interface EditableLabelStyledProps {
-  fontSize?: string;
-  bold?: boolean;
-}
-
-export const EditableLabelStyled = styled.div<EditableLabelStyledProps>`
+export const EditableLabelStyled = styled.div<{ isEditing?: boolean }>`
   padding: 2rem;
 
-  > input {
-    display: inline-flex;
+  > .row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 
-    font-weight: ${p => (p.bold ? 'bold' : 'normal')};
-    font-size: ${p => (p.fontSize ? p.fontSize : p.theme.sizes.textMedium)};
+    > input {
+      font-weight: bold;
+      font-size: 2.2rem;
 
-    border: none;
-    outline: none;
-    border-radius: 2px;
-    padding: 0.4rem 0.8rem;
-    background-color: transparent;
+      outline: none;
+      border: none;
+      border-bottom: 2px solid ${p => (p.isEditing ? p.theme.colors.primary : 'transparent')};
 
-    :disabled {
+      padding: 0.4rem 0.4rem;
       background-color: transparent;
+      overflow: hidden;
+
+      :disabled {
+        background-color: transparent;
+      }
+    }
+
+    .btn-wrap {
+      display: flex;
+
+      i {
+        font-size: 2.4rem;
+      }
+
+      .ok-btn {
+        i {
+          color: #19d115;
+        }
+      }
+
+      .cancel-btn {
+        i {
+          color: #de5050;
+        }
+      }
     }
   }
 
-  :hover {
-    background-color: ${p => p.theme.colors.underBg};
+  > .edit-row {
+    display: flex;
+    align-items: center;
+    gap: 1.2rem;
+    margin-top: 2rem;
+
+    .input-explanation {
+      flex: 1;
+      max-width: 40rem;
+
+      outline: none;
+      border: 1px solid ${p => p.theme.colors.borderColor};
+      border-radius: 4px;
+
+      padding: 0.4rem 0.8rem;
+      font-size: ${p => p.theme.sizes.textSmall};
+    }
   }
 `;
