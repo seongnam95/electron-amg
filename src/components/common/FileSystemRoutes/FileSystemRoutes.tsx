@@ -1,5 +1,7 @@
 import { Fragment } from 'react';
-import { useRoutes, RouteObject, RouterProvider, createHashRouter } from 'react-router-dom';
+import { RouteObject, RouterProvider, createHashRouter, Navigate } from 'react-router-dom';
+
+import Login from '~/pages/login';
 
 type Element = () => JSX.Element;
 
@@ -85,7 +87,9 @@ const router = createHashRouter([
 ]);
 
 const FileSystemRoutes = (props: FileSystemRoutesProps) => {
-  return <RouterProvider router={router} />;
+  const token = sessionStorage.getItem('Authorization');
+
+  return token ? <RouterProvider router={router} /> : <Login />;
 };
 
 export default FileSystemRoutes;

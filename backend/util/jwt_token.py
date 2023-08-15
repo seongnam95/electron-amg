@@ -3,20 +3,19 @@ import datetime
 
 
 class Jwt:
-    def __init__(self, payloads, secret_key):
-        self.payloads = payloads
+    def __init__(self, secret_key):
         self.algorithm = "HS256"
         self.secret_key = secret_key
         self.access_token_lifetime = datetime.timedelta(minutes=15)
         self.refresh_token_lifetime = datetime.timedelta(days=30)
 
-    def create_access_token(self):
-        self.payloads["exp"] = datetime.datetime.utcnow() + self.access_token_lifetime
-        return jwt.encode(self.payloads, key=self.secret_key, algorithm=self.algorithm)
+    def create_access_token(self, payloads):
+        payloads["exp"] = datetime.datetime.utcnow() + self.access_token_lifetime
+        return jwt.encode(payloads, key=self.secret_key, algorithm=self.algorithm)
 
-    def create_refresh_token(self):
-        self.payloads["exp"] = datetime.datetime.utcnow() + self.refresh_token_lifetime
-        return jwt.encode(self.payloads, key=self.secret_key, algorithm=self.algorithm)
+    def create_refresh_token(self, payloads):
+        payloads["exp"] = datetime.datetime.utcnow() + self.refresh_token_lifetime
+        return jwt.encode(payloads, key=self.secret_key, algorithm=self.algorithm)
 
     def verify_token(self, token):
         try:

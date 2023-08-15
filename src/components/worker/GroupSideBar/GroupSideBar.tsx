@@ -21,6 +21,7 @@ const GroupSideBar = ({ className, onChange }: GroupSideBarProps) => {
   const [isEditing, setIsEditing] = useState<boolean>(false);
 
   const groups = useRecoilValue(groupState);
+  console.log(groups);
 
   const handleOnClickGroup = (id: string) => {
     if (isEditing) {
@@ -42,7 +43,7 @@ const GroupSideBar = ({ className, onChange }: GroupSideBarProps) => {
 
         <Divider style={{ margin: '12px 0' }} />
 
-        {groups ? (
+        {groups.length ? (
           groups.map(group => (
             <GroupItem
               id={group.id}
@@ -68,8 +69,8 @@ const GroupSideBar = ({ className, onChange }: GroupSideBarProps) => {
       </ul>
 
       <Button styled={{ fullWidth: true }} onClick={() => setIsEditing(!isEditing)}>
-        그룹 편집
-        <i className="bx bx-edit" />
+        그룹 추가
+        <i className="bx bx-plus" />
       </Button>
     </GroupSideBarStyled>
   );

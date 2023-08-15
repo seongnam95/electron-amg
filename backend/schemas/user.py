@@ -1,4 +1,4 @@
-from pydantic import BaseModel, model_validator
+from pydantic import BaseModel, model_validator, root_validator
 from typing import Optional
 from datetime import datetime
 
@@ -25,6 +25,7 @@ class UserUpdate(BaseModel):
 
 class User(UserBase):
     id: int
+    hashed_password: str
     is_admin: bool
     is_approved: bool
     create_date: datetime
@@ -33,12 +34,20 @@ class User(UserBase):
         from_attributes = True
 
 
+class UserResponse(UserBase):
+    id: int
+    is_admin: bool
+    is_approved: bool
+    create_date: datetime
+
+
 class UserLogin(BaseModel):
     username: str
     password: str
 
 
 class Token(BaseModel):
-    access_token: str
-    token_type: str
     username: str
+    access_token: str
+    refresh_token: str
+    token_type: str
