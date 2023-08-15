@@ -1,10 +1,20 @@
+from models.worker import Worker
 from crud.base import CRUDBase
 from models import Contract
 from schemas import ContractCreate, ContractUpdate
 from sqlalchemy.orm import Session
+from typing import List
 
 
 class CRUDContract(CRUDBase[Contract, ContractCreate, ContractUpdate]):
+    def get_all_contract_for_worker(
+        self, *, db: Session, db_obj: Worker, skip: int = 0, limit: int = 100
+    ) -> List[Contract]:
+        for c in db_obj.contract:
+            print(c)
+
+        return db.query(self.model).offset(skip).limit(limit).all()
+
     def create_contract(
         self, worker_id: int, db: Session, *, obj_in: ContractCreate
     ) -> Contract:

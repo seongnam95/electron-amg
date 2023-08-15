@@ -19,6 +19,6 @@ class WorkLog(Base):
     worker_id = Column(Integer, ForeignKey("worker.id"))
     worker = relationship("Worker", back_populates="worklogs")
 
-    adjustment = relationship(
-        "Adjustment", back_populates="adjustments", cascade="all, delete-orphan"
-    )
+    # adjustment = relationship(
+    #     "Adjustment", back_populates="adjustments", cascade="all, delete-orphan"
+    # )

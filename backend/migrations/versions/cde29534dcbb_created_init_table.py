@@ -1,21 +1,19 @@
-"""empty message
+"""Created init table
 
-Revision ID: 37d89b5fb5da
+Revision ID: cde29534dcbb
 Revises: 
-Create Date: 2023-08-08 20:07:38.711091
+Create Date: 2023-08-15 15:14:38.376249
 
 """
-from typing import Sequence, Union
-
 from alembic import op
 import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = '37d89b5fb5da'
-down_revision: Union[str, None] = None
-branch_labels: Union[str, Sequence[str], None] = None
-depends_on: Union[str, Sequence[str], None] = None
+revision = 'cde29534dcbb'
+down_revision = None
+branch_labels = None
+depends_on = None
 
 
 def upgrade() -> None:
@@ -24,12 +22,23 @@ def upgrade() -> None:
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('name', sa.String(), nullable=False),
     sa.Column('hex_color', sa.String(), nullable=False),
-    sa.Column('wage', sa.Integer(), nullable=False),
-    sa.Column('explanation', sa.Integer(), nullable=True),
+    sa.Column('explanation', sa.Integer(), nullable=False),
     sa.Column('create_date', sa.DateTime(timezone=True), nullable=False),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_index(op.f('ix_group_id'), 'group', ['id'], unique=False)
+    op.create_table('user',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('name', sa.String(), nullable=False),
+    sa.Column('username', sa.String(), nullable=False),
+    sa.Column('hashed_password', sa.String(), nullable=False),
+    sa.Column('is_admin', sa.Boolean(), nullable=False),
+    sa.Column('is_approved', sa.Boolean(), nullable=False),
+    sa.Column('create_date', sa.DateTime(timezone=True), nullable=False),
+    sa.PrimaryKeyConstraint('id'),
+    sa.UniqueConstraint('username')
+    )
+    op.create_index(op.f('ix_user_id'), 'user', ['id'], unique=False)
     op.create_table('worker',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('name', sa.String(), nullable=False),
@@ -70,10 +79,10 @@ def upgrade() -> None:
     op.create_index(op.f('ix_personal_id'), 'personal', ['id'], unique=False)
     op.create_table('worklog',
     sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('group_id', sa.Integer(), nullable=False),
+    sa.Column('position', sa.Integer(), nullable=False),
+    sa.Column('wage', sa.Integer(), nullable=False),
     sa.Column('working_date_str', sa.String(), nullable=False),
-    sa.Column('start_datetime', sa.DateTime(), nullable=True),
-    sa.Column('end_datetime', sa.DateTime(), nullable=True),
-    sa.Column('daily_wage', sa.Integer(), nullable=True),
     sa.Column('worker_id', sa.Integer(), nullable=True),
     sa.ForeignKeyConstraint(['worker_id'], ['worker.id'], ),
     sa.PrimaryKeyConstraint('id')
@@ -92,6 +101,8 @@ def downgrade() -> None:
     op.drop_table('contract')
     op.drop_index(op.f('ix_worker_id'), table_name='worker')
     op.drop_table('worker')
+    op.drop_index(op.f('ix_user_id'), table_name='user')
+    op.drop_table('user')
     op.drop_index(op.f('ix_group_id'), table_name='group')
     op.drop_table('group')
     # ### end Alembic commands ###
