@@ -7,10 +7,12 @@ import { ThemeProvider } from 'styled-components';
 
 import Layout from '~/components/layouts/Layout';
 import Titlebar from '~/components/layouts/Titlebar';
-import { configStore } from '~/stores/config';
+import { loginState } from '~/stores/login';
 import { updateStore } from '~/stores/update';
 import { InitGlobalStyled } from '~/styles/init';
 import { antdTheme, colors, sizes } from '~/styles/themes';
+
+import Login from './login';
 
 type Sizes = typeof sizes;
 type Colors = typeof colors;
@@ -33,8 +35,8 @@ const App = () => {
 const AppInner = () => {
   const antdToken = theme.useToken();
 
-  const config = useRecoilValue(configStore);
   const [update, setUpdate] = useRecoilState(updateStore);
+  const [isLogin, setIsLogin] = useRecoilState(loginState);
 
   const bootstrap = async () => {
     window.electron.onUpdate((event, data) => {
@@ -71,9 +73,13 @@ const AppInner = () => {
       <div id="app">
         <Titlebar />
 
-        <Layout>
-          <Outlet />
-        </Layout>
+        {isLogin ? (
+          <Layout>
+            <Outlet />
+          </Layout>
+        ) : (
+          <Login />
+        )}
       </div>
     </ThemeProvider>
   );

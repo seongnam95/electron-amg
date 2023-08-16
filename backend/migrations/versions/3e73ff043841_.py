@@ -1,8 +1,8 @@
-"""Created init table
+"""empty message
 
-Revision ID: cde29534dcbb
+Revision ID: 3e73ff043841
 Revises: 
-Create Date: 2023-08-15 15:14:38.376249
+Create Date: 2023-08-16 16:39:06.872107
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'cde29534dcbb'
+revision = '3e73ff043841'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -39,6 +39,18 @@ def upgrade() -> None:
     sa.UniqueConstraint('username')
     )
     op.create_index(op.f('ix_user_id'), 'user', ['id'], unique=False)
+    op.create_table('auth_session',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('session_id', sa.String(), nullable=False),
+    sa.Column('last_access_ip', sa.String(), nullable=False),
+    sa.Column('create_date', sa.DateTime(timezone=True), nullable=False),
+    sa.Column('expiry_date', sa.DateTime(), nullable=True),
+    sa.Column('user_id', sa.Integer(), nullable=True),
+    sa.ForeignKeyConstraint(['user_id'], ['user.id'], ),
+    sa.PrimaryKeyConstraint('id'),
+    sa.UniqueConstraint('session_id')
+    )
+    op.create_index(op.f('ix_auth_session_id'), 'auth_session', ['id'], unique=False)
     op.create_table('worker',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('name', sa.String(), nullable=False),
@@ -101,6 +113,8 @@ def downgrade() -> None:
     op.drop_table('contract')
     op.drop_index(op.f('ix_worker_id'), table_name='worker')
     op.drop_table('worker')
+    op.drop_index(op.f('ix_auth_session_id'), table_name='auth_session')
+    op.drop_table('auth_session')
     op.drop_index(op.f('ix_user_id'), table_name='user')
     op.drop_table('user')
     op.drop_index(op.f('ix_group_id'), table_name='group')

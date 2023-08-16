@@ -1,6 +1,7 @@
 from sqlalchemy import Column, Boolean, Integer, String, DateTime
 from db.base_class import Base
 from datetime import datetime
+from sqlalchemy.orm import relationship
 
 
 class User(Base):
@@ -16,3 +17,9 @@ class User(Base):
     is_approved = Column(Boolean, default=False, nullable=False)  # 계정 승인
 
     create_date = Column(DateTime(timezone=True), nullable=False, default=datetime.now)
+
+    auth_session = relationship(
+        "AuthSession",
+        back_populates="user",
+        cascade="all, delete-orphan",
+    )

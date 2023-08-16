@@ -1,17 +1,13 @@
 import { Fragment } from 'react';
-import { RouteObject, RouterProvider, createHashRouter, Navigate } from 'react-router-dom';
-
-import Login from '~/pages/login';
+import { RouteObject, RouterProvider, createHashRouter } from 'react-router-dom';
 
 type Element = () => JSX.Element;
-
-interface FileSystemRoutesProps {}
 
 interface Module {
   default: Element;
 }
 
-const PRESERVED = import.meta.glob<Module>('/src/pages/(_app|404).tsx', { eager: true });
+const PRESERVED = import.meta.glob<Module>('/src/pages/(_app|404|login).tsx', { eager: true });
 const ROUTES = import.meta.glob<Module>('/src/pages/**/[a-z[]*.tsx', { eager: true });
 
 const preservedRoutes: Partial<Record<string, Element>> = Object.keys(PRESERVED).reduce(
@@ -86,10 +82,8 @@ const router = createHashRouter([
   },
 ]);
 
-const FileSystemRoutes = (props: FileSystemRoutesProps) => {
-  const token = sessionStorage.getItem('Authorization');
-
-  return token ? <RouterProvider router={router} /> : <Login />;
+const FileSystemRoutes = () => {
+  return <RouterProvider router={router} />;
 };
 
 export default FileSystemRoutes;

@@ -1,6 +1,5 @@
+from fastapi import HTTPException
 from starlette.responses import JSONResponse
-
-from exceptions import InvalidCodeError
 
 
 def create_response(
@@ -10,6 +9,8 @@ def create_response(
     return JSONResponse(status_code=status_code, content=content)
 
 
-# 잘못된 코드 입력
-def handle_invalid_code_error(request, exc: InvalidCodeError):
-    return create_response(success=False, msg=str(exc), status_code=400)
+def http_exception_handler(request, exc: HTTPException):
+    return JSONResponse(
+        content={"success": False, "err_msg": str(exc.detail)},
+        status_code=exc.status_code,
+    )

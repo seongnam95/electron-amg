@@ -10,10 +10,6 @@ from sqlalchemy.exc import IntegrityError
 
 
 class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
-    def get_current_user(self, *, db: Session, token: str = Depends(oauth2_scheme)):
-        print(token)
-        pass
-
     def get_user(self, *, db: Session, username: str) -> User:
         return db.query(User).filter(User.username == username).first()
 

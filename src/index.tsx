@@ -2,7 +2,6 @@ import { Suspense } from 'react';
 import { createRoot } from 'react-dom/client';
 
 import 'antd/dist/reset.css';
-import axios from 'axios';
 import dayjs from 'dayjs';
 import 'dayjs/locale/ko';
 import relativeTime from 'dayjs/plugin/relativeTime';
@@ -12,8 +11,6 @@ import { SWRConfig, SWRConfiguration } from 'swr';
 import { ElectronRendererContext } from '@app/types/preload';
 
 import FileSystemRoutes from '~/components/common/FileSystemRoutes';
-
-axios.defaults.baseURL = 'http://localhost:8001/api/v1/';
 
 dayjs.extend(relativeTime);
 dayjs.locale('ko');
