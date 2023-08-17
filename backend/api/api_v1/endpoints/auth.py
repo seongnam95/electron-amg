@@ -1,18 +1,13 @@
-from typing import Any
-
 from fastapi import APIRouter, HTTPException, Depends
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
-from util.jwt_token import Jwt
 
 from util.bcrypt import pwd_context
 from ... import deps
 
 from models import AuthSession
-import crud, schemas
+import crud
 from response_model import BaseResponse
-from fastapi.security import OAuth2PasswordRequestForm
-from datetime import timedelta, datetime
 from fastapi.security import HTTPBasic
 from starlette.requests import Request
 import uuid
@@ -48,6 +43,15 @@ def login(form_data: LoginForm, request: Request, db: Session = Depends(deps.get
     )
     db.add(db_session)
     db.commit()
+
+    return BaseResponse(success=True, result="정상 처리되었습니다.")
+
+
+# 로그인
+@router.get("/test", response_model=BaseResponse[str])
+def login(request: Request, db: Session = Depends(deps.get_db)):
+    session_id = request.session.get("session_id")
+    print(session_id)
 
     return BaseResponse(success=True, result="정상 처리되었습니다.")
 

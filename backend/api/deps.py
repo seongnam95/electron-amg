@@ -1,4 +1,5 @@
 from typing import Generator
+from models.auth_session import AuthSession
 
 from db.session import SessionLocal
 from fastapi import HTTPException, Depends
@@ -16,8 +17,6 @@ def get_db() -> Generator:
 
 def get_worker(worker_id: int, db: Session = Depends(get_db)) -> schemas.Worker:
     worker = crud.worker.get(db=db, id=worker_id)
-
     if not worker:
         raise HTTPException(status_code=404, detail="해당하는 근로자를 찾을 수 없습니다.")
-
     return worker
