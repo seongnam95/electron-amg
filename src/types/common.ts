@@ -1,7 +1,12 @@
-export interface ApiResponse {
+export interface FetchApiResponse {
   success: boolean;
   count: number;
   result: any;
+}
+
+export interface BaseApiResponse {
+  success: boolean;
+  msg: any;
 }
 
 export interface Token {

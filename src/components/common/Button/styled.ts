@@ -33,8 +33,13 @@ export const ButtonStyled = styled.button<ButtonStyledProps>`
   transition: all 200ms;
   cursor: pointer;
 
-  :hover {
+  :not(:disabled):hover {
     background-color: var(--hoverColor);
     transform: translateY(-1px);
+  }
+
+  :disabled {
+    color: ${p => p.theme.colors.textColor2};
+    background-color: ${p => p.theme.colors.disableBg};
   }
 `;

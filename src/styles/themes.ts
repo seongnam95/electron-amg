@@ -24,6 +24,7 @@ const _colors = {
   sidebarBG: '#fff',
   sidebarSelected: '',
   selectedBG: '',
+  disableBg: '#BDBDBD',
 
   underBg: '#f9f9f9',
   contentBG: '#ffffff',

@@ -36,7 +36,7 @@ const AppInner = () => {
   const antdToken = theme.useToken();
 
   const [update, setUpdate] = useRecoilState(updateStore);
-  const [isLogin, setIsLogin] = useRecoilState(loginState);
+  const isLogin = useRecoilValue(loginState);
 
   const bootstrap = async () => {
     window.electron.onUpdate((event, data) => {

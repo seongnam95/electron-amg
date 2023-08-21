@@ -1,6 +1,5 @@
 from typing import List, TypeVar, Generic
 from pydantic import BaseModel
-from schemas import Contract
 
 T = TypeVar("T")
 
