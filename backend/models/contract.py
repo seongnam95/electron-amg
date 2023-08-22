@@ -15,7 +15,7 @@ class Contract(Base):
     default_daily_wage = Column(Integer, nullable=False)  # 계약 일당
     start_date = Column(DateTime(timezone=True), nullable=False)  # 계약 시작일
     end_date = Column(DateTime(timezone=True), nullable=False)  # 계약 종료일
-    valid = Column(Boolean, default=True, nullable=False)  # 계약 종료일
+    valid = Column(Boolean, default=True, nullable=False)  # 유효 여부
 
     create_date = Column(DateTime(timezone=True), nullable=False, default=datetime.now)
 

@@ -30,15 +30,14 @@ class CRUDContract(CRUDBase[Contract, ContractCreate, ContractUpdate]):
             contract.valid = False
             db.commit()
 
-        obj_in_data = obj_in.model_dump()
-        obj_in_data["worker_id"] = worker_id
-        db_obj = self.model(**obj_in_data)
+        obj_in["worker_id"] = worker_id
+        obj_in = self.model(**obj_in)
 
-        db.add(db_obj)
+        db.add(obj_in)
         db.commit()
-        db.refresh(db_obj)
+        db.refresh(obj_in)
 
-        return db_obj
+        return obj_in
 
 
 contract = CRUDContract(Contract)

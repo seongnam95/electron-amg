@@ -1,5 +1,7 @@
 import { useState } from 'react';
 
+import { Empty } from 'antd';
+import clsx from 'clsx';
 import { motion } from 'framer-motion';
 import { useRecoilValue } from 'recoil';
 
@@ -20,17 +22,22 @@ const Worker = () => {
   const currentGroup = useRecoilValue(filteredGroupState(groupId));
   const headerText = groupId === 'all' ? '전체' : groupId === 'etc' ? '기타' : currentGroup.name;
 
-  const handleOnClickHeader = () => {
-    if (currentGroup) {
-      setIsEditing(true);
-    }
+  const showEditorModal = () => {
+    if (currentGroup) setIsEditing(true);
+  };
+
+  const hideEditorModal = () => {
+    if (currentGroup) setIsEditing(false);
   };
 
   return (
     <WorkerPageStyled className="WorkerPage">
       <LayoutConfig breadcrumbs={[' 매니저', '직원 관리']} />
+
+      {/* 그룹 선택 사이드 바 */}
       <GroupSideBar onChange={id => setGroupId(id)} />
 
+      {/* 콘텐츠 */}
       <motion.div
         key={groupId}
         className="worker-content"
@@ -38,27 +45,40 @@ const Worker = () => {
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.3 }}
       >
-        <div className="modal-wrap">
-          <div className="header-text" onClick={handleOnClickHeader}>
-            {headerText}
-          </div>
-
-          {currentGroup && (
-            <GroupEditorModal
-              group={currentGroup}
-              open={isEditing}
-              onSubmit={() => setIsEditing(false)}
-              onCancel={() => setIsEditing(false)}
-            />
+        {/* 그룹 헤더 타이틀 */}
+        <div className={clsx('header-text', currentGroup && 'is-group')} onClick={showEditorModal}>
+          {headerText}
+          {currentGroup && currentGroup.explanation && (
+            <span className="explanation-text">{currentGroup.explanation}</span>
           )}
         </div>
 
+        {/* 그룹 에디터 모달 */}
+        {currentGroup && (
+          <GroupEditorModal
+            group={currentGroup}
+            open={isEditing}
+            onSubmit={hideEditorModal}
+            onCancel={hideEditorModal}
+          />
+        )}
+
+        {/* 필터/컨트롤 바 */}
         <div className="worker-control-bar">
-          <Button styled={{ variations: 'icon' }}>
+          <Button styled={{ variations: 'icon', animate: false }}>
             <i className="bx bx-trash" />
           </Button>
+          <Button styled={{ size: 'small', animate: false }}>계약서 폼 생성</Button>
         </div>
-        <WorkerTable allWorker={groupId === 'all'} items={workers} />
+
+        {/* 워커 테이블 */}
+        {workers.length ? (
+          <WorkerTable allWorker={groupId === 'all'} items={workers} />
+        ) : (
+          <div className="empty-wrap">
+            <Empty description="빈 그룹" />
+          </div>
+        )}
       </motion.div>
     </WorkerPageStyled>
   );

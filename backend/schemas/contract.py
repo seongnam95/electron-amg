@@ -2,11 +2,12 @@ from pydantic import BaseModel, model_validator
 from typing import List, Optional
 from datetime import datetime
 
+from schemas.worker import WorkerCreate
 from schemas.common import check_update_fields
 
 
 class ContractBase(BaseModel):
-    company_name: str
+    company_name: Optional[str] = None
     default_daily_wage: int
     start_date: datetime
     end_date: datetime
@@ -42,3 +43,8 @@ class WorkerContractModel(BaseModel):
     valid_contract: Contract
     prev_contract_count: int
     prev_contracts: List[Contract]
+
+
+class WorkerContractCreateModel(BaseModel):
+    worker: WorkerCreate
+    contract: ContractCreate

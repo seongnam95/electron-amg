@@ -12,7 +12,8 @@ const Button = ({ className, children, styled, ...rest }: ButtonProps) => {
   return (
     <ButtonStyled
       className={clsx('Button', className)}
-      variations={styled?.variations ?? 'primary'}
+      variations={styled?.variations ?? 'fill'}
+      animate={styled?.animate ?? true}
       {...styled}
       {...rest}
     >

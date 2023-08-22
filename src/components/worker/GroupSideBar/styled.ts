@@ -38,4 +38,17 @@ export const GroupSideBarStyled = styled.div`
       }
     }
   }
+
+  > .empty-group-wrap {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    height: 100%;
+    padding-bottom: 10rem;
+
+    .ant-empty-description {
+      color: ${p => p.theme.colors.textColor2};
+    }
+  }
 `;

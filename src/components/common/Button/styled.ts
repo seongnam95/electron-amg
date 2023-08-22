@@ -1,15 +1,33 @@
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
 export interface ButtonStyledProps {
   fullWidth?: boolean;
-  variations?: 'primary' | 'outline' | 'link' | 'icon';
+  variations?: 'fill' | 'outline' | 'link' | 'icon';
+  size?: 'small' | 'medium' | 'lazy';
+  animate?: boolean;
 }
 
 export const ButtonStyled = styled.button<ButtonStyledProps>`
-  --color: ${p => (p.variations === 'primary' ? 'white' : p.theme.colors.primary)};
-  --bgColor: ${p => (p.variations === 'primary' ? p.theme.colors.primary : 'transparent')};
+  --color: ${p => (p.variations === 'fill' ? 'white' : p.theme.colors.primary)};
+  --bgColor: ${p => (p.variations === 'fill' ? p.theme.colors.primary : 'transparent')};
   --hoverColor: ${p =>
-    p.variations === 'primary' ? p.theme.colors.buttonHover : p.theme.colors.underBg};
+    p.variations === 'fill' ? p.theme.colors.buttonHover : p.theme.colors.underBg};
+
+  ${p =>
+    p.size === 'small'
+      ? css`
+          --fontSize: ${p => p.theme.sizes.textSmall};
+          --padding: 0.5rem 1rem;
+        `
+      : p.size === 'lazy'
+      ? css`
+          --fontSize: ${p => p.theme.sizes.textLazy};
+          --padding: 1rem 2rem;
+        `
+      : css`
+          --fontSize: ${p => p.theme.sizes.textMedium};
+          --padding: 0.8rem 1.6rem;
+        `};
 
   display: flex;
   justify-content: center;
@@ -17,7 +35,7 @@ export const ButtonStyled = styled.button<ButtonStyledProps>`
   gap: 0.8rem;
 
   width: ${p => (p.fullWidth ? '100%' : 'auto')};
-  padding: ${p => p.variations !== 'icon' && '0.8rem 1.6rem'};
+  padding: ${p => p.variations !== 'icon' && 'var(--padding)'};
   width: ${p => p.variations === 'icon' && '4.2rem'};
   height: ${p => p.variations === 'icon' && '4.2rem'};
 
@@ -27,7 +45,7 @@ export const ButtonStyled = styled.button<ButtonStyledProps>`
   border-radius: ${p => (p.variations === 'icon' ? '50%' : '3px')};
   background-color: var(--bgColor);
 
-  font-size: ${p => p.theme.sizes.textMedium};
+  font-size: var(--fontSize);
   color: var(--color);
 
   transition: all 200ms;
@@ -35,7 +53,7 @@ export const ButtonStyled = styled.button<ButtonStyledProps>`
 
   :not(:disabled):hover {
     background-color: var(--hoverColor);
-    transform: translateY(-1px);
+    transform: ${p => p.animate && 'translateY(-1px)'};
   }
 
   :disabled {

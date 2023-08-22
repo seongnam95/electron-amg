@@ -9,6 +9,8 @@ export const sizes = {
   iconSmall: '1.8rem',
   iconMedium: '2rem',
   iconLazy: '2.2rem',
+
+  navBarHeight: '70px',
 };
 
 const _colors = {

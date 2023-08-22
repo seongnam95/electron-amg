@@ -6,7 +6,7 @@ export const MenuStyled = styled.div`
   align-items: center;
   justify-content: center;
 
-  height: 7rem;
+  height: ${p => p.theme.sizes.navBarHeight};
   width: 100%;
 
   border-bottom: 1px solid ${p => p.theme.colors.borderColor};

@@ -6,13 +6,12 @@ from sqlalchemy.orm import Session
 
 
 class CRUDWorker(CRUDBase[Worker, WorkerCreate, WorkerUpdate]):
-    def get_worker_child_all(
-        self,
-        worker_id: int,
-        model: Worker,
-        db: Session,
-    ) -> List:
-        return db.query(model).filter(model.worker_id == worker_id).all()
+    def search(self, name: str, phone: str, db: Session):
+        return (
+            db.query(self.model)
+            .filter(self.model.name == name, self.model.phone == phone)
+            .first()
+        )
 
 
 worker = CRUDWorker(Worker)

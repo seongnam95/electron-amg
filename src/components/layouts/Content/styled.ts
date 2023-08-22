@@ -5,7 +5,7 @@ export const ContentStyled = styled.div`
   flex-direction: column;
 
   width: 100%;
-  height: 100%;
+  height: calc(100% - ${p => p.theme.sizes.navBarHeight});
 
   background-color: ${props => props.theme.colors.contentBG};
 

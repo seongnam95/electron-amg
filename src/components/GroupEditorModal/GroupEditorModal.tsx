@@ -51,7 +51,7 @@ const GroupEditorModal = ({ group, open, onSubmit, onCancel, ...rest }: GroupEdi
     }));
   };
 
-  const handleOnClickSubmit = () => {
+  const handleOnSubmit = () => {
     const newGroup = {
       name: String(copyGroup.name),
       hex_color: String(copyGroup.hexColor),
@@ -80,7 +80,7 @@ const GroupEditorModal = ({ group, open, onSubmit, onCancel, ...rest }: GroupEdi
       <Button className="btn-cancel" styled={{ variations: 'link' }} onClick={onCancel}>
         취소
       </Button>
-      <Button className="btn-ok" styled={{ variations: 'link' }} onClick={handleOnClickSubmit}>
+      <Button className="btn-ok" styled={{ variations: 'link' }} onClick={handleOnSubmit}>
         저장
       </Button>
     </div>

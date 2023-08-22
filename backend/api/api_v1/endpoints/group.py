@@ -1,4 +1,7 @@
+from datetime import datetime
 from fastapi import APIRouter, Depends, HTTPException
+from fastapi.responses import JSONResponse
+from pydantic import BaseModel
 from sqlalchemy.orm import Session
 from response_model import BaseResponse, ListResponse
 from ... import deps
@@ -31,6 +34,7 @@ def read_all_group(
     return ListResponse(success=True, count=len(groups), result=groups)
 
 
+# TODO: 삭제 무관
 # 그룹 불러오기
 @router.get("/{group_id}", response_model=BaseResponse[schemas.Group])
 def read_group(
@@ -39,6 +43,7 @@ def read_group(
     return BaseResponse(success=True, result=group)
 
 
+# TODO: 삭제 무관
 # 그룹의 모든 근로자 불러오기
 @router.get("/{group_id}/worker", response_model=ListResponse[schemas.Worker])
 def read_group(
@@ -76,3 +81,33 @@ def delete_group(
 ):
     group = crud.group.remove(db=db, id=group.id)
     return BaseResponse(success=True, result=group)
+
+
+# 그룹 계약서 생성
+@router.post("/{group_id}/contract", response_model=BaseResponse[schemas.Contract])
+def create_contract_for_worker(
+    *,
+    db: Session = Depends(deps.get_db),
+    group: schemas.Group = Depends(get_group),
+    obj_in: schemas.WorkerContractCreateModel,
+):
+    worker_in = obj_in.worker
+    contract_in = obj_in.contract
+
+    # Worker 검색 후, 없다면 새로 생성
+    worker = crud.worker.search(db=db, name=worker_in.name, phone=worker_in.phone)
+    if not worker:
+        worker_in = worker_in.model_dump()
+        worker_in["group_id"] = group.id
+
+        worker = crud.worker.create(db=db, obj_in=worker_in)
+
+    # Contract 생성
+    contract_in = contract_in.model_dump()
+    contract_in["company_name"] = group.name
+
+    contract = crud.contract.create_contract(
+        db=db, obj_in=contract_in, worker_id=worker.id
+    )
+
+    return BaseResponse(success=True, result=contract)
