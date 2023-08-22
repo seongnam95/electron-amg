@@ -16,7 +16,7 @@ class WorkLog(Base):
     wage = Column(Integer, nullable=False)  # 일당
     working_date_str = Column(String, nullable=False)  # 근무일 (YYYYMMDD)
 
-    worker_id = Column(Integer, ForeignKey("worker.id"))
+    worker_id = Column(Integer, ForeignKey("worker.id"), nullable=False)
     worker = relationship("Worker", back_populates="worklogs")
 
     # adjustment = relationship(

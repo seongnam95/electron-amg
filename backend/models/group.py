@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, DateTime
+from sqlalchemy import Column, ForeignKey, Integer, String, DateTime
 from db.base_class import Base
 from datetime import datetime
 from sqlalchemy.orm import relationship
@@ -15,4 +15,7 @@ class Group(Base):
 
     create_date = Column(DateTime(timezone=True), nullable=False, default=datetime.now)
 
-    worker = relationship("Worker", back_populates="group")
+    user_id = Column(Integer, ForeignKey("user.id"))
+    user = relationship("User", back_populates="group")
+
+    workers = relationship("Worker", back_populates="group")

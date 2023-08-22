@@ -18,8 +18,4 @@ class User(Base):
 
     create_date = Column(DateTime(timezone=True), nullable=False, default=datetime.now)
 
-    auth_session = relationship(
-        "AuthSession",
-        back_populates="user",
-        cascade="all, delete-orphan",
-    )
+    group = relationship("Group", uselist=False, back_populates="user")

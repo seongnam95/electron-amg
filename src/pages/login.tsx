@@ -4,7 +4,9 @@ import { useNavigate, Navigate } from 'react-router';
 import axios from 'axios';
 import { useSetRecoilState } from 'recoil';
 
+import amgApi from '~/api/apiClient';
 import { loginUser } from '~/api/authApi';
+import { fetchGroups } from '~/api/groupApi';
 import Button from '~/components/common/Button';
 import Input from '~/components/common/Input';
 import { loginState } from '~/stores/login';
@@ -37,6 +39,7 @@ const Login = () => {
 
   const handleOnSubmit = (e: FormEvent) => {
     e.preventDefault();
+
     if (isValid) {
       loginUser({
         username: account.username,
@@ -44,13 +47,12 @@ const Login = () => {
         access_ip: geoData?.ip,
       })
         .then(res => {
-          setIsLogin(true);
+          const accessToken = res.headers['authorization'];
+          amgApi.defaults.headers.common['authorization'] = accessToken;
         })
-        .catch(res => console.log(res.response.data.err_msg));
+        .catch(res => console.log(res.response.data));
     }
   };
-
-  const setToken = (token: string) => {};
 
   const handleOnChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target;
@@ -60,6 +62,12 @@ const Login = () => {
         [id]: value,
       };
     });
+  };
+
+  const handleOnClickToken = () => {
+    fetchGroups()
+      .then(res => console.log(res))
+      .catch(res => console.log(res));
   };
 
   return (
@@ -72,6 +80,7 @@ const Login = () => {
           로그인
         </Button>
       </form>
+      <Button onClick={handleOnClickToken}>토큰 유효성 검사</Button>
     </LoginPageStyled>
   );
 };

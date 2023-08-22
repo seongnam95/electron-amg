@@ -17,15 +17,16 @@ class Worker(Base):
 
     create_date = Column(DateTime(timezone=True), nullable=False, default=datetime.now)
 
-    group_id = Column(Integer, ForeignKey("group.id"), nullable=True)
-    group = relationship("Group", back_populates="worker")
+    group_id = Column(Integer, ForeignKey("group.id"))
+    group = relationship("Group", back_populates="workers")
 
     personal = relationship(
         "Personal",
         back_populates="worker",
+        uselist=False,
         cascade="all, delete-orphan",
     )
-    contract = relationship("Contract", uselist=False, back_populates="worker")
+    contracts = relationship("Contract", back_populates="worker")
     worklogs = relationship(
         "WorkLog", back_populates="worker", cascade="all, delete-orphan"
     )

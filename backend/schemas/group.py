@@ -19,6 +19,7 @@ class GroupUpdate(BaseModel):
     name: Optional[str] = None
     hex_color: Optional[str] = None
     explanation: Optional[str] = None
+    user_id: Optional[int] = None
 
     @model_validator(mode="before")
     def check_fields(cls, values: dict):
@@ -27,6 +28,7 @@ class GroupUpdate(BaseModel):
 
 class Group(GroupBase):
     id: int
+    user_id: Optional[int] = None
     create_date: datetime
 
     class Config:

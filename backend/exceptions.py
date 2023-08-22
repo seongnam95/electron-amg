@@ -14,3 +14,11 @@ class NotFoundValue(Exception):
 class InvalidCodeError(Exception):
     def __init__(self, code_type: str):
         super().__init__(f"Invalid {code_type} code.")
+
+
+class TokenExpiredError(Exception):
+    pass
+
+
+class TokenInvalidError(Exception):
+    pass

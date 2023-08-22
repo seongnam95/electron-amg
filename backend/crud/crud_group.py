@@ -1,4 +1,6 @@
 from typing import List
+
+from fastapi.encoders import jsonable_encoder
 from crud.base import CRUDBase
 from models import Group, Worker
 from schemas import GroupCreate, GroupUpdate
