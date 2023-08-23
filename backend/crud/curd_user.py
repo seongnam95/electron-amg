@@ -11,7 +11,7 @@ from sqlalchemy.exc import IntegrityError
 
 class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
     def get_user(self, *, db: Session, username: str) -> User:
-        return db.query(User).filter(User.username == username).first()
+        return db.query(self.model).filter(User.username == username).first()
 
     def create_user(self, *, db: Session, obj_in: UserCreate) -> User:
         obj_in_data = {k: v for k, v in obj_in.dict().items() if k != "password"}

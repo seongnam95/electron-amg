@@ -1,5 +1,3 @@
-import axios from 'axios';
-
 import { FetchApiResponse } from '~/types/common';
 import { GroupData } from '~/types/group';
 

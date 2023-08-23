@@ -1,7 +1,8 @@
-from fastapi import APIRouter, HTTPException, Depends
+from fastapi import APIRouter, Cookie, HTTPException, Depends
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
+from exceptions import TokenExpiredError, TokenInvalidError
 from util.jwt_token import Jwt
 
 from util.bcrypt import pwd_context
@@ -39,7 +40,7 @@ def login(form_data: LoginForm, db: Session = Depends(deps.get_db)):
     refresh_token = jwt.create_refresh_token({"sub": user.username})
 
     base_res = BaseResponse(success=True, result="정상 처리되었습니다.")
-    headers = {"Authorization": access_token}
+    headers = {"Authorization": f"Bearer {access_token}"}
 
     response = JSONResponse(content=base_res.model_dump(), headers=headers)
     response.set_cookie(
@@ -47,37 +48,33 @@ def login(form_data: LoginForm, db: Session = Depends(deps.get_db)):
         value=refresh_token,
         httponly=True,
         secure=False,
+        samesite="None",  # SameSite 설정
         max_age=30 * 24 * 60 * 60,  # 쿠키의 유효기간을 30일로 설정, 필요에 따라 변경 가능
     )
 
     return response
 
 
-@router.post("/token/refresh", response_model=BaseResponse[schemas.Token])
-def refresh_token(refresh_token: str, db: Session = Depends(deps.get_db)):
+@router.post("/token/refresh")
+def refresh_token(
+    refresh_token: str = Cookie(None), db: Session = Depends(deps.get_db)
+):
+    print(refresh_token)
+    if not refresh_token:
+        raise HTTPException(status_code=401, detail="Refresh token is missing")
+
     jwt = Jwt()
-    payload = jwt.verify_token(refresh_token)
 
-    if not payload.success:
-        raise HTTPException(
-            status_code=401,
-            detail="Invalid or expired refresh token",
-            headers={"WWW-Authenticate": "Bearer"},
-        )
+    try:
+        payload = jwt.verify_token(token=refresh_token)
 
-    user = crud.user.get_user(db=db, username=payload["sub"])
-    if not user:
-        raise HTTPException(status_code=401, detail="User not found")
+    except (TokenExpiredError, TokenInvalidError) as e:
+        raise HTTPException(status_code=401, detail=str(e))
 
-    # 새로운 access_token 생성
-    new_payloads = {"sub": user.username}
-    access_token = jwt.create_access_token(new_payloads)
+    username = payload.get("sub")
+    new_access_token = jwt.create_access_token({"sub": username})
 
-    result = {
-        "username": user.username,
-        "access_token": access_token,
-        "refresh_token": refresh_token,
-        "token_type": "bearer",
-    }
+    base_res = BaseResponse(success=True, result="정상 처리되었습니다.")
+    headers = {"Authorization": f"Bearer {new_access_token}"}
 
-    return BaseResponse(success=True, result=result)
+    return JSONResponse(content=base_res.model_dump(), headers=headers)

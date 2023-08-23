@@ -16,6 +16,7 @@ class UserCreate(UserBase):
 
 class UserUpdate(BaseModel):
     password: Optional[str] = None
+    is_admin: Optional[bool] = None
     is_approved: Optional[bool] = None
 
     @model_validator(mode="before")
@@ -44,10 +45,3 @@ class UserResponse(UserBase):
 class UserLogin(BaseModel):
     username: str
     password: str
-
-
-class Token(BaseModel):
-    username: str
-    access_token: str
-    refresh_token: str
-    token_type: str

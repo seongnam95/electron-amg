@@ -20,4 +20,4 @@ class Contract(Base):
     create_date = Column(DateTime(timezone=True), nullable=False, default=datetime.now)
 
     worker_id = Column(Integer, ForeignKey("worker.id"))
-    worker = relationship("Worker", back_populates="contract")
+    worker = relationship("Worker", back_populates="contracts")

@@ -9,9 +9,10 @@ middleware = [
     Middleware(
         cors.CORSMiddleware,
         allow_credentials=True,
-        allow_origins=["http://localhost:3000"],
+        allow_origins=["http://localhost:8001"],
         allow_methods=["*"],
         allow_headers=["*"],
+        expose_headers=["Authorization"],
     )
 ]
 

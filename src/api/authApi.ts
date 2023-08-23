@@ -1,6 +1,6 @@
 import axios, { AxiosResponse } from 'axios';
 
-import { BaseApiResponse } from '~/types/common';
+import amgApi from './apiClient';
 
 interface LoginBody {
   username: string;
@@ -8,9 +8,7 @@ interface LoginBody {
   access_ip: string;
 }
 
-export const loginUser = async <T = BaseApiResponse, R = LoginBody>(body: R): Promise<T> => {
-  const response = await axios.post<T>('http://localhost:8001/api/v1/auth/login', body);
-  const accessToken = response.headers['Authorization'];
-
-  return response.data;
+export const loginUser = async <T = any, R = LoginBody>(body: R): Promise<AxiosResponse<T>> => {
+  const response = await amgApi.post<T>('/auth/login', body);
+  return response;
 };

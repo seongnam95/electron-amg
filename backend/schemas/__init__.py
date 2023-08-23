@@ -9,5 +9,4 @@ from .contract import (
     WorkerContractCreateModel,
 )
 from .worklog import WorkLog, WorkLogCreate, WorkLogUpdate
-from .auth_session import AuthSession, AuthSessionCreate, AuthSessionUpdate
-from .user import User, UserCreate, UserUpdate, UserResponse, UserLogin, Token
+from .user import User, UserCreate, UserUpdate, UserResponse, UserLogin
