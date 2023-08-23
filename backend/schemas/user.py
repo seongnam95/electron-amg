@@ -39,9 +39,12 @@ class User(UserBase):
 
 class UserResponse(UserBase):
     id: int
+    username: str
     is_admin: bool
     is_approved: bool
-    create_date: datetime
+
+    class Config:
+        from_attributes = True
 
 
 class UserLogin(BaseModel):

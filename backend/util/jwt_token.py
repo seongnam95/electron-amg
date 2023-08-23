@@ -10,8 +10,8 @@ class Jwt:
     def __init__(self):
         self.algorithm = "HS256"
         self.secret_key = get_secret("AUTH_SECRET_KEY")
-        self.access_token_lifetime = datetime.timedelta(hours=1)
-        self.refresh_token_lifetime = datetime.timedelta(days=1)
+        self.access_token_lifetime = datetime.timedelta(seconds=10)  # hours=1)
+        self.refresh_token_lifetime = datetime.timedelta(seconds=20)  # days=1)
 
     def _create_token(self, payloads: dict, lifetime: datetime.timedelta) -> str:
         payloads["exp"] = datetime.datetime.utcnow() + lifetime

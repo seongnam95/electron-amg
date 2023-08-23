@@ -33,10 +33,25 @@ export const WorkerPageStyled = styled.div`
         }
       }
 
+      .manager-text {
+        position: absolute;
+        right: 2rem;
+        color: ${p => p.theme.colors.textColor2};
+        background-color: ${p => p.theme.colors.innerBg};
+        border-radius: 3px;
+        padding: 0.6rem 1.2rem;
+        font-weight: normal;
+        font-size: ${p => p.theme.sizes.textSmall};
+
+        .manager-name {
+          font-weight: bold;
+        }
+      }
+
       &.is-group {
         cursor: pointer;
         :hover {
-          background-color: ${p => p.theme.colors.underBg};
+          background-color: ${p => p.theme.colors.innerBg};
         }
       }
     }

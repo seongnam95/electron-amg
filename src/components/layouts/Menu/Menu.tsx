@@ -1,13 +1,16 @@
-import { ReactNode, useMemo } from 'react';
+import { useMemo } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 
 import { Tooltip } from 'antd';
 import clsx from 'clsx';
-import { motion, LayoutGroup, AnimatePresence } from 'framer-motion';
-import { useRecoilValue } from 'recoil';
+import { motion } from 'framer-motion';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 
-import { configStore } from '~/stores/config';
+import amgApi from '~/api/apiClient';
+import Button from '~/components/common/Button';
+import { useLogout } from '~/hooks/useLogout';
 import { layoutStore } from '~/stores/layout';
+import { initUser, userState } from '~/stores/user';
 
 import { MenuStyled } from './styled';
 
@@ -16,7 +19,8 @@ export interface MenuProps {
 }
 
 const Menu = ({ className }: MenuProps) => {
-  const config = useRecoilValue(configStore);
+  const logout = useLogout();
+
   const { pathname } = useLocation();
   const { breadcrumbs } = useRecoilValue(layoutStore);
 
@@ -43,7 +47,7 @@ const Menu = ({ className }: MenuProps) => {
 
   return (
     <MenuStyled className={clsx('Menu', className)}>
-      <div className="header">
+      <div className="breadcrumb">
         <i className="bx bx-hash" />
 
         <motion.span
@@ -89,6 +93,10 @@ const Menu = ({ className }: MenuProps) => {
           );
         })}
       </div>
+
+      <Button onClick={logout} styled={{ variations: 'icon' }}>
+        <i className="bx bx-log-out" />
+      </Button>
     </MenuStyled>
   );
 };

@@ -36,6 +36,7 @@
     "react-router-dom": "^6.6.2",
     "react-virtualized": "git+https://git@github.com/remorses/react-virtualized-fixed-import.git#9.22.3",
     "recoil": "^0.7.6",
+    "recoil-persist": "^5.1.0",
     "styled-components": "^5.3.6",
     "swr": "^2.0.0",
     "vite-electron-plugin": "^0.8.2"

@@ -4,17 +4,15 @@ export const MenuStyled = styled.div`
   position: relative;
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
+  padding: 0 2rem;
 
   height: ${p => p.theme.sizes.navBarHeight};
   width: 100%;
 
   border-bottom: 1px solid ${p => p.theme.colors.borderColor};
 
-  > .header {
-    position: absolute;
-    left: 2rem;
-
+  > .breadcrumb {
     font-weight: bold;
     font-size: ${p => p.theme.sizes.textMedium};
     display: flex;
@@ -43,6 +41,9 @@ export const MenuStyled = styled.div`
   }
 
   > .menus {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
     display: flex;
     gap: 0.8rem;
 
@@ -76,7 +77,7 @@ export const MenuStyled = styled.div`
       }
 
       :not(.active):hover {
-        background-color: ${p => p.theme.colors.underBg};
+        background-color: ${p => p.theme.colors.innerBg};
 
         > i {
           color: ${p => p.theme.colors.textColor1};

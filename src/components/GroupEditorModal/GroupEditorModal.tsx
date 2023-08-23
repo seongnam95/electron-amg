@@ -1,12 +1,13 @@
 import { ChangeEvent, useEffect, useRef, useState } from 'react';
 
-import { ColorPicker, ModalProps } from 'antd';
+import { ColorPicker, ModalProps, Select } from 'antd';
 import { Color } from 'antd/es/color-picker';
 import { PresetsItem } from 'antd/es/color-picker/interface';
-import { useSetRecoilState } from 'recoil';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { updateGroup } from '~/api/groupApi';
 import { groupState } from '~/stores/group';
+import { userState } from '~/stores/user';
 import { GroupData } from '~/types/group';
 
 import Button from '../common/Button';
@@ -28,6 +29,7 @@ const GroupEditorModal = ({ group, open, onSubmit, onCancel, ...rest }: GroupEdi
   const nameInputRef = useRef<HTMLInputElement>(null);
   const [copyGroup, setCopyGroup] = useState<GroupData>(group);
   const setGroup = useSetRecoilState(groupState);
+  const user = useRecoilValue(userState);
 
   useEffect(() => {
     setCopyGroup(group);
@@ -118,6 +120,8 @@ const GroupEditorModal = ({ group, open, onSubmit, onCancel, ...rest }: GroupEdi
         spellCheck={false}
         placeholder="그룹 설명 (선택)"
       />
+
+      <Select defaultValue={'sddsd'} />
     </GroupEditorModalStyled>
   );
 };

@@ -11,10 +11,13 @@ import LayoutConfig from '~/components/layouts/LayoutConfig/LayoutConfig';
 import GroupSideBar from '~/components/worker/GroupSideBar';
 import WorkerTable from '~/components/worker/WorkerTable/WorkerTable';
 import { filteredGroupState } from '~/stores/group';
+import { userState } from '~/stores/user';
 import { filteredWorkerState } from '~/stores/worker';
 import { WorkerPageStyled } from '~/styles/pageStyled/workerPageStyled';
 
 const Worker = () => {
+  const isAdmin = useRecoilValue(userState).isAdmin;
+
   const [groupId, setGroupId] = useState<string>('all');
   const [isEditing, setIsEditing] = useState<boolean>();
 
@@ -35,7 +38,7 @@ const Worker = () => {
       <LayoutConfig breadcrumbs={[' 매니저', '직원 관리']} />
 
       {/* 그룹 선택 사이드 바 */}
-      <GroupSideBar onChange={id => setGroupId(id)} />
+      {isAdmin && <GroupSideBar onChange={id => setGroupId(id)} />}
 
       {/* 콘텐츠 */}
       <motion.div
@@ -50,6 +53,11 @@ const Worker = () => {
           {headerText}
           {currentGroup && currentGroup.explanation && (
             <span className="explanation-text">{currentGroup.explanation}</span>
+          )}
+          {currentGroup && currentGroup.userName && (
+            <span className="manager-text">
+              담당자 <span className="manager-name">{currentGroup.userName}</span>
+            </span>
           )}
         </div>
 
@@ -68,7 +76,9 @@ const Worker = () => {
           <Button styled={{ variations: 'icon', animate: false }}>
             <i className="bx bx-trash" />
           </Button>
-          <Button styled={{ size: 'small', animate: false }}>계약서 폼 생성</Button>
+          <Button styled={{ variations: 'link', size: 'small', animate: false }}>
+            계약서 폼 생성
+          </Button>
         </div>
 
         {/* 워커 테이블 */}

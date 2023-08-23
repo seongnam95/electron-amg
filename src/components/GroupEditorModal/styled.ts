@@ -32,7 +32,7 @@ export const GroupEditorModalStyled = styled(Modal)`
     outline: none;
     border: none;
     border-radius: 4px;
-    background-color: ${p => p.theme.colors.underBg};
+    background-color: ${p => p.theme.colors.innerBg};
 
     padding: 0.4rem 0.8rem;
     font-size: ${p => p.theme.sizes.textSmall};

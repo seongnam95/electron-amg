@@ -13,8 +13,6 @@ import { ElectronRendererContext } from '@app/types/preload';
 
 import FileSystemRoutes from '~/components/common/FileSystemRoutes';
 
-axios.defaults.baseURL = 'http://localhost:8001/api/v1/';
-
 dayjs.extend(relativeTime);
 dayjs.locale('ko');
 

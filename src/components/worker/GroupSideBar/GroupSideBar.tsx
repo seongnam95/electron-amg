@@ -67,7 +67,10 @@ const GroupSideBar = ({ onChange }: GroupSideBarProps) => {
         </div>
       )}
 
-      <Button styled={{ fullWidth: true }} onClick={() => setIsEditing(!isEditing)}>
+      <Button
+        styled={{ fullWidth: true, variations: 'default' }}
+        onClick={() => setIsEditing(!isEditing)}
+      >
         그룹 추가
         <i className="bx bx-plus" />
       </Button>

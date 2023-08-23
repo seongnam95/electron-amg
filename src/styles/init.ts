@@ -56,28 +56,6 @@ export const InitGlobalStyled = memo(createGlobalStyle`
     color: ${props => props.theme.colors.textColor1};
   }
 
-  mark {
-    background: ${props => props.theme.colors.sidebarBG};
-    border-radius: 5px;
-    padding: 4px 6px;
-    font-size: inherit;
-    color: ${props => props.theme.colors.textColor2};
-  }
-
-  em {
-    text-decoration: none;
-    font-style: normal;
-    color: ${props => props.theme.colors.primary};
-  }
-
-  .successColor {
-    color: ${props => props.theme.colors.success};
-  }
-
-  .errorColor {
-    color: ${props => props.theme.colors.error};
-  }
-
   #app {
     height: 100vh;
     color: ${props => props.theme.colors.textColor1};
@@ -90,7 +68,7 @@ export const InitGlobalStyled = memo(createGlobalStyle`
 
   body {
     overflow: hidden;
-    background-color: ${props => props.theme.colors.sidebarBG};
+    background-color: ${props => props.theme.colors.contentBG};
     color: ${props => props.theme.colors.textColor1};
 
     .ant-switch {
@@ -166,7 +144,7 @@ export const InitGlobalStyled = memo(createGlobalStyle`
     }
 
     .ant-radio-inner {
-      background: ${props => props.theme.colors.buttonBG};
+      background: ${props => props.theme.colors.primary};
       border-color: ${props => props.theme.colors.borderColor};
     }
 
@@ -196,7 +174,7 @@ export const InitGlobalStyled = memo(createGlobalStyle`
       border-color: ${props => props.theme.colors.borderColor};
 
       &:active {
-        background-color: ${props => props.theme.colors.sidebarBG};
+        background-color: ${props => props.theme.colors.secondary};
       }
     }
 
@@ -235,7 +213,7 @@ export const InitGlobalStyled = memo(createGlobalStyle`
 
     // 버튼
     .ant-btn {
-      background-color: ${props => props.theme.colors.buttonBG};
+      background-color: ${props => props.theme.colors.primary};
       border-color: ${props => props.theme.colors.borderColor};
       color: ${props => props.theme.colors.textColor1};
       border-radius: 4px;
@@ -319,7 +297,6 @@ export const InitGlobalStyled = memo(createGlobalStyle`
      * ant-popover 스타일 커스텀
      */
     .ant-popover-inner {
-      background-color: ${props => props.theme.colors.sidebarBG};
       box-shadow: none;
       border-radius: 7px;
     }

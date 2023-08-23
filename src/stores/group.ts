@@ -10,6 +10,8 @@ const mapGroupDataFromResponse = (group: any): GroupData => ({
   hexColor: group.hex_color,
   wage: group.wage,
   createDate: group.create_date,
+  userId: group.user?.id.toString(),
+  userName: group.user?.name,
 });
 
 const groupState = atom<GroupData[]>({
@@ -19,6 +21,7 @@ const groupState = atom<GroupData[]>({
     ({ setSelf }) => {
       fetchGroups().then(response => {
         if (response.success) {
+          console.log(response.result);
           const groups = response.result.map(mapGroupDataFromResponse);
           setSelf(groups);
         }

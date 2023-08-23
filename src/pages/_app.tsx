@@ -1,15 +1,16 @@
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Outlet } from 'react-router-dom';
 
 import { ConfigProvider, theme } from 'antd';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { ThemeProvider } from 'styled-components';
 
 import amgApi from '~/api/apiClient';
 import Layout from '~/components/layouts/Layout';
 import Titlebar from '~/components/layouts/Titlebar';
-import { loginState } from '~/stores/login';
+import { useLogout } from '~/hooks/useLogout';
 import { updateStore } from '~/stores/update';
+import { userState } from '~/stores/user';
 import { InitGlobalStyled } from '~/styles/init';
 import { antdTheme, colors, sizes } from '~/styles/themes';
 
@@ -36,11 +37,9 @@ const App = () => {
 const AppInner = () => {
   const antdToken = theme.useToken();
   const [update, setUpdate] = useRecoilState(updateStore);
-  const isLogin = useRecoilValue(loginState);
-
-  if (sessionStorage.getItem('authorization')) {
-    amgApi.defaults.headers.common['authorization'] = sessionStorage.getItem('authorization');
-  }
+  // TODO: 로그인 로직 수정
+  const token = sessionStorage.getItem('authorization');
+  if (token) amgApi.defaults.headers['authorization'] = token;
 
   const bootstrap = async () => {
     window.electron.onUpdate((event, data) => {
@@ -76,14 +75,9 @@ const AppInner = () => {
 
       <div id="app">
         <Titlebar />
-
-        {isLogin ? (
-          <Layout>
-            <Outlet />
-          </Layout>
-        ) : (
-          <Login />
-        )}
+        <Layout>
+          <Outlet />
+        </Layout>
       </div>
     </ThemeProvider>
   );

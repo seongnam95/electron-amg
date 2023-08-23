@@ -1,6 +1,7 @@
 from pydantic import BaseModel, model_validator
 from typing import Optional
 from datetime import datetime
+from schemas.user import UserResponse
 
 from schemas.common import check_update_fields
 
@@ -28,7 +29,7 @@ class GroupUpdate(BaseModel):
 
 class Group(GroupBase):
     id: int
-    user_id: Optional[int] = None
+    user: Optional[UserResponse] = None
     create_date: datetime
 
     class Config:

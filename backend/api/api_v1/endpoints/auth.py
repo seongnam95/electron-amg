@@ -12,8 +12,9 @@ from exceptions import TokenExpiredError, TokenInvalidError
 
 from util.jwt_token import Jwt
 from util.bcrypt import pwd_context
+from fastapi.encoders import jsonable_encoder
 
-import crud
+import crud, schemas
 
 router = APIRouter()
 security = HTTPBasic()
@@ -36,14 +37,15 @@ def login(form_data: LoginForm, db: Session = Depends(deps.get_db)):
             detail="아이디 또는 패스워드가 일치하지 않습니다.",
         )
 
+    user_json = jsonable_encoder(schemas.UserResponse.from_orm(user))
+
     jwt = Jwt()
     access_token = jwt.create_access_token({"sub": user.username})
     refresh_token = jwt.create_refresh_token({"sub": user.username})
 
-    base_res = BaseResponse(success=True, result="정상 처리되었습니다.")
     headers = {"Authorization": f"Bearer {access_token}"}
 
-    response = JSONResponse(content=base_res.model_dump(), headers=headers)
+    response = JSONResponse(content=user_json, headers=headers)
     response.set_cookie(
         key="refresh_token",
         value=refresh_token,
@@ -58,6 +60,7 @@ def login(form_data: LoginForm, db: Session = Depends(deps.get_db)):
 # Token 재발급
 @router.post("/token/refresh")
 def refresh_token(refresh_token: str = Cookie(None)):
+    print(refresh_token)
     if not refresh_token:
         raise HTTPException(status_code=401, detail="Refresh token is missing")
 
@@ -66,8 +69,8 @@ def refresh_token(refresh_token: str = Cookie(None)):
     try:
         payload = jwt.verify_token(token=refresh_token)
 
-    except (TokenExpiredError, TokenInvalidError) as e:
-        raise HTTPException(status_code=401, detail=str(e))
+    except (TokenExpiredError, TokenInvalidError):
+        raise HTTPException(status_code=401, detail="EXPIRED_REFRESH_TOKEN")
 
     username = payload.get("sub")
     new_access_token = jwt.create_access_token({"sub": username})

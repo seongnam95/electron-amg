@@ -23,7 +23,7 @@ export const MonthTableStyled = styled.table`
 
   tbody {
     tr:hover {
-      background-color: ${p => p.theme.colors.underBg};
+      background-color: ${p => p.theme.colors.innerBg};
     }
 
     td {
@@ -53,7 +53,7 @@ export const MonthTableStyled = styled.table`
   /* .today {
     font-weight: bold;
     color: ${p => p.theme.colors.secondary};
-    background-color: ${p => p.theme.colors.underBg};
+    background-color: ${p => p.theme.colors.innerBg};
   } */
 
   .working-bullet {

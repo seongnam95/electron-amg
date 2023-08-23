@@ -24,17 +24,18 @@ amgApi.interceptors.response.use(
         const newAccessToken = res.headers['authorization'];
 
         if (newAccessToken) {
+          sessionStorage.setItem('authorization', newAccessToken);
           amgApi.defaults.headers['authorization'] = newAccessToken;
           originalRequest.headers['authorization'] = newAccessToken;
+
           return amgApi(originalRequest);
         }
       } catch (refreshError) {
-        console.error('리프레쉬 실패');
-        // TODO : Logout 로직
+        window.location.replace('/login');
       }
     }
-
     return Promise.reject(error);
   },
 );
+
 export default amgApi;

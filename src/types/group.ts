@@ -5,4 +5,6 @@ export interface GroupData {
   wage: string;
   explanation: string;
   createDate: string;
+  userId?: string;
+  userName?: string;
 }

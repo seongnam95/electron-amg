@@ -2,13 +2,13 @@ import { ThemeConfig } from 'antd/es/config-provider/context';
 import { darken, lighten, rgba } from 'polished';
 
 export const sizes = {
-  textSmall: '1.3rem',
-  textMedium: '1.4rem',
-  textLazy: '1.5rem',
+  textSmall: '13px',
+  textMedium: '14px',
+  textLazy: '15px',
 
-  iconSmall: '1.8rem',
-  iconMedium: '2rem',
-  iconLazy: '2.2rem',
+  iconSmall: '18px',
+  iconMedium: '20px',
+  iconLazy: '22px',
 
   navBarHeight: '70px',
 };
@@ -19,24 +19,20 @@ const _colors = {
 
   titleBg: '#1E1E1E',
   titleBgHover: '#2C2C2C',
-  titleTextColor: '#B9B9B9',
-
-  headerBg: '#ffffff',
+  titleTextColor: '#b9b9b9',
 
   sidebarBG: '#fff',
   sidebarSelected: '',
-  selectedBG: '',
-  disableBg: '#BDBDBD',
 
-  underBg: '#f9f9f9',
+  selectedBg: '#F6F9FF',
+  selectedHoverBg: '#F1F5FF',
+  innerBg: '#f9f9f9',
   contentBG: '#ffffff',
-  formFieldBG: '#ffffff',
+  formFieldBG: '#f9f9f9',
+  disableBg: '#bdbdbd',
 
-  borderColor: '#F0F0F0',
+  borderColor: '#f0f0f0',
   borderColorDark: '#333333',
-
-  buttonBG: '#326CF9',
-  buttonHover: '',
 
   scrollTrackBG: '#f9f9f9',
   scrollThumbBG: '#767676',
@@ -44,18 +40,17 @@ const _colors = {
   textColor1: '#191919',
   textColor2: '#767676',
   textColor3: '#999999',
+
   textColorWhite1: '',
   textColorWhite2: '',
 
   success: '#4caf50',
-  error: '#FE6968',
+  error: '#fe6968',
   relic: '#ff6000',
-  ancient: '#c9a472',
+  accent: '#1e41d0',
 };
 
 _colors.sidebarSelected = darken(0.04, _colors.sidebarBG);
-_colors.buttonHover = lighten(0.06, _colors.buttonBG);
-_colors.selectedBG = rgba(_colors.primary, 0.1);
 _colors.textColorWhite1 = rgba('#FFF', 0.86);
 _colors.textColorWhite2 = rgba('#FFF', 0.66);
 

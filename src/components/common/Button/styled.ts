@@ -2,16 +2,30 @@ import styled, { css } from 'styled-components';
 
 export interface ButtonStyledProps {
   fullWidth?: boolean;
-  variations?: 'fill' | 'outline' | 'link' | 'icon';
+  variations?: 'fill' | 'outline' | 'link' | 'icon' | 'default';
   size?: 'small' | 'medium' | 'lazy';
   animate?: boolean;
 }
 
 export const ButtonStyled = styled.button<ButtonStyledProps>`
-  --color: ${p => (p.variations === 'fill' ? 'white' : p.theme.colors.primary)};
-  --bgColor: ${p => (p.variations === 'fill' ? p.theme.colors.primary : 'transparent')};
+  --color: ${p =>
+    p.variations === 'fill'
+      ? 'white'
+      : p.variations === 'icon'
+      ? p.theme.colors.textColor2
+      : p.theme.colors.primary};
+  --bgColor: ${p =>
+    p.variations === 'fill'
+      ? p.theme.colors.primary
+      : p.variations === 'default'
+      ? p.theme.colors.selectedBg
+      : 'transparent'};
   --hoverColor: ${p =>
-    p.variations === 'fill' ? p.theme.colors.buttonHover : p.theme.colors.underBg};
+    p.variations === 'fill'
+      ? p.theme.colors.accent
+      : p.variations === 'default'
+      ? p.theme.colors.selectedHoverBg
+      : p.theme.colors.innerBg};
 
   ${p =>
     p.size === 'small'
@@ -54,10 +68,19 @@ export const ButtonStyled = styled.button<ButtonStyledProps>`
   :not(:disabled):hover {
     background-color: var(--hoverColor);
     transform: ${p => p.animate && 'translateY(-1px)'};
+
+    > i {
+      color: ${p => p.variations === 'icon' && p.theme.colors.textColor1};
+    }
   }
 
   :disabled {
     color: ${p => p.theme.colors.textColor2};
     background-color: ${p => p.theme.colors.disableBg};
+  }
+
+  > i {
+    font-size: ${p => p.theme.sizes.iconLazy};
+    transition: all 200ms;
   }
 `;

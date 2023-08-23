@@ -8,8 +8,9 @@ import { loginUser } from '~/api/authApi';
 import { fetchGroups } from '~/api/groupApi';
 import Button from '~/components/common/Button';
 import Input from '~/components/common/Input';
-import { loginState } from '~/stores/login';
+import { userState } from '~/stores/user';
 import { LoginPageStyled } from '~/styles/pageStyled/loginPageStyled';
+import { UserData } from '~/types/user';
 
 interface GeoLocationI {
   ip: string;
@@ -19,10 +20,11 @@ interface GeoLocationI {
 }
 
 const Login = () => {
+  const setUser = useSetRecoilState(userState);
+
   const [geoData, setGeoData] = useState<GeoLocationI>();
   const [account, setAccount] = useState({ username: '', password: '' });
   const isValid = account.username.trim() !== '' && account.password.trim() !== '';
-  const setIsLogin = useSetRecoilState(loginState);
 
   // 유저 위치 정보 수집
   useEffect(() => {
@@ -52,7 +54,13 @@ const Login = () => {
           amgApi.defaults.headers.common['authorization'] = accessToken;
           sessionStorage.setItem('authorization', accessToken);
 
-          setIsLogin(true);
+          const user: UserData = {
+            id: res.data.id.toString(),
+            name: res.data.name,
+            isAdmin: res.data.is_admin,
+          };
+
+          setUser(user);
         })
         .catch(res => console.log(res.response.data));
     }
@@ -68,12 +76,6 @@ const Login = () => {
     });
   };
 
-  const handleOnClickToken = () => {
-    fetchGroups()
-      .then(res => console.log(res))
-      .catch(res => console.log(res));
-  };
-
   return (
     <LoginPageStyled>
       <p className="title">LOGIN</p>
@@ -84,7 +86,6 @@ const Login = () => {
           로그인
         </Button>
       </form>
-      <Button onClick={handleOnClickToken}>토큰 유효성 검사</Button>
     </LoginPageStyled>
   );
 };
