@@ -2,8 +2,10 @@ import axios from 'axios';
 
 const amgApi = axios.create({
   baseURL: 'http://localhost:8001/api/v1/',
+  withCredentials: true,
 });
 
+// 토큰 인증 인터셉터
 amgApi.interceptors.response.use(
   response => response,
   async error => {
@@ -12,12 +14,10 @@ amgApi.interceptors.response.use(
     if (
       error.response &&
       error.response.status === 401 &&
-      !originalRequest._retry &&
-      originalRequest.url !== 'auth/token/refresh'
+      error.response.data.msg === 'EXPIRED_TOKEN' &&
+      !originalRequest._retry
     ) {
       originalRequest._retry = true;
-
-      console.log('Refresh Token');
 
       try {
         const res = await amgApi.post('auth/token/refresh');

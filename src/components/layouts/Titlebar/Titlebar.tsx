@@ -28,11 +28,9 @@ const Titlebar = ({ className }: TitlebarProps) => {
         AMG
       </div>
       <div className="controls">
-        {developerMode && (
-          <div onClick={() => appControl('devtools')}>
-            <i className="bx bx-code-alt" />
-          </div>
-        )}
+        <div onClick={() => appControl('devtools')}>
+          <i className="bx bx-code-alt" />
+        </div>
 
         <div className="minimize" onClick={() => appControl('minimize')}>
           <i className="bx bx-minus" />

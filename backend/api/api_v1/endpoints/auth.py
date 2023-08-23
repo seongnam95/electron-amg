@@ -1,17 +1,18 @@
-from fastapi import APIRouter, Cookie, HTTPException, Depends
+from fastapi import APIRouter, HTTPException, Cookie, Depends
 from fastapi.responses import JSONResponse
+from fastapi.security import HTTPBasic
+
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
-from exceptions import TokenExpiredError, TokenInvalidError
-from util.jwt_token import Jwt
 
-from util.bcrypt import pwd_context
 from ... import deps
 
 from response_model import BaseResponse
-from fastapi.security import HTTPBasic
+from exceptions import TokenExpiredError, TokenInvalidError
 
-import schemas
+from util.jwt_token import Jwt
+from util.bcrypt import pwd_context
+
 import crud
 
 router = APIRouter()
@@ -24,7 +25,7 @@ class LoginForm(BaseModel):
     access_ip: str
 
 
-# 로그인
+# 로그인 / Token 발급
 @router.post("/login")
 def login(form_data: LoginForm, db: Session = Depends(deps.get_db)):
     user = crud.user.get_user(db=db, username=form_data.username)
@@ -48,18 +49,15 @@ def login(form_data: LoginForm, db: Session = Depends(deps.get_db)):
         value=refresh_token,
         httponly=True,
         secure=False,
-        samesite="None",  # SameSite 설정
-        max_age=30 * 24 * 60 * 60,  # 쿠키의 유효기간을 30일로 설정, 필요에 따라 변경 가능
+        max_age=1 * 24 * 60 * 60,  # 초 단위 [ 설정 값 : 1일 ]
     )
 
     return response
 
 
+# Token 재발급
 @router.post("/token/refresh")
-def refresh_token(
-    refresh_token: str = Cookie(None), db: Session = Depends(deps.get_db)
-):
-    print(refresh_token)
+def refresh_token(refresh_token: str = Cookie(None)):
     if not refresh_token:
         raise HTTPException(status_code=401, detail="Refresh token is missing")
 

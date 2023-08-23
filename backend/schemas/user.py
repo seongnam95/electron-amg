@@ -12,6 +12,8 @@ class UserBase(BaseModel):
 
 class UserCreate(UserBase):
     password: str
+    is_admin: Optional[bool] = None
+    is_approved: Optional[bool] = None
 
 
 class UserUpdate(BaseModel):

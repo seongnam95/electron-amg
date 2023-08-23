@@ -1,5 +1,4 @@
 import { ChangeEvent, FormEvent, useEffect, useState } from 'react';
-import { useNavigate, Navigate } from 'react-router';
 
 import axios from 'axios';
 import { useSetRecoilState } from 'recoil';
@@ -48,7 +47,12 @@ const Login = () => {
       })
         .then(res => {
           const accessToken = res.headers['authorization'];
+
+          // Default 헤더와 Session Storage에 Access-Token 저장
           amgApi.defaults.headers.common['authorization'] = accessToken;
+          sessionStorage.setItem('authorization', accessToken);
+
+          setIsLogin(true);
         })
         .catch(res => console.log(res.response.data));
     }

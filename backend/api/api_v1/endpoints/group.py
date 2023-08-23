@@ -20,7 +20,7 @@ def get_group(group_id: int, db: Session = Depends(deps.get_db)) -> schemas.grou
     return group
 
 
-# 전체 그룹 불러오기
+# 그룹 다중 불러오기
 @router.get("/", response_model=ListResponse[schemas.Group])
 def read_groups(
     user: User = Depends(deps.get_current_user),
@@ -35,26 +35,17 @@ def read_groups(
             db, user_id=user.id, skip=skip, limit=limit
         )
 
-    if not groups:
-        raise HTTPException(status_code=404, detail="그룹이 없습니다.")
+    # if not groups:
+    #     raise HTTPException(status_code=404, detail="그룹이 없습니다.")
 
     return ListResponse(success=True, count=len(groups), result=groups)
-
-
-# 그룹의 모든 근로자 불러오기
-@router.get("/{group_id}/worker", response_model=ListResponse[schemas.Worker])
-def read_group(
-    group: schemas.Group = Depends(get_group), db: Session = Depends(deps.get_db)
-):
-    workers = crud.group.get_group_workers(db=db, group_id=group.id)
-    return ListResponse(success=True, count=len(workers), result=workers)
 
 
 # 그룹 생성
 @router.post("/", response_model=BaseResponse[schemas.Group])
 def create_group(
     *,
-    user: User = Depends(deps.ensure_admin),
+    is_admin: User = Depends(deps.ensure_admin),
     db: Session = Depends(deps.get_db),
     group_in: schemas.GroupCreate,
 ):

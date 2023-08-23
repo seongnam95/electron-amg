@@ -7,7 +7,7 @@ interface Module {
   default: Element;
 }
 
-const PRESERVED = import.meta.glob<Module>('/src/pages/(_app|404|login).tsx', { eager: true });
+const PRESERVED = import.meta.glob<Module>('/src/pages/(_app|404).tsx', { eager: true });
 const ROUTES = import.meta.glob<Module>('/src/pages/**/[a-z[]*.tsx', { eager: true });
 
 const preservedRoutes: Partial<Record<string, Element>> = Object.keys(PRESERVED).reduce(

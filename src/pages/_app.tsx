@@ -5,6 +5,7 @@ import { ConfigProvider, theme } from 'antd';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { ThemeProvider } from 'styled-components';
 
+import amgApi from '~/api/apiClient';
 import Layout from '~/components/layouts/Layout';
 import Titlebar from '~/components/layouts/Titlebar';
 import { loginState } from '~/stores/login';
@@ -34,9 +35,12 @@ const App = () => {
 
 const AppInner = () => {
   const antdToken = theme.useToken();
-
   const [update, setUpdate] = useRecoilState(updateStore);
-  const isLogin = true;
+  const isLogin = useRecoilValue(loginState);
+
+  if (sessionStorage.getItem('authorization')) {
+    amgApi.defaults.headers.common['authorization'] = sessionStorage.getItem('authorization');
+  }
 
   const bootstrap = async () => {
     window.electron.onUpdate((event, data) => {

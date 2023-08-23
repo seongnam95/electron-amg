@@ -42,7 +42,7 @@ def get_current_user(
 
         # 계정 사용 권한 체크
         if not user.is_approved:
-            raise HTTPException(status_code=401, detail="사용이 제한된 계정입니다.")
+            raise HTTPException(status_code=403, detail="사용이 제한된 계정입니다.")
 
         return user
 

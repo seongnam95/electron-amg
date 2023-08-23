@@ -11,6 +11,6 @@ def create_response(
 
 def http_exception_handler(request, exc: HTTPException):
     return JSONResponse(
-        content={"success": False, "err_msg": str(exc.detail)},
+        content={"success": False, "msg": str(exc.detail)},
         status_code=exc.status_code,
     )
