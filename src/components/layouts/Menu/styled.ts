@@ -1,99 +1,58 @@
 import styled from 'styled-components';
 
 export const MenuStyled = styled.div`
-  position: relative;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 2rem;
+  gap: 0.8rem;
 
-  height: ${p => p.theme.sizes.navBarHeight};
-  width: 100%;
+  .item {
+    position: relative;
 
-  border-bottom: 1px solid ${p => p.theme.colors.borderColor};
-
-  > .breadcrumb {
-    font-weight: bold;
-    font-size: ${p => p.theme.sizes.textMedium};
     display: flex;
+    justify-content: center;
     align-items: center;
-    color: ${props => props.theme.colors.textColor1};
 
-    i {
-      font-size: ${p => p.theme.sizes.textMedium};
-      margin-right: 1rem;
-      color: ${props => props.theme.colors.textColor2};
-    }
+    width: 4.2rem;
+    height: 4.2rem;
+    border-radius: 6px;
 
-    > span {
-      margin-bottom: -1px;
+    transition: all 240ms;
 
-      > span {
-        & + span::before {
-          content: '/';
-          display: inline-block;
-          margin: 0 0.6rem;
-          font-weight: bold;
-          color: ${props => props.theme.colors.textColor2};
-        }
-      }
-    }
-  }
+    > i {
+      z-index: 1;
 
-  > .menus {
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
-    display: flex;
-    gap: 0.8rem;
-
-    .item {
-      position: relative;
-
-      display: flex;
-      justify-content: center;
-      align-items: center;
-
-      width: 4.2rem;
-      height: 4.2rem;
-      border-radius: 6px;
+      color: ${p => p.theme.colors.textColor2};
+      font-size: 2.4rem;
 
       transition: all 240ms;
+    }
+
+    &.active {
+      > i {
+        color: ${p => p.theme.colors.textColorWhite1};
+        font-size: 2.4rem;
+      }
+    }
+
+    :not(.active):hover {
+      background-color: ${p => p.theme.colors.innerBg};
 
       > i {
-        z-index: 1;
-
-        color: ${p => p.theme.colors.textColor2};
-        font-size: 2.4rem;
-
-        transition: all 240ms;
+        color: ${p => p.theme.colors.textColor1};
       }
+    }
 
-      &.active {
-        > i {
-          color: ${p => p.theme.colors.textColorWhite1};
-          font-size: 2.4rem;
-        }
-      }
-
-      :not(.active):hover {
-        background-color: ${p => p.theme.colors.innerBg};
-
-        > i {
-          color: ${p => p.theme.colors.textColor1};
-        }
-      }
-
-      .menuActiveBG {
-        position: absolute;
-        border-radius: 6px;
-        background-color: ${props => props.theme.colors.primary};
-        width: 100%;
-        height: 100%;
-        left: 0;
-        top: 0;
-        z-index: 0;
-      }
+    .menuActiveBG {
+      position: absolute;
+      border-radius: 6px;
+      background-color: ${props => props.theme.colors.primary};
+      width: 100%;
+      height: 100%;
+      left: 0;
+      top: 0;
+      z-index: 0;
     }
   }
 `;

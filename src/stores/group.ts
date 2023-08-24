@@ -1,6 +1,6 @@
 import { atom, selectorFamily } from 'recoil';
 
-import { fetchGroups } from '~/api/groupApi';
+import { fetchGroups } from '~/api/group';
 import { GroupData } from '~/types/group';
 
 const mapGroupDataFromResponse = (group: any): GroupData => ({

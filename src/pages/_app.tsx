@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Outlet } from 'react-router-dom';
+import { Outlet, useNavigate } from 'react-router-dom';
 
 import { ConfigProvider, theme } from 'antd';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
@@ -8,13 +8,10 @@ import { ThemeProvider } from 'styled-components';
 import amgApi from '~/api/apiClient';
 import Layout from '~/components/layouts/Layout';
 import Titlebar from '~/components/layouts/Titlebar';
-import { useLogout } from '~/hooks/useLogout';
+import { isLoginState } from '~/stores/auth';
 import { updateStore } from '~/stores/update';
-import { userState } from '~/stores/user';
 import { InitGlobalStyled } from '~/styles/init';
 import { antdTheme, colors, sizes } from '~/styles/themes';
-
-import Login from './login';
 
 type Sizes = typeof sizes;
 type Colors = typeof colors;
@@ -37,7 +34,7 @@ const App = () => {
 const AppInner = () => {
   const antdToken = theme.useToken();
   const [update, setUpdate] = useRecoilState(updateStore);
-  // TODO: 로그인 로직 수정
+
   const token = sessionStorage.getItem('authorization');
   if (token) amgApi.defaults.headers['authorization'] = token;
 

@@ -12,6 +12,7 @@ const LayoutConfig = ({ breadcrumbs }: LayoutConfigProps) => {
   const [layout, setLayout] = useRecoilState(layoutStore);
 
   useEffect(() => {
+    console.log(layout);
     setLayout({
       ...layout,
       breadcrumbs,

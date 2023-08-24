@@ -2,9 +2,6 @@ import { useLocation } from 'react-router-dom';
 
 import clsx from 'clsx';
 import { motion } from 'framer-motion';
-import { useRecoilValue } from 'recoil';
-
-import { layoutStore } from '~/stores/layout';
 
 import { ContentStyled } from './styled';
 

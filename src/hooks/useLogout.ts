@@ -8,8 +8,9 @@ export const useLogout = () => {
 
   const logout = () => {
     setUser(initUser);
-    sessionStorage.clear;
+    sessionStorage.clear();
     amgApi.defaults.headers.common['authorization'] = '';
+    // TODO : Refresh-Token Cookie 제거
   };
 
   return logout;

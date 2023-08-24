@@ -31,7 +31,7 @@ amgApi.interceptors.response.use(
           return amgApi(originalRequest);
         }
       } catch (refreshError) {
-        window.location.replace('/login');
+        sessionStorage.clear();
       }
     }
     return Promise.reject(error);

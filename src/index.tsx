@@ -1,5 +1,6 @@
 import { Suspense } from 'react';
 import { createRoot } from 'react-dom/client';
+import { QueryClient, QueryClientProvider } from 'react-query';
 
 import 'antd/dist/reset.css';
 import axios from 'axios';
@@ -29,12 +30,16 @@ const swrConfig: SWRConfiguration = {
   revalidateIfStale: false,
 };
 
+const queryClient = new QueryClient();
+
 createRoot(document.getElementById('root') as HTMLElement).render(
-  <RecoilRoot>
-    <SWRConfig value={swrConfig}>
-      <Suspense>
-        <FileSystemRoutes />
-      </Suspense>
-    </SWRConfig>
-  </RecoilRoot>,
+  <QueryClientProvider client={queryClient}>
+    <RecoilRoot>
+      <SWRConfig value={swrConfig}>
+        <Suspense>
+          <FileSystemRoutes />
+        </Suspense>
+      </SWRConfig>
+    </RecoilRoot>
+  </QueryClientProvider>,
 );

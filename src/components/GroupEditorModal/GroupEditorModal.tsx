@@ -5,7 +5,7 @@ import { Color } from 'antd/es/color-picker';
 import { PresetsItem } from 'antd/es/color-picker/interface';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 
-import { updateGroup } from '~/api/groupApi';
+import { updateGroup } from '~/api/group';
 import { groupState } from '~/stores/group';
 import { userState } from '~/stores/user';
 import { GroupData } from '~/types/group';
