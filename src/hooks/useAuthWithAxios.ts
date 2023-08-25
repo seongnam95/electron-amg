@@ -25,28 +25,29 @@ export const useAxiosWithAuth = (): AxiosInstance => {
     response => response,
     async error => {
       const originalRequest = error.config;
+      const msg = error.response.data.msg;
 
-      if (
-        error.response &&
-        error.response.status === 401 &&
-        error.response.data.msg === 'EXPIRED_TOKEN' &&
-        !originalRequest._retry
-      ) {
-        originalRequest._retry = true;
+      if (error.response.status === 401 && !originalRequest._retry) {
+        switch (msg) {
+          // 토큰 만료, Access-Token 발행 후, 재요청
+          case 'EXPIRED_TOKEN' || 'INVALID_TOKEN':
+            originalRequest._retry = true;
 
-        try {
-          const res = await axiosInstance.post('auth/token/refresh');
-          const newAccessToken = res.headers['authorization'];
+            const res = await axiosInstance.post('auth/token/refresh');
+            const newAccessToken = res.headers['authorization'];
 
-          if (newAccessToken) {
-            sessionStorage.setItem('authorization', newAccessToken);
-            axiosInstance.defaults.headers['authorization'] = newAccessToken;
-            originalRequest.headers['authorization'] = newAccessToken;
+            if (newAccessToken) {
+              sessionStorage.setItem('authorization', newAccessToken);
+              originalRequest.headers['authorization'] = newAccessToken;
 
-            return axiosInstance(originalRequest);
-          }
-        } catch (refreshError) {
-          setUser(initUser);
+              return axiosInstance(originalRequest);
+            }
+
+          // 리프레쉬 토큰 만료, 로그아웃
+          case 'EXPIRED_REFRESH_TOKEN':
+            setUser(initUser);
+            sessionStorage.clear();
+          // TODO : Logout Endpoint
         }
       }
       return Promise.reject(error);

@@ -74,7 +74,6 @@ const router = createHashRouter([
 
           return parent;
         }, {} as RouteObject);
-        console.log(routes);
         return routes;
       },
       [{ path: '*', element: <NotFound /> }],

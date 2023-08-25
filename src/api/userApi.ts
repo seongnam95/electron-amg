@@ -1,8 +1,8 @@
 import { FetchApiResponse } from '~/types/common';
 
-import amgApi from './apiClient';
+import authAxios from './apiClient';
 
 export const fetchUsers = async (): Promise<FetchApiResponse> => {
-  const response = await amgApi.get<FetchApiResponse>('/user/');
+  const response = await authAxios.get<FetchApiResponse>('/user/');
   return response.data;
 };

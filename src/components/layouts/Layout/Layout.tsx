@@ -2,7 +2,7 @@ import clsx from 'clsx';
 
 import Content from '../Content';
 import Header from '../Header';
-import Menu from '../Menu';
+import NavBar from '../NavBar';
 import { LayoutStyled } from './styled';
 
 export interface LayoutProps {
@@ -14,9 +14,8 @@ const Layout = ({ className, children }: LayoutProps) => {
   return (
     <LayoutStyled className={clsx('Layout', className)}>
       <Header>
-        <Menu />
+        <NavBar />
       </Header>
-
       <Content>{children}</Content>
     </LayoutStyled>
   );

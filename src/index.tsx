@@ -3,7 +3,6 @@ import { createRoot } from 'react-dom/client';
 import { QueryClient, QueryClientProvider } from 'react-query';
 
 import 'antd/dist/reset.css';
-import axios from 'axios';
 import dayjs from 'dayjs';
 import 'dayjs/locale/ko';
 import relativeTime from 'dayjs/plugin/relativeTime';

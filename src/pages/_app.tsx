@@ -1,17 +1,18 @@
-import { useEffect, useMemo, useState } from 'react';
-import { Outlet, useNavigate } from 'react-router-dom';
+import { useEffect, useMemo } from 'react';
+import { Outlet } from 'react-router-dom';
 
 import { ConfigProvider, theme } from 'antd';
-import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import { ThemeProvider } from 'styled-components';
 
-import amgApi from '~/api/apiClient';
 import Layout from '~/components/layouts/Layout';
 import Titlebar from '~/components/layouts/Titlebar';
-import { isLoginState } from '~/stores/auth';
 import { updateStore } from '~/stores/update';
+import { userState } from '~/stores/user';
 import { InitGlobalStyled } from '~/styles/init';
 import { antdTheme, colors, sizes } from '~/styles/themes';
+
+import Login from './login';
 
 type Sizes = typeof sizes;
 type Colors = typeof colors;
@@ -33,10 +34,8 @@ const App = () => {
 
 const AppInner = () => {
   const antdToken = theme.useToken();
+  const { isLogin } = useRecoilValue(userState);
   const [update, setUpdate] = useRecoilState(updateStore);
-
-  const token = sessionStorage.getItem('authorization');
-  if (token) amgApi.defaults.headers['authorization'] = token;
 
   const bootstrap = async () => {
     window.electron.onUpdate((event, data) => {
@@ -72,9 +71,14 @@ const AppInner = () => {
 
       <div id="app">
         <Titlebar />
-        <Layout>
-          <Outlet />
-        </Layout>
+
+        {isLogin ? (
+          <Layout>
+            <Outlet />
+          </Layout>
+        ) : (
+          <Login />
+        )}
       </div>
     </ThemeProvider>
   );

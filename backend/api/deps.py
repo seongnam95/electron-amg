@@ -29,7 +29,7 @@ def get_current_user(
 ) -> models.User:
     # Authorization Header에 Access-Token이 있는지 확인
     if authorization is None or not authorization.startswith("Bearer "):
-        raise HTTPException(status_code=401, detail="Invalid authorization header")
+        raise HTTPException(status_code=401, detail="MISSING_TOKEN")
 
     token = authorization.split("Bearer ")[1].strip()
 

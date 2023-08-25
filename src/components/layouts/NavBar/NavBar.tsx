@@ -4,20 +4,14 @@ import { Link, useLocation } from 'react-router-dom';
 import { Tooltip } from 'antd';
 import clsx from 'clsx';
 import { motion } from 'framer-motion';
-import { useRecoilValue } from 'recoil';
 
-import amgApi from '~/api/apiClient';
-import Button from '~/components/common/Button';
-import { useLogout } from '~/hooks/useLogout';
-import { layoutStore } from '~/stores/layout';
+import { NavBarStyled } from './styled';
 
-import { MenuStyled } from './styled';
-
-export interface MenuProps {
+export interface NavBarProps {
   className?: string;
 }
 
-const Menu = ({ className }: MenuProps) => {
+const NavBar = ({ className }: NavBarProps) => {
   const { pathname } = useLocation();
 
   const menus = useMemo(
@@ -42,7 +36,7 @@ const Menu = ({ className }: MenuProps) => {
   );
 
   return (
-    <MenuStyled className={clsx('Menu', className)}>
+    <NavBarStyled className={clsx('NavBar', className)}>
       {menus.map(menu => {
         const isActive = pathname === menu.link;
         return (
@@ -72,8 +66,8 @@ const Menu = ({ className }: MenuProps) => {
           </motion.div>
         );
       })}
-    </MenuStyled>
+    </NavBarStyled>
   );
 };
 
-export default Menu;
+export default NavBar;

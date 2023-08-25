@@ -3,9 +3,9 @@ import { ChangeEvent, FormEvent, useEffect, useState } from 'react';
 import axios from 'axios';
 import { useSetRecoilState } from 'recoil';
 
+import authAxios from '~/api/apiClient';
 import Button from '~/components/common/Button';
 import Input from '~/components/common/Input';
-import { isLoginState } from '~/stores/auth';
 import { userState } from '~/stores/user';
 import { LoginPageStyled } from '~/styles/pageStyled/loginPageStyled';
 import { UserData } from '~/types/user';
@@ -19,10 +19,10 @@ interface GeoLocationI {
 
 const Login = () => {
   const setUser = useSetRecoilState(userState);
-  const setIsLogin = useSetRecoilState(isLoginState);
 
   const [geoData, setGeoData] = useState<GeoLocationI>();
   const [account, setAccount] = useState({ username: '', password: '' });
+
   const isValid = account.username.trim() !== '' && account.password.trim() !== '';
 
   // 유저 위치 정보 수집
@@ -39,12 +39,13 @@ const Login = () => {
 
   const handleOnSubmit = (e: FormEvent) => {
     e.preventDefault();
+
     if (isValid) requestLoginAuth();
   };
 
   const requestLoginAuth = async () => {
-    await axios
-      .post('http://localhost:8001/api/v1/auth/login', {
+    await authAxios
+      .post('/auth/login', {
         username: account.username,
         password: account.password,
         access_ip: geoData?.ip,
@@ -54,13 +55,11 @@ const Login = () => {
         sessionStorage.setItem('authorization', accessToken);
 
         const user: UserData = {
-          id: res.data.id.toString(),
-          name: res.data.name,
-          isAdmin: res.data.is_admin,
+          isLogin: true,
+          user: { id: res.data.id.toString(), name: res.data.name, isAdmin: res.data.is_admin },
         };
 
         setUser(user);
-        setIsLogin(true);
       })
       .catch(res => console.log(res.response.data));
   };

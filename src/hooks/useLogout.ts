@@ -1,6 +1,6 @@
 import { useSetRecoilState } from 'recoil';
 
-import amgApi from '~/api/apiClient';
+import authAxios from '~/api/apiClient';
 import { initUser, userState } from '~/stores/user';
 
 export const useLogout = () => {
@@ -9,7 +9,7 @@ export const useLogout = () => {
   const logout = () => {
     setUser(initUser);
     sessionStorage.clear();
-    amgApi.defaults.headers.common['authorization'] = '';
+    authAxios.defaults.headers.common['authorization'] = '';
     // TODO : Refresh-Token Cookie 제거
   };
 

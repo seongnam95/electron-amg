@@ -43,7 +43,7 @@ def login(form_data: LoginForm, db: Session = Depends(deps.get_db)):
     access_token = jwt.create_access_token({"sub": user.username})
     refresh_token = jwt.create_refresh_token({"sub": user.username})
 
-    headers = {"Authorization": f"Bearer {access_token}"}
+    headers = {"Authorization": access_token}
 
     response = JSONResponse(content=user_json, headers=headers)
     response.set_cookie(
@@ -60,9 +60,8 @@ def login(form_data: LoginForm, db: Session = Depends(deps.get_db)):
 # Token 재발급
 @router.post("/token/refresh")
 def refresh_token(refresh_token: str = Cookie(None)):
-    print(refresh_token)
     if not refresh_token:
-        raise HTTPException(status_code=401, detail="Refresh token is missing")
+        raise HTTPException(status_code=401, detail="MISSING_REFRESH_TOKEN")
 
     jwt = Jwt()
 
@@ -76,6 +75,6 @@ def refresh_token(refresh_token: str = Cookie(None)):
     new_access_token = jwt.create_access_token({"sub": username})
 
     base_res = BaseResponse(success=True, result="정상 처리되었습니다.")
-    headers = {"Authorization": f"Bearer {new_access_token}"}
+    headers = {"Authorization": new_access_token}
 
     return JSONResponse(content=base_res.model_dump(), headers=headers)

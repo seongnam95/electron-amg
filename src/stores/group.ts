@@ -3,7 +3,7 @@ import { atom, selectorFamily } from 'recoil';
 import { fetchGroups } from '~/api/group';
 import { GroupData } from '~/types/group';
 
-const mapGroupDataFromResponse = (group: any): GroupData => ({
+export const mapGroupDataFromResponse = (group: any): GroupData => ({
   id: group.id.toString(),
   name: group.name,
   explanation: group.explanation,
@@ -17,17 +17,17 @@ const mapGroupDataFromResponse = (group: any): GroupData => ({
 const groupState = atom<GroupData[]>({
   key: 'groupState',
   default: [],
-  effects_UNSTABLE: [
-    ({ setSelf }) => {
-      fetchGroups().then(response => {
-        if (response.success) {
-          console.log(response.result);
-          const groups = response.result.map(mapGroupDataFromResponse);
-          setSelf(groups);
-        }
-      });
-    },
-  ],
+  // effects_UNSTABLE: [
+  //   ({ setSelf }) => {
+  //     fetchGroups().then(response => {
+  //       if (response.success) {
+  //         console.log(response.result);
+  //         const groups = response.result.map(mapGroupDataFromResponse);
+  //         setSelf(groups);
+  //       }
+  //     });
+  //   },
+  // ],
 });
 
 const filteredGroupState = selectorFamily<GroupData, string>({

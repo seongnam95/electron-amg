@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-export const MenuStyled = styled.div`
+export const NavBarStyled = styled.div`
   position: absolute;
   left: 50%;
   transform: translateX(-50%);

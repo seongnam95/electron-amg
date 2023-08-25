@@ -1,4 +1,5 @@
 import { ChangeEvent, useEffect, useRef, useState } from 'react';
+import { useMutation } from 'react-query';
 
 import { ColorPicker, ModalProps, Select } from 'antd';
 import { Color } from 'antd/es/color-picker';
@@ -21,25 +22,39 @@ const initColors: PresetsItem[] = [
 ];
 
 export interface GroupEditorModalProps extends ModalProps {
-  group: GroupData;
+  targetGroup: GroupData;
   onSubmit?: () => void;
 }
 
-const GroupEditorModal = ({ group, open, onSubmit, onCancel, ...rest }: GroupEditorModalProps) => {
+const GroupEditorModal = ({
+  targetGroup,
+  open,
+  onSubmit,
+  onCancel,
+  ...rest
+}: GroupEditorModalProps) => {
   const nameInputRef = useRef<HTMLInputElement>(null);
-  const [copyGroup, setCopyGroup] = useState<GroupData>(group);
-  const setGroup = useSetRecoilState(groupState);
-  const user = useRecoilValue(userState);
+  const [group, setGroup] = useState<GroupData>(targetGroup);
+
+  const { mutate, data, isLoading, isError } = useMutation(updateGroup, {
+    onMutate: variable => {
+      console.log('variable', variable);
+    },
+    onSuccess: (data, variables, context) => {
+      console.log('success', data, variables, context);
+      onSubmit?.();
+    },
+  });
 
   useEffect(() => {
-    setCopyGroup(group);
+    setGroup(targetGroup);
     if (open) nameInputRef.current?.focus();
-  }, [open, group]);
+  }, [open, targetGroup]);
 
   // 그룹명, 그룹설명 변경 핸들러
   const handleOnChangeValue = (e: ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target;
-    setCopyGroup(prevState => ({
+    setGroup(prevState => ({
       ...prevState,
       [id]: value,
     }));
@@ -47,7 +62,7 @@ const GroupEditorModal = ({ group, open, onSubmit, onCancel, ...rest }: GroupEdi
 
   // 그룹 색상 변경 핸들러
   const handleOnChangeColor = (e: Color) => {
-    setCopyGroup(prevState => ({
+    setGroup(prevState => ({
       ...prevState,
       hexColor: e.toHexString(),
     }));
@@ -55,26 +70,30 @@ const GroupEditorModal = ({ group, open, onSubmit, onCancel, ...rest }: GroupEdi
 
   const handleOnSubmit = () => {
     const newGroup = {
-      name: String(copyGroup.name),
-      hex_color: String(copyGroup.hexColor),
-      explanation: String(copyGroup.explanation),
+      name: String(group.name),
+      hex_color: String(group.hexColor),
+      explanation: String(group.explanation),
     };
 
-    updateGroup(copyGroup.id, newGroup)
-      .then(() => {
-        setGroup((prevState: GroupData[]) => {
-          return prevState.map((group: GroupData) => {
-            if (group.id === copyGroup.id) {
-              return { ...group, ...copyGroup };
-            }
-            return group;
-          });
-        });
-        onSubmit?.();
-      })
-      .catch(error => {
-        console.log(error);
-      });
+    console.log(newGroup);
+
+    mutate({ groupId: targetGroup.id, updatedData: newGroup });
+
+    // updateGroup(targetGroup.id, newGroup)
+    //   .then(() => {
+    //     setGroup((prevState: GroupData[]) => {
+    //       return prevState.map((group: GroupData) => {
+    //         if (group.id === group.id) {
+    //           return { ...group, ...group };
+    //         }
+    //         return group;
+    //       });
+    //     });
+    //     onSubmit?.();
+    //   })
+    //   .catch(error => {
+    //     console.log(error);
+    //   });
   };
 
   const RenderFooter = () => (
@@ -96,7 +115,7 @@ const GroupEditorModal = ({ group, open, onSubmit, onCancel, ...rest }: GroupEdi
           ref={nameInputRef}
           id="name"
           type="text"
-          value={copyGroup?.name}
+          value={group?.name}
           spellCheck={false}
           onChange={handleOnChangeValue}
         />
@@ -104,7 +123,7 @@ const GroupEditorModal = ({ group, open, onSubmit, onCancel, ...rest }: GroupEdi
         {/* 그룹 색상 */}
         <ColorPicker
           disabledAlpha
-          defaultValue={copyGroup?.hexColor}
+          defaultValue={group?.hexColor}
           presets={initColors}
           onChangeComplete={handleOnChangeColor}
         />
@@ -115,7 +134,7 @@ const GroupEditorModal = ({ group, open, onSubmit, onCancel, ...rest }: GroupEdi
         id="explanation"
         className="input-explanation"
         key="explanation"
-        value={copyGroup?.explanation}
+        value={group?.explanation}
         onChange={handleOnChangeValue}
         spellCheck={false}
         placeholder="그룹 설명 (선택)"
