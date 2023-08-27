@@ -1,18 +1,21 @@
+import { HTMLAttributes } from 'react';
+
 import styled, { css } from 'styled-components';
 
-export interface GroupItemStyledProps {
+export interface GroupItemStyledProps extends HTMLAttributes<HTMLDivElement> {
   color?: string;
   activated?: boolean;
   disabled?: boolean;
 }
 
-export const GroupItemStyled = styled.li<GroupItemStyledProps>`
+export const GroupItemStyled = styled.div<GroupItemStyledProps>`
   display: flex;
   padding: 1rem 0;
 
   color: ${p => (p.activated ? p.theme.colors.primary : p.theme.colors.textColor2)};
   font-weight: ${p => (p.activated ? 'bold' : 'normal')};
   font-size: ${p => p.theme.sizes.textMedium};
+  background-color: transparent;
 
   transition: all 140ms;
 

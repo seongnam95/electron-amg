@@ -1,22 +1,20 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
-import { useRecoilValue } from 'recoil';
-
-import { filteredGroupState } from '~/stores/group';
+import { GroupData } from '~/types/group';
 
 import GroupEditorModal from '../GroupEditorModal';
 import { GroupTitleStyled } from './styled';
 
 export interface GroupTitleProps {
-  groupId: string;
+  group?: GroupData;
+  headerText?: string;
 }
 
-const GroupTitle = ({ groupId }: GroupTitleProps) => {
+const GroupTitle = ({ headerText, group }: GroupTitleProps) => {
   const [showEditor, setShowEditor] = useState<boolean>(false);
-  const group = useRecoilValue(filteredGroupState(groupId));
-
-  const headerText = groupId === 'all' ? '전체' : groupId === 'etc' ? '기타' : group.name;
   const doesExist = !!group;
+
+  useEffect(() => console.log(showEditor), [showEditor]);
 
   const hideEditorModal = () => setShowEditor(false);
   const handleOnClickEditor = () => {
@@ -41,12 +39,14 @@ const GroupTitle = ({ groupId }: GroupTitleProps) => {
         )}
       </div>
 
-      <GroupEditorModal
-        targetGroup={group}
-        open={showEditor}
-        onSubmit={hideEditorModal}
-        onCancel={hideEditorModal}
-      />
+      {doesExist && (
+        <GroupEditorModal
+          targetGroup={group}
+          open={showEditor}
+          onSubmit={hideEditorModal}
+          onCancel={hideEditorModal}
+        />
+      )}
     </GroupTitleStyled>
   );
 };

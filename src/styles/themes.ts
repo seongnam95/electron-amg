@@ -34,8 +34,8 @@ const _colors = {
   borderColor: '#f0f0f0',
   borderColorDark: '#333333',
 
-  scrollTrackBG: '#f9f9f9',
-  scrollThumbBG: '#767676',
+  scrollTrackBG: '#ffffff',
+  scrollThumbBG: '#eeeeee',
 
   textColor1: '#191919',
   textColor2: '#767676',

@@ -74,26 +74,7 @@ const GroupEditorModal = ({
       hex_color: String(group.hexColor),
       explanation: String(group.explanation),
     };
-
-    console.log(newGroup);
-
     mutate({ groupId: targetGroup.id, updatedData: newGroup });
-
-    // updateGroup(targetGroup.id, newGroup)
-    //   .then(() => {
-    //     setGroup((prevState: GroupData[]) => {
-    //       return prevState.map((group: GroupData) => {
-    //         if (group.id === group.id) {
-    //           return { ...group, ...group };
-    //         }
-    //         return group;
-    //       });
-    //     });
-    //     onSubmit?.();
-    //   })
-    //   .catch(error => {
-    //     console.log(error);
-    //   });
   };
 
   const RenderFooter = () => (
