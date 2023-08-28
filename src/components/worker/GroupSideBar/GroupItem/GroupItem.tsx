@@ -1,17 +1,16 @@
-import { useState } from 'react';
-
-import { GroupItemStyled, GroupItemStyledProps } from './stlyed';
+import { GroupItemStyled, GroupItemStyledProps } from './styled';
 
 export interface GroupSideBarProps extends GroupItemStyledProps {
   id: string;
   label: string;
-  onClick?: (id: string) => void;
 }
 
-const GroupItem = ({ id, label, onClick, ...rest }: GroupSideBarProps) => {
-  const handleOnClick = () => onClick?.(id);
+const GroupItem = ({ label, ...rest }: GroupSideBarProps) => {
+  const Test = () => {
+    return <></>;
+  };
   return (
-    <GroupItemStyled onClick={handleOnClick} {...rest}>
+    <GroupItemStyled {...rest}>
       {rest.color && <span className="color-bar" />}
       {label}
     </GroupItemStyled>

@@ -57,6 +57,13 @@ def login(form_data: LoginForm, db: Session = Depends(deps.get_db)):
     return response
 
 
+@router.post("/logout")
+def logout():
+    response = JSONResponse()
+    response.set_cookie(key="refresh_token", value="")
+    return response
+
+
 # Token 재발급
 @router.post("/token/refresh")
 def refresh_token(refresh_token: str = Cookie(None)):

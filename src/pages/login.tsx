@@ -1,9 +1,11 @@
 import { ChangeEvent, FormEvent, useEffect, useState } from 'react';
+import { useMutation } from 'react-query';
+import { useNavigate } from 'react-router-dom';
 
 import axios from 'axios';
 import { useSetRecoilState } from 'recoil';
 
-import authAxios from '~/api/apiClient';
+import { loginUser } from '~/api/auth';
 import Button from '~/components/common/Button';
 import Input from '~/components/common/Input';
 import { userState } from '~/stores/user';
@@ -19,59 +21,59 @@ interface GeoLocationI {
 
 const Login = () => {
   const setUser = useSetRecoilState(userState);
+  const navigate = useNavigate();
 
   const [geoData, setGeoData] = useState<GeoLocationI>();
   const [account, setAccount] = useState({ username: '', password: '' });
 
   const isValid = account.username.trim() !== '' && account.password.trim() !== '';
 
+  const { mutate, isLoading } = useMutation(loginUser, {
+    onSuccess: res => {
+      const accessToken = res.headers['authorization'];
+      sessionStorage.setItem('authorization', accessToken);
+      const user: UserData = {
+        isLogin: true,
+        user: { id: res.data.id.toString(), name: res.data.name, isAdmin: res.data.is_admin },
+      };
+      setUser(user);
+      navigate('/manager/worker');
+    },
+  });
+
   // 유저 위치 정보 수집
   useEffect(() => {
-    axios.get('https://geolocation-db.com/json/').then(res => {
-      setGeoData({
-        ip: res.data.IPv4,
-        countryName: res.data.country_name,
-        lat: res.data.latitude,
-        lng: res.data.longitude,
-      });
-    });
+    const fetchGeoData = async () => {
+      try {
+        const res = await axios.get('https://geolocation-db.com/json/');
+        setGeoData({
+          ip: res.data.IPv4,
+          countryName: res.data.country_name,
+          lat: res.data.latitude,
+          lng: res.data.longitude,
+        });
+      } catch (error) {
+        console.error('Failed to fetch geo data:', error);
+      }
+    };
+
+    fetchGeoData();
   }, []);
+
+  const handleOnChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const { id, value } = e.target;
+    setAccount(account => ({ ...account, [id]: value }));
+  };
 
   const handleOnSubmit = (e: FormEvent) => {
     e.preventDefault();
 
-    if (isValid) requestLoginAuth();
-  };
-
-  const requestLoginAuth = async () => {
-    await authAxios
-      .post('/auth/login', {
+    if (isValid)
+      mutate({
         username: account.username,
         password: account.password,
         access_ip: geoData?.ip,
-      })
-      .then(res => {
-        const accessToken = res.headers['authorization'];
-        sessionStorage.setItem('authorization', accessToken);
-
-        const user: UserData = {
-          isLogin: true,
-          user: { id: res.data.id.toString(), name: res.data.name, isAdmin: res.data.is_admin },
-        };
-
-        setUser(user);
-      })
-      .catch(res => console.log(res.response.data));
-  };
-
-  const handleOnChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const { id, value } = e.target;
-    setAccount(prev => {
-      return {
-        ...prev,
-        [id]: value,
-      };
-    });
+      });
   };
 
   return (

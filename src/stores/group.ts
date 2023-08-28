@@ -3,17 +3,6 @@ import { atom, selectorFamily } from 'recoil';
 import { fetchGroups } from '~/api/group';
 import { GroupData } from '~/types/group';
 
-export const mapGroupDataFromResponse = (group: any): GroupData => ({
-  id: group.id.toString(),
-  name: group.name,
-  explanation: group.explanation,
-  hexColor: group.hex_color,
-  wage: group.wage,
-  createDate: group.create_date,
-  userId: group.user?.id.toString(),
-  userName: group.user?.name,
-});
-
 const groupState = atom<GroupData[]>({
   key: 'groupState',
   default: [],

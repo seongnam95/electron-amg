@@ -45,7 +45,6 @@ def read_groups(
 @router.post("/", response_model=BaseResponse[schemas.Group])
 def create_group(
     *,
-    is_admin: User = Depends(deps.ensure_admin),
     db: Session = Depends(deps.get_db),
     group_in: schemas.GroupCreate,
 ):

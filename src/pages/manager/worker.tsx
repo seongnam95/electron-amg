@@ -15,38 +15,28 @@ import LayoutConfig from '~/components/layouts/LayoutConfig/LayoutConfig';
 import GroupSideBar from '~/components/worker/GroupSideBar';
 import WorkerTable from '~/components/worker/WorkerTable/WorkerTable';
 import { useRecoilQuery } from '~/hooks/useRecoilQuery';
-import { filteredGroupState, groupState, mapGroupDataFromResponse } from '~/stores/group';
+import { filteredGroupState, groupState } from '~/stores/group';
 import { userState } from '~/stores/user';
 import { filteredWorkerState } from '~/stores/worker';
 import { WorkerPageStyled } from '~/styles/pageStyled/workerPageStyled';
-import { GroupData } from '~/types/group';
 
 const Worker = () => {
-  const setGroup = useSetRecoilState(groupState);
   const {
     user: { isAdmin },
   } = useRecoilValue(userState);
 
   const [groupId, setGroupId] = useState<string>('all');
-  const [isEditing, setIsEditing] = useState<boolean>();
+  const { data, isLoading } = useQuery('groupQuery', fetchGroups);
 
-  const { isLoading } = useQuery('groupQuery', fetchGroups, {
-    onSuccess: res => {
-      const formatGroup = res.result.map(mapGroupDataFromResponse);
-      setGroup(formatGroup);
-    },
-  });
-
-  const workers = useRecoilValue(filteredWorkerState(groupId));
-  const currentGroup = useRecoilValue(filteredGroupState(groupId));
-  const headerText = groupId === 'all' ? '전체' : groupId === 'etc' ? '기타' : currentGroup.name;
+  const currentGroup = data?.filter(group => group.id === groupId)[0];
+  const headerText = groupId === 'all' ? '전체' : groupId === 'etc' ? '기타' : currentGroup?.name;
 
   return (
     <WorkerPageStyled className="WorkerPage">
       <LayoutConfig breadcrumbs={['매니저', '직원 관리']} />
 
       {/* 그룹 선택 사이드 바 */}
-      {isAdmin && <GroupSideBar onChange={id => setGroupId(id)} />}
+      <GroupSideBar onChange={id => setGroupId(id)} />
 
       {/* 콘텐츠 */}
       <motion.div
@@ -57,9 +47,7 @@ const Worker = () => {
         transition={{ duration: 0.3 }}
       >
         {/* 그룹 헤더 타이틀 */}
-        <GroupTitle groupId={groupId} />
-
-        {/* 그룹 에디터 모달 */}
+        <GroupTitle headerText={headerText} group={currentGroup} />
 
         {/* 필터/컨트롤 바 */}
         <div className="worker-control-bar">
@@ -72,13 +60,13 @@ const Worker = () => {
         </div>
 
         {/* 워커 테이블 */}
-        {workers.length ? (
+        {/* {workers.length ? (
           <WorkerTable allWorker={groupId === 'all'} items={workers} />
         ) : (
           <div className="empty-wrap">
             <Empty description="빈 그룹" />
           </div>
-        )}
+        )} */}
       </motion.div>
     </WorkerPageStyled>
   );
