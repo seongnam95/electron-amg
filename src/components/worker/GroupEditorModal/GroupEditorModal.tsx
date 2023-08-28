@@ -1,17 +1,14 @@
-import { ChangeEvent, useEffect, useRef, useState } from 'react';
-import { useMutation } from 'react-query';
+import { ChangeEvent, useEffect, useRef, useState, MouseEvent } from 'react';
+import { useQuery } from 'react-query';
 
 import { ColorPicker, ModalProps, Select } from 'antd';
 import { Color } from 'antd/es/color-picker';
 import { PresetsItem } from 'antd/es/color-picker/interface';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
 
-import { updateGroup } from '~/api/group';
-import { groupState } from '~/stores/group';
-import { userState } from '~/stores/user';
+import { fetchUsers } from '~/api/userApi';
+import Button from '~/components/common/Button';
 import { GroupData } from '~/types/group';
 
-import Button from '../common/Button';
 import { GroupEditorModalStyled } from './styled';
 
 const initColors: PresetsItem[] = [
@@ -23,7 +20,7 @@ const initColors: PresetsItem[] = [
 
 export interface GroupEditorModalProps extends ModalProps {
   targetGroup: GroupData;
-  onSubmit?: () => void;
+  onSubmit?: (group: GroupData) => void;
 }
 
 const GroupEditorModal = ({
@@ -34,20 +31,24 @@ const GroupEditorModal = ({
   ...rest
 }: GroupEditorModalProps) => {
   const nameInputRef = useRef<HTMLInputElement>(null);
-  const [group, setGroup] = useState<GroupData>(targetGroup);
 
-  const { mutate, data, isLoading, isError } = useMutation(updateGroup, {
-    onMutate: variable => {
-      console.log('variable', variable);
-    },
-    onSuccess: (data, variables, context) => {
-      console.log('success', data, variables, context);
-      onSubmit?.();
-    },
+  const [group, setGroup] = useState<GroupData>(targetGroup);
+  const { data: userData } = useQuery('usersQuery', fetchUsers, {
+    enabled: open,
+    staleTime: 1000 * 60 * 10,
   });
 
+  const users = userData?.map(v => ({
+    value: v.id,
+    label: `${v.name} (${v.username})`,
+  }));
+
+  const managerValue = group.userId
+    ? users?.filter(v => group.userId === v.value)[0].value
+    : undefined;
+
   useEffect(() => {
-    setGroup(targetGroup);
+    if (targetGroup) setGroup(targetGroup);
     if (open) nameInputRef.current?.focus();
   }, [open, targetGroup]);
 
@@ -68,21 +69,17 @@ const GroupEditorModal = ({
     }));
   };
 
-  const handleOnSubmit = () => {
-    const newGroup = {
-      name: String(group.name),
-      hex_color: String(group.hexColor),
-      explanation: String(group.explanation),
-    };
-    mutate({ groupId: targetGroup.id, updatedData: newGroup });
+  const handleOnCancel = (e: MouseEvent<HTMLButtonElement>) => {
+    setGroup(targetGroup);
+    onCancel?.(e);
   };
 
   const RenderFooter = () => (
     <div className="btn-wrap">
-      <Button className="btn-cancel" styled={{ variations: 'link' }} onClick={onCancel}>
+      <Button className="btn-cancel" styled={{ variations: 'link' }} onClick={handleOnCancel}>
         취소
       </Button>
-      <Button className="btn-ok" styled={{ variations: 'link' }} onClick={handleOnSubmit}>
+      <Button className="btn-ok" styled={{ variations: 'link' }} onClick={() => onSubmit?.(group)}>
         저장
       </Button>
     </div>
@@ -90,12 +87,13 @@ const GroupEditorModal = ({
 
   return (
     <GroupEditorModalStyled open={open} centered footer={<RenderFooter />} {...rest}>
-      <div className="row">
+      <div className="title-color-row">
         {/* 그룹명 */}
         <input
           ref={nameInputRef}
           id="name"
           type="text"
+          className="input-name"
           value={group?.name}
           spellCheck={false}
           onChange={handleOnChangeValue}
@@ -121,7 +119,17 @@ const GroupEditorModal = ({
         placeholder="그룹 설명 (선택)"
       />
 
-      <Select defaultValue={'sddsd'} />
+      <div className="selector-row">
+        <Select
+          className="user-selector"
+          options={users}
+          defaultValue={managerValue}
+          placeholder="( 그룹 담당자 선택 )"
+        />
+        <Button className="user-clear-btn" styled={{ variations: 'icon' }}>
+          <i className="bx bx-x" />
+        </Button>
+      </div>
     </GroupEditorModalStyled>
   );
 };

@@ -9,9 +9,12 @@ export const GroupTitleStyled = styled.div<GroupTitleStyledProps>`
   align-items: baseline;
   gap: 2rem;
   padding: 1.8rem;
-  font-weight: bold;
-  font-size: 2.2rem;
-  cursor: ${p => (p.doesExist ? 'pointer' : 'default')};
+
+  .header-text {
+    font-weight: bold;
+    font-size: 2.2rem;
+    cursor: ${p => (p.doesExist ? 'pointer' : 'default')};
+  }
 
   .explanation-text {
     display: flex;

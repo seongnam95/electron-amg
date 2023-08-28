@@ -1,23 +1,15 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useQuery } from 'react-query';
-import { useNavigate } from 'react-router-dom';
 
-import { Empty } from 'antd';
-import clsx from 'clsx';
 import { motion } from 'framer-motion';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilValue } from 'recoil';
 
 import { fetchGroups } from '~/api/group';
-import GroupEditorModal from '~/components/GroupEditorModal';
-import GroupTitle from '~/components/GroupTitle/GroupTitle';
 import Button from '~/components/common/Button';
 import LayoutConfig from '~/components/layouts/LayoutConfig/LayoutConfig';
 import GroupSideBar from '~/components/worker/GroupSideBar';
-import WorkerTable from '~/components/worker/WorkerTable/WorkerTable';
-import { useRecoilQuery } from '~/hooks/useRecoilQuery';
-import { filteredGroupState, groupState } from '~/stores/group';
+import GroupTitle from '~/components/worker/GroupTitle';
 import { userState } from '~/stores/user';
-import { filteredWorkerState } from '~/stores/worker';
 import { WorkerPageStyled } from '~/styles/pageStyled/workerPageStyled';
 
 const Worker = () => {
@@ -26,7 +18,9 @@ const Worker = () => {
   } = useRecoilValue(userState);
 
   const [groupId, setGroupId] = useState<string>('all');
-  const { data, isLoading } = useQuery('groupQuery', fetchGroups);
+  const { data, isLoading } = useQuery('groupQuery', fetchGroups, {
+    staleTime: 1000 * 60 * 5,
+  });
 
   const currentGroup = data?.filter(group => group.id === groupId)[0];
   const headerText = groupId === 'all' ? '전체' : groupId === 'etc' ? '기타' : currentGroup?.name;
@@ -35,10 +29,9 @@ const Worker = () => {
     <WorkerPageStyled className="WorkerPage">
       <LayoutConfig breadcrumbs={['매니저', '직원 관리']} />
 
-      {/* 그룹 선택 사이드 바 */}
+      {/* 그룹 사이드 바 */}
       <GroupSideBar onChange={id => setGroupId(id)} />
 
-      {/* 콘텐츠 */}
       <motion.div
         key={groupId}
         className="worker-content"

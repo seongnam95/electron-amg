@@ -1,4 +1,4 @@
-import { FetchApiResponse } from '~/types/common';
+import { FetchApiResponse, UpdateApiResponse } from '~/types/common';
 import { GroupData } from '~/types/group';
 
 import authAxios from './apiClient';
@@ -38,13 +38,13 @@ export const fetchGroups = async (): Promise<GroupData[]> => {
   throw new Error('Failed to fetch groups');
 };
 
-export const updateGroup = async ({
-  groupId,
-  updatedData,
-}: {
-  groupId: string;
-  updatedData: Partial<GroupData>;
-}): Promise<FetchApiResponse> => {
-  const response = await authAxios.put<FetchApiResponse>(`/group/${groupId}/`, updatedData);
+export const updateGroup = async (group: Partial<GroupData>): Promise<UpdateApiResponse> => {
+  const updateBody = {
+    name: group.name,
+    hex_color: group.hexColor,
+    explanation: group.explanation,
+    user_id: group.userId,
+  };
+  const response = await authAxios.put<UpdateApiResponse>(`/group/${group.id}/`, updateBody);
   return response.data;
 };

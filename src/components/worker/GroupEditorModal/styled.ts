@@ -2,13 +2,13 @@ import { Modal } from 'antd';
 import styled from 'styled-components';
 
 export const GroupEditorModalStyled = styled(Modal)`
-  display: flex;
   max-width: 40rem;
 
-  .row {
+  .title-color-row {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    margin-bottom: 2.4rem;
 
     > input {
       font-weight: bold;
@@ -27,7 +27,6 @@ export const GroupEditorModalStyled = styled(Modal)`
   .input-explanation {
     flex: 1;
     width: 100%;
-    margin-top: 2.4rem;
 
     outline: none;
     border: none;
@@ -36,6 +35,33 @@ export const GroupEditorModalStyled = styled(Modal)`
 
     padding: 0.4rem 0.8rem;
     font-size: ${p => p.theme.sizes.textSmall};
+  }
+
+  .selector-row {
+    display: flex;
+    align-items: center;
+    gap: 1.2rem;
+    margin-top: 0.4rem;
+
+    .user-selector {
+      width: 100%;
+
+      .ant-select-selector {
+        font-size: ${p => p.theme.sizes.textSmall};
+      }
+    }
+
+    .user-clear-btn {
+      > i {
+        color: ${p => p.theme.colors.error};
+      }
+
+      :hover {
+        > i {
+          color: ${p => p.theme.colors.error};
+        }
+      }
+    }
   }
 
   .btn-wrap {

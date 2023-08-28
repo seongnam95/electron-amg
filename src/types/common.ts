@@ -4,6 +4,11 @@ export interface FetchApiResponse {
   result: any;
 }
 
+export interface UpdateApiResponse {
+  success: boolean;
+  msg: string;
+}
+
 export interface BaseApiResponse {
   success: boolean;
   msg: any;

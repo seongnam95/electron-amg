@@ -7,7 +7,6 @@ import dayjs from 'dayjs';
 import 'dayjs/locale/ko';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import { RecoilRoot } from 'recoil';
-import { SWRConfig, SWRConfiguration } from 'swr';
 
 import { ElectronRendererContext } from '@app/types/preload';
 
@@ -22,23 +21,14 @@ declare global {
   }
 }
 
-const swrConfig: SWRConfiguration = {
-  errorRetryCount: 2,
-  errorRetryInterval: 500,
-  revalidateOnFocus: false,
-  revalidateIfStale: false,
-};
-
 const queryClient = new QueryClient();
 
 createRoot(document.getElementById('root') as HTMLElement).render(
   <QueryClientProvider client={queryClient}>
     <RecoilRoot>
-      <SWRConfig value={swrConfig}>
-        <Suspense>
-          <FileSystemRoutes />
-        </Suspense>
-      </SWRConfig>
+      <Suspense>
+        <FileSystemRoutes />
+      </Suspense>
     </RecoilRoot>
   </QueryClientProvider>,
 );

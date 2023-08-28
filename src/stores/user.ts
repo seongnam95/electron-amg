@@ -1,14 +1,16 @@
 import { atom } from 'recoil';
 import { recoilPersist } from 'recoil-persist';
 
-import { UserData } from '~/types/user';
+import { CurrentUser } from '~/types/user';
 
-export const initUser: UserData = {
+export const initUser: CurrentUser = {
   isLogin: false,
   user: {
     id: '',
     name: '',
+    username: '',
     isAdmin: false,
+    isApproved: false,
   },
 };
 
@@ -19,29 +21,8 @@ const { persistAtom } = recoilPersist({
   storage: sessionStorage,
 });
 
-export const userState = atom<UserData>({
+export const userState = atom<CurrentUser>({
   key: 'userState',
   default: initUser,
   effects_UNSTABLE: [persistAtom],
 });
-
-// export const userListState = atom<UserData[]>({
-//   key: 'userListState',
-//   default: [],
-//   effects_UNSTABLE: [
-//     ({ setSelf }) => {
-//       fetchUsers().then(response => {
-//         if (response.success) {
-//           const users = response.result.map(mapUserDataFromResponse);
-//           setSelf(users);
-//         }
-//       });
-//     },
-//   ],
-// });
-
-// const mapUserDataFromResponse = (user: any): UserData => ({
-//   id: user.id.toString(),
-//   name: user.name,
-//   isAdmin: user.is_admin,
-// });

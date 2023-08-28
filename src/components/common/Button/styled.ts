@@ -52,6 +52,8 @@ export const ButtonStyled = styled.button<ButtonStyledProps>`
   padding: ${p => p.variations !== 'icon' && 'var(--padding)'};
   width: ${p => p.variations === 'icon' && '4.2rem'};
   height: ${p => p.variations === 'icon' && '4.2rem'};
+  min-width: ${p => p.variations === 'icon' && '4.2rem'};
+  min-height: ${p => p.variations === 'icon' && '4.2rem'};
 
   outline: none;
   border: 1px solid transparent;
