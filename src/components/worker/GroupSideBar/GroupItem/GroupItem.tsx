@@ -6,9 +6,6 @@ export interface GroupSideBarProps extends GroupItemStyledProps {
 }
 
 const GroupItem = ({ label, ...rest }: GroupSideBarProps) => {
-  const Test = () => {
-    return <></>;
-  };
   return (
     <GroupItemStyled {...rest}>
       {rest.color && <span className="color-bar" />}

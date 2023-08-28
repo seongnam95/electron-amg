@@ -1,13 +1,10 @@
 import { useEffect, useState } from 'react';
 
-import { Empty } from 'antd';
 import Checkbox, { CheckboxChangeEvent } from 'antd/es/checkbox';
 import clsx from 'clsx';
 import { motion } from 'framer-motion';
-import { useRecoilValue } from 'recoil';
 
 import Button from '~/components/common/Button';
-import { groupState } from '~/stores/group';
 import { WorkerData } from '~/types/worker';
 
 import { WorkerTableStyled } from './styled';
@@ -20,8 +17,6 @@ export interface WorkerTableProps {
 }
 
 const WorkerTable = ({ items, allWorker, className, onClick }: WorkerTableProps) => {
-  const groups = useRecoilValue(groupState);
-
   const [workers, setWorkers] = useState<WorkerData[]>(items ?? []);
   const [allSelected, setAllSelected] = useState<boolean>(false);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);

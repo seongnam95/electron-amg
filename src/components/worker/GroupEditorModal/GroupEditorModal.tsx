@@ -1,13 +1,15 @@
-import { ChangeEvent, useEffect, useRef, useState, MouseEvent } from 'react';
-import { useQuery } from 'react-query';
+import { ChangeEvent, useEffect, useRef, useState, MouseEvent, useMemo } from 'react';
+import { useMutation, useQuery } from 'react-query';
 
 import { ColorPicker, ModalProps, Select } from 'antd';
 import { Color } from 'antd/es/color-picker';
 import { PresetsItem } from 'antd/es/color-picker/interface';
 
-import { fetchUsers } from '~/api/userApi';
+import { updateGroup } from '~/api/group';
+import { fetchUsers } from '~/api/user';
 import Button from '~/components/common/Button';
 import { GroupData } from '~/types/group';
+import { UserData } from '~/types/user';
 
 import { GroupEditorModalStyled } from './styled';
 
@@ -19,43 +21,45 @@ const initColors: PresetsItem[] = [
 ];
 
 export interface GroupEditorModalProps extends ModalProps {
-  targetGroup: GroupData;
-  onSubmit?: (group: GroupData) => void;
+  group: GroupData;
 }
 
-const GroupEditorModal = ({
-  targetGroup,
-  open,
-  onSubmit,
-  onCancel,
-  ...rest
-}: GroupEditorModalProps) => {
+const GroupEditorModal = ({ group, open, onCancel, ...rest }: GroupEditorModalProps) => {
   const nameInputRef = useRef<HTMLInputElement>(null);
+  const initGroup = {
+    id: group.id,
+    name: '',
+    explanation: '',
+    hexColor: '',
+    userId: '',
+  };
 
-  const [group, setGroup] = useState<GroupData>(targetGroup);
-  const { data: userData } = useQuery('usersQuery', fetchUsers, {
+  const [newGroup, setNewGroup] = useState(initGroup);
+  const { data: userData } = useQuery<UserData[]>('usersQuery', fetchUsers, {
     enabled: open,
     staleTime: 1000 * 60 * 10,
   });
 
-  const users = userData?.map(v => ({
-    value: v.id,
-    label: `${v.name} (${v.username})`,
-  }));
+  const { mutate } = useMutation(updateGroup);
 
-  const managerValue = group.userId
-    ? users?.filter(v => group.userId === v.value)[0].value
-    : undefined;
+  const users = [
+    { value: '', label: '( 담당자 없음 )' },
+    ...(userData
+      ? userData.map(v => ({
+          value: v.id,
+          label: `${v.name} (${v.username})`,
+        }))
+      : []),
+  ];
 
   useEffect(() => {
-    if (targetGroup) setGroup(targetGroup);
     if (open) nameInputRef.current?.focus();
-  }, [open, targetGroup]);
+  }, [open, group]);
 
   // 그룹명, 그룹설명 변경 핸들러
   const handleOnChangeValue = (e: ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target;
-    setGroup(prevState => ({
+    setNewGroup(prevState => ({
       ...prevState,
       [id]: value,
     }));
@@ -63,25 +67,49 @@ const GroupEditorModal = ({
 
   // 그룹 색상 변경 핸들러
   const handleOnChangeColor = (e: Color) => {
-    setGroup(prevState => ({
+    setNewGroup(prevState => ({
       ...prevState,
       hexColor: e.toHexString(),
     }));
   };
 
+  // 담당자 변경 핸들러
+  const handleOnChangeManager = (v: string) => {
+    setNewGroup(prevState => ({
+      ...prevState,
+      userId: v,
+    }));
+  };
+
+  // Footer 버튼 클릭 핸들러
+  const handleOnSubmit = () => {
+    console.log(newGroup);
+
+    const isEmpty =
+      newGroup.constructor === Object && Object.keys(newGroup).length === 0 ? true : false;
+    if (!isEmpty) mutate(newGroup);
+  };
+
+  // const handleOnClickRemove = () => onRemove?.(group);
   const handleOnCancel = (e: MouseEvent<HTMLButtonElement>) => {
-    setGroup(targetGroup);
+    setNewGroup(initGroup);
     onCancel?.(e);
   };
 
   const RenderFooter = () => (
     <div className="btn-wrap">
-      <Button className="btn-cancel" styled={{ variations: 'link' }} onClick={handleOnCancel}>
-        취소
-      </Button>
-      <Button className="btn-ok" styled={{ variations: 'link' }} onClick={() => onSubmit?.(group)}>
-        저장
-      </Button>
+      {/* <Button className="btn-remove" styled={{ variations: 'link' }} onClick={handleOnClickRemove}>
+        그룹 삭제
+      </Button> */}
+
+      <div className="btn-wrap inner">
+        <Button className="btn-cancel" styled={{ variations: 'link' }} onClick={handleOnCancel}>
+          취소
+        </Button>
+        <Button className="btn-ok" styled={{ variations: 'link' }} onClick={handleOnSubmit}>
+          저장
+        </Button>
+      </div>
     </div>
   );
 
@@ -94,8 +122,8 @@ const GroupEditorModal = ({
           id="name"
           type="text"
           className="input-name"
-          value={group?.name}
           spellCheck={false}
+          placeholder={group?.name}
           onChange={handleOnChangeValue}
         />
 
@@ -113,23 +141,19 @@ const GroupEditorModal = ({
         id="explanation"
         className="input-explanation"
         key="explanation"
-        value={group?.explanation}
         onChange={handleOnChangeValue}
         spellCheck={false}
-        placeholder="그룹 설명 (선택)"
+        placeholder={group.explanation ? group.explanation : '그룹 설명 (선택)'}
       />
 
-      <div className="selector-row">
-        <Select
-          className="user-selector"
-          options={users}
-          defaultValue={managerValue}
-          placeholder="( 그룹 담당자 선택 )"
-        />
-        <Button className="user-clear-btn" styled={{ variations: 'icon' }}>
-          <i className="bx bx-x" />
-        </Button>
-      </div>
+      <Select
+        className="user-selector"
+        options={users}
+        placeholder={
+          group.user ? `${group.user.name} (${group.user.username})` : '그룹 담당자 (선택)'
+        }
+        onChange={handleOnChangeManager}
+      />
     </GroupEditorModalStyled>
   );
 };
