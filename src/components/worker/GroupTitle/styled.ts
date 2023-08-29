@@ -11,25 +11,32 @@ export const GroupTitleStyled = styled.div<GroupTitleStyledProps>`
   padding: 1.8rem;
 
   .header-text {
+    display: flex;
+    gap: 1.6rem;
+    align-items: center;
+
     font-weight: bold;
     font-size: 2.2rem;
     cursor: ${p => (p.doesExist ? 'pointer' : 'default')};
-  }
 
-  .explanation-text {
-    display: flex;
-    align-items: center;
-    color: ${p => p.theme.colors.textColor3};
-    font-size: 1.2rem;
-    font-weight: normal;
+    .info-icon {
+      display: flex;
+      justify-content: center;
+      align-items: center;
 
-    ::before {
-      content: '*';
-      padding: 0.5rem 0.8rem 0 0;
+      width: 1.4rem;
+      height: 1.4rem;
+      border-radius: 50%;
+      padding-top: 1px;
+
+      background-color: #e6e6e6;
+      color: ${p => p.theme.colors.textColor3};
+      font-size: 10px;
+      font-weight: bold;
     }
   }
 
-  .manager-text {
+  .manager-text-chip {
     position: absolute;
     right: 2rem;
     color: ${p => p.theme.colors.textColor2};

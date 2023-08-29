@@ -1,57 +1,40 @@
-import { useState } from 'react';
-import { useMutation } from 'react-query';
+import React from 'react';
 
-import { updateGroup } from '~/api/group';
-import Button from '~/components/common/Button';
-import { GroupData } from '~/types/group';
+import { Tooltip } from 'antd';
 
-import GroupEditorModal from '../GroupEditorModal';
 import { GroupTitleStyled } from './styled';
 
 export interface GroupTitleProps {
-  group?: GroupData;
-  headerText?: string;
+  groupName?: string;
+  explanation?: string;
+  mangerName?: string;
+  doesExist?: boolean;
+  onClick?: () => void;
 }
 
-const GroupTitle = ({ headerText, group }: GroupTitleProps) => {
-  const doesExistGroup = !!group;
-
-  const [showEditor, setShowEditor] = useState<boolean>(false);
-
-  const { mutate } = useMutation(updateGroup, {
-    onSuccess: () => {
-      setShowEditor(false);
-    },
-  });
-
+const GroupTitle = ({ groupName, explanation, mangerName, onClick }: GroupTitleProps) => {
+  console.log('타이틀 랜더');
   return (
-    <GroupTitleStyled className="GroupTitle" doesExist={doesExistGroup}>
-      <div className="header-text" onClick={() => setShowEditor(true)}>
-        {headerText}
+    <GroupTitleStyled className="GroupTitle" doesExist={!!onClick} onClick={onClick}>
+      <div className="header-text">
+        {groupName}
 
-        {doesExistGroup && group.explanation && (
-          <span className="explanation-text">{group.explanation}</span>
-        )}
-
-        {doesExistGroup && group.userName && (
-          <span className="manager-text">
-            담당자 <span className="manager-name">{group.userName}</span>
-          </span>
+        {/* 그룹 설명이 있다면, 표시 */}
+        {explanation && (
+          <Tooltip placement="bottom" title={explanation}>
+            <span className="info-icon">i</span>
+          </Tooltip>
         )}
       </div>
 
-      {doesExistGroup && (
-        <>
-          <GroupEditorModal
-            targetGroup={group}
-            open={showEditor}
-            onSubmit={() => mutate(group)}
-            onCancel={() => setShowEditor(false)}
-          />
-        </>
+      {/* 그룹 담당자가 있다면, 표시 */}
+      {mangerName && (
+        <span className="manager-text-chip">
+          담당자 <span className="manager-name">{mangerName}</span>
+        </span>
       )}
     </GroupTitleStyled>
   );
 };
 
-export default GroupTitle;
+export default React.memo(GroupTitle);

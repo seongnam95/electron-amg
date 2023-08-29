@@ -3,10 +3,10 @@ from typing import Optional
 from datetime import datetime
 from schemas.user import UserResponse
 
-from schemas.common import check_update_fields
+from schemas.common import CamelBaseModel, check_update_fields
 
 
-class GroupBase(BaseModel):
+class GroupBase(CamelBaseModel):
     name: str
     hex_color: str
     explanation: str
@@ -16,7 +16,7 @@ class GroupCreate(GroupBase):
     pass
 
 
-class GroupUpdate(BaseModel):
+class GroupUpdate(CamelBaseModel):
     name: Optional[str] = None
     hex_color: Optional[str] = None
     explanation: Optional[str] = None

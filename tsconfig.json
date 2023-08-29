@@ -15,7 +15,8 @@
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "react-jsx",
-    "baseUrl": "./"
+    "baseUrl": "./",
+    "typeRoots": ["./types"]
   },
   "include": ["src", "app"],
   "extends": "./tsconfig.paths.json"

@@ -2,10 +2,10 @@ from pydantic import BaseModel, model_validator, root_validator
 from typing import Optional
 from datetime import datetime
 
-from schemas.common import check_update_fields
+from schemas.common import CamelBaseModel, check_update_fields
 
 
-class UserBase(BaseModel):
+class UserBase(CamelBaseModel):
     name: str
     username: str
 
@@ -16,7 +16,7 @@ class UserCreate(UserBase):
     is_approved: Optional[bool] = None
 
 
-class UserUpdate(BaseModel):
+class UserUpdate(CamelBaseModel):
     password: Optional[str] = None
     is_admin: Optional[bool] = None
     is_approved: Optional[bool] = None

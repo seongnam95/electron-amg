@@ -1,37 +1,32 @@
-import { useState, MouseEvent } from 'react';
-import { useQuery } from 'react-query';
+import { MouseEvent } from 'react';
 
 import { Divider } from 'antd';
 
-import { fetchGroups } from '~/api/group';
 import Button from '~/components/common/Button';
+import { GroupData } from '~/types/group';
 
 import GroupItem from './GroupItem/GroupItem';
 import { GroupSideBarStyled } from './styled';
 
 export interface GroupSideBarProps {
+  groups?: GroupData[];
+  selected?: string;
   onChange?: (id: string) => void;
 }
 
-const GroupSideBar = ({ onChange }: GroupSideBarProps) => {
-  const [selectedId, setSelectedId] = useState<string>('all');
-  const { data: groups, isLoading } = useQuery('groupQuery', fetchGroups);
-
+const GroupSideBar = ({ groups, selected, onChange }: GroupSideBarProps) => {
   const handleOnClickGroup = (e: MouseEvent<HTMLDivElement>) => {
-    const { id } = e.currentTarget;
-    setSelectedId(id);
-    onChange?.(id);
+    onChange?.(e.currentTarget.id);
   };
 
   // TODO: 스켈레톤 로딩 구현
-  if (isLoading) return <>로딩중</>;
   return (
     <GroupSideBarStyled className="GroupSideBar">
       <div className="menu-wrap">
         <GroupItem
           id="all"
           label="전체"
-          activated={selectedId === 'all'}
+          activated={selected === 'all'}
           onClick={handleOnClickGroup}
         />
         <Divider style={{ margin: '12px 0' }} />
@@ -44,7 +39,7 @@ const GroupSideBar = ({ onChange }: GroupSideBarProps) => {
                 key={group.id}
                 color={group.hexColor}
                 label={group.name}
-                activated={selectedId === group.id}
+                activated={selected === group.id}
                 onClick={handleOnClickGroup}
               />
             ))}
@@ -53,7 +48,7 @@ const GroupSideBar = ({ onChange }: GroupSideBarProps) => {
             <GroupItem
               id="etc"
               label="기타"
-              activated={selectedId === 'etc'}
+              activated={selected === 'etc'}
               onClick={handleOnClickGroup}
             />
           </div>

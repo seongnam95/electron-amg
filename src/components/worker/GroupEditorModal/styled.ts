@@ -8,7 +8,7 @@ export const GroupEditorModalStyled = styled(Modal)`
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 2.4rem;
+    margin-bottom: 3rem;
 
     > input {
       font-weight: bold;
@@ -37,40 +37,30 @@ export const GroupEditorModalStyled = styled(Modal)`
     font-size: ${p => p.theme.sizes.textSmall};
   }
 
-  .selector-row {
-    display: flex;
-    align-items: center;
-    gap: 1.2rem;
-    margin-top: 0.4rem;
+  .user-selector {
+    width: 100%;
+    margin-top: 1rem;
 
-    .user-selector {
-      width: 100%;
-
-      .ant-select-selector {
-        font-size: ${p => p.theme.sizes.textSmall};
-      }
-    }
-
-    .user-clear-btn {
-      > i {
-        color: ${p => p.theme.colors.error};
-      }
-
-      :hover {
-        > i {
-          color: ${p => p.theme.colors.error};
-        }
-      }
+    .ant-select-selector {
+      font-size: ${p => p.theme.sizes.textSmall};
     }
   }
 
   .btn-wrap {
     display: flex;
-    gap: 0.4rem;
-    justify-content: end;
+    justify-content: space-between;
 
-    .btn-cancel {
-      color: ${p => p.theme.colors.textColor2};
+    .btn-remove {
+      color: ${p => p.theme.colors.error};
+    }
+
+    &.inner {
+      display: flex;
+      gap: 0.4rem;
+
+      .btn-cancel {
+        color: ${p => p.theme.colors.textColor2};
+      }
     }
   }
 `;
