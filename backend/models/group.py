@@ -11,7 +11,7 @@ class Group(Base):
 
     name = Column(String, nullable=False)  # 그룹명
     hex_color = Column(String, nullable=False)  # 그룹 색상
-    explanation = Column(Integer, nullable=False)  # 그룹 설명
+    explanation = Column(Integer, nullable=True)  # 그룹 설명
 
     create_date = Column(DateTime(timezone=True), nullable=False, default=datetime.now)
 

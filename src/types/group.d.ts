@@ -7,6 +7,7 @@ export interface GroupData {
   explanation?: string;
   createDate?: string;
   user?: UserData;
+  [key: string]: any;
 }
 
 export interface GroupUpdateBody {

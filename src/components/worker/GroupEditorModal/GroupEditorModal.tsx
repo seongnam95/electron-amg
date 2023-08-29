@@ -1,48 +1,73 @@
-import { ChangeEvent, useEffect, useRef, useState, MouseEvent, useMemo } from 'react';
-import { useMutation, useQuery } from 'react-query';
+import { useEffect, useRef } from 'react';
+import { useMutation, useQuery, useQueryClient } from 'react-query';
 
 import { ColorPicker, ModalProps, Select } from 'antd';
-import { Color } from 'antd/es/color-picker';
 import { PresetsItem } from 'antd/es/color-picker/interface';
+import clsx from 'clsx';
+import { useFormik, ErrorMessage } from 'formik';
+import * as Yup from 'yup';
 
-import { updateGroup } from '~/api/group';
+import { createGroup, removeGroup, updateGroup } from '~/api/group';
 import { fetchUsers } from '~/api/user';
 import Button from '~/components/common/Button';
 import { GroupData } from '~/types/group';
 import { UserData } from '~/types/user';
+import { isEmptyObj, removeEmptyValueObj } from '~/utils/objectUtil';
 
 import { GroupEditorModalStyled } from './styled';
 
-const initColors: PresetsItem[] = [
-  {
-    label: '기본 컬러',
-    colors: ['#FE8730', '#FA5454', '7230FE'],
-  },
-];
-
-export interface GroupEditorModalProps extends ModalProps {
-  group: GroupData;
+interface GroupRequestBody {
+  name?: string;
+  explanation?: string;
+  hexColor?: string;
+  userId?: string;
 }
 
-const GroupEditorModal = ({ group, open, onCancel, ...rest }: GroupEditorModalProps) => {
-  const nameInputRef = useRef<HTMLInputElement>(null);
-  const initGroup = {
-    id: group.id,
+export interface GroupEditorModalProps extends ModalProps {
+  group?: GroupData;
+  create?: boolean;
+  onClose?: () => void;
+}
+
+const GroupEditorModal = ({
+  group,
+  open,
+  onClose,
+  create = false,
+  ...rest
+}: GroupEditorModalProps) => {
+  const initGroup: GroupRequestBody = {
     name: '',
     explanation: '',
     hexColor: '',
-    userId: '',
   };
 
-  const [newGroup, setNewGroup] = useState(initGroup);
+  const initColors: PresetsItem[] = [
+    {
+      label: '기본 컬러',
+      colors: ['#FE8730', '#FA5454', '7230FE'],
+    },
+  ];
+
+  const nameInputRef = useRef<HTMLInputElement>(null);
+  const queryClient = useQueryClient();
+
+  const { mutate: createMutate, isLoading: isCreateLoading } = useMutation(createGroup, {
+    onSuccess: () => handleSuccess(),
+  });
+  const { mutate: updateMutate, isLoading: isUpdateLoading } = useMutation(updateGroup, {
+    onSuccess: () => handleSuccess(),
+  });
+  const { mutate: removeMutate, isLoading: isRemoveLoading } = useMutation(removeGroup, {
+    onSuccess: () => handleSuccess(),
+  });
+
   const { data: userData } = useQuery<UserData[]>('usersQuery', fetchUsers, {
     enabled: open,
     staleTime: 1000 * 60 * 10,
   });
 
-  const { mutate } = useMutation(updateGroup);
-
-  const users = [
+  const userOptions = [
     { value: '', label: '( 담당자 없음 )' },
     ...(userData
       ? userData.map(v => ({
@@ -52,107 +77,130 @@ const GroupEditorModal = ({ group, open, onCancel, ...rest }: GroupEditorModalPr
       : []),
   ];
 
+  const createValidation = Yup.object({
+    name: Yup.string().required('그룹명은 필수 사항입니다.'),
+    hexColor: Yup.string().required('그룹 컬러는 필수 사항입니다.'),
+  });
+
+  // 폼 리셋, Name Input 포커스
   useEffect(() => {
-    if (open) nameInputRef.current?.focus();
+    if (open) {
+      formik.resetForm();
+      nameInputRef.current?.focus();
+    }
   }, [open, group]);
 
-  // 그룹명, 그룹설명 변경 핸들러
-  const handleOnChangeValue = (e: ChangeEvent<HTMLInputElement>) => {
-    const { id, value } = e.target;
-    setNewGroup(prevState => ({
-      ...prevState,
-      [id]: value,
-    }));
+  // 핸들러
+  const handleRemove = () => {
+    if (group && !create) removeMutate(group.id);
   };
 
-  // 그룹 색상 변경 핸들러
-  const handleOnChangeColor = (e: Color) => {
-    setNewGroup(prevState => ({
-      ...prevState,
-      hexColor: e.toHexString(),
-    }));
+  const handleSubmit = (values: GroupRequestBody) => {
+    if (create) createMutate(values);
+    else if (group) {
+      const validBody: GroupRequestBody = removeEmptyValueObj(values);
+      if (!isEmptyObj(validBody))
+        updateMutate({
+          id: group?.id,
+          ...validBody,
+        });
+    }
   };
 
-  // 담당자 변경 핸들러
-  const handleOnChangeManager = (v: string) => {
-    setNewGroup(prevState => ({
-      ...prevState,
-      userId: v,
-    }));
+  const handleSuccess = () => {
+    queryClient.invalidateQueries();
+    onClose?.();
   };
 
-  // Footer 버튼 클릭 핸들러
-  const handleOnSubmit = () => {
-    console.log(newGroup);
+  // Formik Hook
+  const formik = useFormik({
+    initialValues: initGroup,
+    onSubmit: handleSubmit,
+    validationSchema: create && createValidation,
+  });
 
-    const isEmpty =
-      newGroup.constructor === Object && Object.keys(newGroup).length === 0 ? true : false;
-    if (!isEmpty) mutate(newGroup);
-  };
-
-  // const handleOnClickRemove = () => onRemove?.(group);
-  const handleOnCancel = (e: MouseEvent<HTMLButtonElement>) => {
-    setNewGroup(initGroup);
-    onCancel?.(e);
-  };
-
+  // Footer 버튼 렌더러
   const RenderFooter = () => (
-    <div className="btn-wrap">
-      {/* <Button className="btn-remove" styled={{ variations: 'link' }} onClick={handleOnClickRemove}>
-        그룹 삭제
-      </Button> */}
-
-      <div className="btn-wrap inner">
-        <Button className="btn-cancel" styled={{ variations: 'link' }} onClick={handleOnCancel}>
+    <div className={clsx('footer-wrap', create && 'create')}>
+      {!create && (
+        <Button className="btn-remove" styled={{ variations: 'link' }} onClick={handleRemove}>
+          그룹 삭제
+        </Button>
+      )}
+      <span className="err-msg">{formik.errors.name || formik.errors.hexColor}</span>
+      <div className="btn-wrap">
+        <Button className="btn-cancel" styled={{ variations: 'link' }} onClick={onClose}>
           취소
         </Button>
-        <Button className="btn-ok" styled={{ variations: 'link' }} onClick={handleOnSubmit}>
-          저장
+        <Button className="btn-ok" styled={{ variations: 'link' }} onClick={formik.submitForm}>
+          {create ? '그룹 생성' : '저장'}
         </Button>
       </div>
     </div>
   );
 
   return (
-    <GroupEditorModalStyled open={open} centered footer={<RenderFooter />} {...rest}>
+    <GroupEditorModalStyled
+      title={`그룹 ${create ? '생성' : '편집'}`}
+      open={open}
+      centered
+      footer={<RenderFooter />}
+      {...rest}
+    >
       <div className="title-color-row">
         {/* 그룹명 */}
         <input
           ref={nameInputRef}
-          id="name"
-          type="text"
+          name="name"
           className="input-name"
           spellCheck={false}
-          placeholder={group?.name}
-          onChange={handleOnChangeValue}
+          placeholder={group && group.name ? group.name : '그룹명'}
+          value={formik.values.name}
+          onChange={formik.handleChange}
         />
 
-        {/* 그룹 색상 */}
+        {/* 그룹 컬러 */}
         <ColorPicker
           disabledAlpha
           defaultValue={group?.hexColor}
           presets={initColors}
-          onChangeComplete={handleOnChangeColor}
+          onChangeComplete={color => {
+            formik.handleChange({
+              target: {
+                name: 'hexColor',
+                value: color.toHexString(),
+              },
+            });
+          }}
         />
       </div>
 
       {/* 그룹 설명 */}
       <input
-        id="explanation"
+        name="explanation"
         className="input-explanation"
-        key="explanation"
-        onChange={handleOnChangeValue}
+        value={formik.values.explanation}
         spellCheck={false}
-        placeholder={group.explanation ? group.explanation : '그룹 설명 (선택)'}
+        placeholder={group && group.explanation ? group.explanation : '그룹 설명 (선택)'}
+        onChange={formik.handleChange}
       />
 
+      {/* 그룹 담당자 */}
       <Select
         className="user-selector"
-        options={users}
+        options={userOptions}
+        value={formik.values.userId}
         placeholder={
-          group.user ? `${group.user.name} (${group.user.username})` : '그룹 담당자 (선택)'
+          group && group.user ? `${group.user.name} (${group.user.username})` : '그룹 담당자 (선택)'
         }
-        onChange={handleOnChangeManager}
+        onChange={userId => {
+          formik.handleChange({
+            target: {
+              name: 'userId',
+              value: userId,
+            },
+          });
+        }}
       />
     </GroupEditorModalStyled>
   );

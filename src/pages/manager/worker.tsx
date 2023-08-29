@@ -15,10 +15,12 @@ import { GroupData } from '~/types/group';
 const Worker = () => {
   const [selectedGroupId, setSelectedGroupId] = useState<string>('all');
   const [showEditor, setShowEditor] = useState<boolean>(false);
+  const [showCreator, setShowCreator] = useState<boolean>(false);
 
   const { data: groups, isLoading } = useQuery<GroupData[]>('groupQuery', fetchGroups, {
     staleTime: 1000 * 60 * 5,
   });
+  console.log(groups);
   const selectedGroup = groups?.filter(group => String(group.id) === selectedGroupId)[0];
   const groupName =
     selectedGroupId === 'all' ? '전체' : selectedGroupId === 'etc' ? '기타' : selectedGroup?.name;
@@ -33,6 +35,7 @@ const Worker = () => {
         groups={groups}
         selected={selectedGroupId}
         onChange={id => setSelectedGroupId(id)}
+        onCreate={() => setShowCreator(true)}
       />
 
       <motion.div
@@ -44,16 +47,6 @@ const Worker = () => {
       >
         {/* 그룹 헤더 타이틀 */}
         <GroupTitle groupName={groupName} onClick={selectedGroup && (() => setShowEditor(true))} />
-
-        {/* 그룹이 존재한다면 모달 랜더링 */}
-        {selectedGroup && (
-          <GroupEditorModal
-            group={selectedGroup}
-            open={showEditor}
-            // onSubmit={newGroup => console.log(newGroup)}
-            onCancel={() => setShowEditor(false)}
-          />
-        )}
 
         {/* 필터/컨트롤 바 */}
         <div className="worker-control-bar">
@@ -74,6 +67,16 @@ const Worker = () => {
           </div>
         )} */}
       </motion.div>
+
+      <GroupEditorModal
+        create={showCreator}
+        group={showEditor ? selectedGroup : undefined}
+        open={showEditor || showCreator}
+        onClose={() => {
+          setShowEditor(false);
+          setShowCreator(false);
+        }}
+      />
     </WorkerPageStyled>
   );
 };

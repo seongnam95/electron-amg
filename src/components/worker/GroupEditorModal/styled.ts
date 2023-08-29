@@ -2,17 +2,18 @@ import { Modal } from 'antd';
 import styled from 'styled-components';
 
 export const GroupEditorModalStyled = styled(Modal)`
-  max-width: 40rem;
+  max-width: 42rem;
 
   .title-color-row {
     display: flex;
+    gap: 2.2rem;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 3rem;
 
-    > input {
-      font-weight: bold;
-      font-size: 2.2rem;
+    > .input-name {
+      flex: 1;
+      font-size: 2rem;
 
       outline: none;
       border: none;
@@ -46,7 +47,7 @@ export const GroupEditorModalStyled = styled(Modal)`
     }
   }
 
-  .btn-wrap {
+  .footer-wrap {
     display: flex;
     justify-content: space-between;
 
@@ -54,13 +55,19 @@ export const GroupEditorModalStyled = styled(Modal)`
       color: ${p => p.theme.colors.error};
     }
 
-    &.inner {
-      display: flex;
-      gap: 0.4rem;
+    .btn-cancel {
+      color: ${p => p.theme.colors.textColor2};
+    }
 
-      .btn-cancel {
-        color: ${p => p.theme.colors.textColor2};
-      }
+    .btn-wrap {
+      display: flex;
+    }
+
+    .err-msg {
+      display: flex;
+      align-items: center;
+      color: ${p => p.theme.colors.error};
+      font-size: ${p => p.theme.sizes.textSmall};
     }
   }
 `;

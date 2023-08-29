@@ -11,10 +11,11 @@ import { GroupSideBarStyled } from './styled';
 export interface GroupSideBarProps {
   groups?: GroupData[];
   selected?: string;
+  onCreate?: () => void;
   onChange?: (id: string) => void;
 }
 
-const GroupSideBar = ({ groups, selected, onChange }: GroupSideBarProps) => {
+const GroupSideBar = ({ groups, selected, onCreate, onChange }: GroupSideBarProps) => {
   const handleOnClickGroup = (e: MouseEvent<HTMLDivElement>) => {
     onChange?.(e.currentTarget.id);
   };
@@ -55,7 +56,7 @@ const GroupSideBar = ({ groups, selected, onChange }: GroupSideBarProps) => {
         )}
       </div>
 
-      <Button styled={{ fullWidth: true, variations: 'default' }}>
+      <Button onClick={onCreate} styled={{ fullWidth: true, variations: 'default' }}>
         그룹 생성
         <i className="bx bx-plus" />
       </Button>

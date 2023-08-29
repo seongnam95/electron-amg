@@ -48,7 +48,7 @@ def create_group(
     db: Session = Depends(deps.get_db),
     group_in: schemas.GroupCreate,
 ):
-    group = crud.group.create(db=db, obj_in=group_in)
+    group = crud.group.create_group(db=db, obj_in=group_in)
     return BaseResponse(success=True, result=group)
 
 
@@ -65,7 +65,7 @@ def update_group(
 
 
 # 그룹 삭제
-@router.delete("/{group_id}", response_model=BaseResponse[schemas.Group])
+@router.delete("/{group_id}", response_model=BaseResponse)
 def delete_group(
     *,
     group: schemas.Group = Depends(get_group),
