@@ -11,6 +11,7 @@ import GroupSideBar from '~/components/worker/GroupSideBar';
 import GroupTitle from '~/components/worker/GroupTitle';
 import { WorkerPageStyled } from '~/styles/pageStyled/workerPageStyled';
 import { GroupData } from '~/types/group';
+import { camelToSnake } from '~/utils/snakeToCamel';
 
 const Worker = () => {
   const [selectedGroupId, setSelectedGroupId] = useState<string>('all');
@@ -20,7 +21,7 @@ const Worker = () => {
   const { data: groups, isLoading } = useQuery<GroupData[]>('groupQuery', fetchGroups, {
     staleTime: 1000 * 60 * 5,
   });
-  console.log(groups);
+
   const selectedGroup = groups?.filter(group => String(group.id) === selectedGroupId)[0];
   const groupName =
     selectedGroupId === 'all' ? '전체' : selectedGroupId === 'etc' ? '기타' : selectedGroup?.name;

@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from ... import deps
 
 import crud, schemas
-from response_model import BaseResponse, ListResponse
+from response_model import DataResponse, ListResponse
 
 router = APIRouter()
 
@@ -28,27 +28,27 @@ def read_all_contract(
 
 # TODO : 추후 필요 없다면 삭제
 # 계약서 불러오기
-@router.get("/{contract_id}", response_model=BaseResponse[schemas.Contract])
+@router.get("/{contract_id}", response_model=DataResponse[schemas.Contract])
 def read_contract(
     *,
     contract: schemas.Contract = Depends(get_contract),
 ):
-    return BaseResponse(success=True, result=contract)
+    return DataResponse(success=True, result=contract)
 
 
 # 계약서 삭제
-@router.delete("/{contract_id}", response_model=BaseResponse[schemas.Contract])
+@router.delete("/{contract_id}", response_model=DataResponse[schemas.Contract])
 def delete_contract(
     *,
     contract: schemas.Contract = Depends(get_contract),
     db: Session = Depends(deps.get_db),
 ):
     contract = crud.contract.remove(db=db, id=contract.id)
-    return BaseResponse(success=True, result=contract)
+    return DataResponse(success=True, result=contract)
 
 
 # 계약서 데이터 변경
-@router.put("/{contract_id}", response_model=BaseResponse[schemas.Contract])
+@router.put("/{contract_id}", response_model=DataResponse[schemas.Contract])
 def update_contract(
     *,
     contract: schemas.Contract = Depends(get_contract),
@@ -56,11 +56,11 @@ def update_contract(
     contract_in: schemas.ContractUpdate,
 ):
     contract = crud.contract.update(db=db, db_obj=contract, obj_in=contract_in)
-    return BaseResponse(success=True, result=contract)
+    return DataResponse(success=True, result=contract)
 
 
 # 해당 근로자 계약서 생성
-@router.post("/", response_model=BaseResponse[schemas.Contract])
+@router.post("/", response_model=DataResponse[schemas.Contract])
 def create_contract_for_worker(
     *,
     worker: schemas.Worker = Depends(deps.get_worker),
@@ -70,13 +70,13 @@ def create_contract_for_worker(
     contract = crud.contract.create_contract(
         db=db, obj_in=contract_in, worker_id=worker.id
     )
-    return BaseResponse(success=True, result=contract)
+    return DataResponse(success=True, result=contract)
 
 
 # 해당 근로자 전체 계약서 불러오기
 @router.get(
     "/worker/{worker_id}/contract",
-    response_model=BaseResponse[schemas.WorkerContractModel],
+    response_model=DataResponse[schemas.WorkerContractModel],
 )
 def read_all_contract_for_worker(
     *,
@@ -101,4 +101,4 @@ def read_all_contract_for_worker(
         prev_contracts=prev_contracts,
     )
 
-    return BaseResponse(success=True, result=response)
+    return DataResponse(success=True, result=response)

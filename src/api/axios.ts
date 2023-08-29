@@ -1,12 +1,14 @@
 import axios from 'axios';
 
-let isTokenRefreshing = false;
-let subscribers: ((token: string) => void)[] = [];
+import { camelToSnake, snakeToCamel } from '~/utils/snakeToCamel';
 
-const authAxios = axios.create({
-  baseURL: 'http://localhost:8001/api/v1/',
+const axiosPrivate = axios.create({
+  baseURL: import.meta.env.VITE_BASE_URL,
   withCredentials: true,
 });
+
+let isTokenRefreshing = false;
+let subscribers: ((token: string) => void)[] = [];
 
 function addRefreshSubscriber(cb: (token: string) => void) {
   subscribers.push(cb);
@@ -18,7 +20,7 @@ function onTokenRefreshed(token: string) {
 
 const getRefreshToken = async (): Promise<string | void> => {
   try {
-    const res = await authAxios.post('auth/token/refresh');
+    const res = await axiosPrivate.post('auth/token/refresh');
     const newAccessToken = res.headers['authorization'];
 
     // 발급이 정상적으로 되었을 경우
@@ -35,18 +37,14 @@ const getRefreshToken = async (): Promise<string | void> => {
     subscribers = [];
     sessionStorage.removeItem('userPersist');
     sessionStorage.removeItem('authorization');
-    window.location.reload();
     // TODO : Logout Endpoint Request
   }
 };
 
-authAxios.interceptors.request.use(config => {
-  if (!config.headers) return config;
-
-  // 로그인 Endpoint가 아닐 경우, 헤더에 AccessToken 저장
+axiosPrivate.interceptors.request.use(config => {
+  if (config.data) config.data = camelToSnake(config.data);
   if (config.url !== '/auth/login' && config.url !== 'auth/token/refresh') {
     let token = sessionStorage.getItem('authorization');
-
     if (token !== null) {
       config.headers['authorization'] = `Bearer ${token}`;
     }
@@ -55,8 +53,12 @@ authAxios.interceptors.request.use(config => {
   return config;
 });
 
-authAxios.interceptors.response.use(
-  response => response,
+axiosPrivate.interceptors.response.use(
+  response => {
+    if (response.data) response.data = snakeToCamel(response.data);
+    return response;
+  },
+
   async error => {
     const originalRequest = error.config;
     const msg = error.response.data.msg;
@@ -70,7 +72,7 @@ authAxios.interceptors.response.use(
           return new Promise(resolve => {
             addRefreshSubscriber((token: string) => {
               originalRequest.headers.Authorization = token;
-              resolve(authAxios(originalRequest));
+              resolve(axiosPrivate(originalRequest));
             });
           });
         }
@@ -80,7 +82,7 @@ authAxios.interceptors.response.use(
 
         if (typeof newAccessToken === 'string') {
           originalRequest.headers['authorization'] = `Bearer ${newAccessToken}`;
-          return authAxios(originalRequest);
+          return axiosPrivate(originalRequest);
         }
       }
     }
@@ -88,4 +90,4 @@ authAxios.interceptors.response.use(
   },
 );
 
-export default authAxios;
+export default axiosPrivate;

@@ -1,47 +1,40 @@
-import { BaseApiResponse, FetchApiResponse, UpdateApiResponse } from '~/types/common';
+import { AxiosResponse } from 'axios';
+
+import { BaseResponse, FetchListResponse } from '~/types/common';
 import { GroupData } from '~/types/group';
-import { snakeToCamel } from '~/utils/snakeToCamel';
 
-import authAxios from './apiClient';
-
-export const fetchGroups = async (): Promise<GroupData[]> => {
-  const response = await authAxios.get<FetchApiResponse>('/group/');
-  return snakeToCamel<GroupData[]>(response.data.result);
-};
+import axiosPrivate from './axios';
 
 interface GroupRequestBody {
-  id?: string;
-  name?: string;
-  hexColor?: string;
+  id: string;
+  name: string;
+  hexColor: string;
   explanation?: string;
   userId?: string;
 }
 
-export const createGroup = async (group: GroupRequestBody): Promise<BaseApiResponse> => {
-  const createBody = {
-    name: group.name,
-    hex_color: group.hexColor,
-    explanation: group.explanation,
-    ...(group.userId && { user_id: group.userId }),
-  };
-
-  const response = await authAxios.post<BaseApiResponse>(`/group`, createBody);
+const apiCall = async <T>(method: 'get' | 'post' | 'put' | 'delete', url: string, body?: any) => {
+  const response = await axiosPrivate.get('/group/');
   return response.data;
 };
 
-export const updateGroup = async (group: GroupRequestBody): Promise<UpdateApiResponse> => {
-  const updateBody = {
-    ...(group.name && { name: group.name }),
-    ...(group.hexColor && { hex_color: group.hexColor }),
-    ...(group.explanation && { explanation: group.explanation }),
-    ...(group.userId && { user_id: group.userId }),
-  };
+export const fetchGroups = async (): Promise<GroupData[]> => {
+  const response = await axiosPrivate.get('/group/');
+  console.log(response.data.result);
+  return response.data.result;
+};
 
-  const response = await authAxios.put<UpdateApiResponse>(`/group/${group.id}`, updateBody);
+export const createGroup = async (group: GroupRequestBody): Promise<BaseResponse> => {
+  const response = await axiosPrivate.post(`/group/`, group);
   return response.data;
 };
 
-export const removeGroup = async (id: string): Promise<BaseApiResponse> => {
-  const response = await authAxios.delete<BaseApiResponse>(`/group/${id}`);
+export const updateGroup = async (group: Partial<GroupRequestBody>): Promise<BaseResponse> => {
+  const response = await axiosPrivate.put(`/group/${group.id}`, group);
+  return response.data;
+};
+
+export const removeGroup = async (id: string): Promise<BaseResponse> => {
+  const response = await axiosPrivate.delete(`/group/${id}`);
   return response.data;
 };

@@ -13,7 +13,6 @@ export interface GroupTitleProps {
 }
 
 const GroupTitle = ({ groupName, explanation, mangerName, onClick }: GroupTitleProps) => {
-  console.log('타이틀 랜더');
   return (
     <GroupTitleStyled className="GroupTitle" doesExist={!!onClick} onClick={onClick}>
       <div className="header-text">

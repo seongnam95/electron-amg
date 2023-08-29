@@ -1,8 +1,8 @@
-import { FetchApiResponse } from '~/types/common';
+import { FetchResponse } from '~/types/common';
 
-import apiClient from './apiClient';
+import axiosPrivate from './axios';
 
-export const fetchWorkers = async (): Promise<FetchApiResponse> => {
-  const response = await apiClient.get<FetchApiResponse>('/worker/');
+export const fetchWorkers = async (): Promise<FetchResponse> => {
+  const response = await axiosPrivate.get<FetchResponse>('/worker/');
   return response.data;
 };

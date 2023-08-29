@@ -12,6 +12,7 @@ dist-electron
 .vscode
 .vscode/
 .vscode/*
+.env
 
 settings.json
 

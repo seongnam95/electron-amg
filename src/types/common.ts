@@ -1,22 +1,17 @@
-export interface FetchApiResponse {
+export interface FetchResponse {
   success: boolean;
   count: number;
   result: any;
 }
 
-export interface UpdateApiResponse {
+export interface FetchListResponse {
   success: boolean;
   msg: string;
+  count: number;
+  result: any[];
 }
 
-export interface BaseApiResponse {
+export interface BaseResponse {
   success: boolean;
-  msg: any;
-}
-
-export interface Token {
-  username: string;
-  accessToken: string;
-  refreshToken: string;
-  tokenType: string;
+  msg: string;
 }

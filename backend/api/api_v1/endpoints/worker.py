@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from response_model import BaseResponse, ListResponse
+from response_model import DataResponse, ListResponse
 from ... import deps
 
 import crud, schemas, models
@@ -21,11 +21,11 @@ def read_all_worker(
 
 
 # 근로자 불러오기
-@router.get("/{worker_id}", response_model=BaseResponse[schemas.Worker])
+@router.get("/{worker_id}", response_model=DataResponse[schemas.Worker])
 def read_worker(
     worker: schemas.Worker = Depends(deps.get_worker),
 ):
-    return BaseResponse(success=True, result=worker)
+    return DataResponse(success=True, result=worker)
 
 
 # 근로자의 모든 계약서 불러오기
@@ -54,7 +54,7 @@ def read_all_worklog(
 
 
 # 근로자 생성
-@router.post("/", response_model=BaseResponse[schemas.Worker])
+@router.post("/", response_model=DataResponse[schemas.Worker])
 def create_worker(
     *, db: Session = Depends(deps.get_db), worker_in: schemas.WorkerCreate
 ):
@@ -65,11 +65,11 @@ def create_worker(
             raise HTTPException(status_code=400, detail="그룹이 존재하지 않습니다.")
 
     worker = crud.worker.create(db=db, obj_in=worker_in)
-    return BaseResponse(success=True, result=worker)
+    return DataResponse(success=True, result=worker)
 
 
 # 근로자 업데이트
-@router.put("/{worker_id}", response_model=BaseResponse[schemas.Worker])
+@router.put("/{worker_id}", response_model=DataResponse[schemas.Worker])
 def update_worker(
     *,
     worker: schemas.Worker = Depends(deps.get_worker),
@@ -77,15 +77,15 @@ def update_worker(
     worker_in: schemas.WorkerUpdate,
 ):
     worker = crud.worker.update(db=db, db_obj=worker, obj_in=worker_in)
-    return BaseResponse(success=True, result=worker)
+    return DataResponse(success=True, result=worker)
 
 
 # 근로자 삭제
-@router.delete("/{worker_id}", response_model=BaseResponse[schemas.Worker])
+@router.delete("/{worker_id}", response_model=DataResponse[schemas.Worker])
 def delete_worker(
     *,
     worker: schemas.Worker = Depends(deps.get_worker),
     db: Session = Depends(deps.get_db),
 ):
     worker = crud.worker.remove(db=db, id=worker.id)
-    return BaseResponse(success=True, result=worker)
+    return DataResponse(success=True, result=worker)

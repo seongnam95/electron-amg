@@ -10,10 +10,10 @@ class GroupBase(BaseModel):
     name: str
     hex_color: str
     explanation: str
-    user_id: Optional[int] = None
 
 
 class GroupCreate(GroupBase):
+    user_id: Optional[int] = None
     pass
 
 

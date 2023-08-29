@@ -1,6 +1,6 @@
 import { AxiosResponse } from 'axios';
 
-import authAxios from './apiClient';
+import axiosPrivate from './axios';
 
 interface LoginBody {
   username: string;
@@ -9,6 +9,6 @@ interface LoginBody {
 }
 
 export const loginUser = async (body: LoginBody): Promise<AxiosResponse> => {
-  const response = await authAxios.post<AxiosResponse>('/auth/login', body);
+  const response = await axiosPrivate.post<AxiosResponse>('/auth/login', body);
   return response;
 };

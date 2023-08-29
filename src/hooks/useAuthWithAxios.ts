@@ -1,58 +1,95 @@
-import axios, { AxiosInstance } from 'axios';
-import { useSetRecoilState } from 'recoil';
+// import { useEffect } from 'react';
 
-import { initUser, userState } from '~/stores/user';
+// import { AxiosInstance } from 'axios';
 
-export const useAxiosWithAuth = (): AxiosInstance => {
-  const setUser = useSetRecoilState(userState);
+// export const useAxiosPrivate = (): AxiosInstance => {
+//   useEffect(() => {
+//     let isTokenRefreshing = false;
+//     let subscribers: ((token: string) => void)[] = [];
 
-  const createAxiosInstance = () => {
-    return axios.create({
-      baseURL: 'http://localhost:8001/api/v1/',
-      withCredentials: true,
-    });
-  };
+//     function addRefreshSubscriber(cb: (token: string) => void) {
+//       subscribers.push(cb);
+//     }
 
-  let axiosInstance = createAxiosInstance();
+//     function onTokenRefreshed(token: string) {
+//       subscribers.forEach(cb => cb(token));
+//     }
 
-  axiosInstance.interceptors.request.use(config => {
-    console.log(config.headers);
-    if (!config.headers) return config;
-    return config;
-  });
+//     const getRefreshToken = async (): Promise<string | void> => {
+//       console.log('Refresh Token');
+//       try {
+//         const res = await axiosAuth.post('auth/token/refresh');
+//         const newAccessToken = res.headers['authorization'];
 
-  axiosInstance.interceptors.response.use(
-    response => response,
-    async error => {
-      const originalRequest = error.config;
-      const msg = error.response.data.msg;
+//         // 발급이 정상적으로 되었을 경우
+//         if (newAccessToken) {
+//           isTokenRefreshing = false;
+//           onTokenRefreshed(newAccessToken);
+//           subscribers = [];
+//           return newAccessToken;
+//         }
+//       } catch (e) {
+//         isTokenRefreshing = false;
+//         subscribers = [];
+//         sessionStorage.removeItem('userPersist');
+//         sessionStorage.removeItem('authorization');
+//         // TODO : Logout Endpoint Request
+//       }
+//     };
 
-      if (error.response.status === 401 && !originalRequest._retry) {
-        switch (msg) {
-          // 토큰 만료, Access-Token 발행 후, 재요청
-          case 'EXPIRED_TOKEN' || 'INVALID_TOKEN':
-            originalRequest._retry = true;
+//     const requestInterceptor = axiosPrivate.interceptors.request.use(
+//       config => {
+//         console.log('Request');
+//         let token = sessionStorage.getItem('authorization');
+//         if (token !== null) {
+//           config.headers['authorization'] = `Bearer ${token}`;
+//         }
+//         return config;
+//       },
+//       error => Promise.reject(error),
+//     );
 
-            const res = await axiosInstance.post('auth/token/refresh');
-            const newAccessToken = res.headers['authorization'];
+//     const responseInterceptor = axiosPrivate.interceptors.response.use(
+//       response => response,
+//       async error => {
+//         console.log('Response Err');
+//         const originalRequest = error.config;
+//         const msg = error.response.data.msg;
 
-            if (newAccessToken) {
-              sessionStorage.setItem('authorization', newAccessToken);
-              originalRequest.headers['authorization'] = newAccessToken;
+//         if (error.response.status === 401 && !originalRequest._retry) {
+//           if (msg === 'EXPIRED_TOKEN' || msg === 'INVALID_TOKEN') {
+//             originalRequest._retry = true;
 
-              return axiosInstance(originalRequest);
-            }
+//             // 토큰 발행중일 경우 요청 대기
+//             if (isTokenRefreshing) {
+//               return new Promise(resolve => {
+//                 addRefreshSubscriber((token: string) => {
+//                   originalRequest.headers.Authorization = token;
+//                   resolve(axiosPrivate(originalRequest));
+//                 });
+//               });
+//             }
 
-          // 리프레쉬 토큰 만료, 로그아웃
-          case 'EXPIRED_REFRESH_TOKEN':
-            setUser(initUser);
-            sessionStorage.clear();
-          // TODO : Logout Endpoint
-        }
-      }
-      return Promise.reject(error);
-    },
-  );
+//             // AccessToken 재발행
+//             const newAccessToken = await getRefreshToken();
 
-  return axiosInstance;
-};
+//             if (typeof newAccessToken === 'string') {
+//               sessionStorage.setItem('authorization', newAccessToken);
+
+//               originalRequest.headers['authorization'] = `Bearer ${newAccessToken}`;
+//               return axiosPrivate(originalRequest);
+//             }
+//           }
+//         }
+//         return Promise.reject(error);
+//       },
+//     );
+
+//     return () => {
+//       axiosPrivate.interceptors.request.eject(requestInterceptor);
+//       axiosPrivate.interceptors.response.eject(responseInterceptor);
+//     };
+//   }, []);
+
+//   return axiosPrivate;
+// };

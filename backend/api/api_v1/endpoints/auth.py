@@ -7,7 +7,7 @@ from sqlalchemy.orm import Session
 
 from ... import deps
 
-from response_model import BaseResponse
+from response_model import DataResponse
 from exceptions import TokenExpiredError, TokenInvalidError
 
 from util.jwt_token import Jwt
@@ -81,7 +81,7 @@ def refresh_token(refresh_token: str = Cookie(None)):
     username = payload.get("sub")
     new_access_token = jwt.create_access_token({"sub": username})
 
-    base_res = BaseResponse(success=True, result="정상 처리되었습니다.")
+    base_res = DataResponse(success=True, result="정상 처리되었습니다.")
     headers = {"Authorization": new_access_token}
 
     return JSONResponse(content=base_res.model_dump(), headers=headers)

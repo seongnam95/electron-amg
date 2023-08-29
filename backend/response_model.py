@@ -1,21 +1,18 @@
-import json
 from typing import List, TypeVar, Generic
-import typing
-from fastapi import BackgroundTasks
 from pydantic import BaseModel
-from fastapi.responses import Response
 
 T = TypeVar("T")
 
 
-class InitResponse(BaseModel):
+class BaseResponse(BaseModel):
     success: bool
+    msg: str
 
 
-class BaseResponse(InitResponse, Generic[T]):
+class DataResponse(BaseResponse, Generic[T]):
     result: T
 
 
-class ListResponse(InitResponse, Generic[T]):
+class ListResponse(BaseResponse, Generic[T]):
     count: int
     result: List[T]

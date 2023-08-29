@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 from ... import deps
 
 import crud, schemas
-from response_model import BaseResponse, ListResponse
+from response_model import DataResponse, ListResponse
 
 
 router = APIRouter()
@@ -37,14 +37,14 @@ def read_all_worklog(
 
 
 # 근무로그 조회
-@router.get("/worklog/{worklog_id}", response_model=BaseResponse[schemas.WorkLog])
+@router.get("/worklog/{worklog_id}", response_model=DataResponse[schemas.WorkLog])
 def read_worklog(worklog: schemas.WorkLog = Depends(get_worklog)):
-    return BaseResponse(success=True, result=worklog)
+    return DataResponse(success=True, result=worklog)
 
 
 # 근무로그 생성 (날짜 중복 불가)
 @router.post(
-    "/worker/{worker_id}/worklog", response_model=BaseResponse[schemas.WorkLog]
+    "/worker/{worker_id}/worklog", response_model=DataResponse[schemas.WorkLog]
 )
 def create_worklog(
     *,
@@ -68,11 +68,11 @@ def create_worklog(
     worklog = crud.worklog.create_for_worker(
         db=db, obj_in=worklog_in, worker_id=worker.id
     )
-    return BaseResponse(success=True, result=worklog)
+    return DataResponse(success=True, result=worklog)
 
 
 # 근무로그 업데이트
-@router.put("/worklog/{worklog_id}", response_model=BaseResponse[schemas.WorkLog])
+@router.put("/worklog/{worklog_id}", response_model=DataResponse[schemas.WorkLog])
 def update_worklog(
     *,
     worklog: schemas.WorkLog = Depends(get_worklog),
@@ -80,7 +80,7 @@ def update_worklog(
     worklog_in: schemas.WorkLogUpdate,
 ):
     worklog = crud.worklog.update(db=db, db_obj=worklog, obj_in=worklog_in)
-    return BaseResponse(success=True, result=worklog)
+    return DataResponse(success=True, result=worklog)
 
 
 # 출, 퇴근 로그 삭제
