@@ -1,26 +1,21 @@
 import { useState } from 'react';
-import { useQuery } from 'react-query';
 
 import { motion } from 'framer-motion';
 
-import { fetchGroups } from '~/api/group';
 import Button from '~/components/common/Button';
 import LayoutConfig from '~/components/layouts/LayoutConfig/LayoutConfig';
 import GroupEditorModal from '~/components/worker/GroupEditorModal';
 import GroupSideBar from '~/components/worker/GroupSideBar';
 import GroupTitle from '~/components/worker/GroupTitle';
+import { useGroupQuery } from '~/hooks/querys/useGroup';
 import { WorkerPageStyled } from '~/styles/pageStyled/workerPageStyled';
-import { GroupData } from '~/types/group';
-import { camelToSnake } from '~/utils/snakeToCamel';
 
 const Worker = () => {
   const [selectedGroupId, setSelectedGroupId] = useState<string>('all');
   const [showEditor, setShowEditor] = useState<boolean>(false);
   const [showCreator, setShowCreator] = useState<boolean>(false);
 
-  const { data: groups, isLoading } = useQuery<GroupData[]>('groupQuery', fetchGroups, {
-    staleTime: 1000 * 60 * 5,
-  });
+  const { groups, isLoading } = useGroupQuery();
 
   const selectedGroup = groups?.filter(group => String(group.id) === selectedGroupId)[0];
   const groupName =
@@ -35,7 +30,7 @@ const Worker = () => {
       <GroupSideBar
         groups={groups}
         selected={selectedGroupId}
-        onChange={id => setSelectedGroupId(id)}
+        onChange={e => setSelectedGroupId(e.currentTarget.id)}
         onCreate={() => setShowCreator(true)}
       />
 
@@ -47,7 +42,12 @@ const Worker = () => {
         transition={{ duration: 0.3 }}
       >
         {/* 그룹 헤더 타이틀 */}
-        <GroupTitle groupName={groupName} onClick={selectedGroup && (() => setShowEditor(true))} />
+        <GroupTitle
+          groupName={groupName}
+          explanation={selectedGroup?.explanation}
+          mangerName={selectedGroup?.user?.name}
+          onEditor={selectedGroup && (() => setShowEditor(true))}
+        />
 
         {/* 필터/컨트롤 바 */}
         <div className="worker-control-bar">

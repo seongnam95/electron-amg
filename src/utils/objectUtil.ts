@@ -1,7 +1,5 @@
 const removeEmptyValueObj = (obj: Object) => {
-  return Object.fromEntries(
-    Object.entries(obj).filter(([_, value]) => value && value.trim() !== ''),
-  );
+  return Object.fromEntries(Object.entries(obj).filter(([_, value]) => value !== ''));
 };
 
 const isEmptyObj = (obj: Object) => {

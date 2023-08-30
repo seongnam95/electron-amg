@@ -9,6 +9,7 @@ export const GroupTitleStyled = styled.div<GroupTitleStyledProps>`
   align-items: baseline;
   gap: 2rem;
   padding: 1.8rem;
+  cursor: ${p => (p.doesExist ? 'pointer' : 'default')};
 
   .header-text {
     display: flex;
@@ -17,7 +18,6 @@ export const GroupTitleStyled = styled.div<GroupTitleStyledProps>`
 
     font-weight: bold;
     font-size: 2.2rem;
-    cursor: ${p => (p.doesExist ? 'pointer' : 'default')};
 
     .info-icon {
       display: flex;

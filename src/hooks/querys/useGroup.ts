@@ -3,28 +3,39 @@ import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { AxiosError } from 'axios';
 
 import { createGroup, fetchGroups, removeGroup, updateGroup } from '~/api/group';
+import { FetchListResponse } from '~/types/common';
 import { GroupData } from '~/types/group';
 
 interface QueryProps {
-  onSuccess?: (groups: GroupData[]) => void;
+  onSuccess?: () => void;
+  onError?: () => void;
 }
 
-export const useGroupQuery = ({ onSuccess }: QueryProps) => {
+export const useGroupQuery = ({ onSuccess }: QueryProps = {}) => {
   const {
-    data: groups,
+    data: groupRes,
     isLoading,
     isError,
-  } = useQuery<GroupData[], AxiosError>(['group'], fetchGroups, {
+  } = useQuery<FetchListResponse<GroupData>, AxiosError>(['group'], fetchGroups, {
     onSuccess: onSuccess,
   });
-
-  return { groups, isLoading, isError };
+  const groups = groupRes?.result;
+  return { groups, groupRes, isLoading, isError };
 };
 
-export const useGroupRemove = ({ onSuccess }: QueryProps) => {
+export const useGroupMutate = ({ onSuccess, onError }: QueryProps = {}) => {
   const queryClient = useQueryClient();
-  const { mutate: removeMutate } = useMutation(removeGroup, {
-    onSuccess: () => queryClient.invalidateQueries(),
-  });
-  return { removeMutate };
+  const options = {
+    onSuccess: () => {
+      onSuccess?.();
+      queryClient.invalidateQueries();
+    },
+    onError: () => onError?.(),
+  };
+
+  const { mutate: createMutate } = useMutation(createGroup, options);
+  const { mutate: updateMutate } = useMutation(updateGroup, options);
+  const { mutate: removeMutate } = useMutation(removeGroup, options);
+
+  return { createMutate, updateMutate, removeMutate };
 };

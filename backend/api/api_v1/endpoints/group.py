@@ -30,6 +30,9 @@ def read_groups(
     limit: int = 100,
 ):
     groups = crud.group.get_multi(db, skip=skip, limit=limit)
+    for i in groups:
+        print(i)
+
     # if user.is_admin:
     #     groups = crud.group.get_multi(db, skip=skip, limit=limit)
     # else:

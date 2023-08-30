@@ -7,21 +7,15 @@ import clsx from 'clsx';
 import { useFormik, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 
-import { createGroup, removeGroup, updateGroup } from '~/api/group';
+import { GroupRequestBody, createGroup, removeGroup, updateGroup } from '~/api/group';
 import { fetchUsers } from '~/api/user';
 import Button from '~/components/common/Button';
+import { useGroupMutate } from '~/hooks/querys/useGroup';
 import { GroupData } from '~/types/group';
 import { UserData } from '~/types/user';
 import { isEmptyObj, removeEmptyValueObj } from '~/utils/objectUtil';
 
 import { GroupEditorModalStyled } from './styled';
-
-interface GroupRequestBody {
-  name?: string;
-  explanation?: string;
-  hexColor?: string;
-  userId?: string;
-}
 
 export interface GroupEditorModalProps extends ModalProps {
   group?: GroupData;
@@ -50,17 +44,8 @@ const GroupEditorModal = ({
   ];
 
   const nameInputRef = useRef<HTMLInputElement>(null);
-  const queryClient = useQueryClient();
 
-  const { mutate: createMutate, isLoading: isCreateLoading } = useMutation(createGroup, {
-    onSuccess: () => handleSuccess(),
-  });
-  const { mutate: updateMutate, isLoading: isUpdateLoading } = useMutation(updateGroup, {
-    onSuccess: () => handleSuccess(),
-  });
-  const { mutate: removeMutate, isLoading: isRemoveLoading } = useMutation(removeGroup, {
-    onSuccess: () => handleSuccess(),
-  });
+  const { createMutate, updateMutate, removeMutate } = useGroupMutate();
 
   const { data: userData } = useQuery<UserData[]>('usersQuery', fetchUsers, {
     enabled: open,
@@ -97,7 +82,7 @@ const GroupEditorModal = ({
 
   const handleSubmit = (values: GroupRequestBody) => {
     if (create) createMutate(values);
-    else if (group) {
+    if (group) {
       const validBody: GroupRequestBody = removeEmptyValueObj(values);
       if (!isEmptyObj(validBody))
         updateMutate({
@@ -105,11 +90,6 @@ const GroupEditorModal = ({
           ...validBody,
         });
     }
-  };
-
-  const handleSuccess = () => {
-    queryClient.invalidateQueries();
-    onClose?.();
   };
 
   // Formik Hook
@@ -162,9 +142,11 @@ const GroupEditorModal = ({
         {/* 그룹 컬러 */}
         <ColorPicker
           disabledAlpha
-          defaultValue={group?.hexColor}
+          value={group && group.hexColor}
+          defaultValue="#00000000"
           presets={initColors}
           onChangeComplete={color => {
+            console.log(color.toHexString());
             formik.handleChange({
               target: {
                 name: 'hexColor',

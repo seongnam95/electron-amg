@@ -1,19 +1,20 @@
-import { HTMLAttributes } from 'react';
+import { LiHTMLAttributes } from 'react';
 
 import styled, { css } from 'styled-components';
 
-export interface GroupItemStyledProps extends HTMLAttributes<HTMLDivElement> {
+export interface GroupItemStyledProps extends LiHTMLAttributes<HTMLLIElement> {
   color?: string;
-  activated?: boolean;
+  activate?: boolean;
   disabled?: boolean;
 }
 
-export const GroupItemStyled = styled.div<GroupItemStyledProps>`
+export const GroupItemStyled = styled.li<GroupItemStyledProps>`
   display: flex;
-  padding: 1rem 0;
+  align-items: center;
+  height: 4.2rem;
 
-  color: ${p => (p.activated ? p.theme.colors.primary : p.theme.colors.textColor2)};
-  font-weight: ${p => (p.activated ? 'bold' : 'normal')};
+  color: ${p => (p.activate ? p.theme.colors.primary : p.theme.colors.textColor2)};
+  font-weight: ${p => (p.activate ? 'bold' : 'normal')};
   font-size: ${p => p.theme.sizes.textMedium};
   background-color: transparent;
 
@@ -22,11 +23,12 @@ export const GroupItemStyled = styled.div<GroupItemStyledProps>`
   cursor: ${p => (p.disabled ? 'default' : 'pointer')};
 
   .color-bar {
+    height: 1.4rem;
     background-color: ${p => p.color};
   }
 
   ${p =>
-    !(p.activated || p.disabled) &&
+    !(p.activate || p.disabled) &&
     css`
       :hover {
         color: ${p.theme.colors.textColor1};

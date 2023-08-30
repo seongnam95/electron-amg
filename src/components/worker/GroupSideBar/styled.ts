@@ -18,4 +18,13 @@ export const GroupSideBarStyled = styled.div`
     flex: 1;
     overflow-y: auto;
   }
+
+  .empty-text {
+    display: flex;
+    align-items: center;
+    height: 4.2rem;
+
+    font-size: ${p => p.theme.sizes.textSmall};
+    color: ${p => p.theme.colors.textColor3};
+  }
 `;

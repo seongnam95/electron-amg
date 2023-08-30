@@ -1,4 +1,4 @@
-import { MouseEvent } from 'react';
+import { MouseEvent, useMemo } from 'react';
 
 import { Divider } from 'antd';
 
@@ -12,49 +12,51 @@ export interface GroupSideBarProps {
   groups?: GroupData[];
   selected?: string;
   onCreate?: () => void;
-  onChange?: (id: string) => void;
+  onChange?: (e: MouseEvent<HTMLLIElement>) => void;
 }
 
 const GroupSideBar = ({ groups, selected, onCreate, onChange }: GroupSideBarProps) => {
-  const handleOnClickGroup = (e: MouseEvent<HTMLDivElement>) => {
-    onChange?.(e.currentTarget.id);
-  };
+  const menus = useMemo(() => {
+    return groups?.map((group: GroupData) => {
+      return {
+        id: group.id.toString(),
+        label: group.name,
+        color: group.hexColor,
+      };
+    });
+  }, [groups]);
 
-  // TODO: 스켈레톤 로딩 구현
   return (
     <GroupSideBarStyled className="GroupSideBar">
-      <div className="menu-wrap">
-        <GroupItem
-          id="all"
-          label="전체"
-          activated={selected === 'all'}
-          onClick={handleOnClickGroup}
-        />
+      <ul className="menu-wrap">
+        <GroupItem id="all" label="전체" activate={selected === 'all'} onClick={onChange} />
         <Divider style={{ margin: '12px 0' }} />
 
-        {groups && groups.length !== 0 && (
-          <div className="menus">
-            {groups.map(group => (
+        {menus && menus?.length !== 0 ? (
+          <section className="menus">
+            {menus.map(menu => (
               <GroupItem
-                id={group.id}
-                key={group.id}
-                color={group.hexColor}
-                label={group.name}
-                activated={selected === group.id}
-                onClick={handleOnClickGroup}
+                id={menu.id}
+                key={menu.id}
+                color={menu.color}
+                label={menu.label}
+                activate={selected === menu.id}
+                onClick={onChange}
               />
             ))}
 
             <Divider style={{ margin: '12px 0' }} />
             <GroupItem
               id="etc"
-              label="기타"
-              activated={selected === 'etc'}
-              onClick={handleOnClickGroup}
+              label="기타 / 소속없음"
+              activate={selected === 'etc'}
+              onClick={onChange}
             />
-          </div>
+          </section>
+        ) : (
+          <span className="empty-text">그룹 없음</span>
         )}
-      </div>
+      </ul>
 
       <Button onClick={onCreate} styled={{ fullWidth: true, variations: 'default' }}>
         그룹 생성

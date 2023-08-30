@@ -1,14 +1,14 @@
 export interface FetchResponse {
   success: boolean;
-  count: number;
+  msg: string;
   result: any;
 }
 
-export interface FetchListResponse {
+export interface FetchListResponse<T> {
   success: boolean;
   msg: string;
   count: number;
-  result: any[];
+  result: T[];
 }
 
 export interface BaseResponse {

@@ -9,12 +9,13 @@ export interface GroupTitleProps {
   explanation?: string;
   mangerName?: string;
   doesExist?: boolean;
-  onClick?: () => void;
+  onEditor?: () => void;
 }
 
-const GroupTitle = ({ groupName, explanation, mangerName, onClick }: GroupTitleProps) => {
+const GroupTitle = ({ groupName, explanation, mangerName, onEditor }: GroupTitleProps) => {
+  console.log(groupName, explanation, mangerName);
   return (
-    <GroupTitleStyled className="GroupTitle" doesExist={!!onClick} onClick={onClick}>
+    <GroupTitleStyled className="GroupTitle" doesExist={!!onEditor} onClick={onEditor}>
       <div className="header-text">
         {groupName}
 

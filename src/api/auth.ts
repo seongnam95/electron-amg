@@ -5,7 +5,7 @@ import axiosPrivate from './axios';
 interface LoginBody {
   username: string;
   password: string;
-  access_ip?: string;
+  access_ip: string;
 }
 
 export const loginUser = async (body: LoginBody): Promise<AxiosResponse> => {
