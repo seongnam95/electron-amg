@@ -70,4 +70,16 @@ export const GroupEditorModalStyled = styled(Modal)`
       font-size: ${p => p.theme.sizes.textSmall};
     }
   }
+
+  .loading-box {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    padding: 2rem;
+
+    .complete-icon {
+      width: 12rem;
+    }
+  }
 `;

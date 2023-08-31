@@ -1,18 +1,17 @@
 import { useEffect, useRef } from 'react';
-import { useMutation, useQuery, useQueryClient } from 'react-query';
 
 import { ColorPicker, ModalProps, Select } from 'antd';
-import { PresetsItem } from 'antd/es/color-picker/interface';
+import { ColorValueType, PresetsItem } from 'antd/es/color-picker/interface';
 import clsx from 'clsx';
-import { useFormik, ErrorMessage } from 'formik';
+import { useFormik } from 'formik';
+import Lottie from 'lottie-react';
 import * as Yup from 'yup';
 
-import { GroupRequestBody, createGroup, removeGroup, updateGroup } from '~/api/group';
-import { fetchUsers } from '~/api/user';
+import loadingLottie from '~/assets/lotties/loading.json';
 import Button from '~/components/common/Button';
-import { useGroupMutate } from '~/hooks/querys/useGroup';
+import { GroupRequestBody, useGroupMutate } from '~/hooks/querys/useGroup';
+import { useUserQuery } from '~/hooks/querys/useUser';
 import { GroupData } from '~/types/group';
-import { UserData } from '~/types/user';
 import { isEmptyObj, removeEmptyValueObj } from '~/utils/objectUtil';
 
 import { GroupEditorModalStyled } from './styled';
@@ -30,11 +29,20 @@ const GroupEditorModal = ({
   create = false,
   ...rest
 }: GroupEditorModalProps) => {
-  const initGroup: GroupRequestBody = {
-    name: '',
-    explanation: '',
-    hexColor: '',
-  };
+  const nameInputRef = useRef<HTMLInputElement>(null);
+  const { isLoading, createMutate, updateMutate, removeMutate } = useGroupMutate();
+
+  const initGroup: GroupRequestBody = group
+    ? {
+        name: group.name,
+        explanation: group.explanation,
+        hexColor: group.hexColor,
+      }
+    : {
+        name: '',
+        explanation: '',
+        hexColor: '',
+      };
 
   const initColors: PresetsItem[] = [
     {
@@ -43,19 +51,14 @@ const GroupEditorModal = ({
     },
   ];
 
-  const nameInputRef = useRef<HTMLInputElement>(null);
-
-  const { createMutate, updateMutate, removeMutate } = useGroupMutate();
-
-  const { data: userData } = useQuery<UserData[]>('usersQuery', fetchUsers, {
+  const { users } = useUserQuery({
     enabled: open,
-    staleTime: 1000 * 60 * 10,
   });
 
   const userOptions = [
     { value: '', label: '( 담당자 없음 )' },
-    ...(userData
-      ? userData.map(v => ({
+    ...(users
+      ? users.map(v => ({
           value: v.id,
           label: `${v.name} (${v.username})`,
         }))
@@ -70,25 +73,37 @@ const GroupEditorModal = ({
   // 폼 리셋, Name Input 포커스
   useEffect(() => {
     if (open) {
-      formik.resetForm();
+      formik.resetForm({ values: initGroup });
       nameInputRef.current?.focus();
     }
   }, [open, group]);
 
   // 핸들러
   const handleRemove = () => {
-    if (group && !create) removeMutate(group.id);
+    if (group && !create)
+      removeMutate(group.id, {
+        onSuccess: onClose,
+      });
   };
 
   const handleSubmit = (values: GroupRequestBody) => {
-    if (create) createMutate(values);
-    if (group) {
-      const validBody: GroupRequestBody = removeEmptyValueObj(values);
-      if (!isEmptyObj(validBody))
-        updateMutate({
-          id: group?.id,
+    if (create)
+      createMutate(values, {
+        onSuccess: onClose,
+      });
+    else if (group) {
+      const validBody = removeEmptyValueObj(values);
+
+      if (!isEmptyObj(validBody)) {
+        const newGroup = {
+          id: group.id,
           ...validBody,
+        };
+
+        updateMutate(newGroup, {
+          onSuccess: onClose,
         });
+      }
     }
   };
 
@@ -134,7 +149,7 @@ const GroupEditorModal = ({
           name="name"
           className="input-name"
           spellCheck={false}
-          placeholder={group && group.name ? group.name : '그룹명'}
+          placeholder={group ? group.name : '그룹명'}
           value={formik.values.name}
           onChange={formik.handleChange}
         />
@@ -142,8 +157,7 @@ const GroupEditorModal = ({
         {/* 그룹 컬러 */}
         <ColorPicker
           disabledAlpha
-          value={group && group.hexColor}
-          defaultValue="#00000000"
+          value={formik.values.hexColor}
           presets={initColors}
           onChangeComplete={color => {
             console.log(color.toHexString());
@@ -184,6 +198,12 @@ const GroupEditorModal = ({
           });
         }}
       />
+
+      {isLoading && (
+        <div className="loading-box">
+          <Lottie className="complete-icon" animationData={loadingLottie} />
+        </div>
+      )}
     </GroupEditorModalStyled>
   );
 };

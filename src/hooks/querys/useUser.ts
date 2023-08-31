@@ -5,63 +5,61 @@ import { AxiosError } from 'axios';
 
 import { createRequest, fetchRequest, removeRequest, updateRequest } from '~/api/common';
 import { BaseResponse, FetchListResponse } from '~/types/common';
-import { GroupData } from '~/types/group';
+import { UserData } from '~/types/user';
 
-let groupQueryKey = 'group';
-let groupRequestUrl = '/group/';
+let userQueryKey = 'user';
+let userRequestUrl = '/user/';
 
-export interface GroupRequestBody {
+export interface UserRequestBody {
   id?: string;
-  name?: string;
-  hexColor?: string;
-  explanation?: string;
-  userId?: string;
 }
 
 interface QueryProps {
+  enabled?: boolean;
   onSuccess?: () => void;
   onError?: () => void;
 }
 
-export const useGroupQuery = ({ onSuccess, onError }: QueryProps = {}) => {
+export const useUserQuery = ({ enabled, onSuccess, onError }: QueryProps = {}) => {
   const {
-    data: groupRes,
+    data: response,
     isLoading,
     isError,
-  } = useQuery<FetchListResponse<GroupData>, AxiosError>(
-    [groupQueryKey],
-    fetchRequest<GroupData>(groupRequestUrl),
+  } = useQuery<FetchListResponse<UserData>, AxiosError>(
+    [userQueryKey],
+    fetchRequest<UserData>(userRequestUrl),
     {
+      enabled: enabled,
       onSuccess: onSuccess,
       onError: onError,
     },
   );
 
-  const groups = groupRes?.result;
-  return { groups, groupRes, isLoading, isError };
+  const users = response?.result;
+  return { users, response, isLoading, isError };
 };
 
-export const useGroupMutate = ({ onSuccess }: QueryProps = {}) => {
+export const useUserMutate = ({ onSuccess }: QueryProps = {}) => {
   const queryClient = useQueryClient();
   const options = {
     onSuccess: () => {
       onSuccess?.();
-      queryClient.invalidateQueries([groupQueryKey]);
+      queryClient.invalidateQueries([userQueryKey]);
     },
   };
 
   const { mutate: createMutate, isLoading: createLoading } = useMutation(
-    createRequest<GroupRequestBody>(groupRequestUrl),
+    createRequest<UserRequestBody>(userRequestUrl),
     options,
   );
 
   const { mutate: updateMutate, isLoading: updateLoading } = useMutation(
-    updateRequest<GroupRequestBody>(groupRequestUrl),
+    updateRequest<UserRequestBody>(userRequestUrl),
     options,
   );
 
   const { mutate: removeMutate, isLoading: removeLoading } = useMutation(
-    removeRequest(groupRequestUrl),
+    removeRequest(userRequestUrl),
     options,
   );
 

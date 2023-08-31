@@ -21,13 +21,13 @@ const Worker = () => {
   const groupName =
     selectedGroupId === 'all' ? '전체' : selectedGroupId === 'etc' ? '기타' : selectedGroup?.name;
 
-  if (isLoading) return <>로딩중</>;
   return (
     <WorkerPageStyled className="WorkerPage">
       <LayoutConfig breadcrumbs={['매니저', '직원 관리']} />
 
       {/* 그룹 사이드 바 */}
       <GroupSideBar
+        isLoading={isLoading}
         groups={groups}
         selected={selectedGroupId}
         onChange={e => setSelectedGroupId(e.currentTarget.id)}
