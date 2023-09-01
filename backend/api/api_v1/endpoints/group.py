@@ -30,8 +30,6 @@ def read_groups(
     limit: int = 100,
 ):
     groups = crud.group.get_multi(db, skip=skip, limit=limit)
-    for i in groups:
-        print(i)
 
     # if user.is_admin:
     #     groups = crud.group.get_multi(db, skip=skip, limit=limit)
@@ -63,8 +61,8 @@ def create_group(
 @router.put("/{group_id}", response_model=BaseResponse)
 def update_group(
     *,
-    group: schemas.Group = Depends(get_group),
     db: Session = Depends(deps.get_db),
+    group: schemas.Group = Depends(get_group),
     group_in: schemas.GroupUpdate,
 ):
     crud.group.update(db=db, db_obj=group, obj_in=group_in)
@@ -75,11 +73,22 @@ def update_group(
 @router.delete("/{group_id}", response_model=BaseResponse)
 def delete_group(
     *,
-    group: schemas.Group = Depends(get_group),
     db: Session = Depends(deps.get_db),
+    group: schemas.Group = Depends(get_group),
 ):
     crud.group.remove(db=db, id=group.id)
     return BaseResponse(success=True, msg="정상 처리되었습니다.")
+
+
+#
+@router.get("/{group_id}/worker", response_model=ListResponse[schemas.Worker])
+def read_worker_in_group(
+    *, group: schemas.Group = Depends(get_group), db: Session = Depends(deps.get_db)
+):
+    workers = crud.group.get_group_workers(db=db, group_id=group.id)
+    return ListResponse(
+        success=True, msg="정상 처리되었습니다.", count=len(workers), result=workers
+    )
 
 
 # 그룹 계약서 생성

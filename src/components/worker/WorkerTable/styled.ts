@@ -8,6 +8,14 @@ export const WorkerTableStyled = styled.div`
   overflow-y: auto;
   padding-bottom: 5rem;
 
+  .empty-wrap {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    padding-bottom: 8rem;
+  }
+
   > table {
     width: 100%;
 

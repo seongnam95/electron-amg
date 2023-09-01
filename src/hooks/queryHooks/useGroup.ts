@@ -1,17 +1,12 @@
-import { useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 
 import { AxiosError } from 'axios';
 
 import { createRequest, fetchRequest, removeRequest, updateRequest } from '~/api/common';
-import { BaseResponse, FetchListResponse } from '~/types/common';
-import { GroupData } from '~/types/group';
-
-let groupQueryKey = 'group';
-let groupRequestUrl = '/group/';
+import { FetchListResponse } from '~/types/common';
 
 export interface GroupRequestBody {
-  id?: string;
+  id: string;
   name?: string;
   hexColor?: string;
   explanation?: string;
@@ -23,45 +18,48 @@ interface QueryProps {
   onError?: () => void;
 }
 
-export const useGroupQuery = ({ onSuccess, onError }: QueryProps = {}) => {
+export const useEasyQuery = <T>(
+  queryKey: string[],
+  url: string,
+  { onSuccess, onError }: QueryProps = {},
+) => {
   const {
-    data: groupRes,
+    data: response,
     isLoading,
     isError,
-  } = useQuery<FetchListResponse<GroupData>, AxiosError>(
-    [groupQueryKey],
-    fetchRequest<GroupData>(groupRequestUrl),
-    {
-      onSuccess: onSuccess,
-      onError: onError,
-    },
-  );
-
-  const groups = groupRes?.result;
-  return { groups, groupRes, isLoading, isError };
+  } = useQuery<FetchListResponse<T>, AxiosError>(queryKey, fetchRequest<T>(url), {
+    onSuccess: onSuccess,
+    onError: onError,
+  });
+  const data = response?.result;
+  return { data, response, isLoading, isError };
 };
 
-export const useGroupMutate = ({ onSuccess }: QueryProps = {}) => {
+export const useEasyMutation = <T extends { id: string }>(
+  queryKey: string[],
+  url: string,
+  { onSuccess }: QueryProps = {},
+) => {
   const queryClient = useQueryClient();
   const options = {
     onSuccess: () => {
       onSuccess?.();
-      queryClient.invalidateQueries([groupQueryKey]);
+      queryClient.invalidateQueries(queryKey);
     },
   };
 
   const { mutate: createMutate, isLoading: createLoading } = useMutation(
-    createRequest<GroupRequestBody>(groupRequestUrl),
+    createRequest<T>(url),
     options,
   );
 
   const { mutate: updateMutate, isLoading: updateLoading } = useMutation(
-    updateRequest<GroupRequestBody>(groupRequestUrl),
+    updateRequest<T>(url),
     options,
   );
 
   const { mutate: removeMutate, isLoading: removeLoading } = useMutation(
-    removeRequest(groupRequestUrl),
+    removeRequest(url),
     options,
   );
 

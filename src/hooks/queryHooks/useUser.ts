@@ -1,10 +1,9 @@
-import { useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 
 import { AxiosError } from 'axios';
 
 import { createRequest, fetchRequest, removeRequest, updateRequest } from '~/api/common';
-import { BaseResponse, FetchListResponse } from '~/types/common';
+import { FetchListResponse } from '~/types/common';
 import { UserData } from '~/types/user';
 
 let userQueryKey = 'user';
@@ -39,7 +38,7 @@ export const useUserQuery = ({ enabled, onSuccess, onError }: QueryProps = {}) =
   return { users, response, isLoading, isError };
 };
 
-export const useUserMutate = ({ onSuccess }: QueryProps = {}) => {
+export const useUserMutation = ({ onSuccess }: QueryProps = {}) => {
   const queryClient = useQueryClient();
   const options = {
     onSuccess: () => {

@@ -9,8 +9,8 @@ import * as Yup from 'yup';
 
 import loadingLottie from '~/assets/lotties/loading.json';
 import Button from '~/components/common/Button';
-import { GroupRequestBody, useGroupMutate } from '~/hooks/querys/useGroup';
-import { useUserQuery } from '~/hooks/querys/useUser';
+import { GroupRequestBody, useEasyMutation } from '~/hooks/queryHooks/useGroup';
+import { useUserQuery } from '~/hooks/queryHooks/useUser';
 import { GroupData } from '~/types/group';
 import { isEmptyObj, removeEmptyValueObj } from '~/utils/objectUtil';
 
@@ -30,15 +30,20 @@ const GroupEditorModal = ({
   ...rest
 }: GroupEditorModalProps) => {
   const nameInputRef = useRef<HTMLInputElement>(null);
-  const { isLoading, createMutate, updateMutate, removeMutate } = useGroupMutate();
+  const { isLoading, createMutate, updateMutate, removeMutate } = useEasyMutation<GroupRequestBody>(
+    ['group'],
+    import.meta.env.VITE_GROUP_API_URL,
+  );
 
   const initGroup: GroupRequestBody = group
     ? {
+        id: group.id,
         name: group.name,
         explanation: group.explanation,
         hexColor: group.hexColor,
       }
     : {
+        id: '',
         name: '',
         explanation: '',
         hexColor: '',
@@ -160,7 +165,6 @@ const GroupEditorModal = ({
           value={formik.values.hexColor}
           presets={initColors}
           onChangeComplete={color => {
-            console.log(color.toHexString());
             formik.handleChange({
               target: {
                 name: 'hexColor',

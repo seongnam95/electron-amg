@@ -3,8 +3,8 @@ import dayjs, { Dayjs } from 'dayjs';
 import { useRecoilValue } from 'recoil';
 import styled, { css } from 'styled-components';
 
+import { useEasyQuery } from '~/hooks/queryHooks/useGroup';
 import { commuteMonthlySelector } from '~/stores/commute';
-import { workerState } from '~/stores/worker';
 import { CommuteData, WorkerData } from '~/types/worker';
 import { findWorkingRanges, groupDataByWorker } from '~/utils/commuteRange';
 
@@ -15,9 +15,11 @@ export interface MonthTableProps {
 }
 
 const MonthTable = ({ selectedDay }: MonthTableProps) => {
-  const workers = useRecoilValue(workerState);
   const commutes = useRecoilValue(commuteMonthlySelector(selectedDay.format('YYYYMM')));
-
+  const { data: workers = [] } = useEasyQuery<WorkerData>(
+    ['workers'],
+    import.meta.env.VITE_WORKER_API_URL,
+  );
   const dayCount = selectedDay.daysInMonth();
   const daysOfMonth = Array.from({ length: dayCount }, (_, i) => dayjs(selectedDay).date(i + 1));
   const dataByWorker = groupDataByWorker(commutes);

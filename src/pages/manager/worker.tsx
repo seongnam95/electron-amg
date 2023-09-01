@@ -1,5 +1,6 @@
 import { useState } from 'react';
 
+import { Radio } from 'antd';
 import { motion } from 'framer-motion';
 
 import Button from '~/components/common/Button';
@@ -7,15 +8,20 @@ import LayoutConfig from '~/components/layouts/LayoutConfig/LayoutConfig';
 import GroupEditorModal from '~/components/worker/GroupEditorModal';
 import GroupSideBar from '~/components/worker/GroupSideBar';
 import GroupTitle from '~/components/worker/GroupTitle';
-import { useGroupQuery } from '~/hooks/querys/useGroup';
+import WorkerTable from '~/components/worker/WorkerTable';
+import { useEasyQuery } from '~/hooks/queryHooks/useGroup';
 import { WorkerPageStyled } from '~/styles/pageStyled/workerPageStyled';
+import { GroupData } from '~/types/group';
 
 const Worker = () => {
   const [selectedGroupId, setSelectedGroupId] = useState<string>('all');
   const [showEditor, setShowEditor] = useState<boolean>(false);
   const [showCreator, setShowCreator] = useState<boolean>(false);
 
-  const { groups, isLoading } = useGroupQuery();
+  const { data: groups, isLoading } = useEasyQuery<GroupData>(
+    ['group'],
+    import.meta.env.VITE_GROUP_API_URL,
+  );
 
   const selectedGroup = groups?.filter(group => String(group.id) === selectedGroupId)[0];
   const groupName =
@@ -49,24 +55,9 @@ const Worker = () => {
           onEditor={selectedGroup && (() => setShowEditor(true))}
         />
 
-        {/* 필터/컨트롤 바 */}
-        <div className="worker-control-bar">
-          <Button styled={{ variations: 'icon', animate: false }}>
-            <i className="bx bx-trash" />
-          </Button>
-          <Button styled={{ variations: 'link', size: 'small', animate: false }}>
-            계약서 폼 생성
-          </Button>
-        </div>
-
         {/* 워커 테이블 */}
-        {/* {workers.length ? (
-          <WorkerTable allWorker={groupId === 'all'} items={workers} />
-        ) : (
-          <div className="empty-wrap">
-            <Empty description="빈 그룹" />
-          </div>
-        )} */}
+
+        <WorkerTable groupId={selectedGroupId} />
       </motion.div>
 
       <GroupEditorModal

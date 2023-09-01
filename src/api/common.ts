@@ -9,6 +9,13 @@ export const fetchRequest =
     return data;
   };
 
+export const fetchARequest =
+  <T>(url: string, id: string) =>
+  async (): Promise<FetchListResponse<T>> => {
+    const { data } = await axiosPrivate.get<FetchListResponse<T>>(`${url}${id}`);
+    return data;
+  };
+
 export const createRequest =
   <T>(url: string) =>
   async (body: T): Promise<BaseResponse> => {

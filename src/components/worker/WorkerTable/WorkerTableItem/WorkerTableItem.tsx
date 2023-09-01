@@ -4,10 +4,9 @@ import Checkbox, { CheckboxChangeEvent } from 'antd/es/checkbox';
 import clsx from 'clsx';
 import { useRecoilState } from 'recoil';
 
-import { workerState } from '~/stores/worker';
 import { WorkerData } from '~/types/worker';
 
-import { WorkerTableStyled } from './styled';
+import { WorkerTableItemStyled } from './styled';
 
 export interface WorkerTableProps {
   className?: string;
@@ -17,15 +16,15 @@ export interface WorkerTableProps {
 const WorkerTable = ({ className, onClick }: WorkerTableProps) => {
   const [allSelected, setAllSelected] = useState<boolean>(false);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
-  const [workers, setWorkers] = useRecoilState(workerState);
+  // const [workers, setWorkers] = useRecoilState(workerState);
 
-  useEffect(() => {
-    setAllSelected(selectedIds.length === workers.length);
-  }, [selectedIds]);
+  // useEffect(() => {
+  //   setAllSelected(selectedIds.length === workers.length);
+  // }, [selectedIds]);
 
-  const handleOnChangeAllChecked = (e: CheckboxChangeEvent) => {
-    setSelectedIds(e.target.checked ? workers.map(worker => worker.id) : []);
-  };
+  // const handleOnChangeAllChecked = (e: CheckboxChangeEvent) => {
+  //   setSelectedIds(e.target.checked ? workers.map(worker => worker.id) : []);
+  // };
 
   const handleOnChangeChecked = (e: CheckboxChangeEvent) => {
     const targetId = e.target.id;
@@ -40,19 +39,17 @@ const WorkerTable = ({ className, onClick }: WorkerTableProps) => {
   };
 
   return (
-    <WorkerTableStyled className={clsx('WorkerTable', className)}>
+    <WorkerTableItemStyled className={clsx('WorkerTable', className)}>
       <thead>
         <tr>
-          <th>
-            <Checkbox onChange={handleOnChangeAllChecked} checked={allSelected} />
-          </th>
+          <th>{/* <Checkbox onChange={handleOnChangeAllChecked} checked={allSelected} /> */}</th>
           <th>성명</th>
           <th>연락처</th>
           <th>구분</th>
         </tr>
       </thead>
       <tbody>
-        {workers.map(worker => {
+        {/* {workers.map(worker => {
           const { contract } = worker;
           return (
             <tr key={worker.id} onClick={() => onClick?.(worker)}>
@@ -69,9 +66,9 @@ const WorkerTable = ({ className, onClick }: WorkerTableProps) => {
               <td>알바</td>
             </tr>
           );
-        })}
+        })} */}
       </tbody>
-    </WorkerTableStyled>
+    </WorkerTableItemStyled>
   );
 };
 

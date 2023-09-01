@@ -12,7 +12,6 @@ class CRUDGroup(CRUDBase[Group, GroupCreate, GroupUpdate]):
     def create_group(self, db: Session, *, obj_in: GroupCreate) -> Group:
         new_obj_in = obj_in.model_dump()
 
-        print(new_obj_in)
         if new_obj_in.get("user_id"):
             user_id = new_obj_in.get("user_id")
             user = db.query(User).filter(User.id == user_id).first()

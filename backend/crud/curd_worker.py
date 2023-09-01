@@ -1,11 +1,40 @@
 from typing import List, Type
+
+from fastapi import HTTPException
 from crud.base import CRUDBase
-from models import Worker
+from models import Worker, Group
 from schemas import WorkerCreate, WorkerUpdate
 from sqlalchemy.orm import Session
 
 
 class CRUDWorker(CRUDBase[Worker, WorkerCreate, WorkerUpdate]):
+    def get_unaffiliated_worker(self, db: Session, *, skip: int = 0, limit: int = 100):
+        return (
+            db.query(self.model)
+            .filter(self.model.group_id == None)
+            .offset(skip)
+            .limit(limit)
+            .all()
+        )
+
+    def create_worker_in_group(self, db: Session, *, obj_in: WorkerCreate) -> Worker:
+        new_obj_in = obj_in.model_dump()
+
+        if new_obj_in.get("group_id"):
+            group_id = new_obj_in.get("group_id")
+            group = db.query(Group).filter(Group.id == group_id).first()
+            if not group:
+                raise HTTPException(status_code=404, detail="해당하는 그룹을 찾을 수 없습니다.")
+
+            new_obj_in["group"] = group
+
+        new_worker = Worker(**new_obj_in)
+
+        db.add(new_worker)
+        db.commit()
+        db.refresh(new_worker)
+        return new_worker
+
     def search(self, name: str, phone: str, db: Session):
         return (
             db.query(self.model)

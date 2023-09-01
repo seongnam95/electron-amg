@@ -32,15 +32,21 @@ export const ButtonStyled = styled.button<ButtonStyledProps>`
       ? css`
           --fontSize: ${p => p.theme.sizes.textSmall};
           --padding: 0.5rem 1rem;
+          --btnSize: 3.8rem;
+          --iconSize: 1.8rem;
         `
       : p.size === 'lazy'
       ? css`
           --fontSize: ${p => p.theme.sizes.textLazy};
           --padding: 1rem 2rem;
+          --btnSize: 4.2rem;
+          --iconSize: 2.4rem;
         `
       : css`
           --fontSize: ${p => p.theme.sizes.textMedium};
           --padding: 0.8rem 1.6rem;
+          --btnSize: 4rem;
+          --iconSize: 2rem;
         `};
 
   display: flex;
@@ -48,12 +54,9 @@ export const ButtonStyled = styled.button<ButtonStyledProps>`
   align-items: center;
   gap: 0.8rem;
 
-  width: ${p => (p.fullWidth ? '100%' : 'auto')};
-  padding: ${p => p.variations !== 'icon' && 'var(--padding)'};
-  width: ${p => p.variations === 'icon' && '4.2rem'};
-  height: ${p => p.variations === 'icon' && '4.2rem'};
-  min-width: ${p => p.variations === 'icon' && '4.2rem'};
-  min-height: ${p => p.variations === 'icon' && '4.2rem'};
+  width: ${p => (p.variations === 'icon' ? 'var(--btnSize)' : p.fullWidth ? '100%' : 'auto')};
+  height: ${p => p.variations === 'icon' && 'var(--btnSize)'};
+  padding: var(--padding);
 
   outline: none;
   border: 1px solid transparent;
@@ -82,7 +85,7 @@ export const ButtonStyled = styled.button<ButtonStyledProps>`
   }
 
   > i {
-    font-size: ${p => p.theme.sizes.iconLazy};
+    font-size: var(--iconSize);
     transition: all 200ms;
   }
 `;
