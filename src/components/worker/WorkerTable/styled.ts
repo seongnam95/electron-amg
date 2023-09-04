@@ -43,6 +43,7 @@ export const WorkerTableStyled = styled.div`
     bottom: 0;
     background-color: ${p => p.theme.colors.formFieldBG};
     border-top: 1px solid ${p => p.theme.colors.borderColor};
+    padding-bottom: 1rem;
 
     > .Button {
       display: flex;

@@ -1,91 +1,118 @@
+import { ButtonHTMLAttributes } from 'react';
+
 import styled, { css } from 'styled-components';
 
-export interface ButtonStyledProps {
+export interface ButtonStyledProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+  color?: string;
+  hoverColor?: string;
+  bgColor?: string;
+  bgHoverColor?: string;
+  borderColor?: string;
+  fontSize?: string;
+  iconSize?: string;
+
+  primary?: boolean;
   fullWidth?: boolean;
-  variations?: 'fill' | 'outline' | 'link' | 'icon' | 'default';
-  size?: 'small' | 'medium' | 'lazy';
+  variations?: 'fill' | 'outline' | 'link' | 'icon';
+  btnSize?: 'small' | 'medium' | 'lazy';
   animate?: boolean;
 }
 
 export const ButtonStyled = styled.button<ButtonStyledProps>`
-  --color: ${p =>
-    p.variations === 'fill'
-      ? 'white'
-      : p.variations === 'icon'
-      ? p.theme.colors.textColor2
-      : p.theme.colors.primary};
-  --bgColor: ${p =>
-    p.variations === 'fill'
-      ? p.theme.colors.primary
-      : p.variations === 'default'
-      ? p.theme.colors.selectedBg
-      : 'transparent'};
-  --hoverColor: ${p =>
-    p.variations === 'fill'
-      ? p.theme.colors.accent
-      : p.variations === 'default'
-      ? p.theme.colors.selectedHoverBg
-      : p.theme.colors.innerBg};
+  ${({ theme, primary, color, bgColor, hoverColor, bgHoverColor, borderColor }) => {
+    const font = primary ? theme.colors.primary : theme.colors.textColor2;
+    const hover = primary ? theme.colors.accent : theme.colors.textColor1;
+    const bg = primary ? theme.colors.primary : theme.colors.innerBg;
+    const bgHover = primary ? theme.colors.selectedBg : theme.colors.innerBg;
+    const border = primary ? theme.colors.primary : theme.colors.borderColor;
 
-  ${p =>
-    p.size === 'small'
-      ? css`
-          --fontSize: ${p => p.theme.sizes.textSmall};
-          --padding: 0.5rem 1rem;
-          --btnSize: 3.8rem;
-          --iconSize: 1.8rem;
-        `
-      : p.size === 'lazy'
-      ? css`
-          --fontSize: ${p => p.theme.sizes.textLazy};
-          --padding: 1rem 2rem;
-          --btnSize: 4.2rem;
-          --iconSize: 2.4rem;
-        `
-      : css`
-          --fontSize: ${p => p.theme.sizes.textMedium};
-          --padding: 0.8rem 1.6rem;
-          --btnSize: 4rem;
-          --iconSize: 2rem;
-        `};
+    return css`
+      --color: ${color ?? font};
+      --hoverColor: ${hoverColor ?? hover};
+      --bgColor: ${bgColor ?? bg};
+      --bgHoverColor: ${bgHoverColor ?? bgHover};
+      --borderColor: ${borderColor ?? border};
+    `;
+  }};
+
+  ${({ theme, btnSize, fontSize, iconSize }) => {
+    const sizes = {
+      small: {
+        size: '3.8rem',
+        padding: '0.5rem 1rem',
+        fontSize: theme.sizes.textSmall,
+        iconSize: theme.sizes.iconSmall,
+      },
+      medium: {
+        size: '4rem',
+        padding: '0.8rem 1.6rem',
+        fontSize: theme.sizes.textMedium,
+        iconSize: theme.sizes.iconMedium,
+      },
+      lazy: {
+        size: '4.2rem',
+        padding: '1rem 2rem',
+        fontSize: theme.sizes.textLazy,
+        iconSize: theme.sizes.iconLazy,
+      },
+    }[btnSize || 'medium'];
+
+    return css`
+      --size: ${sizes.size};
+      --padding: ${sizes.padding};
+      --fontSize: ${fontSize ?? sizes.fontSize};
+      --iconSize: ${iconSize ?? sizes.iconSize};
+    `;
+  }}
 
   display: flex;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
   gap: 0.8rem;
-
-  width: ${p => (p.variations === 'icon' ? 'var(--btnSize)' : p.fullWidth ? '100%' : 'auto')};
-  height: ${p => p.variations === 'icon' && 'var(--btnSize)'};
-  padding: var(--padding);
 
   outline: none;
   border: 1px solid transparent;
-  border-color: ${p => p.variations === 'outline' && p.theme.colors.primary};
-  border-radius: ${p => (p.variations === 'icon' ? '50%' : '3px')};
-  background-color: var(--bgColor);
+  border-radius: 3px;
+  padding: var(--padding);
 
-  font-size: var(--fontSize);
   color: var(--color);
+  font-size: var(--fontSize);
+  background-color: transparent;
 
   transition: all 200ms;
   cursor: pointer;
 
   :not(:disabled):hover {
-    background-color: var(--hoverColor);
-    transform: ${p => p.animate && 'translateY(-1px)'};
+    color: var(--hoverColor);
+    background-color: var(--bgHoverColor);
+  }
 
-    > i {
-      color: ${p => p.variations === 'icon' && p.theme.colors.textColor1};
+  &.fill-style {
+    color: ${p => (p.primary ? 'white' : p.theme.colors.textColor2)};
+    background-color: var(--bgColor);
+
+    :not(:disabled):hover {
+      color: ${p => (p.primary ? 'white' : p.theme.colors.textColor1)};
+      background-color: ${p => (p.primary ? p.theme.colors.accent : p.theme.colors.innerBg)};
     }
+  }
+
+  &.outline-style {
+    border-color: var(--borderColor);
+  }
+
+  &.icon-style {
+    width: var(--size);
+    height: var(--size);
+    border-radius: 50%;
+  }
+
+  > i {
+    font-size: var(--iconSize);
   }
 
   :disabled {
     color: ${p => p.theme.colors.textColor2};
     background-color: ${p => p.theme.colors.disableBg};
-  }
-
-  > i {
-    font-size: var(--iconSize);
-    transition: all 200ms;
   }
 `;

@@ -14,11 +14,19 @@ export const GroupTitleStyled = styled.div`
 
     .header-text {
       display: flex;
-      gap: 1.6rem;
       align-items: center;
 
       font-weight: bold;
       font-size: 2.2rem;
+    }
+
+    .manager-name-text {
+      margin-left: 2rem;
+      background-color: ${p => p.theme.colors.innerBg};
+      padding: 0.2rem 0.8rem;
+      color: ${p => p.theme.colors.textColor2};
+      font-size: ${p => p.theme.sizes.textSmall};
+      font-weight: normal;
     }
   }
 

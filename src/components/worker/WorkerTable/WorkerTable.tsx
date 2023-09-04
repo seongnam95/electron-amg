@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-import { Empty } from 'antd';
+import { Dropdown, Empty } from 'antd';
 import Checkbox, { CheckboxChangeEvent } from 'antd/es/checkbox';
 import clsx from 'clsx';
 import { motion } from 'framer-motion';
@@ -45,6 +45,7 @@ const WorkerTable = ({ groupId, className, onClick }: WorkerTableProps) => {
   // 체크박스 클릭 핸들러
   const handleOnChangeChecked = (e: CheckboxChangeEvent) => {
     const targetId = e.target.id;
+
     if (targetId) {
       setSelectedIds(
         selectedIds.includes(targetId)
@@ -61,54 +62,67 @@ const WorkerTable = ({ groupId, className, onClick }: WorkerTableProps) => {
           <Empty description="그룹이 비었습니다" />
         </div>
       ) : (
-        <table>
-          <thead>
-            <tr>
-              <th>
-                <Checkbox onChange={handleOnChangeAllChecked} checked={allSelected} />
-              </th>
-              <th>성명</th>
-              <th>연락처</th>
-              <th>구분</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            {workers.map(worker => {
-              return (
-                <tr key={worker.id} onClick={() => onClick?.(worker)}>
-                  <td>
-                    <Checkbox
-                      id={worker.id}
-                      value={worker.name}
-                      checked={selectedIds?.includes(worker.id)}
-                      onChange={handleOnChangeChecked}
-                    />
-                  </td>
-                  <td>{worker.name}</td>
-                  <td>{worker.phone}</td>
-                  <td>{worker.positionCode === 0 ? '직원' : '알바'}</td>
-                  <td>
-                    <Button styled={{ variations: 'link' }} onClick={() => {}}>
-                      출근
-                    </Button>
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
+        <>
+          <div className="control-bar">
+            <Button variations="link">상세 조회</Button>
+          </div>
+
+          <table>
+            <thead>
+              <tr>
+                <th>
+                  <Checkbox onChange={handleOnChangeAllChecked} checked={allSelected} />
+                </th>
+                <th>이름</th>
+                <th>연락처</th>
+                <th>구분</th>
+                <th>상태</th>
+                <th>요청</th>
+              </tr>
+            </thead>
+            <tbody>
+              {workers.map(worker => {
+                return (
+                  <tr key={worker.id} onClick={() => onClick?.(worker)}>
+                    <td>
+                      <Checkbox
+                        id={worker.id}
+                        value={worker.name}
+                        checked={selectedIds?.includes(worker.id)}
+                        onChange={handleOnChangeChecked}
+                      />
+                    </td>
+                    <td>{worker.name}</td>
+                    <td>{worker.phone}</td>
+
+                    {/* 직원, 알바, 기사, 기타 */}
+                    <td>{worker.positionCode === 0 ? '직원' : '알바'}</td>
+
+                    {/* 고용중, 계약 종료 */}
+                    <td>고용중</td>
+                    <td>출근 요청</td>
+                    <td>
+                      <Button variations="icon" btnSize="small">
+                        <i className="bx bx-dots-vertical-rounded" />
+                      </Button>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </>
       )}
 
       {isChecked && (
         <motion.div
-          key={'groupId'}
+          key={groupId}
           className="edit-bar"
           initial={{ opacity: 0, y: 5 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.2 }}
         >
-          <Button styled={{ fullWidth: true, variations: 'link', animate: false }}>
+          <Button fullWidth variations="link">
             삭제
             <i className="bx bx-trash" />
           </Button>

@@ -1,22 +1,10 @@
-import { ButtonHTMLAttributes, ReactNode } from 'react';
-
 import clsx from 'clsx';
 
 import { ButtonStyled, ButtonStyledProps } from './styled';
 
-export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-  styled?: ButtonStyledProps;
-}
-
-const Button = ({ className, children, styled, ...rest }: ButtonProps) => {
+const Button = ({ children, variations = 'fill', ...rest }: ButtonStyledProps) => {
   return (
-    <ButtonStyled
-      className={clsx('Button', className)}
-      variations={styled?.variations ?? 'fill'}
-      animate={styled?.animate ?? false}
-      {...styled}
-      {...rest}
-    >
+    <ButtonStyled className={`${variations}-style`} variations={variations} {...rest}>
       {children}
     </ButtonStyled>
   );

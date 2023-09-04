@@ -11,7 +11,8 @@ export const WorkerPageStyled = styled.div`
   }
 
   .color-bar {
-    width: 8px;
+    width: 0.8rem;
+    height: 1.8rem;
     border-radius: 2px;
     margin: 3px 10px 3px 0;
   }

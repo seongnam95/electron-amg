@@ -56,8 +56,8 @@ const GroupSideBar = ({ isLoading, groups, selected, onCreate, onChange }: Group
         )}
       </ul>
 
-      <Button onClick={onCreate} styled={{ fullWidth: true, variations: 'default' }}>
-        그룹 생성
+      <Button fullWidth onClick={onCreate} primary variations="outline">
+        그룹 추가
         <i className="bx bx-plus" />
       </Button>
     </GroupSideBarStyled>

@@ -49,6 +49,7 @@ const Worker = () => {
         <GroupTitle
           groupId={selectedGroupId}
           groupName={groupName}
+          color={selectedGroup?.hexColor}
           explanation={selectedGroup?.explanation}
           mangerName={selectedGroup?.user?.name}
           doesExist={!!selectedGroup}

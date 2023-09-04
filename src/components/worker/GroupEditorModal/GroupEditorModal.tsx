@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 
 import { ColorPicker, ModalProps, Select } from 'antd';
-import { ColorValueType, PresetsItem } from 'antd/es/color-picker/interface';
+import { PresetsItem } from 'antd/es/color-picker/interface';
 import clsx from 'clsx';
 import { useFormik } from 'formik';
 import Lottie from 'lottie-react';
@@ -47,13 +47,13 @@ const GroupEditorModal = ({
         id: '',
         name: '',
         explanation: '',
-        hexColor: '',
+        hexColor: '#fff',
       };
 
   const initColors: PresetsItem[] = [
     {
       label: '기본 컬러',
-      colors: ['#FE8730', '#FA5454', '7230FE'],
+      colors: ['#FE8730', '#FA5454', '#7230FE'],
     },
   ];
 

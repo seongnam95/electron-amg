@@ -12,6 +12,7 @@ import { GroupTitleStyled } from './styled';
 export interface GroupTitleProps {
   groupId: string;
   groupName?: string;
+  color?: string;
   explanation?: string;
   mangerName?: string;
   doesExist?: boolean;
@@ -21,12 +22,12 @@ export interface GroupTitleProps {
 const GroupTitle = ({
   groupId,
   groupName,
+  color,
   explanation,
   mangerName,
   doesExist,
   onEditor,
 }: GroupTitleProps) => {
-  const { confirm, useModal } = Modal;
   const { removeMutate } = useEasyMutation<GroupRequestBody>(
     ['group'],
     import.meta.env.VITE_GROUP_API_URL,
@@ -37,7 +38,7 @@ const GroupTitle = ({
   const removeGroup = () => removeMutate(groupId);
 
   const showRemoveModal = () => {
-    confirm({
+    Modal.confirm({
       title: '해당 그룹을 삭제하시겠습니까?',
       content: '그룹 내 모든 근로자는 기타(소속없음)으로 이동됩니다.',
       okText: '그룹 삭제',
@@ -95,16 +96,20 @@ const GroupTitle = ({
   return (
     <GroupTitleStyled className="GroupTitle">
       <div className="title-row">
-        <span className="header-text">{groupName}</span>
+        <span className="header-text">
+          {groupName}
+          <span className="manager-name-text">{mangerName}</span>
+        </span>
 
         {doesExist ? (
-          <Dropdown menu={{ items }}>
-            <Button styled={{ variations: 'icon', size: 'small' }}>
+          <Dropdown menu={{ items }} trigger={['click']}>
+            <Button>
               <i className="bx bx-dots-vertical-rounded" />
             </Button>
           </Dropdown>
         ) : null}
       </div>
+
       <span className="explanation-text">{explanation}</span>
     </GroupTitleStyled>
   );
