@@ -30,7 +30,8 @@ const GroupEditorModal = ({
   ...rest
 }: GroupEditorModalProps) => {
   const nameInputRef = useRef<HTMLInputElement>(null);
-  const { isLoading, createMutate, updateMutate, removeMutate } = useEasyMutation<GroupRequestBody>(
+
+  const { isLoading, createMutate, updateMutate } = useEasyMutation<GroupRequestBody>(
     ['group'],
     import.meta.env.VITE_GROUP_API_URL,
   );
@@ -83,14 +84,6 @@ const GroupEditorModal = ({
     }
   }, [open, group]);
 
-  // 핸들러
-  const handleRemove = () => {
-    if (group && !create)
-      removeMutate(group.id, {
-        onSuccess: onClose,
-      });
-  };
-
   const handleSubmit = (values: GroupRequestBody) => {
     if (create)
       createMutate(values, {
@@ -122,11 +115,6 @@ const GroupEditorModal = ({
   // Footer 버튼 렌더러
   const RenderFooter = () => (
     <div className={clsx('footer-wrap', create && 'create')}>
-      {!create && (
-        <Button className="btn-remove" styled={{ variations: 'link' }} onClick={handleRemove}>
-          그룹 삭제
-        </Button>
-      )}
       <span className="err-msg">{formik.errors.name || formik.errors.hexColor}</span>
       <div className="btn-wrap">
         <Button className="btn-cancel" styled={{ variations: 'link' }} onClick={onClose}>

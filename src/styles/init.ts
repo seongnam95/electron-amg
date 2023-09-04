@@ -213,7 +213,7 @@ export const InitGlobalStyled = memo(createGlobalStyle`
 
     // 버튼
     .ant-btn {
-      background-color: ${props => props.theme.colors.primary};
+      background-color: transparent;
       border-color: ${props => props.theme.colors.borderColor};
       color: ${props => props.theme.colors.textColor1};
       border-radius: 4px;

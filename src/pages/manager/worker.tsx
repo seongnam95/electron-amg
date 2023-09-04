@@ -1,9 +1,7 @@
 import { useState } from 'react';
 
-import { Radio } from 'antd';
 import { motion } from 'framer-motion';
 
-import Button from '~/components/common/Button';
 import LayoutConfig from '~/components/layouts/LayoutConfig/LayoutConfig';
 import GroupEditorModal from '~/components/worker/GroupEditorModal';
 import GroupSideBar from '~/components/worker/GroupSideBar';
@@ -49,14 +47,15 @@ const Worker = () => {
       >
         {/* 그룹 헤더 타이틀 */}
         <GroupTitle
+          groupId={selectedGroupId}
           groupName={groupName}
           explanation={selectedGroup?.explanation}
           mangerName={selectedGroup?.user?.name}
+          doesExist={!!selectedGroup}
           onEditor={selectedGroup && (() => setShowEditor(true))}
         />
 
         {/* 워커 테이블 */}
-
         <WorkerTable groupId={selectedGroupId} />
       </motion.div>
 

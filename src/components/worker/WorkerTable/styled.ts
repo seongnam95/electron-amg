@@ -6,7 +6,7 @@ export const WorkerTableStyled = styled.div`
   width: 100%;
 
   overflow-y: auto;
-  padding-bottom: 5rem;
+  padding: 1rem 0 5rem 0;
 
   .empty-wrap {
     display: flex;

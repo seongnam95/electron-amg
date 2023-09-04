@@ -1,27 +1,30 @@
 import styled from 'styled-components';
 
-interface GroupTitleStyledProps {
-  doesExist?: boolean;
-}
-
-export const GroupTitleStyled = styled.div<GroupTitleStyledProps>`
+export const GroupTitleStyled = styled.div`
   display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  gap: 2rem;
-  padding: 1.8rem;
-  cursor: ${p => (p.doesExist ? 'pointer' : 'default')};
+  flex-direction: column;
+  padding: 2rem 1rem 2rem 2rem;
+  border-bottom: 1px solid ${p => p.theme.colors.borderColor};
 
-  .header-text {
+  > .title-row {
+    flex: 1;
     display: flex;
-    gap: 1.6rem;
     align-items: center;
+    justify-content: space-between;
 
-    font-weight: bold;
-    font-size: 2.2rem;
+    .header-text {
+      display: flex;
+      gap: 1.6rem;
+      align-items: center;
+
+      font-weight: bold;
+      font-size: 2.2rem;
+    }
   }
 
-  .create-form-btn {
-    color: ${p => p.theme.colors.primary};
+  .explanation-text {
+    height: 2rem;
+    color: ${p => p.theme.colors.textColor3};
+    font-size: ${p => p.theme.sizes.textSmall};
   }
 `;
