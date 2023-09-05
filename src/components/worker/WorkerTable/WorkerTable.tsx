@@ -6,10 +6,11 @@ import clsx from 'clsx';
 import { motion, AnimatePresence } from 'framer-motion';
 
 import Button from '~/components/common/Button';
-import { useEasyQuery } from '~/hooks/queryHooks/useGroup';
+import { GroupRequestBody, useEasyMutation, useEasyQuery } from '~/hooks/queryHooks/useGroup';
 import { WorkerData } from '~/types/worker';
 
 import WorkerTableControlBar, { Sort } from './WorkerTableControlBar';
+import WorkerListItem from './WorkerTableItem';
 import { WorkerTableStyled } from './styled';
 
 export interface WorkerTableProps {
@@ -31,6 +32,10 @@ const WorkerTable = ({ groupId, className, onClick }: WorkerTableProps) => {
       ? `${import.meta.env.VITE_WORKER_API_URL}un/`
       : `${import.meta.env.VITE_GROUP_API_URL}${groupId}${import.meta.env.VITE_WORKER_API_URL}`;
 
+  const { updateMutate } = useEasyMutation<GroupRequestBody>(
+    ['group'],
+    import.meta.env.VITE_GROUP_API_URL,
+  );
   const { data: workers = [] } = useEasyQuery<WorkerData>(['workers', groupId], url);
   const isEmpty = workers.length === 0;
 
@@ -48,7 +53,7 @@ const WorkerTable = ({ groupId, className, onClick }: WorkerTableProps) => {
 
     switch (sort) {
       case Sort.NAME:
-        return filteredWorkers.sort((a, b) => a.name.localeCompare(b.name));
+        return [...filteredWorkers].sort((a, b) => a.name.localeCompare(b.name));
       case Sort.NORMAL:
       default:
         return filteredWorkers;
@@ -82,6 +87,8 @@ const WorkerTable = ({ groupId, className, onClick }: WorkerTableProps) => {
     setSearchTerm(e.target.value);
   };
 
+  const handleMoveGroup = () => {};
+
   return (
     <WorkerTableStyled className={clsx('WorkerTable', className)}>
       {isEmpty ? (
@@ -91,78 +98,26 @@ const WorkerTable = ({ groupId, className, onClick }: WorkerTableProps) => {
       ) : (
         <>
           <WorkerTableControlBar
+            onMoveGroup={handleMoveGroup}
             onSearch={handleSearchChange}
             onChangeSort={sort => setSort(sort)}
             checked={!!selectedIds.length}
           />
 
-          <div className="table-wrap">
-            <table>
-              <thead>
-                <tr>
-                  <th>
-                    <Checkbox onChange={handleOnChangeAllChecked} checked={allSelected} />
-                  </th>
-                  <th>이름</th>
-                  <th>연락처</th>
-                  <th>구분</th>
-                  <th>상태</th>
-                  <th>요청</th>
-                  <th></th>
-                </tr>
-              </thead>
-
-              <tbody>
-                {sortedWorkers.map(worker => {
-                  return (
-                    <tr key={worker.id} onClick={() => onClick?.(worker)}>
-                      <td>
-                        <Checkbox
-                          id={worker.id}
-                          value={worker.name}
-                          checked={selectedIds?.includes(worker.id)}
-                          onChange={handleOnChangeChecked}
-                        />
-                      </td>
-                      <td>{worker.name}</td>
-                      <td>{worker.phone}</td>
-
-                      {/* 직원, 알바, 기사, 기타 */}
-                      <td>{worker.positionCode === 0 ? '직원' : '알바'}</td>
-
-                      {/* 고용중, 계약 종료 */}
-                      <td>고용중</td>
-                      <td>출근 요청</td>
-                      <td>
-                        <Button variations="icon" btnSize="small">
-                          <i className="bx bx-dots-vertical-rounded" />
-                        </Button>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
+          <ul className="worker-list">
+            {sortedWorkers.map(worker => {
+              return (
+                <WorkerListItem
+                  key={worker.id}
+                  worker={worker}
+                  checked={selectedIds.includes(worker.id)}
+                  onChecked={handleOnChangeChecked}
+                />
+              );
+            })}
+          </ul>
         </>
       )}
-      <AnimatePresence>
-        {!!selectedIds.length && (
-          <motion.div
-            key={groupId}
-            className="edit-bar"
-            initial={{ opacity: 0, y: 5 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 5 }}
-            transition={{ duration: 0.2 }}
-          >
-            <Button fullWidth variations="link">
-              삭제
-              <i className="bx bx-trash" />
-            </Button>
-          </motion.div>
-        )}
-      </AnimatePresence>
     </WorkerTableStyled>
   );
 };

@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-export const MonthTableStyled = styled.table`
+export const MonthTableStyled = styled.div`
   --titleBg: #757575;
 
   font-size: ${p => p.theme.sizes.textSmall};

@@ -35,6 +35,7 @@ class WorkerCreate(WorkerBase):
 
 
 class WorkerUpdate(BaseModel):
+    name: Optional[str] = None
     group_id: Optional[int] = None
     phone: Optional[str] = None
     residence: Optional[str] = None
