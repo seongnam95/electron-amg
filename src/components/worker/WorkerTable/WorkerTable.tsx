@@ -1,15 +1,15 @@
-import { useEffect, useState } from 'react';
+import { ChangeEvent, useEffect, useMemo, useState } from 'react';
 
-import { Dropdown, Empty } from 'antd';
+import { Empty } from 'antd';
 import Checkbox, { CheckboxChangeEvent } from 'antd/es/checkbox';
 import clsx from 'clsx';
 import { motion, AnimatePresence } from 'framer-motion';
 
 import Button from '~/components/common/Button';
-import Input from '~/components/common/Input';
 import { useEasyQuery } from '~/hooks/queryHooks/useGroup';
 import { WorkerData } from '~/types/worker';
 
+import WorkerTableControlBar, { Sort } from './WorkerTableControlBar';
 import { WorkerTableStyled } from './styled';
 
 export interface WorkerTableProps {
@@ -21,7 +21,8 @@ export interface WorkerTableProps {
 const WorkerTable = ({ groupId, className, onClick }: WorkerTableProps) => {
   const [allSelected, setAllSelected] = useState<boolean>(false);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
-  const isChecked = !!selectedIds.length;
+  const [sort, setSort] = useState<Sort>(Sort.NORMAL);
+  const [searchTerm, setSearchTerm] = useState<string>('');
 
   const url =
     groupId === 'all'
@@ -32,6 +33,27 @@ const WorkerTable = ({ groupId, className, onClick }: WorkerTableProps) => {
 
   const { data: workers = [] } = useEasyQuery<WorkerData>(['workers', groupId], url);
   const isEmpty = workers.length === 0;
+
+  const sortedWorkers = useMemo(() => {
+    let filteredWorkers = workers;
+
+    if (searchTerm) {
+      filteredWorkers = filteredWorkers.filter(
+        worker =>
+          worker.name.includes(searchTerm) ||
+          worker.residence.includes(searchTerm) ||
+          worker.phone.includes(searchTerm),
+      );
+    }
+
+    switch (sort) {
+      case Sort.NAME:
+        return filteredWorkers.sort((a, b) => a.name.localeCompare(b.name));
+      case Sort.NORMAL:
+      default:
+        return filteredWorkers;
+    }
+  }, [workers, searchTerm, sort]);
 
   // 단일 체크박스 기준 전체 체크박스 활성화/비활성화
   useEffect(() => {
@@ -56,6 +78,10 @@ const WorkerTable = ({ groupId, className, onClick }: WorkerTableProps) => {
     }
   };
 
+  const handleSearchChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(e.target.value);
+  };
+
   return (
     <WorkerTableStyled className={clsx('WorkerTable', className)}>
       {isEmpty ? (
@@ -64,46 +90,11 @@ const WorkerTable = ({ groupId, className, onClick }: WorkerTableProps) => {
         </div>
       ) : (
         <>
-          <div className="control-bar">
-            <AnimatePresence>
-              {!isChecked && (
-                <motion.div
-                  key="search-btn-wrap"
-                  className="section"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1, x: -10 }}
-                  exit={{ opacity: 0, x: 10 }}
-                  transition={{ duration: 0.2 }}
-                >
-                  <Button variations="link" btnSize="small">
-                    <i className="bx bx-filter" />
-                    필터
-                  </Button>
-
-                  <Button variations="link" btnSize="small">
-                    <i className="bx bx-sort" />
-                    정렬방식
-                  </Button>
-                </motion.div>
-              )}
-            </AnimatePresence>
-
-            <AnimatePresence>
-              {isChecked && (
-                <motion.div
-                  key="checked-tool"
-                  className="section"
-                  initial={{ opacity: 0, x: 20 }}
-                  animate={{ opacity: 1, x: 0, width: 'auto' }}
-                  exit={{ opacity: 0, width: '0px' }}
-                  transition={{ duration: 0.2 }}
-                >
-                  <Button btnSize="small">그룹 이동</Button>
-                  <Button btnSize="small">출근</Button>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
+          <WorkerTableControlBar
+            onSearch={handleSearchChange}
+            onChangeSort={sort => setSort(sort)}
+            checked={!!selectedIds.length}
+          />
 
           <div className="table-wrap">
             <table>
@@ -120,8 +111,9 @@ const WorkerTable = ({ groupId, className, onClick }: WorkerTableProps) => {
                   <th></th>
                 </tr>
               </thead>
+
               <tbody>
-                {workers.map(worker => {
+                {sortedWorkers.map(worker => {
                   return (
                     <tr key={worker.id} onClick={() => onClick?.(worker)}>
                       <td>
@@ -155,7 +147,7 @@ const WorkerTable = ({ groupId, className, onClick }: WorkerTableProps) => {
         </>
       )}
       <AnimatePresence>
-        {isChecked && (
+        {!!selectedIds.length && (
           <motion.div
             key={groupId}
             className="edit-bar"
