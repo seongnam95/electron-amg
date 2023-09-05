@@ -96,10 +96,7 @@ const GroupTitle = ({
   return (
     <GroupTitleStyled className="GroupTitle">
       <div className="title-row">
-        <span className="header-text">
-          {groupName}
-          <span className="manager-name-text">{mangerName}</span>
-        </span>
+        <span className="header-text">{groupName}</span>
 
         {doesExist ? (
           <Dropdown menu={{ items }} trigger={['click']}>
@@ -110,7 +107,10 @@ const GroupTitle = ({
         ) : null}
       </div>
 
-      <span className="explanation-text">{explanation}</span>
+      <div className="info-wrap">
+        {mangerName && <span className="manager-text">{mangerName}</span>}
+        <span className="explanation-text">{explanation}</span>
+      </div>
     </GroupTitleStyled>
   );
 };

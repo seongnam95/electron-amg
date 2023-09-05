@@ -78,6 +78,7 @@ export const ButtonStyled = styled.button<ButtonStyledProps>`
   color: var(--color);
   font-size: var(--fontSize);
   background-color: transparent;
+  white-space: nowrap;
 
   transition: all 200ms;
   cursor: pointer;

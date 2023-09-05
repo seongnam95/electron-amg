@@ -37,7 +37,7 @@ def login(form_data: LoginForm, db: Session = Depends(deps.get_db)):
             detail="아이디 또는 패스워드가 일치하지 않습니다.",
         )
 
-    user_json = jsonable_encoder(schemas.UserResponse.from_orm(user))
+    user_json = jsonable_encoder(schemas.UserResponse.model_validate(user))
 
     jwt = Jwt()
     access_token = jwt.create_access_token({"sub": user.username})

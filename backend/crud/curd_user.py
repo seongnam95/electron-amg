@@ -1,10 +1,9 @@
-from fastapi import Depends, HTTPException
-from fastapi.encoders import jsonable_encoder
-from fastapi.security import OAuth2PasswordBearer
+from fastapi import HTTPException
+
 from util.bcrypt import pwd_context
 from crud.base import CRUDBase
 from models import User
-from schemas import UserCreate, UserUpdate, UserLogin
+from schemas import UserCreate, UserUpdate
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
 

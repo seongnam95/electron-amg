@@ -10,7 +10,7 @@ import Button from '~/components/common/Button';
 import Input from '~/components/common/Input';
 import { userState } from '~/stores/user';
 import { LoginPageStyled } from '~/styles/pageStyled/loginPageStyled';
-import { UserData } from '~/types/user';
+import { CurrentUser } from '~/types/user';
 
 interface GeoLocationI {
   ip: string;
@@ -27,19 +27,6 @@ const Login = () => {
   const [account, setAccount] = useState({ username: '', password: '' });
 
   const isValid = account.username.trim() !== '' && account.password.trim() !== '';
-
-  const { mutate, isLoading } = useMutation(loginUser, {
-    onSuccess: res => {
-      const accessToken = res.headers['authorization'];
-      sessionStorage.setItem('authorization', accessToken);
-      const user: UserData = {
-        isLogin: true,
-        user: { id: res.data.id.toString(), name: res.data.name, isAdmin: res.data.is_admin },
-      };
-      setUser(user);
-      navigate('/manager/worker');
-    },
-  });
 
   // 유저 위치 정보 수집
   useEffect(() => {
@@ -68,12 +55,26 @@ const Login = () => {
   const handleOnSubmit = (e: FormEvent) => {
     e.preventDefault();
 
-    if (isValid)
-      mutate({
-        username: account.username,
+    if (isValid) {
+      const body = {
+        username: account.password,
         password: account.password,
         access_ip: geoData?.ip,
+      };
+
+      loginUser(body).then(res => {
+        const accessToken = res.headers['authorization'];
+        sessionStorage.setItem('authorization', accessToken);
+
+        const user: CurrentUser = {
+          isLogin: true,
+          user: res.data,
+        };
+
+        setUser(user);
+        navigate('/manager/worker');
       });
+    }
   };
 
   return (
@@ -82,7 +83,7 @@ const Login = () => {
       <form className="login-form" onSubmit={handleOnSubmit}>
         <Input onChange={handleOnChange} id="username" icon="bx-user" />
         <Input onChange={handleOnChange} id="password" icon="bx-lock" type="password" />
-        <Button type="submit" disabled={!isValid}>
+        <Button type="submit" disabled={!isValid} primary>
           로그인
         </Button>
       </form>
