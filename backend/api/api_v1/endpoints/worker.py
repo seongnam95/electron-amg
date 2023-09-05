@@ -1,5 +1,7 @@
+from typing import List
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
+from api.api_v1.endpoints.group import get_group
 from response_model import BaseResponse, ListResponse
 from ... import deps
 
@@ -65,6 +67,18 @@ def delete_worker(
     db: Session = Depends(deps.get_db),
 ):
     crud.worker.remove(db=db, id=worker.id)
+    return BaseResponse(success=True, msg="정상 처리되었습니다.")
+
+
+@router.put("/change/", response_model=BaseResponse)
+def change_group_worker(
+    *,
+    obj_in: schemas.WorkerGroupChange,
+    db: Session = Depends(deps.get_db),
+):
+    group = get_group(obj_in.group_id, db)
+    crud.worker.change_group(db=db, group_id=group.id, workers=obj_in.worker_list)
+
     return BaseResponse(success=True, msg="정상 처리되었습니다.")
 
 

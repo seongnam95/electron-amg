@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import List, Optional
 from pydantic import BaseModel, model_validator, field_validator
 from schemas.common import check_update_fields
 
@@ -52,3 +52,8 @@ class Worker(WorkerBase):
 
     class Config:
         from_attributes = True
+
+
+class WorkerGroupChange(BaseModel):
+    group_id: int
+    worker_list: List[int]

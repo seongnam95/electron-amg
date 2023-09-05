@@ -17,7 +17,11 @@ interface QueryProps {
   onSuccess?: () => void;
   onError?: () => void;
 }
-
+/**
+ * 커스텀 useQuery Hook 입니다.
+ * @param queryKey 쿼리 키 값입니다.
+ * @param url 요청할 URL 입니다.
+ */
 export const useEasyQuery = <T>(
   queryKey: string[],
   url: string,
@@ -35,6 +39,11 @@ export const useEasyQuery = <T>(
   return { data, response, isLoading, isError };
 };
 
+/**
+ *
+ * @param queryKey 쿼리 키 값입니다.
+ * @param url 요청할 URL 입니다.
+ */
 export const useEasyMutation = <T extends { id: string }>(
   queryKey: string[],
   url: string,

@@ -1,5 +1,5 @@
 from .group import Group, GroupCreate, GroupUpdate
-from .worker import Worker, WorkerCreate, WorkerUpdate
+from .worker import Worker, WorkerCreate, WorkerUpdate, WorkerGroupChange
 from .personal import Personal, PersonalCreate, PersonalUpdate
 from .contract import (
     Contract,

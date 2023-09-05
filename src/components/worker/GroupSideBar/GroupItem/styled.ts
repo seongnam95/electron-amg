@@ -23,7 +23,10 @@ export const GroupItemStyled = styled.li<GroupItemStyledProps>`
   cursor: ${p => (p.disabled ? 'default' : 'pointer')};
 
   .color-bar {
-    height: 1.4rem;
+    width: 0.8rem;
+    height: 1.8rem;
+    border-radius: 2px;
+    margin: 3px 10px 3px 0;
     background-color: ${p => p.color};
   }
 

@@ -9,6 +9,7 @@ import Button from '~/components/common/Button';
 import { GroupRequestBody, useEasyMutation, useEasyQuery } from '~/hooks/queryHooks/useGroup';
 import { WorkerData } from '~/types/worker';
 
+import WorkerGroupMoveModal from '../WorkerGroupMoveModal';
 import WorkerTableControlBar, { Sort } from './WorkerTableControlBar';
 import WorkerListItem from './WorkerTableItem';
 import { WorkerTableStyled } from './styled';
@@ -20,6 +21,7 @@ export interface WorkerTableProps {
 }
 
 const WorkerTable = ({ groupId, className, onClick }: WorkerTableProps) => {
+  const [isOpenGroupMoveModal, setIsOpenGroupMoveModal] = useState<boolean>(false);
   const [allSelected, setAllSelected] = useState<boolean>(false);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [sort, setSort] = useState<Sort>(Sort.NORMAL);
@@ -32,10 +34,6 @@ const WorkerTable = ({ groupId, className, onClick }: WorkerTableProps) => {
       ? `${import.meta.env.VITE_WORKER_API_URL}un/`
       : `${import.meta.env.VITE_GROUP_API_URL}${groupId}${import.meta.env.VITE_WORKER_API_URL}`;
 
-  const { updateMutate } = useEasyMutation<GroupRequestBody>(
-    ['group'],
-    import.meta.env.VITE_GROUP_API_URL,
-  );
   const { data: workers = [] } = useEasyQuery<WorkerData>(['workers', groupId], url);
   const isEmpty = workers.length === 0;
 
@@ -87,7 +85,7 @@ const WorkerTable = ({ groupId, className, onClick }: WorkerTableProps) => {
     setSearchTerm(e.target.value);
   };
 
-  const handleMoveGroup = () => {};
+  const handleMoveGroup = () => setIsOpenGroupMoveModal(true);
 
   return (
     <WorkerTableStyled className={clsx('WorkerTable', className)}>
@@ -118,6 +116,11 @@ const WorkerTable = ({ groupId, className, onClick }: WorkerTableProps) => {
           </ul>
         </>
       )}
+      <WorkerGroupMoveModal
+        selectedWorkerIds={selectedIds}
+        open={isOpenGroupMoveModal}
+        onClose={() => setIsOpenGroupMoveModal(false)}
+      />
     </WorkerTableStyled>
   );
 };

@@ -8,6 +8,13 @@ from sqlalchemy.orm import Session
 
 
 class CRUDWorker(CRUDBase[Worker, WorkerCreate, WorkerUpdate]):
+    def change_group(self, db: Session, group_id: str, workers: List[int]):
+        db.query(Worker).filter(Worker.id.in_(workers)).update(
+            {Worker.group_id: group_id}, synchronize_session="fetch"
+        )
+        db.commit()
+        return
+
     def get_unaffiliated_worker(self, db: Session, *, skip: int = 0, limit: int = 100):
         return (
             db.query(self.model)
