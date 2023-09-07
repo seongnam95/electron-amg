@@ -1,12 +1,10 @@
-import { ReactNode, useState } from 'react';
+import { useState } from 'react';
 
-import { ModalProps } from 'antd';
-import clsx from 'clsx';
+import { ModalProps, Skeleton } from 'antd';
 
-import { ChangeGroupBody, changeGroupRequest } from '~/api/group';
 import Button from '~/components/common/Button';
-import { useEasyMutation, useEasyQuery } from '~/hooks/queryHooks/useGroup';
-import { GroupData } from '~/types/group';
+import { useGroupQuery } from '~/hooks/queryHooks/useGroupQuery';
+import { useWorkerMutation, workerKeys } from '~/hooks/queryHooks/useWorkerQuery';
 
 import GroupItem from '../GroupSideBar/GroupItem';
 import { WorkerGroupMoveModalStyled } from './styled';
@@ -25,18 +23,13 @@ const WorkerGroupMoveModal = ({
 }: WorkerGroupMoveModalProps) => {
   const [targetGroupID, setTargetGroupID] = useState<string>('');
 
-  const { data: groups } = useEasyQuery<GroupData>(['group'], '/group/');
-  const { data: workers } = useEasyQuery<GroupData>(['worker'], '/worker/');
-
-  const { updateMutate } = useEasyMutation(['worker'], '/worker/');
-
+  const { groupMoveMutate } = useWorkerMutation(workerKeys.all);
+  const { groups, isGroupLoading } = useGroupQuery();
   const handleSubmit = () => {
-    console.log(selectedWorkerIds);
-    const body: ChangeGroupBody = {
+    groupMoveMutate({
       groupId: targetGroupID,
-      worker_list: selectedWorkerIds,
-    };
-    changeGroupRequest(body);
+      workerIds: selectedWorkerIds,
+    });
   };
 
   const handleClose = () => {
@@ -72,18 +65,22 @@ const WorkerGroupMoveModal = ({
       footer={<RenderFooter />}
       {...rest}
     >
-      <ul className="group-list">
-        {groups?.map(group => (
-          <GroupItem
-            key={group.id}
-            id={group.id}
-            label={group.name}
-            color={group.hexColor}
-            onClick={() => setTargetGroupID(group.id)}
-            activate={group.id === targetGroupID}
-          />
-        ))}
-      </ul>
+      {!isGroupLoading ? (
+        <ul className="group-list">
+          {groups?.map(group => (
+            <GroupItem
+              key={group.id}
+              id={group.id}
+              label={group.name}
+              color={group.hexColor}
+              onClick={() => setTargetGroupID(group.id)}
+              activate={group.id === targetGroupID}
+            />
+          ))}
+        </ul>
+      ) : (
+        <Skeleton active />
+      )}
     </WorkerGroupMoveModalStyled>
   );
 };

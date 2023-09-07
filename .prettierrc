@@ -7,6 +7,6 @@
   "useTabs": false,
   "printWidth": 100,
   "semi": true,
-  "importOrder": ["^electron", "^react", "^[^.~@]+", "^@app", "^~.+$", "^\\..+$"],
+  "importOrder": ["^electron", "^react", "^@app", "^[^.~@]+", "^@components", "^~.+$", "^\\..+$"],
   "importOrderSeparation": true
 }

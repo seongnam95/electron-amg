@@ -1,18 +1,17 @@
 import React, { useMemo } from 'react';
 
-import { Dropdown, Modal } from 'antd';
+import { Dropdown, Modal, Tooltip } from 'antd';
 import { ItemType } from 'antd/es/menu/hooks/useItems';
 import { CSSProperties } from 'styled-components';
 
 import Button from '~/components/common/Button';
-import { GroupRequestBody, useEasyMutation } from '~/hooks/queryHooks/useGroup';
+import { groupKeys, useGroupMutation } from '~/hooks/queryHooks/useGroupQuery';
 
 import { GroupTitleStyled } from './styled';
 
 export interface GroupTitleProps {
   groupId: string;
   groupName?: string;
-  color?: string;
   explanation?: string;
   mangerName?: string;
   doesExist?: boolean;
@@ -22,20 +21,14 @@ export interface GroupTitleProps {
 const GroupTitle = ({
   groupId,
   groupName,
-  color,
   explanation,
   mangerName,
   doesExist,
   onEditor,
 }: GroupTitleProps) => {
-  const { removeMutate } = useEasyMutation<GroupRequestBody>(
-    ['group'],
-    import.meta.env.VITE_GROUP_API_URL,
-  );
+  const { removeGroupMutate } = useGroupMutation(groupKeys.byId(groupId));
 
   const createContractForm = () => {};
-  const editGroup = () => onEditor?.();
-  const removeGroup = () => removeMutate(groupId);
 
   const showRemoveModal = () => {
     Modal.confirm({
@@ -44,7 +37,7 @@ const GroupTitle = ({
       okText: '그룹 삭제',
       okType: 'danger',
       cancelText: '취소',
-      onOk: removeGroup,
+      onOk: () => removeGroupMutate(groupId),
     });
   };
 
@@ -70,7 +63,7 @@ const GroupTitle = ({
       },
       {
         key: 'group-edit',
-        onClick: editGroup,
+        onClick: onEditor,
         label: (
           <p style={menuItemStyle}>
             <i className="bx bx-edit" />
@@ -95,22 +88,20 @@ const GroupTitle = ({
 
   return (
     <GroupTitleStyled className="GroupTitle">
-      <div className="title-row">
-        <span className="header-text">{groupName}</span>
-
-        {doesExist ? (
-          <Dropdown menu={{ items }} trigger={['click']}>
-            <Button>
-              <i className="bx bx-dots-vertical-rounded" />
-            </Button>
-          </Dropdown>
-        ) : null}
-      </div>
-
-      <div className="info-wrap">
+      <div className="title-wrap">
+        <Tooltip title={explanation} placement="bottom">
+          <span className="header-text">{groupName}</span>
+        </Tooltip>
         {mangerName && <span className="manager-text">{mangerName}</span>}
-        <span className="explanation-text">{explanation}</span>
       </div>
+
+      {doesExist ? (
+        <Dropdown menu={{ items }} trigger={['click']}>
+          <Button>
+            <i className="bx bx-dots-vertical-rounded" />
+          </Button>
+        </Dropdown>
+      ) : null}
     </GroupTitleStyled>
   );
 };

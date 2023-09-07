@@ -34,7 +34,7 @@ export const WorkerTableStyled = styled.div`
     display: flex;
     align-items: center;
     justify-content: center;
-    height: 100%;
-    padding-bottom: 8rem;
+    height: calc(100% - 5.4rem);
+    padding-bottom: 14rem;
   }
 `;

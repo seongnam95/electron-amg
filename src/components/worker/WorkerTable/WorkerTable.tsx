@@ -1,12 +1,10 @@
-import { ChangeEvent, useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
-import { Empty } from 'antd';
-import Checkbox, { CheckboxChangeEvent } from 'antd/es/checkbox';
+import { Empty, Skeleton } from 'antd';
+import { CheckboxChangeEvent } from 'antd/es/checkbox';
 import clsx from 'clsx';
-import { motion, AnimatePresence } from 'framer-motion';
 
-import Button from '~/components/common/Button';
-import { GroupRequestBody, useEasyMutation, useEasyQuery } from '~/hooks/queryHooks/useGroup';
+import { useWorkerQuery } from '~/hooks/queryHooks/useWorkerQuery';
 import { WorkerData } from '~/types/worker';
 
 import WorkerGroupMoveModal from '../WorkerGroupMoveModal';
@@ -27,31 +25,30 @@ const WorkerTable = ({ groupId, className, onClick }: WorkerTableProps) => {
   const [sort, setSort] = useState<Sort>(Sort.NORMAL);
   const [searchTerm, setSearchTerm] = useState<string>('');
 
-  const url =
-    groupId === 'all'
-      ? import.meta.env.VITE_WORKER_API_URL
-      : groupId === 'etc'
-      ? `${import.meta.env.VITE_WORKER_API_URL}un/`
-      : `${import.meta.env.VITE_GROUP_API_URL}${groupId}${import.meta.env.VITE_WORKER_API_URL}`;
+  const { workers, isWorkerLoading } = useWorkerQuery({
+    groupId: groupId !== 'all' ? groupId : undefined,
+  });
 
-  const { data: workers = [] } = useEasyQuery<WorkerData>(['workers', groupId], url);
-  const isEmpty = workers.length === 0;
+  const isEmptyWorker = workers.length === 0;
 
+  // Worker 키워드 검색
+  const searchWorker = (data: Array<WorkerData>): Array<WorkerData> => {
+    return data.filter(
+      worker =>
+        worker.name.includes(searchTerm) ||
+        worker.residence.includes(searchTerm) ||
+        worker.phone.includes(searchTerm),
+    );
+  };
+
+  // Worker 정렬 방식
   const sortedWorkers = useMemo(() => {
-    let filteredWorkers = workers;
-
-    if (searchTerm) {
-      filteredWorkers = filteredWorkers.filter(
-        worker =>
-          worker.name.includes(searchTerm) ||
-          worker.residence.includes(searchTerm) ||
-          worker.phone.includes(searchTerm),
-      );
-    }
+    let filteredWorkers: Array<WorkerData> = searchTerm ? searchWorker(workers) : workers;
 
     switch (sort) {
       case Sort.NAME:
         return [...filteredWorkers].sort((a, b) => a.name.localeCompare(b.name));
+
       case Sort.NORMAL:
       default:
         return filteredWorkers;
@@ -71,7 +68,6 @@ const WorkerTable = ({ groupId, className, onClick }: WorkerTableProps) => {
   // 체크박스 클릭 핸들러
   const handleOnChangeChecked = (e: CheckboxChangeEvent) => {
     const targetId = e.target.id;
-
     if (targetId) {
       setSelectedIds(
         selectedIds.includes(targetId)
@@ -81,27 +77,16 @@ const WorkerTable = ({ groupId, className, onClick }: WorkerTableProps) => {
     }
   };
 
-  const handleSearchChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setSearchTerm(e.target.value);
-  };
-
-  const handleMoveGroup = () => setIsOpenGroupMoveModal(true);
-
   return (
     <WorkerTableStyled className={clsx('WorkerTable', className)}>
-      {isEmpty ? (
-        <div className="empty-wrap">
-          <Empty description="그룹이 비었습니다" />
-        </div>
-      ) : (
-        <>
-          <WorkerTableControlBar
-            onMoveGroup={handleMoveGroup}
-            onSearch={handleSearchChange}
-            onChangeSort={sort => setSort(sort)}
-            checked={!!selectedIds.length}
-          />
-
+      <WorkerTableControlBar
+        onMoveGroup={() => setIsOpenGroupMoveModal(true)}
+        onSearch={e => setSearchTerm(e.target.value)}
+        onChangeSort={sort => setSort(sort)}
+        checked={!!selectedIds.length}
+      />
+      {!isWorkerLoading ? (
+        !isEmptyWorker ? (
           <ul className="worker-list">
             {sortedWorkers.map(worker => {
               return (
@@ -114,8 +99,15 @@ const WorkerTable = ({ groupId, className, onClick }: WorkerTableProps) => {
               );
             })}
           </ul>
-        </>
+        ) : (
+          <div className="empty-wrap">
+            <Empty description="그룹이 비었습니다" />
+          </div>
+        )
+      ) : (
+        <Skeleton active style={{ padding: '2rem' }} />
       )}
+
       <WorkerGroupMoveModal
         selectedWorkerIds={selectedIds}
         open={isOpenGroupMoveModal}

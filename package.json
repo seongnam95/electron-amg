@@ -12,13 +12,15 @@
     "build:all": "tsc && vite build && electron-builder --win --x64 --mac",
     "build:vite": "tsc && vite build",
     "preview": "vite preview",
-    "g": "node generator.mjs"
+    "g": "node generator.mjs",
+    "uvicorn": "cd backend/venv/Scripts && activate && cd ../.. && uvicorn main:app --reload --port 8001"
   },
   "dependencies": {
     "@types/react-virtualized": "^9.21.21",
     "antd": "^5.8.3",
     "axios": "^1.2.3",
     "clsx": "^1.2.1",
+    "concurrently": "^8.2.1",
     "dayjs": "^1.11.7",
     "electron-log": "^4.4.8",
     "electron-store": "^8.1.0",
@@ -27,6 +29,7 @@
     "formik": "^2.4.3",
     "framer-motion": "^9.1.6",
     "glob": "^8.1.0",
+    "global": "^4.4.0",
     "lodash": "^4.17.21",
     "lottie-react": "^2.4.0",
     "path-to-regexp": "^6.2.1",

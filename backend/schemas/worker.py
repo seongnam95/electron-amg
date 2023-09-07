@@ -56,4 +56,4 @@ class Worker(WorkerBase):
 
 class WorkerGroupChange(BaseModel):
     group_id: int
-    worker_list: List[int]
+    worker_ids: List[int]

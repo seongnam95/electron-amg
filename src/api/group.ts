@@ -1,14 +1,10 @@
-import { BaseResponse } from '~/types/common';
+import { BaseResponse } from '~/types/response';
+import { WorkerMoveGroupBody } from '~/types/worker';
 
 import axiosPrivate from './axios';
 
-export interface ChangeGroupBody {
-  groupId: string;
-  worker_list: string[];
-}
-
-export const changeGroupRequest = async (body: ChangeGroupBody): Promise<BaseResponse> => {
-  const url = `${import.meta.env.VITE_GROUP_API_URL}change/`;
+export const workerMoveGroupRequest = async (body: WorkerMoveGroupBody): Promise<BaseResponse> => {
+  const url = `${import.meta.env.VITE_WORKER_API_URL}change/`;
   const { data } = await axiosPrivate.put<BaseResponse>(url, body);
   return data;
 };

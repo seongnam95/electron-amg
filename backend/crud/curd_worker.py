@@ -1,4 +1,4 @@
-from typing import List, Type
+from typing import List, Optional, Type
 
 from fastapi import HTTPException
 from crud.base import CRUDBase
@@ -8,21 +8,39 @@ from sqlalchemy.orm import Session
 
 
 class CRUDWorker(CRUDBase[Worker, WorkerCreate, WorkerUpdate]):
+    def get_multi_worker(
+        self,
+        db: Session,
+        *,
+        group_id: Optional[int] = None,
+        skip: int = 0,
+        limit: int = 100
+    ) -> List[Worker]:
+        if group_id:
+            return (
+                db.query(Worker)
+                .filter(Worker.group_id == group_id)
+                .offset(skip)
+                .limit(limit)
+                .all()
+            )
+        return db.query(self.model).offset(skip).limit(limit).all()
+
+    def get_unaffiliated_worker(self, db: Session, *, skip: int = 0, limit: int = 100):
+        return (
+            db.query(Worker)
+            .filter(Worker.group_id == None)
+            .offset(skip)
+            .limit(limit)
+            .all()
+        )
+
     def change_group(self, db: Session, group_id: str, workers: List[int]):
         db.query(Worker).filter(Worker.id.in_(workers)).update(
             {Worker.group_id: group_id}, synchronize_session="fetch"
         )
         db.commit()
         return
-
-    def get_unaffiliated_worker(self, db: Session, *, skip: int = 0, limit: int = 100):
-        return (
-            db.query(self.model)
-            .filter(self.model.group_id == None)
-            .offset(skip)
-            .limit(limit)
-            .all()
-        )
 
     def create_worker_in_group(self, db: Session, *, obj_in: WorkerCreate) -> Worker:
         new_obj_in = obj_in.model_dump()

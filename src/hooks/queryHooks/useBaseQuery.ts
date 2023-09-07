@@ -2,41 +2,44 @@ import { useMutation, useQuery, useQueryClient } from 'react-query';
 
 import { AxiosError } from 'axios';
 
-import { createRequest, fetchRequest, removeRequest, updateRequest } from '~/api/common';
-import { FetchListResponse } from '~/types/common';
+import { createRequest, fetchAllRequest, removeRequest, updateRequest } from '~/api/base';
+import { FetchListResponse } from '~/types/response';
 
-export interface GroupRequestBody {
-  id: string;
-  name?: string;
-  hexColor?: string;
-  explanation?: string;
-  userId?: string;
+export interface BaseMultiDataParams {
+  skip?: number;
+  limit?: number;
 }
 
-interface QueryProps {
-  onSuccess?: () => void;
-  onError?: () => void;
+export interface QueryDefaultOptions {
+  onSuccessCb?: () => void;
+  onErrorCb?: () => void;
 }
+
+export interface BaseQueryOptions<T = BaseMultiDataParams> extends QueryDefaultOptions {
+  params?: T;
+  enabled?: boolean;
+}
+
 /**
  * 커스텀 useQuery Hook 입니다.
  * @param queryKey 쿼리 키 값입니다.
  * @param url 요청할 URL 입니다.
  */
-export const useEasyQuery = <T>(
-  queryKey: string[],
+export const useBaseQuery = <T>(
+  queryKey: any,
   url: string,
-  { onSuccess, onError }: QueryProps = {},
+  { enabled, onSuccessCb, onErrorCb }: BaseQueryOptions = {},
 ) => {
   const {
     data: response,
     isLoading,
     isError,
-  } = useQuery<FetchListResponse<T>, AxiosError>(queryKey, fetchRequest<T>(url), {
-    onSuccess: onSuccess,
-    onError: onError,
+  } = useQuery<FetchListResponse<T>, AxiosError>(queryKey, fetchAllRequest<T>(url), {
+    enabled: enabled,
+    onSuccess: onSuccessCb,
+    onError: onErrorCb,
   });
-  const data = response?.result;
-  return { data, response, isLoading, isError };
+  return { response, isLoading, isError };
 };
 
 /**
@@ -44,26 +47,26 @@ export const useEasyQuery = <T>(
  * @param queryKey 쿼리 키 값입니다.
  * @param url 요청할 URL 입니다.
  */
-export const useEasyMutation = <T extends { id: string }>(
+export const useBaseMutation = <TCreate, TUpdate>(
   queryKey: string[],
   url: string,
-  { onSuccess }: QueryProps = {},
+  { onSuccessCb }: BaseQueryOptions = {},
 ) => {
   const queryClient = useQueryClient();
   const options = {
     onSuccess: () => {
-      onSuccess?.();
+      onSuccessCb?.();
       queryClient.invalidateQueries(queryKey);
     },
   };
 
   const { mutate: createMutate, isLoading: createLoading } = useMutation(
-    createRequest<T>(url),
+    createRequest<TCreate>(url),
     options,
   );
 
   const { mutate: updateMutate, isLoading: updateLoading } = useMutation(
-    updateRequest<T>(url),
+    updateRequest<TUpdate>(url),
     options,
   );
 

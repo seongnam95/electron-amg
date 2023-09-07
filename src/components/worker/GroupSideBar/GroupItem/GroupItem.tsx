@@ -1,5 +1,3 @@
-import React from 'react';
-
 import { GroupItemStyled, GroupItemStyledProps } from './styled';
 
 export interface GroupSideBarProps extends GroupItemStyledProps {

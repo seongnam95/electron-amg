@@ -8,10 +8,10 @@ export interface InputStyledProps {
 export const InputStyled = styled.label<InputStyledProps>`
   display: flex;
   align-items: center;
-  gap: 1.4rem;
+  gap: 1rem;
 
   width: ${p => (p.fullWidth ? '100%' : 'auto')};
-  height: 3.8rem;
+  height: 3.4rem;
 
   padding: 0.1rem 1.6rem 0 1.2rem;
   border: 1px solid transparent;
@@ -39,7 +39,7 @@ export const InputStyled = styled.label<InputStyledProps>`
   }
 
   > i {
-    font-size: 1.8rem;
+    font-size: 1.6rem;
     color: ${p => p.theme.colors.textColor3};
     transition: all 200ms;
   }

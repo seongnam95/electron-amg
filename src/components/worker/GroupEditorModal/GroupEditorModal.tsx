@@ -7,11 +7,12 @@ import { useFormik } from 'formik';
 import Lottie from 'lottie-react';
 import * as Yup from 'yup';
 
+import { Button } from '@components/common';
+
 import loadingLottie from '~/assets/lotties/loading.json';
-import Button from '~/components/common/Button';
-import { GroupRequestBody, useEasyMutation } from '~/hooks/queryHooks/useGroup';
-import { useUserQuery } from '~/hooks/queryHooks/useUser';
-import { GroupData } from '~/types/group';
+import { groupKeys, useGroupMutation } from '~/hooks/queryHooks/useGroupQuery';
+import { useUserQuery } from '~/hooks/queryHooks/useUserQuery';
+import { GroupCreateBody, GroupData, GroupUpdateBody } from '~/types/group';
 import { isEmptyObj, removeEmptyValueObj } from '~/utils/objectUtil';
 
 import { GroupEditorModalStyled } from './styled';
@@ -30,13 +31,9 @@ const GroupEditorModal = ({
   ...rest
 }: GroupEditorModalProps) => {
   const nameInputRef = useRef<HTMLInputElement>(null);
+  const { isLoading, createGroupMutate, updateGroupMutate } = useGroupMutation(groupKeys.all);
 
-  const { isLoading, createMutate, updateMutate } = useEasyMutation<GroupRequestBody>(
-    ['group'],
-    import.meta.env.VITE_GROUP_API_URL,
-  );
-
-  const initGroup: GroupRequestBody = group
+  const initGroup: GroupData = group
     ? {
         id: group.id,
         name: group.name,
@@ -57,9 +54,7 @@ const GroupEditorModal = ({
     },
   ];
 
-  const { users } = useUserQuery({
-    enabled: open,
-  });
+  const { users } = useUserQuery({ enabled: open });
 
   const userOptions = [
     { value: '', label: '( 담당자 없음 )' },
@@ -84,24 +79,22 @@ const GroupEditorModal = ({
     }
   }, [open, group]);
 
-  const handleSubmit = (values: GroupRequestBody) => {
-    if (create)
-      createMutate(values, {
-        onSuccess: onClose,
-      });
-    else if (group) {
-      const validBody = removeEmptyValueObj(values);
+  const handleSubmit = (values: GroupData) => {
+    if (create) createGroup(values);
+    else updateGroup(values);
+  };
 
-      if (!isEmptyObj(validBody)) {
-        const newGroup = {
-          id: group.id,
-          ...validBody,
-        };
+  const createGroup = (body: GroupCreateBody) => {
+    createGroupMutate(body, {
+      onSuccess: onClose,
+    });
+  };
 
-        updateMutate(newGroup, {
-          onSuccess: onClose,
-        });
-      }
+  const updateGroup = (data: GroupUpdateBody) => {
+    const validBody = removeEmptyValueObj(data);
+
+    if (group && !isEmptyObj(validBody)) {
+      updateGroupMutate({ id: group.id, body: validBody }, { onSuccess: onClose });
     }
   };
 
@@ -177,7 +170,7 @@ const GroupEditorModal = ({
       <Select
         className="user-selector"
         options={userOptions}
-        value={formik.values.userId}
+        value={formik.values.user?.id}
         placeholder={
           group && group.user ? `${group.user.name} (${group.user.username})` : '그룹 담당자 (선택)'
         }

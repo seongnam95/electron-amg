@@ -1,8 +1,8 @@
-from typing import List
+from typing import List, Optional
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from api.api_v1.endpoints.group import get_group
-from response_model import BaseResponse, ListResponse
+from response_model import BaseResponse, ListResponse, DataResponse
 from ... import deps
 
 import crud, schemas
@@ -11,21 +11,41 @@ import crud, schemas
 router = APIRouter()
 
 
+# 근로자 불러오기
+@router.get("/{worker_id}", response_model=DataResponse[schemas.Worker])
+def read_worker(
+    worker: schemas.Worker = Depends(deps.get_worker),
+):
+    return DataResponse(success=True, msg="정상 처리되었습니다.", result=worker)
+
+
 # 전체 근로자 불러오기
 @router.get("/", response_model=ListResponse[schemas.Worker])
 def read_all_worker(
     # user: User = Depends(deps.get_current_user),
+    group_id: Optional[int] = None,
     db: Session = Depends(deps.get_db),
     skip: int = 0,
     limit: int = 100,
 ):
-    workers = crud.worker.get_multi(db, skip=skip, limit=limit)
+    if group_id:
+        group = crud.group.get(db, id=group_id)
+        if not group:
+            raise HTTPException(status_code=404, detail="해당 그룹을 찾을 수 없습니다.")
+
+        workers = crud.worker.get_multi_worker(
+            db, group_id=group.id, skip=skip, limit=limit
+        )
+
+    else:
+        workers = crud.worker.get_multi_worker(db, skip=skip, limit=limit)
+
     return ListResponse(
         success=True, msg="정상 처리되었습니다.", count=len(workers), result=workers
     )
 
 
-@router.get("/un/", response_model=ListResponse[schemas.Worker])
+@router.get("/unaffiliated/", response_model=ListResponse[schemas.Worker])
 def read_all_unaffiliated_worker(
     # user: User = Depends(deps.get_current_user),
     db: Session = Depends(deps.get_db),
@@ -33,6 +53,7 @@ def read_all_unaffiliated_worker(
     limit: int = 100,
 ):
     workers = crud.worker.get_unaffiliated_worker(db, skip=skip, limit=limit)
+
     return ListResponse(
         success=True, msg="정상 처리되었습니다.", count=len(workers), result=workers
     )
@@ -76,18 +97,11 @@ def change_group_worker(
     obj_in: schemas.WorkerGroupChange,
     db: Session = Depends(deps.get_db),
 ):
+    print(obj_in)
     group = get_group(obj_in.group_id, db)
-    crud.worker.change_group(db=db, group_id=group.id, workers=obj_in.worker_list)
+    crud.worker.change_group(db=db, group_id=group.id, workers=obj_in.worker_ids)
 
     return BaseResponse(success=True, msg="정상 처리되었습니다.")
-
-
-# 근로자 불러오기
-# @router.get("/{worker_id}", response_model=DataResponse[schemas.Worker])
-# def read_worker(
-#     worker: schemas.Worker = Depends(deps.get_worker),
-# ):
-#     return DataResponse(success=True, result=worker)
 
 
 # 근로자의 모든 계약서 불러오기

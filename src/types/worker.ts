@@ -1,9 +1,4 @@
-export interface ContractData {
-  company: string;
-  date: string;
-  period: [string, string];
-}
-
+/** 워커 데이터 인터페이스 */
 export interface WorkerData {
   id: string;
   name: string;
@@ -15,10 +10,17 @@ export interface WorkerData {
   groupId?: string;
 }
 
-export interface CommuteData {
-  id: string;
-  workerId: string;
-  workingDay: string;
-  startTimeStamp: number;
-  endTimeStamp: number;
-}
+/** 워커 생성 API 바디 */
+export type WorkerCreateBody = Pick<
+  WorkerData,
+  'name' | 'genderCode' | 'phone' | 'residence' | 'positionCode' | 'groupId'
+>;
+
+/** 워커 업데이트 API 바디 */
+export type WorkerUpdateBody = Partial<Omit<WorkerCreateBody, 'genderCode'>>;
+
+/** 워커 그룹 이동 API 바디 */
+export type WorkerMoveGroupBody = {
+  groupId: string;
+  workerIds: string[];
+};

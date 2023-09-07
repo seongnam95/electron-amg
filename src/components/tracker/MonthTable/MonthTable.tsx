@@ -3,7 +3,7 @@ import dayjs, { Dayjs } from 'dayjs';
 import { useRecoilValue } from 'recoil';
 import styled, { css } from 'styled-components';
 
-import { useEasyQuery } from '~/hooks/queryHooks/useGroup';
+import { useBaseQuery } from '~/hooks/queryHooks/useBaseQuery';
 import { commuteMonthlySelector } from '~/stores/commute';
 import { CommuteData, WorkerData } from '~/types/worker';
 import { findWorkingRanges, groupDataByWorker } from '~/utils/commuteRange';
@@ -16,10 +16,10 @@ export interface MonthTableProps {
 
 const MonthTable = ({ selectedDay }: MonthTableProps) => {
   const commutes = useRecoilValue(commuteMonthlySelector(selectedDay.format('YYYYMM')));
-  const { data: workers = [] } = useEasyQuery<WorkerData>(
-    ['workers'],
-    import.meta.env.VITE_WORKER_API_URL,
-  );
+  const { response } = useBaseQuery<WorkerData>(['workers'], import.meta.env.VITE_WORKER_API_URL);
+
+  const workers = response?.result;
+
   const dayCount = selectedDay.daysInMonth();
   const daysOfMonth = Array.from({ length: dayCount }, (_, i) => dayjs(selectedDay).date(i + 1));
   const dataByWorker = groupDataByWorker(commutes);
@@ -40,7 +40,7 @@ const MonthTable = ({ selectedDay }: MonthTableProps) => {
 
       <tbody>
         {/* Worker Row */}
-        {workers.map((worker: WorkerData) => (
+        {workers?.map((worker: WorkerData) => (
           <tr key={'row' + worker.id}>
             <td className="name-column">{worker.name}</td>
 

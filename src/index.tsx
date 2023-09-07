@@ -2,13 +2,13 @@ import { Suspense } from 'react';
 import { createRoot } from 'react-dom/client';
 import { QueryClient, QueryClientProvider } from 'react-query';
 
+import { ElectronRendererContext } from '@app/types/preload';
+
 import 'antd/dist/reset.css';
 import dayjs from 'dayjs';
 import 'dayjs/locale/ko';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import { RecoilRoot } from 'recoil';
-
-import { ElectronRendererContext } from '@app/types/preload';
 
 import FileSystemRoutes from '~/components/common/FileSystemRoutes';
 
@@ -24,7 +24,8 @@ declare global {
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      staleTime: 1000 * 60 * 5,
+      retry: false,
+      // staleTime: 1000 * 60 * 5,
     },
   },
 });

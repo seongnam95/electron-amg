@@ -43,6 +43,8 @@ const getRefreshToken = async (): Promise<string | void> => {
 
 axiosPrivate.interceptors.request.use(config => {
   if (config.data) config.data = camelToSnake(config.data);
+  if (config.params) config.params = camelToSnake(config.params);
+
   if (config.url !== '/auth/login' && config.url !== 'auth/token/refresh') {
     let token = sessionStorage.getItem('authorization');
     if (token !== null) {

@@ -114,6 +114,7 @@ export const ButtonStyled = styled.button<ButtonStyledProps>`
 
   :disabled {
     color: ${p => p.theme.colors.textColor2};
-    background-color: ${p => p.theme.colors.disableBg};
+    background-color: ${p => (p.variations === 'fill' ? p.theme.colors.disableBg : 'transparent')};
+    cursor: default;
   }
 `;

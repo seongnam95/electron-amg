@@ -9,7 +9,7 @@ from schemas.common import check_update_fields
 class GroupBase(BaseModel):
     name: str
     hex_color: str
-    explanation: str
+    explanation: Optional[str] = None
 
 
 class GroupCreate(GroupBase):
