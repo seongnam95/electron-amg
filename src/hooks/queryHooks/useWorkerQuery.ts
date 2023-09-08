@@ -8,7 +8,7 @@ import {
   BaseMultiDataParams,
   BaseQueryOptions,
   QueryDefaultOptions,
-  useBaseMutation,
+  baseMutation,
 } from './useBaseQuery';
 
 export interface WorkerQueryParams extends BaseMultiDataParams {
@@ -31,8 +31,8 @@ export const useWorkerQuery = ({
   workerId,
   groupId,
   params,
-  onSuccessCb,
-  onErrorCb,
+  onSuccess,
+  onError,
 }: WorkerQueryOptions = {}) => {
   const isUnaffiliated = groupId === 'etc';
   const baseEndpoint = import.meta.env.VITE_WORKER_API_URL;
@@ -54,39 +54,28 @@ export const useWorkerQuery = ({
     isLoading: isWorkerLoading,
     isError: isWorkerError,
   } = useQuery(queryKey, baseFetch<WorkerData, WorkerQueryParams>(endpoint, workerId, newParams), {
-    onSuccess: onSuccessCb,
-    onError: onErrorCb,
+    onSuccess: onSuccess,
+    onError: onError,
   });
 
   const workers = response ? response.result : [];
   return { response, workers, isWorkerLoading, isWorkerError };
 };
 
-export const useWorkerMutation = (
-  queryKey: string[],
-  { onSuccessCb, onErrorCb }: QueryDefaultOptions = {},
-) => {
+export const useWorkerMutation = (queryKey: string[], options?: BaseQueryOptions) => {
   const endpoint = import.meta.env.VITE_WORKER_API_URL;
 
-  const queryClient = useQueryClient();
-  const options = {
-    onSuccess: () => {
-      queryClient.invalidateQueries(queryKey);
-      onSuccessCb?.();
-    },
-    onError: onErrorCb,
-  };
-
   const {
+    initOptions,
     createMutate,
     updateMutate,
     removeMutate,
     isLoading: baseLoading,
-  } = useBaseMutation<WorkerCreateBody, WorkerUpdateBody>(queryKey, endpoint);
+  } = baseMutation<WorkerCreateBody, WorkerUpdateBody>(queryKey, endpoint, options);
 
   const { mutate: groupMoveMutate, isLoading: groupMoveLoading } = useMutation(
     workerMoveGroupRequest,
-    options,
+    initOptions,
   );
 
   const isLoading = baseLoading || groupMoveLoading;

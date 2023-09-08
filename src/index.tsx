@@ -4,6 +4,7 @@ import { QueryClient, QueryClientProvider } from 'react-query';
 
 import { ElectronRendererContext } from '@app/types/preload';
 
+import { ConfigProvider } from 'antd';
 import 'antd/dist/reset.css';
 import dayjs from 'dayjs';
 import 'dayjs/locale/ko';

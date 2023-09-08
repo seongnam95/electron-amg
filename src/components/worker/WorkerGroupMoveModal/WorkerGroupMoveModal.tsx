@@ -25,11 +25,15 @@ const WorkerGroupMoveModal = ({
 
   const { groupMoveMutate } = useWorkerMutation(workerKeys.all);
   const { groups, isGroupLoading } = useGroupQuery();
+
   const handleSubmit = () => {
-    groupMoveMutate({
-      groupId: targetGroupID,
-      workerIds: selectedWorkerIds,
-    });
+    groupMoveMutate(
+      {
+        groupId: targetGroupID !== 'etc' ? targetGroupID : undefined,
+        workerIds: selectedWorkerIds,
+      },
+      { onSuccess: () => handleClose() },
+    );
   };
 
   const handleClose = () => {
@@ -67,6 +71,13 @@ const WorkerGroupMoveModal = ({
     >
       {!isGroupLoading ? (
         <ul className="group-list">
+          <GroupItem
+            id="etc"
+            label="기타"
+            color="#333333"
+            onClick={() => setTargetGroupID('etc')}
+            activate={targetGroupID === 'etc'}
+          />
           {groups?.map(group => (
             <GroupItem
               key={group.id}

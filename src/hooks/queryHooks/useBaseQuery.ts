@@ -1,81 +1,59 @@
-import { useMutation, useQuery, useQueryClient } from 'react-query';
+import { useMutation, useQueryClient } from 'react-query';
 
-import { AxiosError } from 'axios';
-
-import { createRequest, fetchAllRequest, removeRequest, updateRequest } from '~/api/base';
-import { FetchListResponse } from '~/types/response';
+import { createRequest, removeRequest, updateRequest } from '~/api/base';
 
 export interface BaseMultiDataParams {
   skip?: number;
   limit?: number;
 }
 
+/** Create, Put, Remove Request Options */
 export interface QueryDefaultOptions {
-  onSuccessCb?: () => void;
-  onErrorCb?: () => void;
+  onSuccess?: () => void;
+  onError?: () => void;
 }
 
+/** Fetch Request Options */
 export interface BaseQueryOptions<T = BaseMultiDataParams> extends QueryDefaultOptions {
   params?: T;
   enabled?: boolean;
 }
 
 /**
- * 커스텀 useQuery Hook 입니다.
- * @param queryKey 쿼리 키 값입니다.
- * @param url 요청할 URL 입니다.
- */
-export const useBaseQuery = <T>(
-  queryKey: any,
-  url: string,
-  { enabled, onSuccessCb, onErrorCb }: BaseQueryOptions = {},
-) => {
-  const {
-    data: response,
-    isLoading,
-    isError,
-  } = useQuery<FetchListResponse<T>, AxiosError>(queryKey, fetchAllRequest<T>(url), {
-    enabled: enabled,
-    onSuccess: onSuccessCb,
-    onError: onErrorCb,
-  });
-  return { response, isLoading, isError };
-};
-
-/**
  *
  * @param queryKey 쿼리 키 값입니다.
  * @param url 요청할 URL 입니다.
  */
-export const useBaseMutation = <TCreate, TUpdate>(
+export const baseMutation = <TCreate, TUpdate>(
   queryKey: string[],
   url: string,
-  { onSuccessCb }: BaseQueryOptions = {},
+  options?: BaseQueryOptions,
 ) => {
   const queryClient = useQueryClient();
-  const options = {
+  const initOptions: BaseQueryOptions = {
+    ...options,
     onSuccess: () => {
-      onSuccessCb?.();
       queryClient.invalidateQueries(queryKey);
+      if (options?.onSuccess) options.onSuccess();
     },
   };
 
   const { mutate: createMutate, isLoading: createLoading } = useMutation(
     createRequest<TCreate>(url),
-    options,
+    initOptions,
   );
 
   const { mutate: updateMutate, isLoading: updateLoading } = useMutation(
     updateRequest<TUpdate>(url),
-    options,
+    initOptions,
   );
 
   const { mutate: removeMutate, isLoading: removeLoading } = useMutation(
     removeRequest(url),
-    options,
+    initOptions,
   );
 
   const isLoading = createLoading || updateLoading || removeLoading;
 
-  return { isLoading, createMutate, updateMutate, removeMutate };
+  return { isLoading, createMutate, updateMutate, removeMutate, initOptions };
 };

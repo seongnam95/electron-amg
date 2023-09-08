@@ -47,6 +47,7 @@ const Worker = () => {
           mangerName={selectedGroup?.user?.name}
           doesExist={!!selectedGroup}
           onEditor={selectedGroup && (() => setShowEditor(true))}
+          onRemove={() => setSelectedGroupId('all')}
         />
 
         {/* 워커 테이블 */}

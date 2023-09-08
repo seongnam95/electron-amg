@@ -21,6 +21,6 @@ export type WorkerUpdateBody = Partial<Omit<WorkerCreateBody, 'genderCode'>>;
 
 /** 워커 그룹 이동 API 바디 */
 export type WorkerMoveGroupBody = {
-  groupId: string;
+  groupId?: string;
   workerIds: string[];
 };

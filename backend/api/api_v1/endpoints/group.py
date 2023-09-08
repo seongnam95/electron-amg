@@ -13,7 +13,7 @@ from models import User
 router = APIRouter()
 
 
-def get_group(group_id: int, db: Session = Depends(deps.get_db)) -> schemas.group:
+def get_group(group_id: int, db: Session = Depends(deps.get_db)) -> schemas.Group:
     group = crud.group.get(db=db, id=group_id)
     if not group:
         raise HTTPException(status_code=404, detail="해당하는 그룹을 찾을 수 없습니다.")

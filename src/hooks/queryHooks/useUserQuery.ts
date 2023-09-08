@@ -3,7 +3,7 @@ import { useQuery } from 'react-query';
 import { baseFetch } from '~/api/base';
 import { UserCreateBody, UserData, UserUpdateBody } from '~/types/user';
 
-import { BaseQueryOptions, QueryDefaultOptions, useBaseMutation } from './useBaseQuery';
+import { BaseQueryOptions, QueryDefaultOptions, baseMutation } from './useBaseQuery';
 
 export interface UserQueryOptions extends BaseQueryOptions {
   userId?: string;
@@ -14,7 +14,7 @@ export const userKeys = {
   byId: (userId: string) => [...userKeys.all, userId],
 };
 
-export const useUserQuery = ({ userId, params, onSuccessCb, onErrorCb }: UserQueryOptions = {}) => {
+export const useUserQuery = ({ userId, params, onSuccess, onError }: UserQueryOptions = {}) => {
   const endpoint = import.meta.env.VITE_USER_API_URL;
   const queryKey = userId ? userKeys.byId(userId) : userKeys.all;
 
@@ -23,8 +23,8 @@ export const useUserQuery = ({ userId, params, onSuccessCb, onErrorCb }: UserQue
     isLoading: isUserLoading,
     isError: isUserError,
   } = useQuery(queryKey, baseFetch<UserData>(endpoint, userId, params), {
-    onSuccess: onSuccessCb,
-    onError: onErrorCb,
+    onSuccess: onSuccess,
+    onError: onError,
   });
 
   const users = response ? response.result : [];
@@ -34,7 +34,7 @@ export const useUserQuery = ({ userId, params, onSuccessCb, onErrorCb }: UserQue
 export const useUserMutation = (queryKey: string[], options?: QueryDefaultOptions) => {
   const endpoint = import.meta.env.VITE_WORKER_API_URL;
 
-  const { createMutate, updateMutate, removeMutate, isLoading } = useBaseMutation<
+  const { createMutate, updateMutate, removeMutate, isLoading } = baseMutation<
     UserCreateBody,
     UserUpdateBody
   >(queryKey, endpoint, options);

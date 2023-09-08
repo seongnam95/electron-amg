@@ -55,5 +55,5 @@ class Worker(WorkerBase):
 
 
 class WorkerGroupChange(BaseModel):
-    group_id: int
+    group_id: Optional[int] = None
     worker_ids: List[int]

@@ -7,7 +7,7 @@ import {
   BaseMultiDataParams,
   BaseQueryOptions,
   QueryDefaultOptions,
-  useBaseMutation,
+  baseMutation,
 } from './useBaseQuery';
 
 export interface GroupQueryParams extends BaseMultiDataParams {}
@@ -21,12 +21,7 @@ export const groupKeys = {
   byId: (groupId: string) => [...groupKeys.all, groupId],
 };
 
-export const useGroupQuery = ({
-  groupId,
-  params,
-  onSuccessCb,
-  onErrorCb,
-}: GroupQueryOptions = {}) => {
+export const useGroupQuery = ({ groupId, params, onSuccess, onError }: GroupQueryOptions = {}) => {
   const endpoint = import.meta.env.VITE_GROUP_API_URL;
   const queryKey = groupId ? groupKeys.byId(groupId) : groupKeys.all;
 
@@ -35,8 +30,8 @@ export const useGroupQuery = ({
     isLoading: isGroupLoading,
     isError: isGroupError,
   } = useQuery(queryKey, baseFetch<GroupData, GroupQueryParams>(endpoint, groupId, params), {
-    onSuccess: onSuccessCb,
-    onError: onErrorCb,
+    onSuccess: onSuccess,
+    onError: onError,
   });
 
   const groups = response ? response.result : [];
@@ -46,7 +41,7 @@ export const useGroupQuery = ({
 export const useGroupMutation = (queryKey: string[], options?: QueryDefaultOptions) => {
   const endpoint = import.meta.env.VITE_GROUP_API_URL;
 
-  const { createMutate, updateMutate, removeMutate, isLoading } = useBaseMutation<
+  const { createMutate, updateMutate, removeMutate, isLoading } = baseMutation<
     GroupCreateBody,
     GroupUpdateBody
   >(queryKey, endpoint, options);

@@ -16,6 +16,7 @@ export interface GroupTitleProps {
   mangerName?: string;
   doesExist?: boolean;
   onEditor?: () => void;
+  onRemove?: () => void;
 }
 
 const GroupTitle = ({
@@ -25,10 +26,15 @@ const GroupTitle = ({
   mangerName,
   doesExist,
   onEditor,
+  onRemove,
 }: GroupTitleProps) => {
-  const { removeGroupMutate } = useGroupMutation(groupKeys.byId(groupId));
+  const { removeGroupMutate } = useGroupMutation(groupKeys.all);
 
   const createContractForm = () => {};
+
+  const removeGroup = () => {
+    removeGroupMutate(groupId, { onSuccess: onRemove });
+  };
 
   const showRemoveModal = () => {
     Modal.confirm({
@@ -37,7 +43,7 @@ const GroupTitle = ({
       okText: '그룹 삭제',
       okType: 'danger',
       cancelText: '취소',
-      onOk: () => removeGroupMutate(groupId),
+      onOk: removeGroup,
     });
   };
 

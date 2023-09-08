@@ -97,9 +97,11 @@ def change_group_worker(
     obj_in: schemas.WorkerGroupChange,
     db: Session = Depends(deps.get_db),
 ):
-    print(obj_in)
-    group = get_group(obj_in.group_id, db)
-    crud.worker.change_group(db=db, group_id=group.id, workers=obj_in.worker_ids)
+    if obj_in.group_id:
+        group = get_group(obj_in.group_id, db)
+        crud.worker.change_group(db=db, group_id=group.id, workers=obj_in.worker_ids)
+    else:
+        crud.worker.change_group(db=db, group_id=None, workers=obj_in.worker_ids)
 
     return BaseResponse(success=True, msg="정상 처리되었습니다.")
 

@@ -12,14 +12,32 @@
     ],
     "description": "Styled Components 내보내기"
   },
-  "Styled Components Props Theme": {
+  "Styled Components Props": {
     "prefix": [
       "pro"
     ],
     "body": [
-      "${props => props.theme${0}}"
+      "${p => p${0}}"
     ],
     "description": "Styled Components Props 자동완성"
+  },
+  "Styled Components Props Theme Colors": {
+    "prefix": [
+      "proc"
+    ],
+    "body": [
+      "${p => p.theme.colors${0}}"
+    ],
+    "description": "Styled Components Theme Color 자동완성"
+  },
+  "Styled Components Props Theme Sizes": {
+    "prefix": [
+      "pros"
+    ],
+    "body": [
+      "${p => p.theme.sizes${0}}"
+    ],
+    "description": "Styled Components Theme Size 자동완성"
   },
   "Component styled": {
     "prefix": [
