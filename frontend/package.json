@@ -13,7 +13,8 @@
     "build:vite": "tsc && vite build",
     "preview": "vite preview",
     "g": "node generator.mjs",
-    "uvicorn": "cd backend/venv/Scripts && activate && cd ../.. && uvicorn main:app --reload --port 8001"
+    "uvicorn": "cd ../backend/venv/Scripts && activate && cd ../.. && uvicorn main:app --reload --port 8001",
+    "uvicorn-mac": "cd ../backend && source venv/bin/activate && uvicorn main:app --reload --port 8001"
   },
   "dependencies": {
     "@types/react-virtualized": "^9.21.21",

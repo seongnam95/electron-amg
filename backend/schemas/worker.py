@@ -5,8 +5,11 @@ from schemas.common import check_update_fields
 from exceptions import InvalidCodeError
 from datetime import datetime
 
-GENDER_CODES = [0, 1]  # 성별 코드 [0: 남자, 1: 여자]
-POSITION_CODES = [0, 1, 2]  # 직위 코드 [0: 직원, 1: 알바, 2: 기타]
+# 성별 코드 [1: 남자, 2: 여자]
+GENDER_CODES = [1, 2]
+
+# 직위 코드 [1: 팀장, 2: 부팀장, 3: 알바, 4: 기사, 5: 홍보단, 6: 기타]
+POSITION_CODES = [1, 2, 3, 4, 5, 6]
 
 
 class WorkerBase(BaseModel):

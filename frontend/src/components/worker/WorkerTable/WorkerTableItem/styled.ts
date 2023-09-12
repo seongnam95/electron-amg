@@ -10,6 +10,25 @@ export const WorkerListItemStyled = styled.li`
   color: ${p => p.theme.colors.textColor1};
   font-size: ${p => p.theme.sizes.textMedium};
 
+  > .item {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    white-space: nowrap;
+
+    &.name {
+      width: 12rem;
+    }
+
+    &.position {
+      width: 5rem;
+    }
+
+    &.phone {
+      width: 12rem;
+    }
+  }
+
   :hover {
     background-color: ${p => p.theme.colors.innerBg};
   }
