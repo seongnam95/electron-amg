@@ -83,7 +83,7 @@ const Login = () => {
       <form className="login-form" onSubmit={handleOnSubmit}>
         <Input onChange={handleOnChange} id="username" icon="bx-user" />
         <Input onChange={handleOnChange} id="password" icon="bx-lock" type="password" />
-        <Button type="submit" disabled={!isValid} primary>
+        <Button type="submit" disabled={!isValid} $primary $btnSize="lazy">
           로그인
         </Button>
       </form>

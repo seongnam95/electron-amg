@@ -3,7 +3,6 @@ import { Controller } from 'react-hook-form';
 import { Switch } from 'antd';
 import { useRecoilState, useRecoilValue } from 'recoil';
 
-import SaveButton from '~/components/common/SaveButton';
 import UpdateStatus from '~/components/common/UpdateStatus';
 import LayoutConfig from '~/components/layouts/LayoutConfig';
 import Section from '~/components/layouts/Section';
@@ -75,8 +74,6 @@ const Settings = () => {
       >
         <UpdateStatus version={version} status={status} />
       </Section>
-
-      <SaveButton defaultValues={config.general} form={form} />
     </SettingsPageStyled>
   );
 };

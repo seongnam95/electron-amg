@@ -103,7 +103,7 @@ const GroupTitle = ({
 
       {doesExist ? (
         <Dropdown menu={{ items }} trigger={['click']}>
-          <Button>
+          <Button $variations="icon">
             <i className="bx bx-dots-vertical-rounded" />
           </Button>
         </Dropdown>

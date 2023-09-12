@@ -38,7 +38,7 @@ const Header = ({ className, children }: HeaderProps) => {
         </motion.span>
       </div>
       {children}
-      <Button onClick={logout} variations="icon">
+      <Button onClick={logout} $variations="icon">
         <i className="bx bx-log-out" />
       </Button>
     </HeaderStyled>

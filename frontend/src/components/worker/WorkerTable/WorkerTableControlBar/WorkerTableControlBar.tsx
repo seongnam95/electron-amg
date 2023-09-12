@@ -47,11 +47,11 @@ const WorkerTableControlBar = ({
             exit={{ opacity: 0, x: 10 }}
             transition={{ duration: 0.2 }}
           >
-            <Button variations="link" btnSize="small">
+            <Button $variations="link" $btnSize="small">
               <i className="bx bx-filter" />
               필터
             </Button>
-            <Button variations="link" btnSize="small" onClick={handleOnChangeSort}>
+            <Button $variations="link" $btnSize="small" onClick={handleOnChangeSort}>
               <i className="bx bx-sort" style={{ fontSize: '14px' }} />
               {sort === Sort.NORMAL ? '기본순' : '이름순'}
             </Button>
@@ -69,10 +69,10 @@ const WorkerTableControlBar = ({
             exit={{ opacity: 0, width: '0px' }}
             transition={{ duration: 0.2 }}
           >
-            <Button btnSize="small" onClick={onMoveGroup}>
+            <Button $btnSize="small" onClick={onMoveGroup}>
               그룹 이동
             </Button>
-            <Button btnSize="small">출근</Button>
+            <Button $btnSize="small">출근</Button>
           </motion.div>
         )}
       </AnimatePresence>

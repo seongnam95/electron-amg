@@ -5,7 +5,7 @@ export const WorkerListItemStyled = styled.li`
   align-items: center;
   justify-content: space-between;
 
-  padding: 0.8rem 2rem;
+  padding: 0.3rem 2rem;
 
   color: ${p => p.theme.colors.textColor1};
   font-size: ${p => p.theme.sizes.textMedium};

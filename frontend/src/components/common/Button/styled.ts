@@ -3,39 +3,62 @@ import { ButtonHTMLAttributes } from 'react';
 import styled, { css } from 'styled-components';
 
 export interface ButtonStyledProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-  color?: string;
-  hoverColor?: string;
-  bgColor?: string;
-  bgHoverColor?: string;
-  borderColor?: string;
-  fontSize?: string;
-  iconSize?: string;
+  $color?: string;
+  $hoverColor?: string;
+  $bgColor?: string;
+  $bgHoverColor?: string;
+  $borderColor?: string;
+  $fontSize?: string;
+  $iconSize?: string;
 
-  primary?: boolean;
-  fullWidth?: boolean;
-  variations?: 'fill' | 'outline' | 'link' | 'icon';
-  btnSize?: 'small' | 'medium' | 'lazy';
-  animate?: boolean;
+  $primary?: boolean;
+  $height?: string;
+  $width?: string;
+  $fullWidth?: boolean;
+  $variations?: 'fill' | 'outline' | 'link' | 'icon';
+  $btnSize?: 'small' | 'medium' | 'lazy';
+  $animate?: boolean;
 }
 
 export const ButtonStyled = styled.button<ButtonStyledProps>`
-  ${({ theme, primary, color, bgColor, hoverColor, bgHoverColor, borderColor }) => {
-    const font = primary ? theme.colors.primary : theme.colors.textColor2;
-    const hover = primary ? theme.colors.accent : theme.colors.textColor1;
-    const bg = primary ? theme.colors.primary : theme.colors.innerBg;
-    const bgHover = primary ? theme.colors.selectedBg : theme.colors.innerBg;
-    const border = primary ? theme.colors.primary : theme.colors.borderColor;
+  ${({ theme, $primary, $variations }) => {
+    let fontColor, fontHoverColor, bgColor, bgHoverColor, borderColor;
+    const primary = theme.colors.primary;
+    const accent = theme.colors.accent;
+    const hover = theme.colors.selectedHoverBg;
 
+    switch ($variations) {
+      case 'fill':
+        fontColor = $primary ? 'white' : theme.colors.textColor2;
+        fontHoverColor = $primary ? 'white' : theme.colors.textColor1;
+        bgColor = $primary ? primary : theme.colors.innerBg;
+        bgHoverColor = $primary ? accent : theme.colors.innerBg;
+        borderColor = 'transparent';
+        break;
+
+      default:
+        fontColor = $primary ? primary : theme.colors.textColor2;
+        fontHoverColor = $primary ? accent : theme.colors.textColor1;
+        bgColor = 'transparent';
+        bgHoverColor = $primary ? hover : theme.colors.innerBg;
+        borderColor =
+          $variations === 'outline'
+            ? $primary
+              ? primary
+              : theme.colors.borderColor
+            : 'transparent';
+        break;
+    }
     return css`
-      --color: ${color ?? font};
-      --hoverColor: ${hoverColor ?? hover};
-      --bgColor: ${bgColor ?? bg};
-      --bgHoverColor: ${bgHoverColor ?? bgHover};
-      --borderColor: ${borderColor ?? border};
+      --fontColor: ${fontColor};
+      --fontHoverColor: ${fontHoverColor};
+      --bgColor: ${bgColor};
+      --bgHoverColor: ${bgHoverColor};
+      --borderColor: ${borderColor};
     `;
-  }};
+  }}
 
-  ${({ theme, btnSize, fontSize, iconSize }) => {
+  ${({ theme, $btnSize, $fontSize, $iconSize }) => {
     const sizes = {
       small: {
         size: '3.8rem',
@@ -55,13 +78,13 @@ export const ButtonStyled = styled.button<ButtonStyledProps>`
         fontSize: theme.sizes.textLazy,
         iconSize: theme.sizes.iconLazy,
       },
-    }[btnSize || 'medium'];
+    }[$btnSize || 'medium'];
 
     return css`
       --size: ${sizes.size};
       --padding: ${sizes.padding};
-      --fontSize: ${fontSize ?? sizes.fontSize};
-      --iconSize: ${iconSize ?? sizes.iconSize};
+      --fontSize: ${$fontSize ?? sizes.fontSize};
+      --iconSize: ${$iconSize ?? sizes.iconSize};
     `;
   }}
 
@@ -70,51 +93,33 @@ export const ButtonStyled = styled.button<ButtonStyledProps>`
   justify-content: center;
   gap: 0.8rem;
 
+  width: ${p => (p.$fullWidth ? '100%' : p.$variations === 'icon' ? 'var(--size)' : p.$width)};
+  height: ${p => (p.$variations === 'icon' ? 'var(--size)' : p.$height)};
   outline: none;
-  border: 1px solid transparent;
-  border-radius: 3px;
+  border: 1px solid ${p => (p.$borderColor ? p.$borderColor : 'var(--borderColor)')};
+  border-radius: ${p => (p.$variations === 'icon' ? '50%' : '3px')};
   padding: var(--padding);
 
-  color: var(--color);
+  color: ${p => (p.$color ? p.$color : 'var(--fontColor)')};
   font-size: var(--fontSize);
-  background-color: transparent;
+  background-color: ${p => (p.$bgColor ? p.$bgColor : 'var(--bgColor)')};
   white-space: nowrap;
 
   transition: all 200ms;
   cursor: pointer;
 
-  :not(:disabled):hover {
-    color: var(--hoverColor);
-    background-color: var(--bgHoverColor);
-  }
-
-  &.fill-style {
-    color: ${p => (p.primary ? 'white' : p.theme.colors.textColor2)};
-    background-color: var(--bgColor);
-
-    :not(:disabled):hover {
-      color: ${p => (p.primary ? 'white' : p.theme.colors.textColor1)};
-      background-color: ${p => (p.primary ? p.theme.colors.accent : p.theme.colors.innerBg)};
-    }
-  }
-
-  &.outline-style {
-    border-color: var(--borderColor);
-  }
-
-  &.icon-style {
-    width: var(--size);
-    height: var(--size);
-    border-radius: 50%;
-  }
-
   > i {
     font-size: var(--iconSize);
   }
 
+  &:not(:disabled):hover {
+    color: ${p => (p.$hoverColor ? p.$hoverColor : 'var(--fontHoverColor)')};
+    background-color: ${p => (p.$bgHoverColor ? p.$bgHoverColor : 'var(--bgHoverColor)')};
+  }
+
   :disabled {
     color: ${p => p.theme.colors.textColor2};
-    background-color: ${p => (p.variations === 'fill' ? p.theme.colors.disableBg : 'transparent')};
+    background-color: ${p => (p.$variations === 'fill' ? p.theme.colors.disableBg : 'transparent')};
     cursor: default;
   }
 `;

@@ -110,10 +110,10 @@ const GroupEditorModal = ({
     <div className={clsx('footer-wrap', create && 'create')}>
       <span className="err-msg">{formik.errors.name || formik.errors.hexColor}</span>
       <div className="btn-wrap">
-        <Button className="btn-cancel" variations="link" onClick={onClose}>
+        <Button className="btn-cancel" $variations="link" onClick={onClose}>
           취소
         </Button>
-        <Button className="btn-ok" variations="link" primary onClick={formik.submitForm}>
+        <Button className="btn-ok" $variations="link" $primary onClick={formik.submitForm}>
           {create ? '그룹 생성' : '저장'}
         </Button>
       </div>

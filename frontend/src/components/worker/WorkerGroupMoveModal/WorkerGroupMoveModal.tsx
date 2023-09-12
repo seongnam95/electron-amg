@@ -45,13 +45,13 @@ const WorkerGroupMoveModal = ({
   const RenderFooter = () => (
     <div className="footer-wrap">
       <div className="btn-wrap">
-        <Button className="btn-cancel" variations="link" onClick={handleClose}>
+        <Button className="btn-cancel" $variations="link" onClick={handleClose}>
           취소
         </Button>
         <Button
           className="btn-ok"
-          variations="link"
-          primary
+          $variations="link"
+          $primary
           onClick={handleSubmit}
           disabled={!targetGroupID}
         >

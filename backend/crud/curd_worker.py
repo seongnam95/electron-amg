@@ -8,13 +8,21 @@ from sqlalchemy.orm import Session
 
 
 class CRUDWorker(CRUDBase[Worker, WorkerCreate, WorkerUpdate]):
+    def get_for_name(
+        self,
+        db: Session,
+        *,
+        name: str,
+    ):
+        return db.query(Worker).filter(Worker.name == name).first()
+
     def get_multi_worker(
         self,
         db: Session,
         *,
         group_id: Optional[int] = None,
         skip: int = 0,
-        limit: int = 100
+        limit: int = 100,
     ) -> List[Worker]:
         if group_id:
             return (
