@@ -1,7 +1,7 @@
 export { HeaderBar } from "./HeaderBar";
 export { Button } from "./Button";
 export { AddressField } from "./AddressField";
-export { TextField } from "./TextField";
+export { LabeledField } from "./LabeledField";
 export { Chip } from "./Chip";
 export { Check } from "./Check";
 export { ContractArticle } from "./ContractArticle";
@@ -12,3 +12,6 @@ export { View } from "./View";
 export { TextInput } from "./TextInput";
 export { FileUploadBox } from "./FileUploadBox";
 export { Loading } from "./Loading";
+export { Header } from "./Header";
+export { BankInput } from "./BankInput";
+export { IDInput } from "./IDInput";

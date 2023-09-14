@@ -20,3 +20,10 @@ export interface Contractor {
   bankbook: string;
   sign: string;
 }
+
+export interface WorkerData {
+  id: string;
+  name: string;
+  phone: string;
+  residence: string;
+}

@@ -1,4 +1,4 @@
-import { Button, Icon, TextField, View } from "@components";
+import { Button, Icon, TextInput, View } from "@components";
 import styled from "styled-components";
 import { useRef, useState } from "react";
 import { Salary } from "@types";
@@ -111,9 +111,7 @@ export function AdminPage() {
           ))}
         </div>
 
-        <TextField
-          onlyNum
-          label={payLabel}
+        <TextInput
           value={contract.pay}
           onChange={(e) => {
             setContract((prev) => {
@@ -124,10 +122,9 @@ export function AdminPage() {
             });
           }}
         />
-        <TextField
+        <TextInput
           type="date"
           value={contract.startPeriod}
-          label="계약 시작일"
           onChange={(e) => {
             setContract((prev) => {
               return {
@@ -137,10 +134,9 @@ export function AdminPage() {
             });
           }}
         />
-        <TextField
+        <TextInput
           type="date"
           value={contract.endPeriod}
-          label="계약 종료일"
           onChange={(e) => {
             setContract((prev) => {
               return {

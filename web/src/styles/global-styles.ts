@@ -57,6 +57,16 @@ const GlobalStyle = createGlobalStyle`
     font-weight: bold;
   }
 
+  input[type='number'] {
+    -moz-appearance: textfield;
+}
+
+  /* Chrome, Safari, Edge */
+  input::-webkit-outer-spin-button,
+  input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
 `;
 
 export default GlobalStyle;

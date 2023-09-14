@@ -14,7 +14,7 @@ class CRUDWorker(CRUDBase[Worker, WorkerCreate, WorkerUpdate]):
         *,
         name: str,
     ):
-        return db.query(Worker).filter(Worker.name == name).first()
+        return db.query(Worker).filter(Worker.name.like(f"%{name}%")).all()
 
     def get_multi_worker(
         self,

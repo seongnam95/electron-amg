@@ -13,7 +13,9 @@ export function App() {
           <Route path="/contract/:params" element={<ContractPage />} />
           <Route path="/complete" element={<CompletePage />} />
           <Route path="/document" element={<DocumentPage />} />
-          <Route path="/draw-contract" element={<PersonalPage />} />
+          <Route path="/draw" element={<PersonalPage />}>
+            <Route path="test" element={<AdminPage />} />
+          </Route>
           <Route path="/admin" element={<AdminPage />} />
         </Routes>
       </RecoilRoot>

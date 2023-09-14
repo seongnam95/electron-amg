@@ -1,19 +1,19 @@
 import { Field } from "formik";
-import { AddressField, TextField, TextInput } from "@components";
+import { AddressField, TextInput } from "@components";
 import styled from "styled-components";
 
 export function PersonalView() {
   return (
     <StyledPersonalView>
       <Field
-        as={TextField}
+        as={TextInput}
         label="이름"
         placeholder="계약자 성명"
         name="name"
       />
 
       <Field
-        as={TextField}
+        as={TextInput}
         label="연락처"
         placeholder='"-" 하이픈 제외 숫자만 입력'
         name="phone"
