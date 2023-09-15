@@ -1,14 +1,13 @@
 import { ChangeEvent, InputHTMLAttributes, RefObject } from "react";
 import styled from "styled-components";
 
-interface TextInputProps extends InputHTMLAttributes<HTMLInputElement> {
+interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   hint?: string;
-  maxLength?: number;
   inputRef?: RefObject<HTMLInputElement>;
   onCompleted?: (value: string | number) => void;
 }
 
-export const TextInput = ({
+export const Input = ({
   hint,
   maxLength,
   placeholder,
@@ -16,25 +15,26 @@ export const TextInput = ({
   onCompleted,
   onChange,
   ...rest
-}: TextInputProps) => {
+}: InputProps) => {
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
-
-    if (maxLength && value.length >= maxLength) {
-      console.log(e.target.value);
-      const sliceValue = e.target.value.slice(0, e.target.maxLength);
-      e.target.value = sliceValue;
-      onCompleted?.(sliceValue);
-    } else onChange?.(e);
+    if (maxLength && value.length >= maxLength) onCompleted?.(value);
+    onChange?.(e);
   };
 
   return (
-    <TextInputStyled>
+    <InputStyled>
       <div className="input-wrap">
         <input
+          onInput={(e) => {
+            const { value, maxLength } = e.currentTarget;
+            if (maxLength !== -1 && value.length > maxLength)
+              e.currentTarget.value = value.slice(0, maxLength);
+          }}
           ref={inputRef}
           maxLength={maxLength}
           onChange={handleChange}
+          autoComplete="off"
           required
           {...rest}
         />
@@ -43,11 +43,11 @@ export const TextInput = ({
       </div>
 
       {hint ? <p className="hint-text">{hint}</p> : null}
-    </TextInputStyled>
+    </InputStyled>
   );
 };
 
-export const TextInputStyled = styled.label`
+export const InputStyled = styled.label`
   padding-top: 2.8rem;
 
   .input-wrap {

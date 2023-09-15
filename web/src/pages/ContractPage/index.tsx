@@ -25,83 +25,79 @@ export function ContractPage() {
   const [submit, setSubmit] = useState(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  const STEPS = useMemo(
-    () => [
-      {
-        title: "AMG 용역 계약서 작성",
-        component: PersonalView,
-        initialValues: (contractor: Contractor) => ({
-          name: contractor.name,
-          phone: contractor.phone,
-          address: contractor.address,
-          bank: contractor.bank,
-          bankNum: contractor.bankNum,
-        }),
-        validationSchema: Yup.object().shape({
-          name: Yup.string()
-            .min(2, "이름은 최소 2글자 이상이어야 합니다.")
-            .max(14, "이름은 최대 14글자 이하여야 합니다.")
-            .required("이름 입력은 필수입니다."),
-          phone: Yup.string()
-            .matches(
-              /^(010)-?\d{4}-?\d{4}$/,
-              "핸드폰 번호가 올바르게 입력되지 않았습니다."
-            )
-            .required("핸드폰 번호 입력은 필수입니다."),
-          address: Yup.string().required("주소 입력은 필수입니다."),
-          bank: Yup.string().required("은행 입력은 필수입니다."),
-          bankNum: Yup.string().required("계좌번호 입력은 필수입니다."),
-        }),
-        contentText: (
-          <>
-            계약자(수급인) 정보를 정확히 입력해주세요. <br />
-            올바르지 않은 정보 입력은 <br />
-            계약 진행에 불이익을 초래할 수 있습니다.
-          </>
-        ),
-      },
-      {
-        title: "신분증 및 통장사본 첨부",
-        component: UploadView,
-        initialValues: (contractor: Contractor) => ({
-          identification: contractor.identification,
-          bankbook: contractor.bankbook,
-        }),
-        validationSchema: Yup.object().shape({
-          identification:
-            Yup.string().required("신분증 이미지를 첨부해주세요."),
-          bankbook: Yup.string().required("통장사본 이미지를 첨부해주세요."),
-        }),
-        contentText: (
-          <>
-            계약자(수급인)의 신분증과 통장 사본을 첨부해주세요.
-            <br />
-            본인 명의의 통장 또는 계좌번호가 아닐 경우
-            <br />
-            관리자에게 문의해주세요.
-          </>
-        ),
-      },
-      {
-        title: "계약 조항",
-        component: ArticleView,
-        initialValues: (contractor: Contractor) => ({
-          sign: contractor.sign,
-        }),
-        validationSchema: Yup.object().shape({
-          sign: Yup.string().required("서명은 필수입니다."),
-        }),
-        contentText: (
-          <>
-            모든 계약 조항을 꼼꼼히 읽은 후,
-            <br />
-            계약에 동의한다면 아래 서명란에 서명해 주세요.
-          </>
-        ),
-      },
-    ],
-    []
-  );
+  const STEPS = [
+    {
+      title: "AMG 용역 계약서 작성",
+      component: PersonalView,
+      initialValues: (contractor: Contractor) => ({
+        name: contractor.name,
+        phone: contractor.phone,
+        address: contractor.address,
+        bank: contractor.bank,
+        bankNum: contractor.bankNum,
+      }),
+      validationSchema: Yup.object().shape({
+        name: Yup.string()
+          .min(2, "이름은 최소 2글자 이상이어야 합니다.")
+          .max(14, "이름은 최대 14글자 이하여야 합니다.")
+          .required("이름 입력은 필수입니다."),
+        phone: Yup.string()
+          .matches(
+            /^(010)-?\d{4}-?\d{4}$/,
+            "핸드폰 번호가 올바르게 입력되지 않았습니다."
+          )
+          .required("핸드폰 번호 입력은 필수입니다."),
+        address: Yup.string().required("주소 입력은 필수입니다."),
+        bank: Yup.string().required("은행 입력은 필수입니다."),
+        bankNum: Yup.string().required("계좌번호 입력은 필수입니다."),
+      }),
+      contentText: (
+        <>
+          계약자(수급인) 정보를 정확히 입력해주세요. <br />
+          올바르지 않은 정보 입력은 <br />
+          계약 진행에 불이익을 초래할 수 있습니다.
+        </>
+      ),
+    },
+    {
+      title: "신분증 및 통장사본 첨부",
+      component: UploadView,
+      initialValues: (contractor: Contractor) => ({
+        identification: contractor.identification,
+        bankbook: contractor.bankbook,
+      }),
+      validationSchema: Yup.object().shape({
+        identification: Yup.string().required("신분증 이미지를 첨부해주세요."),
+        bankbook: Yup.string().required("통장사본 이미지를 첨부해주세요."),
+      }),
+      contentText: (
+        <>
+          계약자(수급인)의 신분증과 통장 사본을 첨부해주세요.
+          <br />
+          본인 명의의 통장 또는 계좌번호가 아닐 경우
+          <br />
+          관리자에게 문의해주세요.
+        </>
+      ),
+    },
+    {
+      title: "계약 조항",
+      component: ArticleView,
+      initialValues: (contractor: Contractor) => ({
+        sign: contractor.sign,
+      }),
+      validationSchema: Yup.object().shape({
+        sign: Yup.string().required("서명은 필수입니다."),
+      }),
+      contentText: (
+        <>
+          모든 계약 조항을 꼼꼼히 읽은 후,
+          <br />
+          계약에 동의한다면 아래 서명란에 서명해 주세요.
+        </>
+      ),
+    },
+  ];
 
   const currentStep = STEPS[step];
 

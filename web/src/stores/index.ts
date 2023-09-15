@@ -11,23 +11,29 @@ export const initContract: Contract = {
   endPeriod: "",
 };
 
-export const initContractor = {
+export const initContractor: Contractor = {
   name: "",
   phone: "",
   address: "",
   bank: "",
   bankNum: "",
+  residentId: "",
   identification: "",
   bankbook: "",
   sign: "",
 };
 
 export const ContractState = atom<Contract>({
-  key: "contract",
+  key: "contractStore",
   default: initContract,
 });
 
 export const ContractorState = atom<Contractor>({
-  key: "contractor",
+  key: "contractorStore",
   default: initContractor,
+});
+
+export const stepState = atom<number>({
+  key: "stepState",
+  default: 0,
 });

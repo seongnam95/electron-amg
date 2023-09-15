@@ -16,6 +16,7 @@ export interface Contractor {
   address: string;
   bank: string;
   bankNum: string;
+  residentId: string;
   identification: string;
   bankbook: string;
   sign: string;

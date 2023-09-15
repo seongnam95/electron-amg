@@ -1,4 +1,4 @@
-import { Button, Icon, TextInput, View } from "@components";
+import { Button, Icon, Input, View } from "@components";
 import styled from "styled-components";
 import { useRef, useState } from "react";
 import { Salary } from "@types";
@@ -111,7 +111,7 @@ export function AdminPage() {
           ))}
         </div>
 
-        <TextInput
+        <Input
           value={contract.pay}
           onChange={(e) => {
             setContract((prev) => {
@@ -122,7 +122,7 @@ export function AdminPage() {
             });
           }}
         />
-        <TextInput
+        <Input
           type="date"
           value={contract.startPeriod}
           onChange={(e) => {
@@ -134,7 +134,7 @@ export function AdminPage() {
             });
           }}
         />
-        <TextInput
+        <Input
           type="date"
           value={contract.endPeriod}
           onChange={(e) => {

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import styled from "styled-components";
-import { Modal, TextInput } from "@components";
+import { Modal, Input } from "@components";
 import DaumPostcode, { Address } from "react-daum-postcode";
 import { useField, useFormikContext } from "formik";
 
@@ -27,7 +27,7 @@ export function AddressField({ name, label }: AddressFieldProps) {
   return (
     <StyledAddressField>
       <span className="field-label">{label}</span>
-      <TextInput
+      <Input
         {...field}
         readOnly
         type="text"

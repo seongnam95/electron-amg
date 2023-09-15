@@ -1,11 +1,11 @@
 import styled from "styled-components";
-import { TextInput } from "../TextInput";
+import { Input } from "@components";
 import { AnimatePresence, motion } from "framer-motion";
 
 export const BankInput = () => {
   return (
     <BankInputStyled>
-      <TextInput type="number" />
+      <Input type="number" />
       <motion.div className="bank-btn-wrap">
         <button className="bank-btn">카카오뱅크</button>
       </motion.div>

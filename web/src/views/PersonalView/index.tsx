@@ -1,87 +1,136 @@
-import { Field } from "formik";
-import { AddressField, TextInput } from "@components";
+import { Field, useFormikContext } from "formik";
+import { Input } from "@components";
 import styled from "styled-components";
+import { useEffect, useRef } from "react";
+import axios from "axios";
+import { WorkerData } from "@types";
+import { AnimatePresence, motion } from "framer-motion";
+import { useSetRecoilState } from "recoil";
+import { stepState } from "@stores";
+
+interface Personal {
+  name: string;
+  phone: string;
+  idFront: string;
+  idBack: string;
+}
 
 export function PersonalView() {
-  return (
-    <StyledPersonalView>
-      <Field
-        as={TextInput}
-        label="이름"
-        placeholder="계약자 성명"
-        name="name"
-      />
+  const frontRef = useRef<HTMLInputElement>(null);
+  const backRef = useRef<HTMLInputElement>(null);
 
+  const setStep = useSetRecoilState(stepState);
+  const { isValid, dirty, errors, values } = useFormikContext<Personal>();
+
+  const handleClickPrev = () => {
+    setStep(3);
+  };
+
+  useEffect(() => {
+    console.log(isValid, dirty);
+    if (isValid && dirty) console.log("완");
+  }, [isValid, dirty, errors]);
+
+  // 기존 근로자 API 호출
+  const getWorkerList = () => {
+    const params = {
+      name: values.name,
+      phone: values.phone,
+      birth: values.idFront,
+    };
+    axios
+      .get("http://localhost:8001/api/v1/worker/draw/", { params })
+      .then((res) => {
+        const data: WorkerData[] = res.data.result;
+        console.log(data);
+      });
+  };
+
+  const handleBlurPhone = () => {};
+
+  return (
+    <PersonalViewStyled>
+      {/* 이름 */}
+      <Field as={Input} name="name" placeholder="계약자 성명" />
+
+      {/* 연락처 */}
       <Field
-        as={TextInput}
-        label="연락처"
-        placeholder='"-" 하이픈 제외 숫자만 입력'
+        as={Input}
         name="phone"
         inputMode="tel"
-        onKeyPress={(event: any) => {
-          if (!/[0-9]/.test(event.key)) {
-            event.preventDefault();
-          }
-        }}
+        maxLength={11}
+        placeholder="연락처"
+        hint="'-' 하이픈 제외 숫자만 입력"
+        onBlur={handleBlurPhone}
+        onCompleted={() => frontRef.current?.focus()}
       />
 
-      <Field as={AddressField} name="address" label="거주지" />
+      {/* 주민등록번호 */}
+      <div className="id-input-wrap">
+        <Field
+          as={Input}
+          name="idFront"
+          inputRef={frontRef}
+          inputMode="numeric"
+          maxLength={6}
+          placeholder="주민등록번호"
+          onCompleted={() => backRef.current?.focus()}
+        />
 
-      <div className="personal-field-wrap">
-        <span className="field-label">계좌번호</span>
-        <div className="bank-field">
-          <Field as={TextInput} placeholder="은행명" name="bank" />
-          <Field
-            as={TextInput}
-            placeholder='"-" 하이픈 제외 숫자만 입력'
-            name="bankNum"
-            inputMode="tel"
-            onKeyPress={(event: any) => {
-              if (!/[0-9]/.test(event.key)) {
-                event.preventDefault();
-              }
-            }}
-          />
-        </div>
+        <Field
+          as={Input}
+          name="idBack"
+          inputRef={backRef}
+          inputMode="numeric"
+          maxLength={7}
+          type="password"
+          onCompleted={() => backRef.current?.blur()}
+        />
       </div>
-    </StyledPersonalView>
+
+      {isValid && dirty ? (
+        <AnimatePresence>
+          <motion.div
+            onAnimationComplete={() => {
+              window.scrollTo({
+                top: 0,
+                behavior: "smooth",
+              });
+            }}
+            className="btn-wrap"
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.3 }}
+          >
+            <button
+              type="button"
+              className="card-btn"
+              onClick={handleClickPrev}
+            >
+              <p className="btn-label">이전 계약 정보로 진행하기</p>
+            </button>
+            <button
+              type="button"
+              className="card-btn link"
+              onClick={() => setStep(1)}
+            >
+              <p className="btn-label">새로운 정보로 진행하기</p>
+            </button>
+          </motion.div>
+        </AnimatePresence>
+      ) : null}
+    </PersonalViewStyled>
   );
 }
 
-const StyledPersonalView = styled.div`
+const PersonalViewStyled = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 3rem;
+  gap: 2.8rem;
 
-  .personal-field-wrap {
+  .id-input-wrap {
     display: flex;
-    flex-direction: column;
-    gap: 0.8rem;
-
-    .field-label {
-      font-size: var(--font-size-xs);
-      font-weight: bold;
-      color: var(--text);
-      padding-left: 0.4rem;
-    }
-
-    .address-field {
-      display: flex;
-      flex-direction: column;
-      gap: 0.8rem;
-    }
-
-    .bank-field {
-      display: flex;
-      gap: 0.8rem;
-
-      > input:first-child {
-        width: 30%;
-      }
-
-      > input:last-child {
-        flex: 1;
-      }
-    }
+    gap: 1.4rem;
   }
 `;

@@ -5,7 +5,7 @@ export const PersonalPageStyled = styled.div`
   height: 100%;
 
   .btn-wrap {
-    margin-bottom: 4rem;
+    margin-top: 8rem;
 
     .card-btn {
       display: flex;
@@ -48,43 +48,16 @@ export const PersonalPageStyled = styled.div`
         font-size: var(--font-size-l);
       }
 
-      &.outline {
-        border: 1px solid #333333;
+      &.link {
         background-color: transparent;
 
         .btn-label {
-          color: var(--text);
+          color: var(--text-sub);
+          font-weight: normal;
+          padding: 0 4px 4px 4px;
+          border-bottom: 1px solid var(--text-hint);
         }
       }
     }
-  }
-
-  .worker-wrap {
-    display: flex;
-    margin-bottom: 3rem;
-
-    user-select: none;
-
-    .info-wrap {
-      flex: 1;
-
-      display: flex;
-      flex-direction: column;
-
-      .text-name {
-        font-weight: bold;
-      }
-
-      .text-phone {
-        font-weight: normal;
-        color: var(--text-sub);
-      }
-    }
-  }
-
-  .field-wrap {
-    display: flex;
-    gap: 2rem;
-    flex-direction: column;
   }
 `;

@@ -1,12 +1,6 @@
 import styled from "styled-components";
-import { TextInput } from "../TextInput";
-import {
-  ChangeEvent,
-  InputHTMLAttributes,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import { Input } from "@components";
+import { ChangeEvent, InputHTMLAttributes, useRef, useState } from "react";
 
 interface IDInputProps extends InputHTMLAttributes<HTMLInputElement> {
   onCompleted?: (id: string) => void;
@@ -16,7 +10,6 @@ export const IDInput = ({ onCompleted }: IDInputProps) => {
   const backRef = useRef<HTMLInputElement>(null);
   const [workerID, setWorkerID] = useState({ front: "", back: "" });
 
-  useEffect(() => console.log(workerID), [workerID]);
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target;
     setWorkerID({
@@ -26,10 +19,7 @@ export const IDInput = ({ onCompleted }: IDInputProps) => {
   };
 
   const handleComplete = () => {
-    console.log(workerID.front, workerID.front.length);
-
     if (workerID.front.length === 6) {
-      console.log("in");
       onCompleted?.(`${workerID.front}${workerID.back}`);
     }
   };
@@ -37,7 +27,7 @@ export const IDInput = ({ onCompleted }: IDInputProps) => {
   //
   return (
     <IDInputStyled>
-      <TextInput
+      <Input
         id="front"
         type="number"
         maxLength={6}
@@ -45,7 +35,7 @@ export const IDInput = ({ onCompleted }: IDInputProps) => {
         onChange={handleChange}
         onCompleted={() => backRef.current?.focus()}
       />
-      <TextInput
+      <Input
         id="back"
         inputRef={backRef}
         maxLength={7}
