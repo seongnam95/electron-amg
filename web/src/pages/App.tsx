@@ -13,9 +13,7 @@ export function App() {
           <Route path="/contract/:params" element={<ContractPage />} />
           <Route path="/complete" element={<CompletePage />} />
           <Route path="/document" element={<DocumentPage />} />
-          <Route path="/draw" element={<PersonalPage />}>
-            <Route path="test" element={<AdminPage />} />
-          </Route>
+          <Route path="/draw/:params" element={<PersonalPage />} />
           <Route path="/admin" element={<AdminPage />} />
         </Routes>
       </RecoilRoot>
@@ -23,4 +21,6 @@ export function App() {
   );
 }
 
-const StyledApp = styled.div``;
+const StyledApp = styled.div`
+  height: 100vh;
+`;

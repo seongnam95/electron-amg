@@ -11,7 +11,7 @@ const validationSchemas = {
       .required("이름 입력은 필수입니다."),
     phone: Yup.string()
       .matches(
-        /^\d{3}\d{3,4}\d{4}$/,
+        /^\d{3}\d{4}\d{4}$/,
         "핸드폰 번호가 올바르게 입력되지 않았습니다."
       )
       .required("핸드폰 번호 입력은 필수입니다."),

@@ -12,18 +12,15 @@ router = APIRouter()
 
 
 # 근로자 불러오기
-@router.get("/draw/", response_model=ListResponse[schemas.Worker])
+@router.get("/draw/", response_model=DataResponse[schemas.Worker | None])
 def read_worker_for_name(
     name: str,
+    phone: str,
+    birth: str,
     db: Session = Depends(deps.get_db),
 ):
-    workers = crud.worker.get_for_name(db, name=name)
-    if not workers:
-        return ListResponse(success=True, msg="정상 처리되었습니다.", count=0, result=[])
-
-    return ListResponse(
-        success=True, msg="정상 처리되었습니다.", count=len(workers), result=workers
-    )
+    workers = crud.worker.get_for_params(db, name=name, phone=phone, birth=birth)
+    return DataResponse(success=True, msg="정상 처리되었습니다.", result=workers)
 
 
 # 근로자 불러오기

@@ -8,13 +8,13 @@ from sqlalchemy.orm import Session
 
 
 class CRUDWorker(CRUDBase[Worker, WorkerCreate, WorkerUpdate]):
-    def get_for_name(
-        self,
-        db: Session,
-        *,
-        name: str,
-    ):
-        return db.query(Worker).filter(Worker.name.like(f"%{name}%")).all()
+    def get_for_params(self, db: Session, *, name: str, phone: str, birth: str):
+        return (
+            db.query(Worker)
+            .filter(Worker.name == name)
+            .filter(Worker.phone == phone)
+            .first()
+        )
 
     def get_multi_worker(
         self,
