@@ -8,6 +8,7 @@ interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
 }
 
 export const Input = ({
+  value,
   hint,
   maxLength,
   placeholder,
@@ -23,7 +24,7 @@ export const Input = ({
   };
 
   return (
-    <InputStyled>
+    <InputStyled doseExist={Boolean(value)}>
       <div className="input-wrap">
         <input
           onInput={(e) => {
@@ -35,7 +36,7 @@ export const Input = ({
           maxLength={maxLength}
           onChange={handleChange}
           autoComplete="off"
-          required
+          value={value}
           {...rest}
         />
         <span className="placeholder-text">{placeholder}</span>
@@ -47,14 +48,13 @@ export const Input = ({
   );
 };
 
-export const InputStyled = styled.label`
+export const InputStyled = styled.label<{ doseExist: boolean }>`
   padding-top: 2.8rem;
 
   .input-wrap {
     position: relative;
 
     input {
-      z-index: 5;
       background: none;
 
       width: 100%;
@@ -69,12 +69,6 @@ export const InputStyled = styled.label`
 
       padding-bottom: 0.8rem;
       padding-left: 0.4rem;
-
-      :valid ~ .placeholder-text {
-        font-size: var(--font-size-s);
-        bottom: calc(100% + 1rem);
-        color: var(--text-sub);
-      }
 
       :focus ~ .border-bar {
         width: 100%;
@@ -97,12 +91,14 @@ export const InputStyled = styled.label`
     }
 
     .placeholder-text {
+      z-index: -1;
       position: absolute;
-      color: var(--text-hint);
-      left: 0;
-      font-size: var(--font-size-2xl);
-      bottom: 1rem;
+      bottom: ${(p) => (p.doseExist ? "calc(100% + 1rem)" : "1rem")};
       left: 0.4rem;
+
+      color: ${(p) => (p.doseExist ? "var(--text-sub)" : "var(--text-hint)")};
+      font-size: ${(p) =>
+        p.doseExist ? "var(--font-size-s)" : "var(--font-size-2xl)"};
       transition: all 0.2s;
     }
   }

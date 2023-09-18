@@ -23,16 +23,16 @@ const PersonalPage = () => {
   useEffect(() => {
     if (params) {
       let decData = atob(params);
-
-      setContract((prev) => {
-        return {
-          ...prev,
-          salary: decData.split(",")[0] as Salary,
-          pay: Number(decData.split(",")[1]),
-          startPeriod: `20${decData.split(",")[2]}`,
-          endPeriod: `20${decData.split(",")[3]}`,
-        };
-      });
+      if (decData)
+        setContract((prev) => {
+          return {
+            ...prev,
+            salary: decData.split(",")[0] as Salary,
+            pay: Number(decData.split(",")[1]),
+            startPeriod: `20${decData.split(",")[2]}`,
+            endPeriod: `20${decData.split(",")[3]}`,
+          };
+        });
     }
   }, [params]);
 

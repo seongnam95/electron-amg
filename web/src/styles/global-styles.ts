@@ -37,10 +37,12 @@ const GlobalStyle = createGlobalStyle`
 
   html {
     font-family: 'GothicA1';
+    -webkit-overflow-scrolling: touch !important;
   }
 
   body {
     scrollbar-width: none;
+    -webkit-overflow-scrolling: touch !important;
   }
 
   body::-webkit-scrollbar {

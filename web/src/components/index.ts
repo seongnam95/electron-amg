@@ -12,5 +12,5 @@ export { Input } from "./Input";
 export { FileUploadBox } from "./FileUploadBox";
 export { Loading } from "./Loading";
 export { Header } from "./Header";
-export { BankInput } from "./BankInput";
+export { BankSelector } from "./BankSelector";
 export { IDInput } from "./IDInput";

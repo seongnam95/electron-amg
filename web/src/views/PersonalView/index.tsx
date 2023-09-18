@@ -25,13 +25,21 @@ export function PersonalView() {
   const setContractor = useSetRecoilState(ContractorState);
   const setStep = useSetRecoilState(stepState);
 
+  const textWorker: WorkerData = {
+    id: "1",
+    name: "장성남",
+    phone: "01012341234",
+    residence: "경기도 남양주시 다산동",
+  };
+
   const { isValid, dirty, values, errors, validateForm } =
     useFormikContext<Personal>();
 
   useEffect(() => {
     const validateFormCheck = async () => {
       const errors = await validateForm();
-      if (isValid && dirty && !Object.keys(errors).length) getWorkerList();
+      if (isValid && dirty && !Object.keys(errors).length)
+        setWorker(textWorker);
       else setIsValidForm(false);
     };
     validateFormCheck();
@@ -51,7 +59,8 @@ export function PersonalView() {
         const data: WorkerData = res.data.result;
         setWorker(data);
         setIsValidForm(true);
-      });
+      })
+      .catch((err) => alert(err));
   };
 
   // 이전 기록으로 계약 진행

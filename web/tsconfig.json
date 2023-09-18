@@ -27,7 +27,8 @@
       "@stores": ["src/stores/index"],
       "@types": ["src/types/index"],
       "@utils": ["src/utils/index"],
-      "@lotties/*": ["src/assets/lotties/*"]
+      "@lotties/*": ["src/assets/lotties/*"],
+      "@images/*": ["src/assets/images/*"]
     }
   },
   "include": ["src", "svg.d.ts"],
