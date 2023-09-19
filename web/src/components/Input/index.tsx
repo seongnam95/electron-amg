@@ -2,12 +2,14 @@ import { ChangeEvent, InputHTMLAttributes, RefObject } from "react";
 import styled from "styled-components";
 
 interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
+  onlyNum?: boolean;
   hint?: string;
   inputRef?: RefObject<HTMLInputElement>;
   onCompleted?: (value: string | number) => void;
 }
 
 export const Input = ({
+  onlyNum,
   value,
   hint,
   maxLength,
@@ -29,6 +31,11 @@ export const Input = ({
         <input
           onInput={(e) => {
             const { value, maxLength } = e.currentTarget;
+
+            if (onlyNum) {
+              e.currentTarget.value = value.replace(/\D/g, "");
+            }
+
             if (maxLength !== -1 && value.length > maxLength)
               e.currentTarget.value = value.slice(0, maxLength);
           }}

@@ -28,6 +28,7 @@
       "@types": ["src/types/index"],
       "@utils": ["src/utils/index"],
       "@lotties/*": ["src/assets/lotties/*"],
+      "@svg/*": ["src/assets/svg/*"],
       "@images/*": ["src/assets/images/*"]
     }
   },

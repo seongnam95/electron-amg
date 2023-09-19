@@ -14,3 +14,6 @@ export { Loading } from "./Loading";
 export { Header } from "./Header";
 export { BankSelector } from "./BankSelector";
 export { IDInput } from "./IDInput";
+
+export { BankIcon } from "./BankIcon";
+export type { BankIconType } from "./BankIcon";

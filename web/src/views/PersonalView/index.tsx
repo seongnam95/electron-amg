@@ -14,7 +14,9 @@ interface Personal {
   idFront: string;
   idBack: string;
 }
-
+/**
+ * [ STEP 1 ] 개인정보 입력 폼
+ */
 export function PersonalView() {
   const frontRef = useRef<HTMLInputElement>(null);
   const backRef = useRef<HTMLInputElement>(null);
@@ -36,6 +38,7 @@ export function PersonalView() {
     useFormikContext<Personal>();
 
   useEffect(() => {
+    console.log(errors);
     const validateFormCheck = async () => {
       const errors = await validateForm();
       if (isValid && dirty && !Object.keys(errors).length)
@@ -122,10 +125,11 @@ export function PersonalView() {
       <Field
         as={Input}
         name="phone"
-        inputMode="tel"
+        inputMode="numeric"
         maxLength={11}
         placeholder="연락처"
         hint="'-' 하이픈 제외 숫자만 입력"
+        onlyNum
         onCompleted={() => frontRef.current?.focus()}
       />
 
@@ -138,6 +142,7 @@ export function PersonalView() {
           inputMode="numeric"
           maxLength={6}
           placeholder="주민등록번호"
+          onlyNum
           onCompleted={() => backRef.current?.focus()}
         />
 
@@ -148,6 +153,7 @@ export function PersonalView() {
           inputMode="numeric"
           maxLength={7}
           type="password"
+          onlyNum
           onCompleted={() => backRef.current?.blur()}
         />
       </div>

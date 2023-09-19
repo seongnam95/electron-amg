@@ -23,6 +23,7 @@ const PersonalPage = () => {
   useEffect(() => {
     if (params) {
       let decData = atob(params);
+
       if (decData)
         setContract((prev) => {
           return {
@@ -40,8 +41,21 @@ const PersonalPage = () => {
     throw new Error(`Undefined step: ${step}`);
   }
 
+  const initValues = {
+    name: "",
+    phone: "",
+    idFront: "",
+    idBack: "",
+    address: "",
+    bank: "",
+    bankNum: "",
+    identification: "",
+    bankbook: "",
+    sign: "",
+  };
+
   const formik = useFormik({
-    initialValues: currentStep.initialValues,
+    initialValues: initValues,
     validationSchema: currentStep.validationSchema,
     onSubmit: () => {},
   });
@@ -49,7 +63,7 @@ const PersonalPage = () => {
   return (
     <PersonalPageStyled>
       <Header />
-      <FormikProvider value={formik}>
+      <FormikProvider key={step} value={formik}>
         <motion.div
           key={step}
           style={{ height: "100%" }}

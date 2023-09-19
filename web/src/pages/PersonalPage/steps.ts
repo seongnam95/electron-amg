@@ -49,7 +49,7 @@ export const STEPS = [
     initialValues: { name: "", phone: "", idFront: "", idBack: "" },
   },
   {
-    viewComponent: AdditionalView, // 변경
+    viewComponent: AdditionalView,
     validationSchema: validationSchemas.additional,
     initialValues: { address: "", bank: "", bankNum: "" },
   },

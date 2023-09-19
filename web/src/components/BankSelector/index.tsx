@@ -1,9 +1,9 @@
 import styled from "styled-components";
-import { Icon, Input } from "@components";
+import { BankIcon, Icon, Input } from "@components";
 import { AnimatePresence, motion } from "framer-motion";
 import { InputHTMLAttributes, useEffect, useRef, useState } from "react";
 import ReactDOM from "react-dom";
-import { banks } from "./bank";
+import { banks } from "./banks";
 
 export const BankSelector = ({
   onChange,
@@ -84,7 +84,7 @@ const BankModal = ({ open = false, onClose, onSelect }: BankModalProps) => {
                   className="bank-item"
                   onClick={() => onSelect(bank.name)}
                 >
-                  <img className="bank-img" loading="lazy" src={bank.iconUrl} />
+                  <BankIcon bank={bank.value} />
                   {bank.name}
                 </div>
               ))}
@@ -141,6 +141,7 @@ const BankModalStyled = styled.div`
       gap: 1rem 1.2rem;
       padding-bottom: 10rem;
       overflow-y: scroll;
+      overflow-x: hidden;
     }
 
     .bank-item {
@@ -160,10 +161,6 @@ const BankModalStyled = styled.div`
       white-space: nowrap;
 
       cursor: pointer;
-
-      .bank-img {
-        width: 35%;
-      }
     }
   }
 `;

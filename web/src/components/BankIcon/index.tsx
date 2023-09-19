@@ -1,9 +1,25 @@
-export type SvgIconId = "kakao" | "kb";
+import BankSpriteSVG from "@svg/bank-sprite-sheet.svg";
 
-export function BankIcon(id: SvgIconId) {
+export type BankIconType =
+  | "bank-k"
+  | "bank-ibk"
+  | "bank-epost"
+  | "bank-sh"
+  | "bank-nh"
+  | "bank-hana"
+  | "bank-sc"
+  | "bank-kb"
+  | "bank-kakao"
+  | "bank-sinhan"
+  | "bank-woori"
+  | "bank-cu"
+  | "bank-toss"
+  | "bank-citi";
+
+export function BankIcon({ bank }: { bank: BankIconType }) {
   return (
     <svg>
-      <use href={`#${id}`}></use>
+      <use href={`${BankSpriteSVG}#${bank}`} />
     </svg>
   );
 }
