@@ -1,10 +1,9 @@
 import { Field, useFormikContext } from "formik";
-import { Input } from "@components";
+import { Input, PastWorkerModal } from "@components";
 import styled from "styled-components";
 import { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import { WorkerData } from "@types";
-import { AnimatePresence, motion } from "framer-motion";
 import { useSetRecoilState } from "recoil";
 import { ContractorState, stepState } from "@stores";
 
@@ -14,6 +13,15 @@ interface Personal {
   idFront: string;
   idBack: string;
 }
+
+const textWorker: WorkerData = {
+  id: "1",
+  name: "장성남",
+  phone: "01012341234",
+  residence: "경기도 남양주시 다산동",
+  bank: "카카오",
+  bankNum: "3333033137517",
+};
 /**
  * [ STEP 1 ] 개인정보 입력 폼
  */
@@ -21,29 +29,22 @@ export function PersonalView() {
   const frontRef = useRef<HTMLInputElement>(null);
   const backRef = useRef<HTMLInputElement>(null);
 
-  const [worker, setWorker] = useState<WorkerData | undefined>();
+  const [worker, setWorker] = useState<WorkerData | undefined>(textWorker);
   const [isValidForm, setIsValidForm] = useState<boolean>(false);
 
   const setContractor = useSetRecoilState(ContractorState);
   const setStep = useSetRecoilState(stepState);
 
-  const textWorker: WorkerData = {
-    id: "1",
-    name: "장성남",
-    phone: "01012341234",
-    residence: "경기도 남양주시 다산동",
-  };
-
   const { isValid, dirty, values, errors, validateForm } =
     useFormikContext<Personal>();
 
   useEffect(() => {
-    console.log(errors);
     const validateFormCheck = async () => {
       const errors = await validateForm();
-      if (isValid && dirty && !Object.keys(errors).length)
+      if (isValid && dirty && !Object.keys(errors).length) {
         setWorker(textWorker);
-      else setIsValidForm(false);
+        setIsValidForm(true);
+      } else setIsValidForm(false);
     };
     validateFormCheck();
   }, [values, errors]);
@@ -83,41 +84,6 @@ export function PersonalView() {
 
   return (
     <PersonalViewStyled>
-      {worker ? (
-        <AnimatePresence>
-          <motion.div
-            onAnimationComplete={() => {
-              window.scrollTo({
-                top: 0,
-                behavior: "smooth",
-              });
-            }}
-            className="btn-wrap"
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto" }}
-            exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.3 }}
-          >
-            <button
-              type="button"
-              className="card-btn"
-              onClick={handleClickSkip}
-            >
-              <p className="btn-label">이전 계약 정보로 진행하기</p>
-            </button>
-            <button
-              type="button"
-              className="card-btn link"
-              onClick={() => setStep(1)}
-            >
-              <p className="btn-label">새로운 정보로 진행하기</p>
-            </button>
-          </motion.div>
-        </AnimatePresence>
-      ) : (
-        isValidForm && <>sadasd</>
-      )}
-
       {/* 이름 */}
       <Field as={Input} name="name" placeholder="계약자 성명" />
 
@@ -125,7 +91,7 @@ export function PersonalView() {
       <Field
         as={Input}
         name="phone"
-        inputMode="numeric"
+        inputMode="tel"
         maxLength={11}
         placeholder="연락처"
         hint="'-' 하이픈 제외 숫자만 입력"
@@ -139,7 +105,7 @@ export function PersonalView() {
           as={Input}
           name="idFront"
           inputRef={frontRef}
-          inputMode="numeric"
+          inputMode="tel"
           maxLength={6}
           placeholder="주민등록번호"
           onlyNum
@@ -150,13 +116,22 @@ export function PersonalView() {
           as={Input}
           name="idBack"
           inputRef={backRef}
-          inputMode="numeric"
+          inputMode="tel"
           maxLength={7}
           type="password"
           onlyNum
           onCompleted={() => backRef.current?.blur()}
         />
       </div>
+
+      {worker && (
+        <PastWorkerModal
+          worker={worker}
+          open={isValidForm}
+          onNew={() => setStep(1)}
+          onSkip={handleClickSkip}
+        />
+      )}
     </PersonalViewStyled>
   );
 }

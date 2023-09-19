@@ -1,32 +1,25 @@
-import { Button, Icon, Input, View } from "@components";
+import { Button, Header, Icon, Input, View } from "@components";
 import styled from "styled-components";
-import { useRef, useState } from "react";
-import { Salary } from "@types";
+import { useEffect, useRef, useState } from "react";
+import { Contract, Salary } from "@types";
+import { Field, Form, Formik } from "formik";
+import { encodingData, getDefaultDate } from "./utils";
 
-type ContractType = {
-  salary: Salary;
-  pay: number;
-  startPeriod: string;
-  endPeriod: string;
-};
+export type ContractBodyType = Pick<
+  Contract,
+  "salary" | "pay" | "startPeriod" | "endPeriod"
+>;
 
 export function AdminPage() {
-  const { today, endOfMonth } = getDateDefaults();
+  const { today, endOfMonth } = getDefaultDate();
   const inputRef = useRef<HTMLInputElement>(null);
-  const [url, setUrl] = useState<string>("");
-  const [contract, setContract] = useState<ContractType>({
-    salary: "daily",
-    pay: 0,
-    startPeriod: today,
-    endPeriod: endOfMonth,
-  });
 
-  const payLabel =
-    contract.salary === "daily"
-      ? "용역 수수료 (일급)"
-      : contract.salary === "weekly"
-      ? "용역 수수료 (주급)"
-      : "용역 수수료 (월급)";
+  // const payLabel =
+  //   contract.salary === "daily"
+  //     ? "용역 수수료 (일급)"
+  //     : contract.salary === "weekly"
+  //     ? "용역 수수료 (주급)"
+  //     : "용역 수수료 (월급)";
 
   const salaryTypes = [
     {
@@ -43,39 +36,11 @@ export function AdminPage() {
     },
   ];
 
-  function getDateDefaults() {
-    const currentDate = new Date();
-    const lastDate = new Date(
-      currentDate.getFullYear(),
-      currentDate.getMonth() + 1,
-      0
-    );
-
-    const formatDate = (date: Date) =>
-      `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(
-        2,
-        "0"
-      )}-${String(date.getDate()).padStart(2, "0")}`;
-
-    return {
-      today: formatDate(currentDate),
-      endOfMonth: formatDate(lastDate),
-    };
-  }
-
-  function convertDateToString(date: string) {
-    const day = date.split("-")[0].slice(2, 4);
-    return day + date.split("-")[1] + date.split("-")[2];
-  }
-
-  function encodingData() {
-    const data = `${contract.salary},${contract.pay},${convertDateToString(
-      contract.startPeriod
-    )},${convertDateToString(contract.endPeriod)}`;
-    console.log(data);
-    const base64Encoded = btoa(data);
-    return encodeURIComponent(base64Encoded);
-  }
+  const handleSubmit = (contract: ContractBodyType) => {
+    if (inputRef.current)
+      inputRef.current.value = `http://amgcom.site/${encodingData(contract)}`;
+    handleOnCopy();
+  };
 
   const handleOnCopy = async () => {
     try {
@@ -90,136 +55,86 @@ export function AdminPage() {
 
   return (
     <StyledAdminPage>
-      <View title="계약서 폼 생성">
-        <div className="radio-wrap">
-          {salaryTypes.map((salary) => (
-            <label key={salary.value}>
-              <input
-                type="radio"
-                onChange={() => {
-                  setContract((prev) => {
-                    return {
-                      ...prev,
-                      salary: salary.value as Salary,
-                    };
-                  });
-                }}
-                checked={salary.value === contract.salary}
-              />
-              <span>{salary.label}</span>
-            </label>
-          ))}
-        </div>
+      <Header />
+      {/* <div className="radio-wrap">
+        {salaryTypes.map((salary) => (
+          <label key={salary.value}>
+            <input
+              type="radio"
+              onChange={() => {
+                setContract((prev) => {
+                  return {
+                    ...prev,
+                    salary: salary.value as Salary,
+                  };
+                });
+              }}
+              checked={salary.value === contract.salary}
+            />
+            <span>{salary.label}</span>
+          </label>
+        ))}
+      </div> */}
 
-        <Input
-          value={contract.pay}
-          onChange={(e) => {
-            setContract((prev) => {
-              return {
-                ...prev,
-                pay: Number(e.target.value),
-              };
-            });
-          }}
-        />
-        <Input
-          type="date"
-          value={contract.startPeriod}
-          onChange={(e) => {
-            setContract((prev) => {
-              return {
-                ...prev,
-                startPeriod: e.target.value,
-              };
-            });
-          }}
-        />
-        <Input
-          type="date"
-          value={contract.endPeriod}
-          onChange={(e) => {
-            setContract((prev) => {
-              return {
-                ...prev,
-                endPeriod: e.target.value,
-              };
-            });
-          }}
-        />
-        {url ? (
-          <div className="link-input" onClick={handleOnCopy}>
-            <div className="link-icon">
-              <Icon icon="linkOutline" size="2.4rem" color="#a7b0bc" />
-            </div>
-            <input readOnly ref={inputRef} className="link-text" value={url} />
-            <button className="copy-btn">
-              <Icon icon="copyOutline" size="1.8rem" color="white" />
-            </button>
-          </div>
-        ) : null}
-      </View>
-      <Button
-        fixed
-        fullWidth
-        onClick={() => setUrl(`http://amgcom.site/${encodingData()}`)}
-        className="next-btn"
+      <Formik
+        initialValues={{
+          salary: "daily",
+          pay: "",
+          startPeriod: today,
+          endPeriod: endOfMonth,
+        }}
+        onSubmit={handleSubmit}
       >
-        링크 생성
-      </Button>
+        {({}) => (
+          <Form className="form-wrap">
+            <Field
+              as={Input}
+              name="pay"
+              placeholder="급여"
+              inputMode="numeric"
+              onlyNum
+            />
+            <Field
+              as={Input}
+              name="startPeriod"
+              type="date"
+              placeholder="시작일"
+            />
+            <Field
+              as={Input}
+              name="endPeriod"
+              type="date"
+              placeholder="종료일"
+            />
+            <Button type="submit" className="copy-btn">
+              클립보드에 링크 복사
+            </Button>
+          </Form>
+        )}
+      </Formik>
+
+      <input readOnly ref={inputRef} className="link-text" />
     </StyledAdminPage>
   );
 }
 
 // styled
 const StyledAdminPage = styled.div`
-  display: flex;
-  flex-direction: column;
+  position: relative;
+  padding: 3.4rem 2rem 11.8rem;
 
   width: 100vw;
   height: 100vh;
-  background-color: white;
 
-  .form-field {
+  .form-wrap {
     display: flex;
     flex-direction: column;
-    gap: 3rem;
+    gap: 2.8rem;
   }
 
-  .link-input {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-
-    border-radius: 0.4rem;
-    box-shadow: var(--shadow-gray-100);
-    height: 5.6rem;
-
-    cursor: pointer;
-
-    .link-icon {
-      border-right: 1px solid var(--border-color);
-      padding: 0 1.4rem;
-    }
-
-    .link-text {
-      flex: 1;
-      color: #acb4bf;
-      font-size: var(--font-size-m);
-      padding: 0 1.4rem;
-      outline: none;
-      border: none;
-    }
-
-    .copy-btn {
-      height: 100%;
-      outline: none;
-      border: none;
-      border-radius: 0.4rem;
-      background-color: #4d90fd;
-      padding: 0 2.6rem;
-
-      font-size: var(--font-size-m);
-    }
+  .link-text {
+    position: absolute;
+    top: 100%;
   }
 
   .radio-wrap {

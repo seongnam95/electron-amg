@@ -26,7 +26,8 @@ export const Input = ({
   };
 
   return (
-    <InputStyled doseExist={Boolean(value)}>
+    <InputStyled doseExist={Boolean(value?.toString())}>
+      <div className="placeholder-space" />
       <div className="input-wrap">
         <input
           onInput={(e) => {
@@ -56,8 +57,6 @@ export const Input = ({
 };
 
 export const InputStyled = styled.label<{ doseExist: boolean }>`
-  padding-top: 2.8rem;
-
   .input-wrap {
     position: relative;
 
@@ -108,6 +107,10 @@ export const InputStyled = styled.label<{ doseExist: boolean }>`
         p.doseExist ? "var(--font-size-s)" : "var(--font-size-2xl)"};
       transition: all 0.2s;
     }
+  }
+
+  .placeholder-space {
+    height: 2.8rem;
   }
 
   .hint-text {

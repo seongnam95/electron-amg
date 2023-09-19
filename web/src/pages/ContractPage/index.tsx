@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useMemo } from "react";
+import { useState, useEffect, useRef } from "react";
 import { ArticleView, UploadView, PersonalView } from "@views";
 import { Form, Formik } from "formik";
 import { Button, Loading, View } from "@components";
@@ -142,7 +142,7 @@ export function ContractPage() {
       console.log(body);
 
       // axios
-      //   .post("http://amgcom.site/api/contract/", body)
+      //   .post("http://amgcom.site/api/contract", body)
       //   .then(() => {
       //     setIsLoading(false);
       //     navigate("/complete");

@@ -5,7 +5,7 @@ export interface Contract {
   companyName: string;
   companyAddress: string;
   salary: Salary;
-  pay: number;
+  pay: string;
   startPeriod: string;
   endPeriod: string;
 }
@@ -27,4 +27,6 @@ export interface WorkerData {
   name: string;
   phone: string;
   residence: string;
+  bank: string;
+  bankNum: string;
 }

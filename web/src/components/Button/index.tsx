@@ -30,10 +30,9 @@ const StyledButton = styled.button<{
 
   width: ${(p) => (p.fullWidth ? "100vw" : "auto")};
   height: 6.8rem;
-  padding: 0 3.4rem;
+  padding-top: 0.4rem;
   background-color: ${(p) => (p.secondary ? "white" : "var(--primary)")};
-
-  border-top: 1px solid var(--border-accent-color);
+  border-radius: 0.8rem;
   font-size: var(--font-size-2xl);
   color: ${(p) => (p.secondary ? "var(--text)" : "white")};
 
