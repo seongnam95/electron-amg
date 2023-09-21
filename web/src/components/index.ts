@@ -12,6 +12,9 @@ export { Header } from "./Header";
 export { BankSelector } from "./BankSelector";
 export { PastWorkerModal } from "./PastWorkerModal";
 export { BottomSheetModal } from "./BottomSheetModal";
+export { SalaryRadio } from "./SalaryRadio";
+export { ConsentCheck } from "./ConsentCheck";
+export { NextButton } from "./NextButton";
 
 export { BankIcon } from "./BankIcon";
 export type { BankIconType } from "./BankIcon";

@@ -1,4 +1,4 @@
-from typing import List, Optional, Type
+from typing import List, Optional
 
 from fastapi import HTTPException
 from crud.base import CRUDBase

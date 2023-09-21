@@ -12,7 +12,7 @@ router = APIRouter()
 
 
 # 근로자 불러오기
-@router.get("/draw/", response_model=DataResponse[schemas.Worker | None])
+@router.get("/draw/", response_model=DataResponse[schemas.WorkerWithPersonal | None])
 def read_worker_for_name(
     name: str,
     phone: str,

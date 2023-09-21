@@ -16,6 +16,7 @@ export default defineConfig({
       { find: "@lotties", replacement: "/src/assets/lotties" },
       { find: "@svg", replacement: "/src/assets/svg" },
       { find: "@images", replacement: "/src/assets/images" },
+      { find: "@hooks", replacement: "/src/hooks" },
     ],
   },
   build: {

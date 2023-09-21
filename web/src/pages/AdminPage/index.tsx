@@ -1,6 +1,6 @@
-import { Button, Header, Icon, Input, View } from "@components";
+import { Button, Header, Input, SalaryRadio } from "@components";
 import styled from "styled-components";
-import { useEffect, useRef, useState } from "react";
+import { useRef } from "react";
 import { Contract, Salary } from "@types";
 import { Field, Form, Formik } from "formik";
 import { encodingData, getDefaultDate } from "./utils";
@@ -13,28 +13,6 @@ export type ContractBodyType = Pick<
 export function AdminPage() {
   const { today, endOfMonth } = getDefaultDate();
   const inputRef = useRef<HTMLInputElement>(null);
-
-  // const payLabel =
-  //   contract.salary === "daily"
-  //     ? "용역 수수료 (일급)"
-  //     : contract.salary === "weekly"
-  //     ? "용역 수수료 (주급)"
-  //     : "용역 수수료 (월급)";
-
-  const salaryTypes = [
-    {
-      label: "일급",
-      value: "daily",
-    },
-    {
-      label: "주급",
-      value: "weekly",
-    },
-    {
-      label: "월급",
-      value: "monthly",
-    },
-  ];
 
   const handleSubmit = (contract: ContractBodyType) => {
     if (inputRef.current)
@@ -55,26 +33,10 @@ export function AdminPage() {
 
   return (
     <StyledAdminPage>
-      <Header />
-      {/* <div className="radio-wrap">
-        {salaryTypes.map((salary) => (
-          <label key={salary.value}>
-            <input
-              type="radio"
-              onChange={() => {
-                setContract((prev) => {
-                  return {
-                    ...prev,
-                    salary: salary.value as Salary,
-                  };
-                });
-              }}
-              checked={salary.value === contract.salary}
-            />
-            <span>{salary.label}</span>
-          </label>
-        ))}
-      </div> */}
+      <Header
+        title="계약서 폼 생성"
+        subTitle={<>생성 된 링크를 계약자에게 전달해주세요.</>}
+      />
 
       <Formik
         initialValues={{
@@ -85,32 +47,53 @@ export function AdminPage() {
         }}
         onSubmit={handleSubmit}
       >
-        {({}) => (
-          <Form className="form-wrap">
-            <Field
-              as={Input}
-              name="pay"
-              placeholder="급여"
-              inputMode="numeric"
-              onlyNum
-            />
-            <Field
-              as={Input}
-              name="startPeriod"
-              type="date"
-              placeholder="시작일"
-            />
-            <Field
-              as={Input}
-              name="endPeriod"
-              type="date"
-              placeholder="종료일"
-            />
-            <Button type="submit" className="copy-btn">
-              클립보드에 링크 복사
-            </Button>
-          </Form>
-        )}
+        {({ values, handleChange }) => {
+          const payLabel =
+            values.salary === "daily"
+              ? "일급"
+              : values.salary === "weekly"
+              ? "주급"
+              : "월급";
+
+          return (
+            <Form className="form-wrap">
+              <SalaryRadio
+                className="radio-btn"
+                value={values.salary}
+                onChange={(v: Salary) => {
+                  handleChange({
+                    target: {
+                      name: "salary",
+                      value: v,
+                    },
+                  });
+                }}
+              />
+              <Field
+                as={Input}
+                name="pay"
+                placeholder={`급여 (${payLabel})`}
+                inputMode="tel"
+                onlyNum
+              />
+              <Field
+                as={Input}
+                name="startPeriod"
+                type="date"
+                placeholder="시작일"
+              />
+              <Field
+                as={Input}
+                name="endPeriod"
+                type="date"
+                placeholder="종료일"
+              />
+              <Button type="submit" className="copy-btn" disabled={!values.pay}>
+                클립보드에 링크 복사
+              </Button>
+            </Form>
+          );
+        }}
       </Formik>
 
       <input readOnly ref={inputRef} className="link-text" />
@@ -118,7 +101,6 @@ export function AdminPage() {
   );
 }
 
-// styled
 const StyledAdminPage = styled.div`
   position: relative;
   padding: 3.4rem 2rem 11.8rem;
@@ -132,43 +114,12 @@ const StyledAdminPage = styled.div`
     gap: 2.8rem;
   }
 
-  .link-text {
-    position: absolute;
-    top: 100%;
+  .copy-btn {
+    margin-top: 3.2rem;
   }
 
-  .radio-wrap {
-    display: flex;
-    height: 4.6rem;
-    width: 100%;
-    border: 1px solid var(--border-color);
-
-    > label {
-      flex: 1;
-      font-size: var(--font-size-m);
-      height: 100%;
-
-      cursor: pointer;
-
-      span {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100%;
-      }
-
-      input[type="radio"] {
-        display: none;
-
-        &:checked + span {
-          color: white;
-          background-color: var(--primary);
-        }
-      }
-    }
-
-    label:not(:last-child) {
-      border-right: 1px solid var(--border-color);
-    }
+  .link-text {
+    position: absolute;
+    top: -100%;
   }
 `;

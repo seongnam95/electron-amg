@@ -1,53 +1,31 @@
 import { Field, useFormikContext } from "formik";
-import { Input, PastWorkerModal } from "@components";
+import { Input, NextButton, PastWorkerModal } from "@components";
 import styled from "styled-components";
 import { useEffect, useRef, useState } from "react";
 import axios from "axios";
-import { WorkerData } from "@types";
+import { Contractor, Worker } from "@types";
 import { useSetRecoilState } from "recoil";
 import { ContractorState, stepState } from "@stores";
+import useValidFormCheck from "@hooks/useValidFormCheck";
 
-interface Personal {
-  name: string;
-  phone: string;
-  idFront: string;
-  idBack: string;
-}
-
-const textWorker: WorkerData = {
-  id: "1",
-  name: "장성남",
-  phone: "01012341234",
-  residence: "경기도 남양주시 다산동",
-  bank: "카카오",
-  bankNum: "3333033137517",
-};
 /**
  * [ STEP 1 ] 개인정보 입력 폼
  */
 export function PersonalView() {
+  const isValidForm = useValidFormCheck();
+  const { values } = useFormikContext<Contractor>();
+
   const frontRef = useRef<HTMLInputElement>(null);
   const backRef = useRef<HTMLInputElement>(null);
 
-  const [worker, setWorker] = useState<WorkerData | undefined>(textWorker);
-  const [isValidForm, setIsValidForm] = useState<boolean>(false);
+  const [worker, setWorker] = useState<Worker | undefined>();
 
-  const setContractor = useSetRecoilState(ContractorState);
   const setStep = useSetRecoilState(stepState);
-
-  const { isValid, dirty, values, errors, validateForm } =
-    useFormikContext<Personal>();
+  const setContractor = useSetRecoilState(ContractorState);
 
   useEffect(() => {
-    const validateFormCheck = async () => {
-      const errors = await validateForm();
-      if (isValid && dirty && !Object.keys(errors).length) {
-        setWorker(textWorker);
-        setIsValidForm(true);
-      } else setIsValidForm(false);
-    };
-    validateFormCheck();
-  }, [values, errors]);
+    if (isValidForm) getWorkerList();
+  }, [isValidForm]);
 
   // 기존 근로자 API 호출
   const getWorkerList = () => {
@@ -60,11 +38,27 @@ export function PersonalView() {
     axios
       .get("http://localhost:8001/api/v1/worker/draw/", { params })
       .then((res) => {
-        const data: WorkerData = res.data.result;
-        setWorker(data);
-        setIsValidForm(true);
+        const data = res.data.result;
+        setWorker(serviceWorker(data));
       })
-      .catch((err) => alert(err));
+      .catch(() => {});
+  };
+
+  const serviceWorker = (data: any): Worker => {
+    const worker = {
+      id: data.id,
+      name: data.name,
+      phone: data.phone,
+      residence: data.residence,
+      personal: {
+        id: data.personal.id,
+        bank: data.personal.bank,
+        bankNum: data.personal.bank_number_enc,
+        ssn: data.personal.ssn_enc,
+        sign: data.personal.sign_base64,
+      },
+    } as Worker;
+    return worker;
   };
 
   // 이전 기록으로 계약 진행
@@ -124,6 +118,8 @@ export function PersonalView() {
         />
       </div>
 
+      <NextButton className="next-btn" onClick={() => setStep(1)} />
+
       {worker && (
         <PastWorkerModal
           worker={worker}
@@ -144,5 +140,9 @@ const PersonalViewStyled = styled.div`
   .id-input-wrap {
     display: flex;
     gap: 1.4rem;
+  }
+
+  .next-btn {
+    margin-top: 3.4rem;
   }
 `;

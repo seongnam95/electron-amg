@@ -1,8 +1,11 @@
 import { AddressInput, BankSelector, Button, Input } from "@components";
-import { Field, useFormikContext } from "formik";
-import { useEffect, useRef, useState } from "react";
+import { Field } from "formik";
+import { useRef } from "react";
 import styled from "styled-components";
 import { motion, AnimatePresence } from "framer-motion";
+import { useSetRecoilState } from "recoil";
+import { stepState } from "@stores";
+import useValidFormCheck from "@hooks/useValidFormCheck";
 
 /**
  * [ STEP 2 ] 추가 정보 입력 폼
@@ -11,22 +14,12 @@ export function AdditionalView() {
   const bankNumRef = useRef<HTMLInputElement>(null);
   const bankRef = useRef<HTMLInputElement>(null);
 
-  const [isValidForm, setIsValidForm] = useState<boolean>(false);
-
-  const { isValid, dirty, values, errors, validateForm } = useFormikContext();
-
-  useEffect(() => {
-    const validateFormCheck = async () => {
-      const errors = await validateForm();
-      if (isValid && dirty && !Object.keys(errors).length) {
-        setIsValidForm(true);
-      } else setIsValidForm(false);
-    };
-    validateFormCheck();
-  }, [values, errors]);
+  const setStep = useSetRecoilState(stepState);
+  const isValidForm = useValidFormCheck();
 
   return (
     <AdditionalViewStyled>
+      {/* 주소 */}
       <Field
         as={AddressInput}
         name="address"
@@ -55,6 +48,7 @@ export function AdditionalView() {
         hint="'-' 하이픈 제외 숫자만 입력"
         onlyNum
       />
+
       <AnimatePresence>
         {isValidForm && (
           <motion.div
@@ -64,7 +58,9 @@ export function AdditionalView() {
             exit={{ opacity: 0, x: -14 }}
             transition={{ duration: 0.3, ease: "easeInOut" }}
           >
-            <Button>다음</Button>
+            <Button type="button" onClick={() => setStep(2)}>
+              다음
+            </Button>
           </motion.div>
         )}
       </AnimatePresence>

@@ -47,7 +47,7 @@ export const BottomSheetModal = ({
               {title}
               <Icon icon="closeOutline" onClick={onClose} />
             </div>
-            {children}
+            <div className="modal-content">{children}</div>
           </motion.div>
         </BottomSheetModalStyled>
       )}
@@ -89,7 +89,14 @@ const BottomSheetModalStyled = styled.div`
       color: var(--text);
       font-weight: bold;
       font-size: 22px;
+
+      height: 2.5rem;
       margin-bottom: 3rem;
+    }
+
+    .modal-content {
+      height: calc(100% - 5.5rem);
+      overflow-y: scroll;
     }
   }
 `;

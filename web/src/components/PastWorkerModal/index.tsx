@@ -2,10 +2,10 @@ import { useEffect } from "react";
 import ReactDOM from "react-dom";
 import styled from "styled-components";
 import { AnimatePresence, motion } from "framer-motion";
-import { WorkerData } from "@types";
+import { Worker } from "@types";
 
 interface PastWorkerModalProps {
-  worker: WorkerData;
+  worker: Worker;
   open?: boolean;
   onSkip?: () => void;
   onNew?: () => void;
@@ -59,8 +59,8 @@ export function PastWorkerModal({
               <li>
                 <span>계좌번호</span>
                 <span>
-                  <span className="bank-name">{worker.bank}</span>
-                  {worker.bankNum}
+                  <span className="bank-name">{worker.personal.bank}</span>
+                  {worker.personal.bankNum}
                 </span>
               </li>
             </ul>

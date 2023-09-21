@@ -29,7 +29,8 @@
       "@utils": ["src/utils/index"],
       "@lotties/*": ["src/assets/lotties/*"],
       "@svg/*": ["src/assets/svg/*"],
-      "@images/*": ["src/assets/images/*"]
+      "@images/*": ["src/assets/images/*"],
+      "@hooks/*": ["src/hooks/*"]
     }
   },
   "include": ["src", "svg.d.ts"],

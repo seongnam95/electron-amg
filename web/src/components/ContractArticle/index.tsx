@@ -4,7 +4,7 @@ import styled from "styled-components";
 
 interface ContractArticleProps {
   salary: Salary;
-  pay: number;
+  pay: string;
   startPeriod: string;
   endPeriod: string;
   name: string;
@@ -110,7 +110,9 @@ export function ContractArticle({
               <span className="list-number">①</span>
               <p>
                 용역 수수료는 {salaryText}{" "}
-                <span className="text-accent">{pay.toLocaleString()}원</span>
+                <span className="text-accent">
+                  {Number(pay).toLocaleString()}원
+                </span>
                 으로 하며, 甲은 당월 1일부터 말일까지 乙의 용역 수행에 따라
                 계산된 금액을 익월 15일에 乙 의 금융계좌에 입금한다. 단, 하루의
                 업무 범위를 벗어나 추가로 용역을 수행하는 경우 지급되는 수수료는

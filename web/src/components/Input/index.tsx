@@ -76,6 +76,8 @@ export const InputStyled = styled.label<{ doseExist: boolean }>`
       padding-bottom: 0.8rem;
       padding-left: 0.4rem;
 
+      text-align: left;
+
       :focus ~ .border-bar {
         width: 100%;
       }

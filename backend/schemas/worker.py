@@ -1,6 +1,7 @@
 from typing import List, Optional
 from pydantic import BaseModel, model_validator, field_validator
 from schemas.common import check_update_fields
+from schemas.personal import Personal
 
 from exceptions import InvalidCodeError
 from datetime import datetime
@@ -60,3 +61,7 @@ class Worker(WorkerBase):
 class WorkerGroupChange(BaseModel):
     group_id: Optional[int] = None
     worker_ids: List[int]
+
+
+class WorkerWithPersonal(WorkerBase):
+    personal: Personal

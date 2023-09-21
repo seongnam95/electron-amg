@@ -1,14 +1,11 @@
 import { ButtonHTMLAttributes } from "react";
 import styled from "styled-components";
 
-interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-  secondary?: boolean;
-  fixed?: boolean;
-  fullWidth?: boolean;
-}
-
-export function Button(props: ButtonProps) {
-  return <StyledButton {...props}>{props.children}</StyledButton>;
+export function Button({
+  children,
+  ...props
+}: ButtonHTMLAttributes<HTMLButtonElement>) {
+  return <StyledButton {...props}>{children}</StyledButton>;
 }
 
 // styled
@@ -28,13 +25,16 @@ const StyledButton = styled.button<{
   border: none;
   outline: none;
 
-  width: ${(p) => (p.fullWidth ? "100vw" : "auto")};
+  width: 100%;
   height: 6.8rem;
+  min-height: 6.8rem;
+
   padding-top: 0.4rem;
-  background-color: ${(p) => (p.secondary ? "white" : "var(--primary)")};
-  border-radius: 0.8rem;
+  background-color: var(--primary);
+  border-radius: 0.6rem;
+
   font-size: var(--font-size-2xl);
-  color: ${(p) => (p.secondary ? "var(--text)" : "white")};
+  color: white;
 
   transition: all var(--ease-in-out-1);
 
@@ -44,6 +44,6 @@ const StyledButton = styled.button<{
   }
 
   &:not(:disabled):active {
-    background-color: ${(p) => (p.secondary ? "white" : "var(--text)")};
+    background-color: var(--text);
   }
 `;

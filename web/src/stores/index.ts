@@ -6,7 +6,7 @@ export const initContract: Contract = {
   companyName: "에이엠지(AMG)",
   companyAddress: "남양주시 미금로57번길 20, 715-2102",
   salary: "daily",
-  pay: 0,
+  pay: "0",
   startPeriod: "",
   endPeriod: "",
 };
@@ -14,10 +14,11 @@ export const initContract: Contract = {
 export const initContractor: Contractor = {
   name: "",
   phone: "",
+  idFront: "",
+  idBack: "",
   address: "",
   bank: "",
   bankNum: "",
-  residentId: "",
   identification: "",
   bankbook: "",
   sign: "",
