@@ -1,7 +1,7 @@
 export { Button } from "./Button";
 export { AddressInput } from "./AddressInput";
 export { ContractArticle } from "./ContractArticle";
-export { Signature } from "./Signature";
+export { Contractor } from "./Contractor";
 export { Modal } from "./Modal";
 export { Icon } from "./Icon";
 export { View } from "./View";
@@ -15,6 +15,8 @@ export { BottomSheetModal } from "./BottomSheetModal";
 export { SalaryRadio } from "./SalaryRadio";
 export { ConsentCheck } from "./ConsentCheck";
 export { NextButton } from "./NextButton";
+export { PersonalConsent } from "./PersonalConsent";
+export { Signature } from "./Signature";
 
 export { BankIcon } from "./BankIcon";
 export type { BankIconType } from "./BankIcon";

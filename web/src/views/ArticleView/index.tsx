@@ -1,14 +1,15 @@
 import styled from "styled-components";
 import {
   BottomSheetModal,
-  Signature,
+  Contractor,
   ConsentCheck,
   ContractArticle,
   Button,
+  PersonalConsent,
+  Signature,
 } from "@components";
 import { useRecoilValue } from "recoil";
 import { ContractState, ContractorState } from "@stores";
-import { SignatureView } from "@views";
 import { useState } from "react";
 import { useFormikContext } from "formik";
 import useValidFormCheck from "@hooks/useValidFormCheck";
@@ -21,11 +22,17 @@ export function ArticleView() {
   const contractor = useRecoilValue(ContractorState);
 
   const [showSignModal, setShowSignModal] = useState<boolean>(false);
-  const { setFieldValue } = useFormikContext();
+  const { setFieldValue, handleSubmit } = useFormikContext();
   const [sign, setSign] = useState<string>("");
 
   const [contractConsent, setContractConsent] = useState<boolean>(false);
   const [personalConsent, setPersonalConsent] = useState<boolean>(false);
+
+  const handleSignatureComplete = (data: string) => {
+    setSign(data);
+    setFieldValue("sign", data);
+    setShowSignModal(false);
+  };
 
   return (
     <StyledArticleView>
@@ -45,22 +52,14 @@ export function ArticleView() {
           onChange={(e) => setContractConsent(e.target.checked)}
         />
         <ConsentCheck
-          label="개인정보 수집 및 이용 동의"
-          contentTitle="개인정보 수집 및 이용 동의"
-          content={
-            <ContractArticle
-              salary={contract.salary}
-              name={contractor.name}
-              pay={contract.pay}
-              startPeriod={contract.startPeriod}
-              endPeriod={contract.endPeriod}
-            />
-          }
+          label="개인정보 수집·이용·제3자 제공 동의"
+          contentTitle="개인정보 수집·이용·제공 동의"
+          content={<PersonalConsent />}
           onChange={(e) => setPersonalConsent(e.target.checked)}
         />
       </div>
 
-      <Signature
+      <Contractor
         repName={contract.repName}
         companyName={contract.companyName}
         companyAddress={contract.companyAddress}
@@ -86,7 +85,7 @@ export function ArticleView() {
               });
             }}
           >
-            <Button type="button" onClick={() => {}}>
+            <Button type="button" onClick={() => handleSubmit()}>
               계약서 작성 완료
             </Button>
           </motion.div>
@@ -98,13 +97,7 @@ export function ArticleView() {
         onClose={() => setShowSignModal(false)}
         open={showSignModal}
       >
-        <SignatureView
-          onSubmit={(result) => {
-            setSign(result);
-            setFieldValue("sign", result);
-          }}
-          onClose={() => setShowSignModal(false)}
-        />
+        <Signature onComplete={handleSignatureComplete} />
       </BottomSheetModal>
     </StyledArticleView>
   );

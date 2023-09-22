@@ -13,7 +13,7 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
         return db.query(self.model).filter(User.username == username).first()
 
     def create_user(self, *, db: Session, obj_in: UserCreate) -> User:
-        obj_in_data = {k: v for k, v in obj_in.dict().items() if k != "password"}
+        obj_in_data = {k: v for k, v in obj_in.model_dump().items() if k != "password"}
         db_obj = User(**obj_in_data)
 
         hash_password = pwd_context.hash(obj_in.password)

@@ -1,8 +1,8 @@
-"""Create Table
+"""init
 
-Revision ID: cb107f7c2f51
+Revision ID: f57b9fb6e7e7
 Revises: 
-Create Date: 2023-08-30 17:33:46.228721
+Create Date: 2023-09-22 17:50:55.483045
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'cb107f7c2f51'
+revision = 'f57b9fb6e7e7'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -70,9 +70,11 @@ def upgrade() -> None:
     op.create_table('personal',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('bank', sa.String(), nullable=False),
-    sa.Column('bank_number_enc', sa.Text(), nullable=False),
+    sa.Column('bank_num_enc', sa.Text(), nullable=False),
     sa.Column('ssn_enc', sa.Text(), nullable=False),
     sa.Column('sign_base64', sa.Text(), nullable=False),
+    sa.Column('bank_book_file_nm', sa.Text(), nullable=False),
+    sa.Column('id_card_file_nm', sa.Text(), nullable=False),
     sa.Column('worker_id', sa.Integer(), nullable=True),
     sa.ForeignKeyConstraint(['worker_id'], ['worker.id'], ),
     sa.PrimaryKeyConstraint('id'),

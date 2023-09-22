@@ -22,4 +22,5 @@ def get_secret(
 
 SQL_DB_URL = get_secret("SQL_DB_URL")
 SALT_KEY = get_secret("SALT_KEY")
+RANDOM = get_secret("RANDOM")
 AUTH_SECRET_KEY = get_secret("AUTH_SECRET_KEY")

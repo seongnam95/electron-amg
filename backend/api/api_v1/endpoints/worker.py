@@ -12,18 +12,6 @@ router = APIRouter()
 
 
 # 근로자 불러오기
-@router.get("/draw/", response_model=DataResponse[schemas.WorkerWithPersonal | None])
-def read_worker_for_name(
-    name: str,
-    phone: str,
-    birth: str,
-    db: Session = Depends(deps.get_db),
-):
-    workers = crud.worker.get_for_params(db, name=name, phone=phone, birth=birth)
-    return DataResponse(success=True, msg="정상 처리되었습니다.", result=workers)
-
-
-# 근로자 불러오기
 @router.get("/{worker_id}", response_model=DataResponse[schemas.Worker])
 def read_worker(
     worker: schemas.Worker = Depends(deps.get_worker),
@@ -57,6 +45,7 @@ def read_all_worker(
     )
 
 
+# 소속없는 근로자 불러오기
 @router.get("/unaffiliated/", response_model=ListResponse[schemas.Worker])
 def read_all_unaffiliated_worker(
     # user: User = Depends(deps.get_current_user),
@@ -76,7 +65,7 @@ def read_all_unaffiliated_worker(
 def create_worker(
     *, db: Session = Depends(deps.get_db), worker_in: schemas.WorkerCreate
 ):
-    crud.worker.create_worker_in_group(db=db, obj_in=worker_in)
+    crud.worker.create_worker(db=db, worker_in=worker_in)
     return BaseResponse(success=True, msg="정상 처리되었습니다.")
 
 

@@ -1,4 +1,10 @@
-import { AddressInput, BankSelector, Button, Input } from "@components";
+import {
+  AddressInput,
+  BankSelector,
+  Button,
+  Input,
+  NextButton,
+} from "@components";
 import { Field } from "formik";
 import { useRef } from "react";
 import styled from "styled-components";
@@ -49,21 +55,7 @@ export function AdditionalView() {
         onlyNum
       />
 
-      <AnimatePresence>
-        {isValidForm && (
-          <motion.div
-            className="btn-wrap"
-            initial={{ opacity: 0, x: -14 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -14 }}
-            transition={{ duration: 0.3, ease: "easeInOut" }}
-          >
-            <Button type="button" onClick={() => setStep(2)}>
-              다음
-            </Button>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      <NextButton />
     </AdditionalViewStyled>
   );
 }
@@ -73,14 +65,4 @@ const AdditionalViewStyled = styled.div`
   display: flex;
   flex-direction: column;
   gap: 2.8rem;
-
-  .btn-wrap {
-    display: flex;
-    width: 100%;
-    margin-top: 3rem;
-
-    > button {
-      flex: 1;
-    }
-  }
 `;

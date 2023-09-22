@@ -32,11 +32,11 @@ export function PersonalView() {
     const params = {
       name: values.name,
       phone: values.phone,
-      birth: values.idFront,
+      ssn: values.idFront + values.idBack,
     };
 
     axios
-      .get("http://localhost:8001/api/v1/worker/draw/", { params })
+      .get("http://localhost:8001/api/v1/draw/worker/", { params })
       .then((res) => {
         const data = res.data.result;
         setWorker(serviceWorker(data));
@@ -53,7 +53,7 @@ export function PersonalView() {
       personal: {
         id: data.personal.id,
         bank: data.personal.bank,
-        bankNum: data.personal.bank_number_enc,
+        bankNum: data.personal.bank_num_enc,
         ssn: data.personal.ssn_enc,
         sign: data.personal.sign_base64,
       },
@@ -118,7 +118,7 @@ export function PersonalView() {
         />
       </div>
 
-      <NextButton className="next-btn" onClick={() => setStep(1)} />
+      <NextButton className="next-btn" />
 
       {worker && (
         <PastWorkerModal

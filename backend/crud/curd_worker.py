@@ -5,9 +5,36 @@ from crud.base import CRUDBase
 from models import Worker, Group
 from schemas import WorkerCreate, WorkerUpdate
 from sqlalchemy.orm import Session
+from util.crypto import encrypt
+from sqlalchemy.exc import IntegrityError
 
 
 class CRUDWorker(CRUDBase[Worker, WorkerCreate, WorkerUpdate]):
+    def create_worker(self, db: Session, worker_in: WorkerCreate):
+        worker_obj = worker_in.model_dump()
+        personal_obj = worker_obj.get("personal")
+
+        # 암호화
+        bank_num_enc = encrypt(personal_obj.get("bank_num"))
+        ssn_enc = encrypt(personal_obj.get("ssn"))
+
+        new_personal_obj = {
+            **personal_obj,
+            "bank_num_enc": bank_num_enc,
+            "ssn_enc": ssn_enc,
+        }
+
+        db_obj = Worker(personal=new_personal_obj, **worker_obj)
+
+        try:
+            db.add(db_obj)
+            db.commit()
+            db.refresh(db_obj)
+
+        except IntegrityError:
+            db.rollback()
+            raise HTTPException(status_code=400, detail="")
+
     def get_for_params(self, db: Session, *, name: str, phone: str, birth: str):
         return (
             db.query(Worker)

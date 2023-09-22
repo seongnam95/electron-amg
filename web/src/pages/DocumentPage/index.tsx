@@ -1,4 +1,4 @@
-import { ContractArticle, Signature } from "@components";
+import { ContractArticle, Contractor } from "@components";
 import { ContractState, ContractorState } from "@stores";
 import { useRecoilValue } from "recoil";
 
@@ -26,7 +26,7 @@ export function DocumentPage({ className, inputRef }: DocumentPageProps) {
             startPeriod={contract.startPeriod}
             endPeriod={contract.endPeriod}
           />
-          <Signature
+          <Contractor
             printView
             repName={contract.repName}
             companyName={contract.companyName}

@@ -6,9 +6,11 @@ from schemas.common import check_update_fields
 
 class PersonalBase(BaseModel):
     bank: str
-    bank_number_enc: str
-    ssn_enc: str
-    sign_base64: str
+    bank_num: str
+    ssn: str
+    sign: str
+    bank_book: str
+    id_card: str
 
 
 class PersonalCreate(PersonalBase):
@@ -17,8 +19,8 @@ class PersonalCreate(PersonalBase):
 
 class PersonalUpdate(BaseModel):
     bank: Optional[str] = None
-    bank_number_enc: Optional[str] = None
-    sign_base64: Optional[str] = None
+    bank_num: Optional[str] = None
+    sign: Optional[str] = None
 
     @model_validator(mode="before")
     def check_fields(cls, values: dict):
