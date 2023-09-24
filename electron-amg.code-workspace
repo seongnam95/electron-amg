@@ -1,0 +1,12 @@
+{
+  "folders": [
+    {
+      "path": "."
+    }
+  ],
+  "settings": {
+    "typescript.tsdk": "node_modules/typescript/lib",
+    "cSpell.words": ["clsx", "unpad"],
+    "python.defaultInterpreterPath": "${workspaceFolder}/backend/venv/bin/python3"
+  }
+}
