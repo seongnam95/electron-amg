@@ -28,7 +28,7 @@ export function ContractPage() {
         doc: base64doc,
         name: contractor.name,
         phone: contractor.phone,
-        address: contractor.address,
+        address: contractor.residence,
         bank: contractor.bank,
         bankNum: contractor.bankNum,
         identification: contractor.identification,

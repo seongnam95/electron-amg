@@ -1,7 +1,6 @@
 from typing import List, Optional
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from api.api_v1.endpoints.group import get_group
 from response_model import BaseResponse, ListResponse, DataResponse
 from ... import deps
 from util.crypto import decrypt
@@ -36,23 +35,11 @@ def read_worker_with_personal(worker_id: int, db: Session = Depends(deps.get_db)
 @router.get("/", response_model=ListResponse[schemas.Worker])
 def read_all_worker(
     # user: User = Depends(deps.get_current_user),
-    group_id: Optional[int] = None,
     db: Session = Depends(deps.get_db),
     skip: int = 0,
     limit: int = 100,
 ):
-    if group_id:
-        group = crud.group.get(db, id=group_id)
-        if not group:
-            raise HTTPException(status_code=404, detail="해당 그룹을 찾을 수 없습니다.")
-
-        workers = crud.worker.get_multi_worker(
-            db, group_id=group.id, skip=skip, limit=limit
-        )
-
-    else:
-        workers = crud.worker.get_multi_worker(db, skip=skip, limit=limit)
-
+    workers = crud.worker.get_multi_worker(db, skip=skip, limit=limit)
     return ListResponse(
         success=True, msg="정상 처리되었습니다.", count=len(workers), result=workers
     )
@@ -102,21 +89,6 @@ def delete_worker(
     db: Session = Depends(deps.get_db),
 ):
     crud.worker.remove(db=db, id=worker.id)
-    return BaseResponse(success=True, msg="정상 처리되었습니다.")
-
-
-@router.put("/change/", response_model=BaseResponse)
-def change_group_worker(
-    *,
-    obj_in: schemas.WorkerGroupChange,
-    db: Session = Depends(deps.get_db),
-):
-    if obj_in.group_id:
-        group = get_group(obj_in.group_id, db)
-        crud.worker.change_group(db=db, group_id=group.id, workers=obj_in.worker_ids)
-    else:
-        crud.worker.change_group(db=db, group_id=None, workers=obj_in.worker_ids)
-
     return BaseResponse(success=True, msg="정상 처리되었습니다.")
 
 

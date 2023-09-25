@@ -1,4 +1,3 @@
-from .crud_group import group
 from .curd_worker import worker
 from .curd_contract import contract
 

@@ -1,7 +1,8 @@
-from typing import List, Optional
+from typing import Optional
 from pydantic import BaseModel, model_validator, field_validator
 from schemas.common import check_update_fields
-from schemas.personal import PersonalCreate, PersonalUpdate, Personal
+from schemas.personal import PersonalCreate, PersonalResponse
+
 
 from exceptions import InvalidCodeError
 from datetime import datetime
@@ -19,7 +20,6 @@ class WorkerBase(BaseModel):
     phone: str
     residence: str
     position_code: int
-    group_id: Optional[int] = None
 
     @field_validator("gender_code")
     def validate_gender_code(cls, value):
@@ -40,11 +40,9 @@ class WorkerCreate(WorkerBase):
 
 class WorkerUpdate(BaseModel):
     name: Optional[str] = None
-    group_id: Optional[int] = None
     phone: Optional[str] = None
     residence: Optional[str] = None
     position_code: Optional[int] = None
-    personal: Optional[PersonalUpdate] = None
 
     @model_validator(mode="before")
     def check_fields(cls, values: dict):
@@ -62,12 +60,7 @@ class Worker(WorkerBase):
 class WorkerWithPersonal(WorkerBase):
     id: int
     create_date: datetime
-    personal: Personal
+    personal: PersonalResponse
 
     class Config:
         from_attributes = True
-
-
-class WorkerGroupChange(BaseModel):
-    group_id: Optional[int] = None
-    worker_ids: List[int]

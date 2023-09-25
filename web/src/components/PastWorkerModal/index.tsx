@@ -46,7 +46,10 @@ export function PastWorkerModal({
             <p className="modal-header-sub-text">
               통장사본, 신분증, 주소, 계좌 등이 자동 입력됩니다.
             </p>
-
+            <div className="img-wrap">
+              <img className="img-box" src={worker.personal.bankBook} />
+              <img className="img-box" src={worker.personal.idCard} />
+            </div>
             <ul>
               <li>
                 <span>이름</span>
@@ -193,6 +196,19 @@ const PastWorkerModalStyled = styled.div`
           border-bottom: 1px solid var(--text-hint);
         }
       }
+    }
+  }
+
+  .img-wrap {
+    display: flex;
+    gap: 0.4rem;
+    height: 10rem;
+    margin-bottom: 1.8rem;
+
+    .img-box {
+      border-radius: 6px;
+      width: 100%;
+      object-fit: cover;
     }
   }
 `;

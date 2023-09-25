@@ -38,4 +38,4 @@ def decrypt(enc):
 
 
 def verify(raw, enc_raw):
-    return bool(raw == decrypt(enc_raw, random))
+    return bool(raw == decrypt(enc_raw))

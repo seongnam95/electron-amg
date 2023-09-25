@@ -10,7 +10,6 @@ class WorkLog(Base):
 
     id = Column(Integer, primary_key=True, index=True)  # PK
 
-    group_id = Column(Integer, nullable=False)  # 그룹 ID
     position = Column(Integer, nullable=False)  # 포지션
 
     wage = Column(Integer, nullable=False)  # 일당

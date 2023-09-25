@@ -47,18 +47,6 @@ def delete_contract(
     return DataResponse(success=True, result=contract)
 
 
-# 계약서 데이터 변경
-@router.put("/{contract_id}", response_model=DataResponse[schemas.Contract])
-def update_contract(
-    *,
-    contract: schemas.Contract = Depends(get_contract),
-    db: Session = Depends(deps.get_db),
-    contract_in: schemas.ContractUpdate,
-):
-    contract = crud.contract.update(db=db, db_obj=contract, obj_in=contract_in)
-    return DataResponse(success=True, result=contract)
-
-
 # 해당 근로자 계약서 생성
 @router.post("/", response_model=DataResponse[schemas.Contract])
 def create_contract_for_worker(

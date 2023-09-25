@@ -7,26 +7,15 @@ from schemas.common import check_update_fields
 
 
 class ContractBase(BaseModel):
-    company_name: Optional[str] = None
-    default_daily_wage: int
-    start_date: datetime
-    end_date: datetime
+    company_name: str
+    salary: str
+    default_wage: int
+    start_period: datetime
+    end_period: datetime
 
 
 class ContractCreate(ContractBase):
     pass
-
-
-class ContractUpdate(BaseModel):
-    company_name: Optional[str] = None
-    default_daily_wage: Optional[int] = None
-    start_date: Optional[datetime] = None
-    end_date: Optional[datetime] = None
-    valid: Optional[bool] = None
-
-    @model_validator(mode="before")
-    def check_fields(cls, values: dict):
-        return check_update_fields(cls, values)
 
 
 class Contract(ContractBase):
@@ -43,8 +32,3 @@ class WorkerContractModel(BaseModel):
     valid_contract: Contract
     prev_contract_count: int
     prev_contracts: List[Contract]
-
-
-class WorkerContractCreateModel(BaseModel):
-    worker: WorkerCreate
-    contract: ContractCreate

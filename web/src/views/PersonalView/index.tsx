@@ -44,18 +44,22 @@ export function PersonalView() {
       .catch(() => {});
   };
 
+  // Worker 데이터 변환
   const serviceWorker = (data: any): Worker => {
+    const personal = data.personal;
     const worker = {
       id: data.id,
       name: data.name,
       phone: data.phone,
       residence: data.residence,
       personal: {
-        id: data.personal.id,
-        bank: data.personal.bank,
-        bankNum: data.personal.bank_num_enc,
-        ssn: data.personal.ssn_enc,
-        sign: data.personal.sign_base64,
+        id: personal.id,
+        bank: personal.bank,
+        bankNum: personal.bank_num_cover,
+        ssn: personal.ssn,
+        sign: personal.sign_base64,
+        bankBook: `data:image/jpeg;base64,${personal.bank_book}`,
+        idCard: `data:image/jpeg;base64,${personal.id_card}`,
       },
     } as Worker;
     return worker;
@@ -67,14 +71,17 @@ export function PersonalView() {
       setContractor((preview) => {
         return {
           ...preview,
+          id: worker.id,
           name: worker.name,
           phone: worker.phone,
-          address: worker.residence,
+          residence: worker.residence,
         };
       });
       setStep(3);
     }
   };
+
+  const handleNext = () => {};
 
   return (
     <PersonalViewStyled>
@@ -118,7 +125,7 @@ export function PersonalView() {
         />
       </div>
 
-      <NextButton className="next-btn" />
+      <NextButton className="next-btn" onClick={handleNext} />
 
       {worker && (
         <PastWorkerModal

@@ -3,15 +3,16 @@ import { Header } from "@components";
 import { useFormik, FormikProvider } from "formik";
 import { motion } from "framer-motion";
 import { STEPS } from "./steps";
-import { useRecoilValue, useSetRecoilState } from "recoil";
-import { ContractState, stepState } from "@stores";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
+import { ContractState, ContractorState, stepState } from "@stores";
 import { useParams } from "react-router-dom";
-import { Salary } from "@types";
+import { Contractor, Salary } from "@types";
 import { useEffect, useMemo } from "react";
 import styled from "styled-components";
 
 export const ContractPage = () => {
   const setContract = useSetRecoilState(ContractState);
+  const [Contractor, setContractor] = useRecoilState(ContractorState);
   const step = useRecoilValue(stepState);
   const currentStep = STEPS[step];
   if (!currentStep) throw new Error(`Undefined step: ${step}`);
@@ -33,12 +34,12 @@ export const ContractPage = () => {
     }
   }, [params]);
 
-  const initValues = {
+  const initValues: Contractor = {
     name: "",
     phone: "",
     idFront: "",
     idBack: "",
-    address: "",
+    residence: "",
     bank: "",
     bankNum: "",
     identification: "",
@@ -94,10 +95,18 @@ export const ContractPage = () => {
     []
   );
 
+  const handleSubmit = (values: Contractor) => {
+    if (Contractor.id) {
+      console.log("아이디 있음", values);
+    } else {
+      console.log("아이디 없음", values);
+    }
+  };
+
   const formik = useFormik({
     initialValues: initValues,
     validationSchema: currentStep.validationSchema,
-    onSubmit: (v) => console.log(v),
+    onSubmit: handleSubmit,
   });
 
   return (

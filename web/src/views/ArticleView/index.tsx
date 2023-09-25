@@ -64,9 +64,9 @@ export function ArticleView() {
         companyName={contract.companyName}
         companyAddress={contract.companyAddress}
         name={contractor.name}
-        address={contractor.address}
+        address={contractor.residence}
         phone={contractor.phone}
-        sign={sign === "" ? contractor.sign : sign}
+        sign={sign}
         onClickSign={() => setShowSignModal(true)}
       />
 

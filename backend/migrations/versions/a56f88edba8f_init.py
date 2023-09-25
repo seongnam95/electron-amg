@@ -1,19 +1,21 @@
 """init
 
-Revision ID: f57b9fb6e7e7
+Revision ID: a56f88edba8f
 Revises: 
-Create Date: 2023-09-22 17:50:55.483045
+Create Date: 2023-09-25 21:43:48.817178
 
 """
+from typing import Sequence, Union
+
 from alembic import op
 import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'f57b9fb6e7e7'
-down_revision = None
-branch_labels = None
-depends_on = None
+revision: str = 'a56f88edba8f'
+down_revision: Union[str, None] = None
+branch_labels: Union[str, Sequence[str], None] = None
+depends_on: Union[str, Sequence[str], None] = None
 
 
 def upgrade() -> None:
@@ -30,17 +32,6 @@ def upgrade() -> None:
     sa.UniqueConstraint('username')
     )
     op.create_index(op.f('ix_user_id'), 'user', ['id'], unique=False)
-    op.create_table('group',
-    sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('name', sa.String(), nullable=False),
-    sa.Column('hex_color', sa.String(), nullable=False),
-    sa.Column('explanation', sa.String(), nullable=True),
-    sa.Column('create_date', sa.DateTime(timezone=True), nullable=False),
-    sa.Column('user_id', sa.Integer(), nullable=True),
-    sa.ForeignKeyConstraint(['user_id'], ['user.id'], ),
-    sa.PrimaryKeyConstraint('id')
-    )
-    op.create_index(op.f('ix_group_id'), 'group', ['id'], unique=False)
     op.create_table('worker',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('name', sa.String(), nullable=False),
@@ -49,17 +40,17 @@ def upgrade() -> None:
     sa.Column('gender_code', sa.Integer(), nullable=False),
     sa.Column('position_code', sa.Integer(), nullable=False),
     sa.Column('create_date', sa.DateTime(timezone=True), nullable=False),
-    sa.Column('group_id', sa.Integer(), nullable=True),
-    sa.ForeignKeyConstraint(['group_id'], ['group.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_index(op.f('ix_worker_id'), 'worker', ['id'], unique=False)
     op.create_table('contract',
     sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('sign_base64', sa.Text(), nullable=False),
     sa.Column('company_name', sa.String(), nullable=False),
-    sa.Column('default_daily_wage', sa.Integer(), nullable=False),
-    sa.Column('start_date', sa.DateTime(timezone=True), nullable=False),
-    sa.Column('end_date', sa.DateTime(timezone=True), nullable=False),
+    sa.Column('salary', sa.String(), nullable=False),
+    sa.Column('default_wage', sa.Integer(), nullable=False),
+    sa.Column('start_period', sa.DateTime(timezone=True), nullable=False),
+    sa.Column('end_period', sa.DateTime(timezone=True), nullable=False),
     sa.Column('valid', sa.Boolean(), nullable=False),
     sa.Column('create_date', sa.DateTime(timezone=True), nullable=False),
     sa.Column('worker_id', sa.Integer(), nullable=True),
@@ -72,9 +63,8 @@ def upgrade() -> None:
     sa.Column('bank', sa.String(), nullable=False),
     sa.Column('bank_num_enc', sa.Text(), nullable=False),
     sa.Column('ssn_enc', sa.Text(), nullable=False),
-    sa.Column('sign_base64', sa.Text(), nullable=False),
-    sa.Column('bank_book_file_nm', sa.Text(), nullable=False),
-    sa.Column('id_card_file_nm', sa.Text(), nullable=False),
+    sa.Column('bank_book_file_nm', sa.String(), nullable=False),
+    sa.Column('id_card_file_nm', sa.String(), nullable=False),
     sa.Column('worker_id', sa.Integer(), nullable=True),
     sa.ForeignKeyConstraint(['worker_id'], ['worker.id'], ),
     sa.PrimaryKeyConstraint('id'),
@@ -83,7 +73,6 @@ def upgrade() -> None:
     op.create_index(op.f('ix_personal_id'), 'personal', ['id'], unique=False)
     op.create_table('worklog',
     sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('group_id', sa.Integer(), nullable=False),
     sa.Column('position', sa.Integer(), nullable=False),
     sa.Column('wage', sa.Integer(), nullable=False),
     sa.Column('working_date_str', sa.String(), nullable=False),
@@ -105,8 +94,6 @@ def downgrade() -> None:
     op.drop_table('contract')
     op.drop_index(op.f('ix_worker_id'), table_name='worker')
     op.drop_table('worker')
-    op.drop_index(op.f('ix_group_id'), table_name='group')
-    op.drop_table('group')
     op.drop_index(op.f('ix_user_id'), table_name='user')
     op.drop_table('user')
     # ### end Alembic commands ###

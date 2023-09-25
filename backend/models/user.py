@@ -17,5 +17,3 @@ class User(Base):
     is_approved = Column(Boolean, default=False, nullable=False)  # 계정 승인
 
     create_date = Column(DateTime(timezone=True), nullable=False, default=datetime.now)
-
-    group = relationship("Group", uselist=False, back_populates="user")

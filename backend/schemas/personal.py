@@ -13,13 +13,13 @@ class PersonalBase(BaseModel):
     id_card: str
 
 
-class PersonalEncryptionBase(BaseModel):
-    bank: str
-    sign_base64: str
-    bank_num_enc: str
-    ssn_enc: str
-    bank_book_file_nm: str
-    id_card_file_nm: str
+# class PersonalEncryptionBase(BaseModel):
+#     bank: str
+#     sign_base64: str
+#     bank_num_enc: str
+#     ssn_enc: str
+#     bank_book_file_nm: str
+#     id_card_file_nm: str
 
 
 class PersonalCreate(PersonalBase):
@@ -47,9 +47,18 @@ class Personal(PersonalBase):
         from_attributes = True
 
 
-class PersonalEncryption(PersonalEncryptionBase):
+class PersonalResponse(BaseModel):
     id: int
     worker_id: int
+    bank: str
+    bank_num_cover: str
+    bank_book: str
+    id_card: str
 
-    class Config:
-        from_attributes = True
+
+# class PersonalEncryption(PersonalEncryptionBase):
+#     id: int
+#     worker_id: int
+
+#     class Config:
+#         from_attributes = True

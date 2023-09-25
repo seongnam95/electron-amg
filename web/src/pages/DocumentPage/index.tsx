@@ -32,7 +32,7 @@ export function DocumentPage({ className, inputRef }: DocumentPageProps) {
             companyName={contract.companyName}
             companyAddress={contract.companyAddress}
             name={contractor.name}
-            address={contractor.address}
+            address={contractor.residence}
             phone={contractor.phone}
             sign={contractor.sign}
           />

@@ -1,12 +1,12 @@
 from models.worker import Worker
 from crud.base import CRUDBase
 from models import Contract
-from schemas import ContractCreate, ContractUpdate
+from schemas import ContractCreate
 from sqlalchemy.orm import Session
 from typing import List
 
 
-class CRUDContract(CRUDBase[Contract, ContractCreate, ContractUpdate]):
+class CRUDContract:
     def get_all_contract_for_worker(
         self, *, db: Session, db_obj: Worker, skip: int = 0, limit: int = 100
     ) -> List[Contract]:
@@ -31,7 +31,7 @@ class CRUDContract(CRUDBase[Contract, ContractCreate, ContractUpdate]):
             db.commit()
 
         obj_in["worker_id"] = worker_id
-        obj_in = self.model(**obj_in)
+        obj_in = Contract(**obj_in)
 
         db.add(obj_in)
         db.commit()
@@ -40,4 +40,4 @@ class CRUDContract(CRUDBase[Contract, ContractCreate, ContractUpdate]):
         return obj_in
 
 
-contract = CRUDContract(Contract)
+contract = CRUDContract()

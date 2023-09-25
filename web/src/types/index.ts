@@ -10,6 +10,7 @@ export interface Contract {
   repName: string;
   companyName: string;
   companyAddress: string;
+
   salary: Salary;
   pay: string;
   startPeriod: string;
@@ -17,12 +18,13 @@ export interface Contract {
 }
 
 export interface Contractor {
+  id?: string;
   name: string;
   phone: string;
   idFront: string;
   idBack: string;
 
-  address: string;
+  residence: string;
   bank: string;
   bankNum: string;
 
@@ -46,4 +48,6 @@ export interface Personal {
   bankNum: string;
   ssn: string;
   sign: string;
+  bankBook: string;
+  idCard: string;
 }

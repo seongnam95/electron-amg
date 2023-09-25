@@ -1,17 +1,7 @@
-import {
-  AddressInput,
-  BankSelector,
-  Button,
-  Input,
-  NextButton,
-} from "@components";
+import { AddressInput, BankSelector, Input, NextButton } from "@components";
 import { Field } from "formik";
 import { useRef } from "react";
 import styled from "styled-components";
-import { motion, AnimatePresence } from "framer-motion";
-import { useSetRecoilState } from "recoil";
-import { stepState } from "@stores";
-import useValidFormCheck from "@hooks/useValidFormCheck";
 
 /**
  * [ STEP 2 ] 추가 정보 입력 폼
@@ -20,15 +10,12 @@ export function AdditionalView() {
   const bankNumRef = useRef<HTMLInputElement>(null);
   const bankRef = useRef<HTMLInputElement>(null);
 
-  const setStep = useSetRecoilState(stepState);
-  const isValidForm = useValidFormCheck();
-
   return (
     <AdditionalViewStyled>
       {/* 주소 */}
       <Field
         as={AddressInput}
-        name="address"
+        name="residence"
         placeholder="주소"
         onSelected={() => bankRef.current?.focus()}
       />

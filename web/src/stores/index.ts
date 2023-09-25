@@ -11,17 +11,15 @@ export const initContract: Contract = {
   endPeriod: "",
 };
 
-export const initContractor: Contractor = {
+type ContractorStateType = Pick<
+  Contractor,
+  "id" | "name" | "phone" | "residence"
+>;
+export const initContractor: ContractorStateType = {
+  id: "",
   name: "",
   phone: "",
-  idFront: "",
-  idBack: "",
-  address: "",
-  bank: "",
-  bankNum: "",
-  identification: "",
-  bankbook: "",
-  sign: "",
+  residence: "",
 };
 
 export const ContractState = atom<Contract>({
@@ -29,7 +27,7 @@ export const ContractState = atom<Contract>({
   default: initContract,
 });
 
-export const ContractorState = atom<Contractor>({
+export const ContractorState = atom<ContractorStateType>({
   key: "contractorStore",
   default: initContractor,
 });

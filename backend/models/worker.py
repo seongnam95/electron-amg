@@ -17,9 +17,6 @@ class Worker(Base):
 
     create_date = Column(DateTime(timezone=True), nullable=False, default=datetime.now)
 
-    group_id = Column(Integer, ForeignKey("group.id"))
-    group = relationship("Group", back_populates="workers")
-
     personal = relationship(
         "Personal",
         back_populates="worker",
