@@ -4,8 +4,9 @@ from sqlalchemy.orm import Session
 from api.api_v1.endpoints.group import get_group
 from response_model import BaseResponse, ListResponse, DataResponse
 from ... import deps
+from util.crypto import decrypt
 
-import crud, schemas
+import crud, schemas, models
 
 
 router = APIRouter()
@@ -13,9 +14,21 @@ router = APIRouter()
 
 # 근로자 불러오기
 @router.get("/{worker_id}", response_model=DataResponse[schemas.Worker])
-def read_worker(
+def read_worker_with_personal(
     worker: schemas.Worker = Depends(deps.get_worker),
 ):
+    return DataResponse(success=True, msg="정상 처리되었습니다.", result=worker)
+
+
+# 근로자 불러오기
+@router.get(
+    "/{worker_id}/personal",
+    response_model=DataResponse[schemas.WorkerWithPersonal],
+)
+def read_worker_with_personal(worker_id: int, db: Session = Depends(deps.get_db)):
+    worker = crud.worker.get_worker_with_personal(db=db, id=worker_id)
+    if not worker:
+        raise HTTPException(status_code=404, detail="해당하는 근로자를 찾을 수 없습니다.")
     return DataResponse(success=True, msg="정상 처리되었습니다.", result=worker)
 
 

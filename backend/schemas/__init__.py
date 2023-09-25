@@ -1,6 +1,12 @@
 from .group import Group, GroupCreate, GroupUpdate
-from .worker import Worker, WorkerCreate, WorkerUpdate, WorkerGroupChange
-from .personal import Personal, PersonalCreate, PersonalUpdate
+from .worker import (
+    Worker,
+    WorkerCreate,
+    WorkerUpdate,
+    WorkerGroupChange,
+    WorkerWithPersonal,
+)
+from .personal import Personal, PersonalCreate, PersonalUpdate, PersonalBase
 from .contract import (
     Contract,
     ContractCreate,

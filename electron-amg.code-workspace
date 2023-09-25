@@ -6,7 +6,7 @@
   ],
   "settings": {
     "typescript.tsdk": "node_modules/typescript/lib",
-    "cSpell.words": ["clsx", "unpad"],
+    "cSpell.words": ["clsx", "Cryptodome", "unpad"],
     "python.defaultInterpreterPath": "${workspaceFolder}/backend/venv/bin/python3"
   }
 }
