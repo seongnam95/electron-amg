@@ -1,6 +1,6 @@
-from Crypto.Cipher import AES
-from Crypto import Random
-from Crypto.Protocol.KDF import PBKDF2
+from Cryptodome.Cipher import AES
+from Cryptodome import Random
+from Cryptodome.Protocol.KDF import PBKDF2
 
 import base64
 import config

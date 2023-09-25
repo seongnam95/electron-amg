@@ -23,7 +23,6 @@ class CRUDWorker(CRUDBase[Worker, WorkerCreate, WorkerUpdate]):
             "bank_num_enc": bank_num_enc,
             "ssn_enc": ssn_enc,
         }
-        print(new_personal_obj)
         db_obj = Worker(personal=new_personal_obj, **worker_obj)
 
         try:
