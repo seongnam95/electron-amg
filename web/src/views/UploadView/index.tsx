@@ -1,18 +1,17 @@
 import { FileUploadBox, NextButton } from "@components";
-import { Field, useFormikContext } from "formik";
-import { useEffect } from "react";
+import { stepState } from "@stores";
+import { Field } from "formik";
+import { useSetRecoilState } from "recoil";
 import styled from "styled-components";
 
 export function UploadView() {
-  const { values } = useFormikContext();
-
-  useEffect(() => console.log(values), [values]);
+  const setStep = useSetRecoilState(stepState);
 
   return (
     <StyledUploadView>
       <Field as={FileUploadBox} name="identification" label="신분증 첨부" />
       <Field as={FileUploadBox} name="bankbook" label="통장사본 첨부" />
-      <NextButton />
+      <NextButton onClick={() => setStep(3)} />
     </StyledUploadView>
   );
 }

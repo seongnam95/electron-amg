@@ -39,7 +39,7 @@ export function AddressInput({
       />
 
       <BottomSheetModal
-        title="은행 선택"
+        title="주소 검색"
         open={showAddressModal}
         onClose={() => setShowAddressModal(false)}
       >

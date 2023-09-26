@@ -5,11 +5,20 @@ const convertDateToString = (date: string) => {
   return day + date.split("-")[1] + date.split("-")[2];
 };
 
-export const encodingData = (contract: ContractBodyType) => {
-  const data = `${contract.salary},${contract.pay},${convertDateToString(
-    contract.startPeriod
-  )},${convertDateToString(contract.endPeriod)}`;
-  const base64Encoded = btoa(data);
+function utf8ToBase64(str: string) {
+  return window.btoa(
+    encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, (match, p1) => {
+      return String.fromCharCode(parseInt(p1, 16));
+    })
+  );
+}
+
+export const encodingData = (data: ContractBodyType) => {
+  data.startPeriod = convertDateToString(data.startPeriod);
+  data.endPeriod = convertDateToString(data.endPeriod);
+
+  const contractJson = encodeURIComponent(JSON.stringify(data));
+  const base64Encoded = utf8ToBase64(contractJson);
   return encodeURIComponent(base64Encoded);
 };
 

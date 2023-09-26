@@ -18,7 +18,6 @@ class CRUDPersonal(CRUDBase[Personal, PersonalCreate, PersonalUpdate]):
         personal_obj = PersonalSchema(
             id=personal.id,
             worker_id=personal.worker_id,
-            sign=personal.sign_base64,
             bank=personal.bank,
             bank_book=personal.bank_book_file_nm,
             id_card=personal.id_card_file_nm,

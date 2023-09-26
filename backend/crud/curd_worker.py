@@ -22,7 +22,6 @@ class CRUDWorker(CRUDBase[Worker, WorkerCreate, WorkerUpdate]):
         personal_dict = worker_dict.pop("personal", {})
 
         personal_obj = Personal(
-            sign_base64=personal_dict["sign_base64"],
             bank=personal_dict["bank"],
             bank_num_enc=encrypt(personal_dict["bank_num"]),
             ssn_enc=encrypt(personal_dict["ssn"]),
@@ -35,6 +34,7 @@ class CRUDWorker(CRUDBase[Worker, WorkerCreate, WorkerUpdate]):
             db.add(db_obj)
             db.commit()
             db.refresh(db_obj)
+            return db_obj
 
         except IntegrityError:
             db.rollback()

@@ -8,7 +8,7 @@ import {
   PersonalConsent,
   Signature,
 } from "@components";
-import { useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import { ContractState, ContractorState } from "@stores";
 import { useState } from "react";
 import { useFormikContext } from "formik";
@@ -18,7 +18,7 @@ import { AnimatePresence, motion } from "framer-motion";
 export function ArticleView() {
   const isValidForm = useValidFormCheck();
 
-  const contract = useRecoilValue(ContractState);
+  const [contract, setContract] = useRecoilState(ContractState);
   const contractor = useRecoilValue(ContractorState);
 
   const [showSignModal, setShowSignModal] = useState<boolean>(false);
@@ -32,6 +32,13 @@ export function ArticleView() {
     setSign(data);
     setFieldValue("sign", data);
     setShowSignModal(false);
+    setContract((prev) => {
+      return {
+        ...prev,
+        groupName: "테스트 그룹",
+        sign: data,
+      };
+    });
   };
 
   return (

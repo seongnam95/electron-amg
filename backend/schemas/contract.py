@@ -1,20 +1,22 @@
-from pydantic import BaseModel, model_validator
-from typing import List, Optional
+from pydantic import BaseModel
+from typing import List
 from datetime import datetime
-
-from schemas.worker import WorkerCreate
-from schemas.common import check_update_fields
 
 
 class ContractBase(BaseModel):
     company_name: str
     salary: str
     default_wage: int
+    sign_base64: str
     start_period: datetime
     end_period: datetime
 
 
 class ContractCreate(ContractBase):
+    pass
+
+
+class ContractUpdate(ContractBase):
     pass
 
 

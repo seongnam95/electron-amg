@@ -14,6 +14,7 @@ from .personal import (
 from .contract import (
     Contract,
     ContractCreate,
+    ContractUpdate,
     WorkerContractModel,
 )
 from .worklog import WorkLog, WorkLogCreate, WorkLogUpdate

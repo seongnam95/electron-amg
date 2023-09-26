@@ -1,27 +1,28 @@
 from models.worker import Worker
 from crud.base import CRUDBase
 from models import Contract
-from schemas import ContractCreate
+from schemas import ContractCreate, ContractUpdate
 from sqlalchemy.orm import Session
-from typing import List
+from typing import List, Any, Optional
 
 
-class CRUDContract:
+class CRUDContract(CRUDBase[Contract, ContractCreate, ContractUpdate]):
     def get_all_contract_for_worker(
-        self, *, db: Session, db_obj: Worker, skip: int = 0, limit: int = 100
+        self, db: Session, *, worker_obj: Worker, skip: int = 0, limit: int = 100
     ) -> List[Contract]:
-        for c in db_obj.contract:
+        for c in worker_obj.contracts:
             print(c)
 
-        return db.query(self.model).offset(skip).limit(limit).all()
+        return db.query(Contract).offset(skip).limit(limit).all()
 
+    # 계약서 생성
     def create_contract(
-        self, worker_id: int, db: Session, *, obj_in: ContractCreate
+        self, db: Session, *, worker_id: int, contract_obj: ContractCreate
     ) -> Contract:
         # 해당 Worker에 유효한 Contract가 있는지 확인
         existing_valid_contracts = (
-            db.query(self.model)
-            .filter(self.model.worker_id == worker_id, self.model.valid == True)
+            db.query(Contract)
+            .filter(Contract.worker_id == worker_id, Contract.valid == True)
             .all()
         )
 
@@ -30,14 +31,13 @@ class CRUDContract:
             contract.valid = False
             db.commit()
 
-        obj_in["worker_id"] = worker_id
-        obj_in = Contract(**obj_in)
+        contract_dict = contract_obj.model_dump()
+        contract_dict["worker_id"] = worker_id
+        contract_obj = Contract(**contract_dict)
 
-        db.add(obj_in)
+        db.add(contract_obj)
         db.commit()
-        db.refresh(obj_in)
-
-        return obj_in
+        db.refresh(contract_obj)
 
 
-contract = CRUDContract()
+contract = CRUDContract(Contract)

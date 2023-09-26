@@ -17,6 +17,7 @@ export default defineConfig({
       { find: "@svg", replacement: "/src/assets/svg" },
       { find: "@images", replacement: "/src/assets/images" },
       { find: "@hooks", replacement: "/src/hooks" },
+      { find: "@api", replacement: "/src/apis" },
     ],
   },
   build: {

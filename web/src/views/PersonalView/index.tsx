@@ -68,20 +68,27 @@ export function PersonalView() {
   // 이전 기록으로 계약 진행
   const handleClickSkip = () => {
     if (worker) {
-      setContractor((preview) => {
-        return {
-          ...preview,
-          id: worker.id,
-          name: worker.name,
-          phone: worker.phone,
-          residence: worker.residence,
-        };
+      setContractor({
+        id: worker.id,
+        name: worker.name,
+        phone: worker.phone,
+        residence: worker.residence,
       });
       setStep(3);
     }
   };
 
-  const handleNext = () => {};
+  // 스킵 또는 기록 없음
+  const handleNext = () => {
+    setContractor((prev) => {
+      return {
+        ...prev,
+        name: values.name,
+        phone: values.phone,
+      };
+    });
+    setStep(1);
+  };
 
   return (
     <PersonalViewStyled>
@@ -131,7 +138,7 @@ export function PersonalView() {
         <PastWorkerModal
           worker={worker}
           open={isValidForm}
-          onNew={() => setStep(1)}
+          onNew={handleNext}
           onSkip={handleClickSkip}
         />
       )}

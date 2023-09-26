@@ -30,7 +30,8 @@
       "@lotties/*": ["src/assets/lotties/*"],
       "@svg/*": ["src/assets/svg/*"],
       "@images/*": ["src/assets/images/*"],
-      "@hooks/*": ["src/hooks/*"]
+      "@hooks/*": ["src/hooks/*"],
+      "@api": ["src/apis"]
     }
   },
   "include": ["src", "svg.d.ts"],

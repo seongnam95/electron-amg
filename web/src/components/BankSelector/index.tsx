@@ -12,7 +12,6 @@ export const BankSelector = ({
   onChange,
   ...rest
 }: BankSelectorProps) => {
-  const inputRef = useRef<HTMLInputElement>(null);
   const [showBankModal, setShowBankModal] = useState<boolean>(false);
 
   const handleBankSelect = (selectedValue: string) => {
@@ -30,12 +29,7 @@ export const BankSelector = ({
 
   return (
     <BankSelectorStyled>
-      <Input
-        readOnly
-        inputRef={inputRef}
-        onFocus={() => setShowBankModal(true)}
-        {...rest}
-      />
+      <Input readOnly onFocus={() => setShowBankModal(true)} {...rest} />
 
       <BottomSheetModal
         title="은행 선택"

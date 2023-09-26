@@ -1,4 +1,10 @@
-import { Button, Header, Input, SalaryRadio } from "@components";
+import {
+  Button,
+  Header,
+  Input,
+  PositionSelector,
+  SalaryRadio,
+} from "@components";
 import styled from "styled-components";
 import { useRef } from "react";
 import { Contract, Salary } from "@types";
@@ -7,12 +13,20 @@ import { encodingData, getDefaultDate } from "./utils";
 
 export type ContractBodyType = Pick<
   Contract,
-  "salary" | "pay" | "startPeriod" | "endPeriod"
+  "salary" | "pay" | "startPeriod" | "endPeriod" | "groupName" | "positionCode"
 >;
 
 export function AdminPage() {
   const { today, endOfMonth } = getDefaultDate();
   const inputRef = useRef<HTMLInputElement>(null);
+  const initValues: ContractBodyType = {
+    groupName: "",
+    positionCode: 0,
+    salary: "daily",
+    pay: "",
+    startPeriod: today,
+    endPeriod: endOfMonth,
+  };
 
   const handleSubmit = (contract: ContractBodyType) => {
     if (inputRef.current)
@@ -38,15 +52,7 @@ export function AdminPage() {
         subTitle={<>생성 된 링크를 계약자에게 전달해주세요.</>}
       />
 
-      <Formik
-        initialValues={{
-          salary: "daily",
-          pay: "",
-          startPeriod: today,
-          endPeriod: endOfMonth,
-        }}
-        onSubmit={handleSubmit}
-      >
+      <Formik initialValues={initValues} onSubmit={handleSubmit}>
         {({ values, handleChange }) => {
           const payLabel =
             values.salary === "daily"
@@ -68,6 +74,18 @@ export function AdminPage() {
                     },
                   });
                 }}
+              />
+              <Field
+                as={PositionSelector}
+                name="positionCode"
+                placeholder="직위 구분"
+                inputMode="tel"
+              />
+              <Field
+                as={Input}
+                name="groupName"
+                placeholder="협력 업체명"
+                inputMode="tel"
               />
               <Field
                 as={Input}
@@ -103,10 +121,11 @@ export function AdminPage() {
 
 const StyledAdminPage = styled.div`
   position: relative;
+  display: flex;
+  flex-direction: column;
   padding: 3.4rem 2rem 11.8rem;
 
   width: 100vw;
-  height: 100vh;
 
   .form-wrap {
     display: flex;

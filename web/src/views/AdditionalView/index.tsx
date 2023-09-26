@@ -1,6 +1,9 @@
 import { AddressInput, BankSelector, Input, NextButton } from "@components";
-import { Field } from "formik";
-import { useRef } from "react";
+import { ContractorState, stepState } from "@stores";
+import { Contractor } from "@types";
+import { Field, useFormikContext } from "formik";
+import { useEffect, useRef } from "react";
+import { useSetRecoilState } from "recoil";
 import styled from "styled-components";
 
 /**
@@ -9,6 +12,21 @@ import styled from "styled-components";
 export function AdditionalView() {
   const bankNumRef = useRef<HTMLInputElement>(null);
   const bankRef = useRef<HTMLInputElement>(null);
+
+  const setStep = useSetRecoilState(stepState);
+  const setContractor = useSetRecoilState(ContractorState);
+  const { values } = useFormikContext<Contractor>();
+
+  // 스킵 또는 기록 없음
+  const handleNext = () => {
+    setContractor((prev) => {
+      return {
+        ...prev,
+        residence: values.residence,
+      };
+    });
+    setStep(2);
+  };
 
   return (
     <AdditionalViewStyled>
@@ -42,7 +60,7 @@ export function AdditionalView() {
         onlyNum
       />
 
-      <NextButton />
+      <NextButton onClick={handleNext} />
     </AdditionalViewStyled>
   );
 }

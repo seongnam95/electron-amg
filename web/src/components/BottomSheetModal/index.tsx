@@ -9,6 +9,7 @@ import { Icon } from "@components";
 interface BottomSheetModalProps {
   children?: ReactNode;
   title?: string;
+  height?: string;
   open?: boolean;
   onClose?: () => void;
 }
@@ -16,6 +17,7 @@ interface BottomSheetModalProps {
 export const BottomSheetModal = ({
   children,
   title,
+  height,
   open = false,
   onClose,
 }: BottomSheetModalProps) => {
@@ -27,7 +29,7 @@ export const BottomSheetModal = ({
   return ReactDOM.createPortal(
     <AnimatePresence>
       {open && (
-        <BottomSheetModalStyled className="bottom-sheet-modal">
+        <BottomSheetModalStyled className="bottom-sheet-modal" height={height}>
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -56,7 +58,7 @@ export const BottomSheetModal = ({
   );
 };
 
-const BottomSheetModalStyled = styled.div`
+const BottomSheetModalStyled = styled.div<{ height?: string }>`
   position: fixed;
   top: 0;
   left: 0;
@@ -76,7 +78,7 @@ const BottomSheetModalStyled = styled.div`
     border-top-right-radius: 2rem;
 
     width: 100%;
-    height: 90%;
+    height: ${(p) => (p.height ? p.height : "90%")};
     padding: 4rem 2rem;
 
     background-color: white;

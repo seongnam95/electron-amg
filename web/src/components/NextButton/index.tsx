@@ -1,23 +1,10 @@
 import { Button } from "@components";
 import { AnimatePresence, motion } from "framer-motion";
 import useValidFormCheck from "@hooks/useValidFormCheck";
-import { ButtonHTMLAttributes, MouseEvent } from "react";
-import { useFormikContext } from "formik";
-import { Contractor } from "@types";
-import { useRecoilState, useSetRecoilState } from "recoil";
-import { ContractorState, stepState } from "@stores";
+import { ButtonHTMLAttributes } from "react";
 
 export const NextButton = (props: ButtonHTMLAttributes<HTMLButtonElement>) => {
   const isValidForm = useValidFormCheck();
-  const { values } = useFormikContext<Contractor>();
-  const setContractor = useSetRecoilState(ContractorState);
-  const [step, setStep] = useRecoilState(stepState);
-
-  const handleClick = (e: MouseEvent<HTMLButtonElement>) => {
-    console.log(values);
-    setContractor(values);
-    setStep(step + 1);
-  };
 
   return (
     <AnimatePresence>
@@ -34,11 +21,7 @@ export const NextButton = (props: ButtonHTMLAttributes<HTMLButtonElement>) => {
             });
           }}
         >
-          <Button
-            type={props.type ? props.type : "button"}
-            onClick={handleClick}
-            {...props}
-          >
+          <Button type={props.type ? props.type : "button"} {...props}>
             다음
           </Button>
         </motion.div>

@@ -9,6 +9,8 @@ export const initContract: Contract = {
   pay: "0",
   startPeriod: "",
   endPeriod: "",
+  sign: "",
+  groupName: "",
 };
 
 type ContractorStateType = Pick<

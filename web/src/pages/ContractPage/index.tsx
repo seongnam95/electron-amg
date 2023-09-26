@@ -3,16 +3,17 @@ import { Header } from "@components";
 import { useFormik, FormikProvider } from "formik";
 import { motion } from "framer-motion";
 import { STEPS } from "./steps";
-import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import { ContractState, ContractorState, stepState } from "@stores";
 import { useParams } from "react-router-dom";
 import { Contractor, Salary } from "@types";
 import { useEffect, useMemo } from "react";
 import styled from "styled-components";
+import { createContract, createWorker } from "@api";
 
 export const ContractPage = () => {
-  const setContract = useSetRecoilState(ContractState);
-  const [Contractor, setContractor] = useRecoilState(ContractorState);
+  const [contract, setContract] = useRecoilState(ContractState);
+  const Contractor = useRecoilValue(ContractorState);
   const step = useRecoilValue(stepState);
   const currentStep = STEPS[step];
   if (!currentStep) throw new Error(`Undefined step: ${step}`);
@@ -99,7 +100,12 @@ export const ContractPage = () => {
     if (Contractor.id) {
       console.log("아이디 있음", values);
     } else {
-      console.log("아이디 없음", values);
+      createWorker(values).then((res) => {
+        const id = res.data.result.id;
+        createContract(id, contract).then((res) => {
+          if (res.data.success) console.log("성공");
+        });
+      });
     }
   };
 

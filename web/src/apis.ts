@@ -1,7 +1,14 @@
-import { Contractor, Salary } from "@types";
+import { Contract, Contractor, Salary } from "@types";
 import axios, { AxiosResponse } from "axios";
 
 const BASE_URL = "http://localhost:8001/api/v1";
+
+const getGenderCode: { [key: string]: number } = {
+  1: 1,
+  2: 2,
+  3: 1,
+  4: 2,
+};
 
 interface WorkerBody {
   name: string;
@@ -24,23 +31,41 @@ interface ContractBody {
   sign_base64: string;
   company_name: string;
   salary: Salary;
-  default_wage: number;
+  default_wage: string;
   start_period: string;
   end_period: string;
 }
 
-function createWorker(contractor: Contractor) {
-  const body: WorkerBody = {
+export function createWorker(contractor: Contractor) {
+  const personalBody: PersonalBody = {
+    bank: contractor.bank,
+    bank_num: contractor.bankNum,
+    bank_book: contractor.bankbook,
+    ssn: `${contractor.idFront}${contractor.idBack}`,
+    id_card: contractor.identification,
+  };
+
+  const workerBody: WorkerBody = {
     name: contractor.name,
     phone: contractor.phone,
     gender_code: getGenderCode[contractor.idBack.slice(0, 1)],
+    residence: contractor.residence,
+    position_code: 1,
+    personal: personalBody,
   };
-  return axios.post(`${BASE_URL}/worker`, body);
+
+  return axios.post(`${BASE_URL}/worker`, workerBody);
 }
 
-const getGenderCode: { [key: string]: number } = {
-  1: 1,
-  2: 2,
-  3: 1,
-  4: 2,
-};
+export function createContract(workerId: string, contract: Contract) {
+  const contractBody: ContractBody = {
+    salary: contract.salary,
+    default_wage: contract.pay,
+    start_period: contract.startPeriod,
+    end_period: contract.endPeriod,
+    company_name: contract.groupName,
+    sign_base64: contract.sign,
+  };
+  console.log(contractBody);
+  return axios.post(`${BASE_URL}/contract/worker/${workerId}`, contractBody);
+}

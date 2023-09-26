@@ -25,7 +25,7 @@ const validationSchemas = {
 
   // 주소, 은행명, 계좌번호
   additional: Yup.object().shape({
-    address: Yup.string().required("주소 입력은 필수입니다."),
+    residence: Yup.string().required("주소 입력은 필수입니다."),
     bank: Yup.string().required("은행 입력은 필수입니다."),
     bankNum: Yup.string().required("계좌번호 입력은 필수입니다."),
   }),

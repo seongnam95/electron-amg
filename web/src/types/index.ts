@@ -10,11 +10,13 @@ export interface Contract {
   repName: string;
   companyName: string;
   companyAddress: string;
-
   salary: Salary;
   pay: string;
   startPeriod: string;
   endPeriod: string;
+  sign: string;
+  groupName: string;
+  positionCode: number;
 }
 
 export interface Contractor {

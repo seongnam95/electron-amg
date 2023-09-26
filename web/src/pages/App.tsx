@@ -19,5 +19,6 @@ export function App() {
 }
 
 const StyledApp = styled.div`
-  height: 100vh;
+  height: 100%;
+  min-height: 100vh;
 `;
