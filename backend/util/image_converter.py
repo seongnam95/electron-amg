@@ -36,11 +36,10 @@ def base64_to_image(base64_str: str, file_name: str = f"{uuid.uuid4()}.jpeg") ->
 
 def image_to_base64(file_name: str):
     file_path = os.path.join(UPLOAD_DIR, file_name)
-    print(file_path)
     if not os.path.exists(file_path):
         return None
 
     with open(file_path, "rb") as f:
         encoded_string = base64.b64encode(f.read()).decode("utf-8")
-
-    return encoded_string
+    img_extension = file_name.split(".")[1]
+    return f"data:image/{img_extension};base64,{encoded_string}"

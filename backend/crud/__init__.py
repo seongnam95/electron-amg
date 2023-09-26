@@ -1,6 +1,4 @@
-from .curd_worker import worker
-from .curd_contract import contract
-
-from .curd_personal import personal
-from .curd_worklog import worklog
-from .curd_user import user
+from .crud_worker import worker
+from .crud_contract import contract
+from .crud_worklog import worklog
+from .crud_user import user

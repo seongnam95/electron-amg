@@ -2,14 +2,8 @@ from .worker import (
     Worker,
     WorkerCreate,
     WorkerUpdate,
-    WorkerWithPersonal,
-)
-from .personal import (
-    Personal,
-    PersonalCreate,
-    PersonalUpdate,
-    PersonalBase,
-    PersonalResponse,
+    WorkerBaseResponse,
+    CoveringWorkerResponse,
 )
 from .contract import (
     Contract,
@@ -19,3 +13,4 @@ from .contract import (
 )
 from .worklog import WorkLog, WorkLogCreate, WorkLogUpdate
 from .user import User, UserCreate, UserUpdate, UserResponse, UserLogin
+from .form import Form, FormCreate

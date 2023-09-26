@@ -5,34 +5,52 @@ import { motion } from "framer-motion";
 import { STEPS } from "./steps";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { ContractState, ContractorState, stepState } from "@stores";
-import { useParams } from "react-router-dom";
-import { Contractor, Salary } from "@types";
+import { useNavigate, useParams } from "react-router-dom";
+import { Contractor } from "@types";
 import { useEffect, useMemo } from "react";
 import styled from "styled-components";
-import { createContract, createWorker } from "@api";
+import { createContract, createWorker, getContractForm } from "@api";
 
 export const ContractPage = () => {
   const [contract, setContract] = useRecoilState(ContractState);
   const Contractor = useRecoilValue(ContractorState);
+  const navigate = useNavigate();
+
   const step = useRecoilValue(stepState);
   const currentStep = STEPS[step];
   if (!currentStep) throw new Error(`Undefined step: ${step}`);
 
   const { params } = useParams();
+
   useEffect(() => {
-    if (params) {
-      let decData = atob(params);
-      if (decData)
+    if (!params) return; // params가 없으면 실행하지 않음
+    let isMounted = true; // 컴포넌트 마운트 상태를 추적
+
+    getContractForm(params)
+      .then((res) => {
+        const contract = res.data.result;
         setContract((prev) => {
           return {
             ...prev,
-            salary: decData.split(",")[0] as Salary,
-            pay: decData.split(",")[1],
-            startPeriod: `20${decData.split(",")[2]}`,
-            endPeriod: `20${decData.split(",")[3]}`,
+            salary: contract.salary,
+            groupName: contract.group_name,
+            pay: contract.default_wage,
+            startPeriod: contract.start_period,
+            endPeriod: contract.end_period,
+            positionCode: contract.position_code,
           };
         });
-    }
+      })
+      .catch(() => {
+        if (!isMounted) return;
+
+        navigate("/");
+        alert("유효하지 않은 폼입니다.");
+      });
+
+    return () => {
+      isMounted = false;
+    };
   }, [params]);
 
   const initValues: Contractor = {
@@ -103,11 +121,13 @@ export const ContractPage = () => {
       createWorker(values).then((res) => {
         const id = res.data.result.id;
         createContract(id, contract).then((res) => {
-          if (res.data.success) console.log("성공");
+          if (res.data.success) handleCompleted();
         });
       });
     }
   };
+
+  const handleCompleted = () => {};
 
   const formik = useFormik({
     initialValues: initValues,

@@ -47,8 +47,8 @@ export function PastWorkerModal({
               통장사본, 신분증, 주소, 계좌 등이 자동 입력됩니다.
             </p>
             <div className="img-wrap">
-              <img className="img-box" src={worker.personal.bankBook} />
-              <img className="img-box" src={worker.personal.idCard} />
+              <img className="img-box" src={worker.bankBook} />
+              <img className="img-box" src={worker.idCard} />
             </div>
             <ul>
               <li>
@@ -62,8 +62,8 @@ export function PastWorkerModal({
               <li>
                 <span>계좌번호</span>
                 <span>
-                  <span className="bank-name">{worker.personal.bank}</span>
-                  {worker.personal.bankNum}
+                  <span className="bank-name">{worker.bank}</span>
+                  {worker.bankNumCover}
                 </span>
               </li>
             </ul>

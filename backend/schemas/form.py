@@ -1,18 +1,17 @@
 from pydantic import BaseModel, field_validator
-from typing import List
-from datetime import datetime, date
+from datetime import date, datetime
 from exceptions import InvalidCodeError
+
 
 # 직위 코드 [1: 팀장, 2: 부팀장, 3: 알바, 4: 기사, 5: 홍보단, 6: 기타]
 POSITION_CODES = [1, 2, 3, 4, 5, 6]
 
 
-class ContractBase(BaseModel):
+class FormBase(BaseModel):
+    group_name: str
     position_code: int
-    company_name: str
     salary: str
     default_wage: int
-    sign_base64: str
     start_period: date
     end_period: date
 
@@ -23,25 +22,10 @@ class ContractBase(BaseModel):
         return value
 
 
-class ContractCreate(ContractBase):
+class FormCreate(FormBase):
     pass
 
 
-class ContractUpdate(ContractBase):
-    pass
-
-
-class Contract(ContractBase):
-    id: int
-    worker_id: int
+class Form(FormBase):
+    id: str
     create_date: datetime
-    valid: bool
-
-    class Config:
-        from_attributes = True
-
-
-class WorkerContractModel(BaseModel):
-    valid_contract: Contract
-    prev_contract_count: int
-    prev_contracts: List[Contract]

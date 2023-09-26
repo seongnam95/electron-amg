@@ -2,11 +2,11 @@ import { Field, useFormikContext } from "formik";
 import { Input, NextButton, PastWorkerModal } from "@components";
 import styled from "styled-components";
 import { useEffect, useRef, useState } from "react";
-import axios from "axios";
 import { Contractor, Worker } from "@types";
 import { useSetRecoilState } from "recoil";
 import { ContractorState, stepState } from "@stores";
 import useValidFormCheck from "@hooks/useValidFormCheck";
+import { getWorker } from "@api";
 
 /**
  * [ STEP 1 ] 개인정보 입력 폼
@@ -29,14 +29,10 @@ export function PersonalView() {
 
   // 기존 근로자 API 호출
   const getWorkerList = () => {
-    const params = {
-      name: values.name,
-      phone: values.phone,
-      ssn: values.idFront + values.idBack,
-    };
+    const name = values.name;
+    const ssn = values.idFront + values.idBack;
 
-    axios
-      .get("http://localhost:8001/api/v1/draw/worker/", { params })
+    getWorker(name, ssn)
       .then((res) => {
         const data = res.data.result;
         setWorker(serviceWorker(data));
@@ -46,27 +42,36 @@ export function PersonalView() {
 
   // Worker 데이터 변환
   const serviceWorker = (data: any): Worker => {
-    const personal = data.personal;
-    const worker = {
+    const worker: Worker = {
       id: data.id,
       name: data.name,
       phone: data.phone,
       residence: data.residence,
-      personal: {
-        id: personal.id,
-        bank: personal.bank,
-        bankNum: personal.bank_num_cover,
-        ssn: personal.ssn,
-        sign: personal.sign_base64,
-        bankBook: `data:image/jpeg;base64,${personal.bank_book}`,
-        idCard: `data:image/jpeg;base64,${personal.id_card}`,
-      },
+      bank: data.bank,
+      bankNumCover: data.bank_num_cover,
+      bankBook: data.bank_book,
+      idCard: data.id_card,
     } as Worker;
     return worker;
   };
 
+  // TODO 새로운 계약서 작성하더라도 중복 Worker 처리
+  const saveContractor = () => {};
+
   // 이전 기록으로 계약 진행
   const handleClickSkip = () => {
+    if (worker) {
+      setContractor({
+        id: worker.id,
+        name: worker.name,
+        phone: worker.phone,
+        residence: worker.residence,
+      });
+      setStep(3);
+    }
+  };
+
+  const handleClickNew = () => {
     if (worker) {
       setContractor({
         id: worker.id,

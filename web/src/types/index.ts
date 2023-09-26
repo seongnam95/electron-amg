@@ -14,13 +14,14 @@ export interface Contract {
   pay: string;
   startPeriod: string;
   endPeriod: string;
-  sign: string;
   groupName: string;
   positionCode: number;
+  sign: string;
 }
 
 export interface Contractor {
   id?: string;
+
   name: string;
   phone: string;
   idFront: string;
@@ -41,15 +42,8 @@ export interface Worker {
   name: string;
   phone: string;
   residence: string;
-  personal: Personal;
-}
-
-export interface Personal {
-  id: string;
   bank: string;
-  bankNum: string;
-  ssn: string;
-  sign: string;
+  bankNumCover: string;
   bankBook: string;
   idCard: string;
 }

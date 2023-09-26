@@ -6,6 +6,7 @@ export const initContract: Contract = {
   companyName: "에이엠지(AMG)",
   companyAddress: "남양주시 미금로57번길 20, 715-2102",
   salary: "daily",
+  positionCode: 1,
   pay: "0",
   startPeriod: "",
   endPeriod: "",

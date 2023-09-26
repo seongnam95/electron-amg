@@ -2,4 +2,4 @@
 # imported by Alembic
 
 from .base_class import Base  # noqa
-from models import Worker, Personal, Contract, WorkLog  # noqa
+from models import Worker, Contract, WorkLog, User  # noqa

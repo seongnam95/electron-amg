@@ -1,4 +1,4 @@
-from sqlalchemy import Column, ForeignKey, Integer, String, DateTime
+from sqlalchemy import Column, Text, Integer, String, DateTime
 from db.base_class import Base
 from datetime import datetime
 from sqlalchemy.orm import relationship
@@ -13,16 +13,14 @@ class Worker(Base):
     phone = Column(String, nullable=False)  # 연락처
     residence = Column(String, nullable=False)  # 거주지
     gender_code = Column(Integer, nullable=False)  # 성별 코드
-    position_code = Column(Integer, nullable=False)  # 직위 코드
+    bank = Column(String, nullable=False)  # 은행명
+    bank_num_enc = Column(Text, nullable=False)  # 계좌번호 (암호화)
+    ssn_enc = Column(Text, nullable=False)  # 주민등록번호 (암호화)
 
+    bank_book_file_nm = Column(String, nullable=False)  # 통장 사본
+    id_card_file_nm = Column(String, nullable=False)  # 신분증
     create_date = Column(DateTime(timezone=True), nullable=False, default=datetime.now)
 
-    personal = relationship(
-        "Personal",
-        back_populates="worker",
-        uselist=False,
-        cascade="all, delete-orphan",
-    )
     contracts = relationship("Contract", back_populates="worker")
     worklogs = relationship(
         "WorkLog", back_populates="worker", cascade="all, delete-orphan"

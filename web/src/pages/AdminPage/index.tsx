@@ -9,9 +9,10 @@ import styled from "styled-components";
 import { useRef } from "react";
 import { Contract, Salary } from "@types";
 import { Field, Form, Formik } from "formik";
-import { encodingData, getDefaultDate } from "./utils";
+import { getDefaultDate } from "./utils";
+import { createContractForm } from "@api";
 
-export type ContractBodyType = Pick<
+export type ContractForm = Pick<
   Contract,
   "salary" | "pay" | "startPeriod" | "endPeriod" | "groupName" | "positionCode"
 >;
@@ -19,7 +20,8 @@ export type ContractBodyType = Pick<
 export function AdminPage() {
   const { today, endOfMonth } = getDefaultDate();
   const inputRef = useRef<HTMLInputElement>(null);
-  const initValues: ContractBodyType = {
+
+  const initValues: ContractForm = {
     groupName: "",
     positionCode: 0,
     salary: "daily",
@@ -28,10 +30,15 @@ export function AdminPage() {
     endPeriod: endOfMonth,
   };
 
-  const handleSubmit = (contract: ContractBodyType) => {
-    if (inputRef.current)
-      inputRef.current.value = `http://amgcom.site/${encodingData(contract)}`;
-    handleOnCopy();
+  const handleSubmit = (contract: ContractForm) => {
+    createContractForm(contract).then((res) => {
+      const id = res.data.result.id;
+
+      if (inputRef.current) {
+        inputRef.current.value = `http://amgcom.site/${id}`;
+        handleOnCopy();
+      }
+    });
   };
 
   const handleOnCopy = async () => {

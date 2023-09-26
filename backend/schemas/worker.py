@@ -1,8 +1,8 @@
 from typing import Optional
-from pydantic import BaseModel, model_validator, field_validator
+from pydantic import BaseModel, model_validator, field_validator, validator
 from schemas.common import check_update_fields
-from schemas.personal import PersonalCreate, PersonalResponse
-
+from util.crypto import encrypt, decrypt
+from util.image_converter import base64_to_image
 
 from exceptions import InvalidCodeError
 from datetime import datetime
@@ -10,16 +10,17 @@ from datetime import datetime
 # 성별 코드 [1: 남자, 2: 여자]
 GENDER_CODES = [1, 2]
 
-# 직위 코드 [1: 팀장, 2: 부팀장, 3: 알바, 4: 기사, 5: 홍보단, 6: 기타]
-POSITION_CODES = [1, 2, 3, 4, 5, 6]
-
 
 class WorkerBase(BaseModel):
     name: str
     gender_code: int
     phone: str
     residence: str
-    position_code: int
+    bank: str
+    bank_num: str
+    ssn: str
+    bank_book: str
+    id_card: str
 
     @field_validator("gender_code")
     def validate_gender_code(cls, value):
@@ -27,22 +28,20 @@ class WorkerBase(BaseModel):
             raise InvalidCodeError("gender")
         return value
 
-    @field_validator("position_code")
-    def validate_position_code(cls, value):
-        if value not in POSITION_CODES:
-            raise InvalidCodeError("position")
-        return value
-
 
 class WorkerCreate(WorkerBase):
-    personal: PersonalCreate
+    pass
 
 
 class WorkerUpdate(BaseModel):
     name: Optional[str] = None
     phone: Optional[str] = None
     residence: Optional[str] = None
-    position_code: Optional[int] = None
+    bank: Optional[str] = None
+    bank_num: Optional[str] = None
+    ssn: Optional[str] = None
+    bank_book: Optional[str] = None
+    id_card: Optional[str] = None
 
     @model_validator(mode="before")
     def check_fields(cls, values: dict):
@@ -57,10 +56,15 @@ class Worker(WorkerBase):
         from_attributes = True
 
 
-class WorkerWithPersonal(WorkerBase):
+class WorkerBaseResponse(BaseModel):
     id: int
-    create_date: datetime
-    personal: PersonalResponse
+    name: str
+    phone: str
+    residence: str
 
-    class Config:
-        from_attributes = True
+
+class CoveringWorkerResponse(WorkerBaseResponse):
+    bank: str
+    bank_num_cover: str
+    bank_book: str
+    id_card: str
