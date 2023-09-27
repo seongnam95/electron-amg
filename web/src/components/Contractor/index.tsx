@@ -1,28 +1,20 @@
+import { ContractorState } from "@stores";
+import { useRecoilValue } from "recoil";
 import styled from "styled-components";
 
 interface ContractorProps {
-  repName: string;
-  companyName: string;
-  companyAddress: string;
-  name: string;
-  phone: string;
-  address: string;
-  sign: string;
+  signBase64?: string;
   printView?: boolean;
   onClickSign?: () => void;
 }
 
 export function Contractor({
-  repName,
-  companyName,
-  companyAddress,
-  name,
-  phone,
-  sign,
-  address,
+  signBase64,
   printView,
   onClickSign,
 }: ContractorProps) {
+  const { name, phone, residence } = useRecoilValue(ContractorState);
+
   const ContractorContent = (
     <>
       <div className="contractor-wrap">
@@ -34,19 +26,20 @@ export function Contractor({
             </>
           ) : null}
         </div>
+
         <ul className="field-list">
           <li className="field-list-row">
             <span>사업체명</span>
-            <p>{companyName}</p>
+            <p>에이엠지(AMG)</p>
           </li>
           <li className="field-list-row">
             <span>주 소</span>
-            <p className="address-text">{companyAddress}</p>
+            <p className="address-text">남양주시 미금로57번길 20, 715-2102</p>
           </li>
           <li className="field-list-row">
             <span>대 표 자</span>
             <p>
-              {repName}
+              김지호
               <span>
                 (인 또는 서명)
                 <img
@@ -75,7 +68,7 @@ export function Contractor({
           </li>
           <li className="field-list-row">
             <span>주 소</span>
-            <p className="address-text">{address}</p>
+            <p className="address-text">{residence}</p>
           </li>
           <li className="field-list-row">
             <span>성 명</span>
@@ -83,8 +76,8 @@ export function Contractor({
               {name}
               <span className="contractor-sign">
                 (인 또는 서명)
-                {sign ? (
-                  <img className="stamp-img" alt="stamp" src={sign} />
+                {signBase64 ? (
+                  <img className="stamp-img" alt="stamp" src={signBase64} />
                 ) : null}
               </span>
             </p>

@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import completeLottie from "@lotties/complete.json";
 import { useRecoilValue } from "recoil";
 import { ContractState, ContractorState } from "@stores";
-import { formatDate } from "@utils";
+import { formatDate } from "@utils/formatDate";
 
 export function CompletePage() {
   const navigate = useNavigate();
@@ -42,7 +42,7 @@ export function CompletePage() {
               {formatDate(contract.startPeriod, true)} ~{" "}
               {formatDate(contract.endPeriod, true)}
             </p>
-            <p>{contract.pay.toLocaleString()}원</p>
+            <p>{contract.defaultWage.toLocaleString()}원</p>
           </div>
         </div>
 

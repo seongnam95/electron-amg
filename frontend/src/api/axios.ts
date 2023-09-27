@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-import { camelToSnake, snakeToCamel } from '~/utils/snakeToCamel';
+import { camelToSnake, snakeToCamel } from '~/utils/snakeCamelConverter';
 
 const axiosPrivate = axios.create({
   baseURL: import.meta.env.VITE_BASE_URL,

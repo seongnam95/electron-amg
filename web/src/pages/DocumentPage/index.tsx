@@ -22,20 +22,11 @@ export function DocumentPage({ className, inputRef }: DocumentPageProps) {
             printView
             salary={contract.salary}
             name={contractor.name}
-            pay={contract.pay}
+            defaultWage={contract.defaultWage}
             startPeriod={contract.startPeriod}
             endPeriod={contract.endPeriod}
           />
-          <Contractor
-            printView
-            repName={contract.repName}
-            companyName={contract.companyName}
-            companyAddress={contract.companyAddress}
-            name={contractor.name}
-            address={contractor.residence}
-            phone={contractor.phone}
-            sign={contractor.sign}
-          />
+          <Contractor printView signBase64={contract.signBase64} />
         </div>
       </div>
     </StyledDocumentPage>

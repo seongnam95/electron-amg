@@ -35,7 +35,7 @@ export function ContractPage() {
         bankbook: contractor.bankbook,
         sign: contractor.sign,
         salary: salaryText,
-        pay: contract.pay.toString(),
+        pay: contract.defaultWage.toString(),
         startPeriod: contract.startPeriod,
         endPeriod: contract.endPeriod,
       };

@@ -8,13 +8,13 @@ POSITION_CODES = [1, 2, 3, 4, 5, 6]
 
 
 class ContractBase(BaseModel):
-    position_code: int
-    company_name: str
     salary: str
+    position_code: int
+    group_name: str
     default_wage: int
-    sign_base64: str
     start_period: date
     end_period: date
+    sign_base64: str
 
     @field_validator("position_code")
     def validate_position_code(cls, value):

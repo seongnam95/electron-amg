@@ -5,11 +5,12 @@ import { ReactNode } from "react";
 interface HeaderProps {
   title?: string;
   subTitle?: ReactNode;
+  height?: string;
 }
 
-export const Header = ({ title, subTitle }: HeaderProps) => {
+export const Header = ({ title, subTitle, height }: HeaderProps) => {
   return (
-    <HeaderStyled>
+    <HeaderStyled height={height}>
       <motion.div
         className="description-box"
         initial={{ opacity: 0, y: -20 }}
@@ -25,13 +26,12 @@ export const Header = ({ title, subTitle }: HeaderProps) => {
   );
 };
 
-const HeaderStyled = styled.div`
+const HeaderStyled = styled.div<{ height?: string }>`
   .description-box {
     display: flex;
     flex-direction: column;
     gap: 1.2rem;
-    margin-bottom: 3.4rem;
-    height: 9rem;
+    height: ${(p) => (p.height ? p.height : "9rem")};
 
     .description-title {
       color: var(--text);

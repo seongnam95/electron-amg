@@ -2,15 +2,12 @@ import { Contract, Contractor } from "@types";
 import { atom } from "recoil";
 
 export const initContract: Contract = {
-  repName: "김지호",
-  companyName: "에이엠지(AMG)",
-  companyAddress: "남양주시 미금로57번길 20, 715-2102",
   salary: "daily",
   positionCode: 1,
-  pay: "0",
+  defaultWage: "0",
   startPeriod: "",
   endPeriod: "",
-  sign: "",
+  signBase64: "",
   groupName: "",
 };
 

@@ -3,8 +3,8 @@ from db.base_class import Base
 from datetime import datetime
 
 
-class Form(Base):
-    __tablename__ = "form"
+class Draft(Base):
+    __tablename__ = "draft"
 
     id = Column(String, primary_key=True, index=True, unique=True)
     position_code = Column(Integer, nullable=False)  # 직위 코드

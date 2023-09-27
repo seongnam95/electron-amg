@@ -9,7 +9,9 @@ import { useNavigate, useParams } from "react-router-dom";
 import { Contractor } from "@types";
 import { useEffect, useMemo } from "react";
 import styled from "styled-components";
-import { createContract, createWorker, getContractForm } from "@api";
+import { fetchContractDraft } from "@api/draft";
+import { createWorker } from "@api/worker";
+import { createContract } from "@api/contract";
 
 export const ContractPage = () => {
   const [contract, setContract] = useRecoilState(ContractState);
@@ -23,10 +25,10 @@ export const ContractPage = () => {
   const { params } = useParams();
 
   useEffect(() => {
-    if (!params) return; // params가 없으면 실행하지 않음
-    let isMounted = true; // 컴포넌트 마운트 상태를 추적
+    if (!params) return;
+    let isMounted = true;
 
-    getContractForm(params)
+    fetchContractDraft(params)
       .then((res) => {
         const contract = res.data.result;
         setContract((prev) => {
@@ -34,7 +36,7 @@ export const ContractPage = () => {
             ...prev,
             salary: contract.salary,
             groupName: contract.group_name,
-            pay: contract.default_wage,
+            defaultWage: contract.default_wage,
             startPeriod: contract.start_period,
             endPeriod: contract.end_period,
             positionCode: contract.position_code,
@@ -61,9 +63,8 @@ export const ContractPage = () => {
     residence: "",
     bank: "",
     bankNum: "",
-    identification: "",
+    idCard: "",
     bankbook: "",
-    sign: "",
   };
 
   const StepHeaders = useMemo(

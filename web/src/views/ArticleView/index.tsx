@@ -36,7 +36,7 @@ export function ArticleView() {
       return {
         ...prev,
         groupName: "테스트 그룹",
-        sign: data,
+        signBase64: data,
       };
     });
   };
@@ -51,7 +51,7 @@ export function ArticleView() {
             <ContractArticle
               salary={contract.salary}
               name={contractor.name}
-              pay={contract.pay}
+              defaultWage={contract.defaultWage}
               startPeriod={contract.startPeriod}
               endPeriod={contract.endPeriod}
             />
@@ -67,13 +67,7 @@ export function ArticleView() {
       </div>
 
       <Contractor
-        repName={contract.repName}
-        companyName={contract.companyName}
-        companyAddress={contract.companyAddress}
-        name={contractor.name}
-        address={contractor.residence}
-        phone={contractor.phone}
-        sign={sign}
+        signBase64={sign}
         onClickSign={() => setShowSignModal(true)}
       />
 

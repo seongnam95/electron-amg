@@ -7,7 +7,7 @@ from exceptions import InvalidCodeError
 POSITION_CODES = [1, 2, 3, 4, 5, 6]
 
 
-class FormBase(BaseModel):
+class DraftBase(BaseModel):
     group_name: str
     position_code: int
     salary: str
@@ -22,10 +22,10 @@ class FormBase(BaseModel):
         return value
 
 
-class FormCreate(FormBase):
+class DraftCreate(DraftBase):
     pass
 
 
-class Form(FormBase):
+class Draft(DraftBase):
     id: str
     create_date: datetime

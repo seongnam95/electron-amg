@@ -6,7 +6,7 @@ import { Contractor, Worker } from "@types";
 import { useSetRecoilState } from "recoil";
 import { ContractorState, stepState } from "@stores";
 import useValidFormCheck from "@hooks/useValidFormCheck";
-import { getWorker } from "@api";
+import { getWorker } from "@api/worker";
 
 /**
  * [ STEP 1 ] 개인정보 입력 폼
@@ -99,7 +99,6 @@ export function PersonalView() {
     <PersonalViewStyled>
       {/* 이름 */}
       <Field as={Input} name="name" placeholder="계약자 성명" />
-
       {/* 연락처 */}
       <Field
         as={Input}
@@ -136,9 +135,7 @@ export function PersonalView() {
           onCompleted={() => backRef.current?.blur()}
         />
       </div>
-
       <NextButton className="next-btn" onClick={handleNext} />
-
       {worker && (
         <PastWorkerModal
           worker={worker}
