@@ -1,8 +1,7 @@
-import { Header } from "@components";
+import { Header, TabBar } from "@components";
 import styled from "styled-components";
-import { useMemo, useRef, useState } from "react";
+import { useMemo, useRef } from "react";
 import { DraftContractView, FormHistoryView } from "@views";
-import { Tabs } from "antd";
 
 export function AdminPage() {
   const inputRef = useRef<HTMLInputElement>(null);
@@ -17,14 +16,12 @@ export function AdminPage() {
   const tabs = useMemo(
     () => [
       {
-        key: "create",
         label: "계약서 폼 생성",
-        children: <DraftContractView onCopy={handleOnCopy} />,
+        view: <DraftContractView onCopy={handleOnCopy} />,
       },
       {
-        key: "history",
         label: "이전 기록",
-        children: <FormHistoryView onCopy={handleOnCopy} />,
+        view: <FormHistoryView onCopy={handleOnCopy} />,
       },
     ],
     []
@@ -48,7 +45,7 @@ export function AdminPage() {
         title="계약서 폼 생성"
         subTitle={<>생성 된 링크를 계약자에게 전달해주세요.</>}
       />
-      <Tabs className="tabs" items={tabs} />
+      <TabBar className="tab-bar-wrap" items={tabs} />
       <input readOnly ref={inputRef} className="link-text" />
     </StyledAdminPage>
   );
@@ -58,18 +55,14 @@ const StyledAdminPage = styled.div`
   position: relative;
   display: flex;
   flex-direction: column;
-  padding: 3.4rem 2rem 5.6rem;
+  padding: 3.4rem 2rem;
 
   width: 100vw;
-  height: 100vh;
+  height: 100%;
   overflow: hidden;
 
-  .tabs {
+  .tab-bar-wrap {
     height: calc(100% - 5.6rem);
-  }
-
-  .ant-tabs-content-holder {
-    overflow-y: scroll;
   }
 
   .link-text {

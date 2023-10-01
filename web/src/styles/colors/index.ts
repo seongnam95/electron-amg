@@ -3,7 +3,7 @@ import { css } from "styled-components";
 export const colors = css`
   --primary: #333333;
   --secondary: #333333;
-  --blue: #0055f0;
+  --blue: #3579f4;
 
   --border-color: #dbdbdb;
   --border-accent-color: #cccccc;

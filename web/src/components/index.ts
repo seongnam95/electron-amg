@@ -2,7 +2,6 @@ export { Button } from "./Button";
 export { AddressInput } from "./AddressInput";
 export { ContractArticle } from "./ContractArticle";
 export { Contractor } from "./Contractor";
-export { Modal } from "./Modal";
 export { Icon } from "./Icon";
 export { View } from "./View";
 export { Input } from "./Input";
@@ -18,6 +17,7 @@ export { NextButton } from "./NextButton";
 export { PersonalConsent } from "./PersonalConsent";
 export { Signature } from "./Signature";
 export { PositionSelector } from "./PositionSelector";
+export { TabBar } from "./TabBar";
 
 export { BankIcon } from "./BankIcon";
 export type { BankIconType } from "./BankIcon";

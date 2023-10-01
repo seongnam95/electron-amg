@@ -1,6 +1,7 @@
-import { fetchAllContractDraft } from "@api/draft";
-import { POSITION_CODE, SALARY_CODE } from "@types";
+import { ContractResponse, fetchAllContractDraft } from "@api/draft";
+import { Contract, POSITION_CODE, SALARY_CODE } from "@types";
 import { formatDate } from "@utils/formatDate";
+import { snakeToCamel } from "@utils/snakeCamelConverter";
 import { Empty } from "antd";
 import { useQuery } from "react-query";
 import styled from "styled-components";
@@ -10,7 +11,61 @@ interface FormHistoryViewProps {
 }
 
 export function FormHistoryView({ onCopy }: FormHistoryViewProps) {
-  const { data } = useQuery(["draft"], fetchAllContractDraft());
+  // const { data } = useQuery(["draft"], () => fetchAllContractDraft());
+
+  const dataJson = [
+    {
+      group_name: "다산자이어쩌구",
+      position_code: 3,
+      salary: "daily",
+      default_wage: 80000,
+      start_period: "2023-09-27",
+      end_period: "2023-09-30",
+      id: "3wbSuG",
+      create_date: "2023-09-27T13:55:14.503214",
+    },
+    {
+      group_name: "다산자이어쩌구",
+      position_code: 4,
+      salary: "weekly",
+      default_wage: 500000,
+      start_period: "2023-09-27",
+      end_period: "2023-09-30",
+      id: "aU8U3h",
+      create_date: "2023-09-27T13:55:26.952808",
+    },
+    {
+      group_name: "다산자이어쩌구",
+      position_code: 1,
+      salary: "weekly",
+      default_wage: 4000000,
+      start_period: "2023-09-27",
+      end_period: "2023-09-30",
+      id: "7ssomC",
+      create_date: "2023-09-27T13:55:34.015529",
+    },
+    {
+      group_name: "가나다라마바사",
+      position_code: 3,
+      salary: "daily",
+      default_wage: 80000,
+      start_period: "2023-10-01",
+      end_period: "2023-10-31",
+      id: "h391h7",
+      create_date: "2023-10-01T22:28:27.897438",
+    },
+    {
+      group_name: "가나다라마바사",
+      position_code: 3,
+      salary: "daily",
+      default_wage: 80000,
+      start_period: "2023-10-01",
+      end_period: "2023-10-31",
+      id: "En72A9",
+      create_date: "2023-10-01T22:28:29.099768",
+    },
+  ];
+  const data: ContractResponse[] = snakeToCamel(dataJson);
 
   return (
     <StyledFormHistoryView>

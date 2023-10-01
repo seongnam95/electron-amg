@@ -22,8 +22,24 @@ export const BottomSheetModal = ({
   onClose,
 }: BottomSheetModalProps) => {
   useEffect(() => {
-    if (open) document.body.style.overflow = "hidden";
-    else document.body.style.overflow = "unset";
+    if (open) {
+      const scrollY = window.scrollY;
+      const scrollBarWidth = window.innerWidth - document.body.clientWidth;
+      document.body.style.position = "fixed";
+      document.body.style.top = `-${scrollY}px`;
+      document.body.style.paddingRight = `${scrollBarWidth}px`;
+
+      const preventScroll = (e: any) => e.preventDefault();
+      window.addEventListener("touchmove", preventScroll, { passive: false });
+
+      return () => {
+        document.body.style.position = "";
+        document.body.style.top = "";
+        document.body.style.paddingRight = "";
+        window.removeEventListener("touchmove", preventScroll);
+        window.scrollTo(0, scrollY);
+      };
+    }
   }, [open]);
 
   return ReactDOM.createPortal(

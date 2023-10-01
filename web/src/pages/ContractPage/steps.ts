@@ -32,13 +32,13 @@ const validationSchemas = {
 
   // 신분증 이미지, 통장사본 이미지
   attachment: Yup.object().shape({
-    identification: Yup.string().required("신분증 이미지를 첨부해주세요."),
-    bankbook: Yup.string().required("통장사본 이미지를 첨부해주세요."),
+    idCard: Yup.string().required("신분증 이미지를 첨부해주세요."),
+    bankBook: Yup.string().required("통장사본 이미지를 첨부해주세요."),
   }),
 
   // 서명
   article: Yup.object().shape({
-    sign: Yup.string().required("서명은 필수입니다."),
+    signBase64: Yup.string().required("서명은 필수입니다."),
   }),
 };
 
@@ -61,6 +61,6 @@ export const STEPS = [
   {
     viewComponent: ArticleView,
     validationSchema: validationSchemas.article,
-    initialValues: { sign: "" },
+    initialValues: { signBase64: "" },
   },
 ];

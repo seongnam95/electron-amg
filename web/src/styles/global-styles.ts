@@ -42,11 +42,13 @@ const GlobalStyle = createGlobalStyle`
 
   body {
     scrollbar-width: none;
+    overscroll-behavior: none;
     -webkit-overflow-scrolling: touch !important;
   }
 
   body::-webkit-scrollbar {
     display: none;
+    -ms-overflow-style: none;
   }
   
   button {
@@ -61,7 +63,7 @@ const GlobalStyle = createGlobalStyle`
 
   input[type='number'] {
     -moz-appearance: textfield;
-}
+  }
 
   /* Chrome, Safari, Edge */
   input::-webkit-outer-spin-button,

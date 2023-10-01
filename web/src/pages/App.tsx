@@ -1,9 +1,20 @@
 import { AdminPage, CompletePage, ContractPage, DocumentPage } from "@pages";
+import { useEffect } from "react";
 import { Route, Routes } from "react-router-dom";
 import { RecoilRoot } from "recoil";
 import styled from "styled-components";
 
 export function App() {
+  useEffect(() => {
+    const setScreenHeight = () => {
+      let vh = window.innerHeight * 0.01;
+      document.documentElement.style.setProperty("--vh", `${vh}px`);
+    };
+    setScreenHeight();
+    window.addEventListener("resize", setScreenHeight);
+    return () => window.removeEventListener("resize", setScreenHeight);
+  }, []);
+
   return (
     <StyledApp>
       <RecoilRoot>
@@ -19,6 +30,6 @@ export function App() {
 }
 
 const StyledApp = styled.div`
-  height: 100%;
-  min-height: 100vh;
+  height: calc(var(--vh, 1vh) * 100);
+  overflow: hidden;
 `;

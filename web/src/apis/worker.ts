@@ -8,25 +8,19 @@ const getGenderCode: { [key: string]: string } = {
   4: "2",
 };
 
+type CreateWorkerBody = {
+  ssn: string;
+  genderCode: string;
+} & Omit<Contractor, "idBack" | "idFront">;
+
 export function createWorker(contractor: Contractor) {
-  const body: Contractor = {
+  const body: CreateWorkerBody = {
     ...contractor,
-    genderCode: getGenderCode[contractor.idBack.slice(0, 1)],
-  };
-
-  const workerBody: Contractor = {
-    name: contractor.name,
-    phone: contractor.phone,
-    genderCode: getGenderCode[contractor.idBack.slice(0, 1)],
-    residence: contractor.residence,
-    bank: contractor.bank,
-    bank_num: contractor.bankNum,
-    bank_book: contractor.bankbook,
     ssn: `${contractor.idFront}${contractor.idBack}`,
-    id_card: contractor.idCard,
+    genderCode: getGenderCode[contractor.idBack.slice(0, 1)],
   };
 
-  return axios.post("/worker", workerBody);
+  return axios.post("/worker", body);
 }
 
 export function getWorker(name: string, ssn: string) {

@@ -1,26 +1,19 @@
-import { Salary } from "@types";
+import { ContractState } from "@stores";
 import { formatDate } from "@utils/formatDate";
+import { useRecoilValue } from "recoil";
 import styled from "styled-components";
 
 interface ContractArticleProps {
-  salary: Salary;
-  defaultWage: string;
-  startPeriod: string;
-  endPeriod: string;
   name: string;
   printView?: boolean;
 }
 
-export function ContractArticle({
-  salary,
-  defaultWage,
-  startPeriod,
-  endPeriod,
-  name,
-  printView,
-}: ContractArticleProps) {
+export function ContractArticle({ name, printView }: ContractArticleProps) {
+  const { salary, defaultWage, startPeriod, endPeriod, groupName } =
+    useRecoilValue(ContractState);
   const salaryText =
     salary === "daily" ? "일당" : salary === "weekly" ? "주급" : "월급";
+
   const ArticleContent = (
     <>
       <p>

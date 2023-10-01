@@ -18,14 +18,7 @@ export function DocumentPage({ className, inputRef }: DocumentPageProps) {
       <div className="contract-wrap">
         <div className="contract-title">용역 계약서</div>
         <div className="contract-content">
-          <ContractArticle
-            printView
-            salary={contract.salary}
-            name={contractor.name}
-            defaultWage={contract.defaultWage}
-            startPeriod={contract.startPeriod}
-            endPeriod={contract.endPeriod}
-          />
+          <ContractArticle printView name={contractor.name} />
           <Contractor printView signBase64={contract.signBase64} />
         </div>
       </div>

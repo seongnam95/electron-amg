@@ -1,8 +1,7 @@
-import { InputHTMLAttributes, useEffect, useRef, useState } from "react";
+import { InputHTMLAttributes, useRef, useState } from "react";
 import styled from "styled-components";
-import { Modal, Input, BottomSheetModal } from "@components";
+import { Input, BottomSheetModal } from "@components";
 import DaumPostcode, { Address } from "react-daum-postcode";
-import { useField, useFormikContext } from "formik";
 
 interface AddressInputProps extends InputHTMLAttributes<HTMLInputElement> {
   onSelected?: () => void;

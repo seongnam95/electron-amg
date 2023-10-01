@@ -8,18 +8,18 @@ type CamelCase<S extends string> = S extends `${infer First}_${infer Rest}`
   ? `${Lowercase<First>}${Capitalize<CamelCase<Rest>>}`
   : S;
 
-export const snakeToCamel = <T>(obj: T): Object => {
+export const snakeToCamel = <T>(obj: T): any => {
   if (Array.isArray(obj)) {
-    return obj.map((v) => snakeToCamel(v)) as any;
-  } else if (obj !== null && typeof obj == "object") {
+    return obj.map((v) => snakeToCamel(v));
+  } else if (obj !== null && typeof obj === "object") {
     return Object.entries(obj).reduce((acc, [key, value]) => {
       const camelKey = key.replace(/_([a-z])/g, (_, letter) =>
         letter.toUpperCase()
       );
-      return { ...acc, [camelKey]: snakeToCamel(value) as any };
-    }, {}) as any;
+      return { ...acc, [camelKey]: snakeToCamel(value) };
+    }, {});
   }
-  return obj as any;
+  return obj;
 };
 
 export const camelToSnake = <T>(obj: T): Object => {

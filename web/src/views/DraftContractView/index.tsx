@@ -14,7 +14,7 @@ export function DraftContractView({ onCopy }: DraftContractViewProps) {
 
   const initValues: Contract = {
     groupName: "",
-    positionCode: "3",
+    positionCode: 2,
     salary: "daily",
     defaultWage: "",
     startPeriod: today,
@@ -22,7 +22,7 @@ export function DraftContractView({ onCopy }: DraftContractViewProps) {
   };
 
   const handleSubmit = (contract: Contract) => {
-    createContractDraft(contract).then((res) => onCopy(res.data.result.id));
+    createContractDraft(contract).then((data) => onCopy(data.result.id));
   };
 
   return (
@@ -55,17 +55,12 @@ export function DraftContractView({ onCopy }: DraftContractViewProps) {
                 placeholder="직위 구분"
                 inputMode="tel"
               />
-              <Field
-                as={Input}
-                name="groupName"
-                placeholder="협력 업체명"
-                inputMode="tel"
-              />
+              <Field as={Input} name="groupName" placeholder="협력 업체명" />
               <Field
                 as={Input}
                 name="defaultWage"
                 placeholder={`급여 (${wageLabel})`}
-                inputMode="tel"
+                inputMode="numeric"
                 onlyNum
               />
               <Field

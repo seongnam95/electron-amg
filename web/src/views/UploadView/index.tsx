@@ -10,7 +10,7 @@ export function UploadView() {
   return (
     <StyledUploadView>
       <Field as={FileUploadBox} name="idCard" label="신분증 첨부" />
-      <Field as={FileUploadBox} name="bankbook" label="통장사본 첨부" />
+      <Field as={FileUploadBox} name="bankBook" label="통장사본 첨부" />
       <NextButton onClick={() => setStep(3)} />
     </StyledUploadView>
   );

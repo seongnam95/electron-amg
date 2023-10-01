@@ -8,8 +8,8 @@ import {
   PersonalConsent,
   Signature,
 } from "@components";
-import { useRecoilState, useRecoilValue } from "recoil";
-import { ContractState, ContractorState } from "@stores";
+import { useRecoilValue } from "recoil";
+import { ContractorState } from "@stores";
 import { useState } from "react";
 import { useFormikContext } from "formik";
 import useValidFormCheck from "@hooks/useValidFormCheck";
@@ -17,45 +17,29 @@ import { AnimatePresence, motion } from "framer-motion";
 
 export function ArticleView() {
   const isValidForm = useValidFormCheck();
-
-  const [contract, setContract] = useRecoilState(ContractState);
   const contractor = useRecoilValue(ContractorState);
 
-  const [showSignModal, setShowSignModal] = useState<boolean>(false);
   const { setFieldValue, handleSubmit } = useFormikContext();
-  const [sign, setSign] = useState<string>("");
 
+  const [sign, setSign] = useState<string>("");
+  const [showSignModal, setShowSignModal] = useState<boolean>(false);
   const [contractConsent, setContractConsent] = useState<boolean>(false);
   const [personalConsent, setPersonalConsent] = useState<boolean>(false);
 
   const handleSignatureComplete = (data: string) => {
     setSign(data);
-    setFieldValue("sign", data);
+    setFieldValue("signBase64", data);
     setShowSignModal(false);
-    setContract((prev) => {
-      return {
-        ...prev,
-        groupName: "테스트 그룹",
-        signBase64: data,
-      };
-    });
   };
 
   return (
     <StyledArticleView>
+      {/* 계약 내용 및 개인정보이용 동의 체크박스 */}
       <div className="check-wrap">
         <ConsentCheck
           label="계약 조항을 모두 읽었으며 이에 동의함"
           contentTitle="계약 내용"
-          content={
-            <ContractArticle
-              salary={contract.salary}
-              name={contractor.name}
-              defaultWage={contract.defaultWage}
-              startPeriod={contract.startPeriod}
-              endPeriod={contract.endPeriod}
-            />
-          }
+          content={<ContractArticle name={contractor.name} />}
           onChange={(e) => setContractConsent(e.target.checked)}
         />
         <ConsentCheck
@@ -66,6 +50,7 @@ export function ArticleView() {
         />
       </div>
 
+      {/* 계약자 */}
       <Contractor
         signBase64={sign}
         onClickSign={() => setShowSignModal(true)}

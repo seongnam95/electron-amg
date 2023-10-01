@@ -38,7 +38,7 @@ export interface Contractor {
   bankNum: string;
 
   idCard: string;
-  bankbook: string;
+  bankBook: string;
 }
 
 export interface Worker {
@@ -48,8 +48,6 @@ export interface Worker {
   residence: string;
   bank: string;
   bankNumCover: string;
-  bankBook: string;
-  idCard: string;
 }
 
 export interface DataResponse<T> {

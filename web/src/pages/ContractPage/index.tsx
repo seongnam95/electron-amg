@@ -1,17 +1,18 @@
-import { Header } from "@components";
-
-import { useFormik, FormikProvider } from "formik";
-import { motion } from "framer-motion";
-import { STEPS } from "./steps";
-import { useRecoilState, useRecoilValue } from "recoil";
-import { ContractState, ContractorState, stepState } from "@stores";
-import { useNavigate, useParams } from "react-router-dom";
-import { Contractor } from "@types";
 import { useEffect, useMemo } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import styled from "styled-components";
+import { motion } from "framer-motion";
+import { useFormik, FormikProvider } from "formik";
+import { useRecoilState, useRecoilValue } from "recoil";
+
+import { Header } from "@components";
+import { Contractor } from "@types";
+import { ContractState, ContractorState, stepState } from "@stores";
 import { fetchContractDraft } from "@api/draft";
 import { createWorker } from "@api/worker";
 import { createContract } from "@api/contract";
+
+import { STEPS } from "./steps";
 
 export const ContractPage = () => {
   const [contract, setContract] = useRecoilState(ContractState);
@@ -23,25 +24,14 @@ export const ContractPage = () => {
   if (!currentStep) throw new Error(`Undefined step: ${step}`);
 
   const { params } = useParams();
-
   useEffect(() => {
     if (!params) return;
     let isMounted = true;
 
     fetchContractDraft(params)
-      .then((res) => {
-        const contract = res.data.result;
-        setContract((prev) => {
-          return {
-            ...prev,
-            salary: contract.salary,
-            groupName: contract.group_name,
-            defaultWage: contract.default_wage,
-            startPeriod: contract.start_period,
-            endPeriod: contract.end_period,
-            positionCode: contract.position_code,
-          };
-        });
+      .then((data) => {
+        const contract = data.result;
+        setContract(contract);
       })
       .catch(() => {
         if (!isMounted) return;
@@ -64,7 +54,7 @@ export const ContractPage = () => {
     bank: "",
     bankNum: "",
     idCard: "",
-    bankbook: "",
+    bankBook: "",
   };
 
   const StepHeaders = useMemo(
@@ -136,9 +126,11 @@ export const ContractPage = () => {
     onSubmit: handleSubmit,
   });
 
+  useEffect(() => console.log(formik.values), [formik.values]);
+
   return (
     <ContractPageStyled>
-      <Header {...StepHeaders[step]} />
+      <Header height="12rem" {...StepHeaders[step]} />
       <FormikProvider key={step} value={formik}>
         <motion.div
           key={step}
