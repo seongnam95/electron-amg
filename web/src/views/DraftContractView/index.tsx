@@ -59,10 +59,9 @@ export function DraftContractView({ onCopy }: DraftContractViewProps) {
               ? "주급"
               : "월급";
 
-          console.log(values);
           return (
             <Form className="form-wrap">
-              <Field as={Input} name="groupName" placeholder="협력 업체명" />
+              <Field as={Input} name="groupName" placeholder="그룹명" />
 
               <Field
                 as={Selector}
