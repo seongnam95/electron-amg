@@ -3,7 +3,7 @@ import { atom } from "recoil";
 
 export const initContract: Contract = {
   salary: "daily",
-  positionCode: 1,
+  positionCode: "1",
   defaultWage: "0",
   startPeriod: "",
   endPeriod: "",

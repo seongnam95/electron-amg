@@ -1,5 +1,5 @@
 import ReactDOM from "react-dom";
-import { ReactNode, useEffect } from "react";
+import { ReactNode, useEffect, useRef } from "react";
 
 import styled from "styled-components";
 import { AnimatePresence, motion } from "framer-motion";
@@ -21,22 +21,30 @@ export const BottomSheetModal = ({
   open = false,
   onClose,
 }: BottomSheetModalProps) => {
+  const maskRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
     if (open) {
       const scrollY = window.scrollY;
-      const scrollBarWidth = window.innerWidth - document.body.clientWidth;
       document.body.style.position = "fixed";
       document.body.style.top = `-${scrollY}px`;
-      document.body.style.paddingRight = `${scrollBarWidth}px`;
 
       const preventScroll = (e: any) => e.preventDefault();
-      window.addEventListener("touchmove", preventScroll, { passive: false });
+
+      if (maskRef.current) {
+        maskRef.current.addEventListener("touchmove", preventScroll, {
+          passive: false,
+        });
+      }
 
       return () => {
         document.body.style.position = "";
         document.body.style.top = "";
-        document.body.style.paddingRight = "";
-        window.removeEventListener("touchmove", preventScroll);
+
+        if (maskRef.current) {
+          maskRef.current.removeEventListener("touchmove", preventScroll);
+        }
+
         window.scrollTo(0, scrollY);
       };
     }
@@ -47,6 +55,7 @@ export const BottomSheetModal = ({
       {open && (
         <BottomSheetModalStyled className="bottom-sheet-modal" height={height}>
           <motion.div
+            ref={maskRef}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -82,7 +91,7 @@ const BottomSheetModalStyled = styled.div<{ height?: string }>`
 
   .mask-wrap {
     width: 100vw;
-    height: 100vh;
+    height: calc(var(--vh, 1vh) * 100);
     background-color: rgba(50, 50, 50, 0.4);
   }
 
@@ -93,7 +102,7 @@ const BottomSheetModalStyled = styled.div<{ height?: string }>`
     border-top-left-radius: 2rem;
     border-top-right-radius: 2rem;
 
-    width: 100%;
+    width: 100vw;
     height: ${(p) => (p.height ? p.height : "90%")};
     padding: 4rem 2rem;
 
@@ -109,12 +118,17 @@ const BottomSheetModalStyled = styled.div<{ height?: string }>`
       font-size: 22px;
 
       height: 2.5rem;
-      margin-bottom: 3rem;
+      margin-bottom: 4.2rem;
     }
 
     .modal-content {
       height: calc(100% - 5.5rem);
       overflow-y: scroll;
+      -ms-overflow-style: none;
+
+      &::-webkit-scrollbar {
+        display: none;
+      }
     }
   }
 `;

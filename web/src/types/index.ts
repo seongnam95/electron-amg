@@ -6,12 +6,12 @@ export const SALARY_CODE = {
 export type Salary = keyof typeof SALARY_CODE;
 
 export const POSITION_CODE = {
-  1: "팀장",
-  2: "부팀장",
-  3: "알바",
-  4: "기사",
-  5: "홍보단",
-  6: "기타",
+  "1": "팀장",
+  "2": "부팀장",
+  "3": "알바",
+  "4": "기사",
+  "5": "홍보단",
+  "6": "기타",
 } as const;
 export type Position = keyof typeof POSITION_CODE;
 

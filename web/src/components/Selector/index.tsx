@@ -1,34 +1,35 @@
 import styled from "styled-components";
 import { BottomSheetModal } from "../BottomSheetModal";
 import { InputHTMLAttributes, useState } from "react";
-import { Input } from "@components";
+import { Icon, Input } from "@components";
 
-interface PositionSelector extends InputHTMLAttributes<HTMLInputElement> {
+interface ItemType {
+  value: string;
+  label: string;
+}
+
+interface Selector extends InputHTMLAttributes<HTMLInputElement> {
+  items: Array<ItemType>;
+  modalTitle: string;
   onSelected?: () => void;
 }
 
-export function PositionSelector({
+export function Selector({
+  items,
+  modalTitle,
   onSelected,
   onChange,
-  ...rest
-}: PositionSelector) {
-  const positions = [
-    { value: "1", label: "팀장" },
-    { value: "2", label: "부팀장" },
-    { value: "3", label: "알바" },
-    { value: "4", label: "기사" },
-    { value: "5", label: "홍보단" },
-    { value: "6", label: "기타" },
-  ];
-  const currentLabel = positions.find((pos) => pos.value === rest.value)?.label;
+  ...props
+}: Selector) {
   const [showModal, setShowModal] = useState<boolean>(false);
+  const currentLabel = items.find((item) => item.value === props.value)?.label;
 
   const handleSelect = (selectedValue: string) => {
     if (onChange) {
       onChange({
         target: {
           value: selectedValue,
-          name: rest.name || "",
+          name: props.name || "",
         },
       } as React.ChangeEvent<HTMLInputElement>);
     }
@@ -40,25 +41,26 @@ export function PositionSelector({
     <PositionSelectorStyled>
       <Input
         readOnly
-        {...rest}
+        {...props}
         value={currentLabel || ""}
         onFocus={() => setShowModal(true)}
       />
+      <Icon className="down-arrow-icon" icon="downArrow" />
       <BottomSheetModal
         open={showModal}
-        height="60%"
-        title="직위 선택"
+        height="70%"
+        title={modalTitle}
         onClose={() => setShowModal(false)}
       >
         <ul>
-          {positions.map((pos) => (
-            <PositionListItem
-              key={pos.value}
-              active={rest.value === pos.value}
-              onClick={() => handleSelect(pos.value)}
+          {items.map((item) => (
+            <ListItem
+              key={item.value}
+              active={props.value === item.value}
+              onClick={() => handleSelect(item.value)}
             >
-              {pos.label}
-            </PositionListItem>
+              {item.label}
+            </ListItem>
           ))}
         </ul>
       </BottomSheetModal>
@@ -67,12 +69,23 @@ export function PositionSelector({
 }
 
 const PositionSelectorStyled = styled.div`
+  position: relative;
+  display: flex;
+  align-items: center;
+  flex: 1;
+
+  .down-arrow-icon {
+    position: absolute;
+    right: 0;
+    bottom: 0.6rem;
+  }
+
   ul {
     overflow-y: scroll;
   }
 `;
 
-const PositionListItem = styled.ul<{ active?: boolean }>`
+const ListItem = styled.ul<{ active?: boolean }>`
   display: flex;
   align-items: center;
   color: var(--text);

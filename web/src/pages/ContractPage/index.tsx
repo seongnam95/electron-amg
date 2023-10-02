@@ -36,8 +36,8 @@ export const ContractPage = () => {
       .catch(() => {
         if (!isMounted) return;
 
-        navigate("/");
-        alert("유효하지 않은 폼입니다.");
+        // navigate("/");
+        // alert("유효하지 않은 폼입니다.");
       });
 
     return () => {
@@ -106,6 +106,8 @@ export const ContractPage = () => {
   );
 
   const handleSubmit = (values: Contractor) => {
+    console.log(values);
+
     if (Contractor.id) {
       console.log("아이디 있음", values);
     } else {
@@ -126,14 +128,13 @@ export const ContractPage = () => {
     onSubmit: handleSubmit,
   });
 
-  useEffect(() => console.log(formik.values), [formik.values]);
-
   return (
     <ContractPageStyled>
       <Header height="12rem" {...StepHeaders[step]} />
       <FormikProvider key={step} value={formik}>
         <motion.div
           key={step}
+          className="content-wrap"
           style={{ height: "100%" }}
           initial={{ opacity: 0, x: 100 }}
           animate={{ opacity: 1, x: 0 }}
@@ -147,6 +148,9 @@ export const ContractPage = () => {
 };
 
 const ContractPageStyled = styled.div`
-  padding: 3.4rem 2rem 11.8rem;
-  height: 100%;
+  padding: 3.4rem 0;
+
+  .content-wrap {
+    padding: 0 2rem;
+  }
 `;

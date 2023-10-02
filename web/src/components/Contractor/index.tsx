@@ -1,19 +1,15 @@
-import { ContractorState } from "@stores";
+import { ContractState, ContractorState } from "@stores";
 import { useRecoilValue } from "recoil";
 import styled from "styled-components";
 
 interface ContractorProps {
-  signBase64?: string;
   printView?: boolean;
   onClickSign?: () => void;
 }
 
-export function Contractor({
-  signBase64,
-  printView,
-  onClickSign,
-}: ContractorProps) {
+export function Contractor({ printView, onClickSign }: ContractorProps) {
   const { name, phone, residence } = useRecoilValue(ContractorState);
+  const { signBase64 } = useRecoilValue(ContractState);
 
   const ContractorContent = (
     <>

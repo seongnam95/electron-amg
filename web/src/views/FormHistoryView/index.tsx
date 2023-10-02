@@ -1,7 +1,6 @@
-import { ContractResponse, fetchAllContractDraft } from "@api/draft";
-import { Contract, POSITION_CODE, SALARY_CODE } from "@types";
+import { fetchAllContractDraft } from "@api/draft";
+import { POSITION_CODE, SALARY_CODE } from "@types";
 import { formatDate } from "@utils/formatDate";
-import { snakeToCamel } from "@utils/snakeCamelConverter";
 import { Empty } from "antd";
 import { useQuery } from "react-query";
 import styled from "styled-components";
@@ -11,99 +10,53 @@ interface FormHistoryViewProps {
 }
 
 export function FormHistoryView({ onCopy }: FormHistoryViewProps) {
-  // const { data } = useQuery(["draft"], () => fetchAllContractDraft());
-
-  const dataJson = [
-    {
-      group_name: "다산자이어쩌구",
-      position_code: 3,
-      salary: "daily",
-      default_wage: 80000,
-      start_period: "2023-09-27",
-      end_period: "2023-09-30",
-      id: "3wbSuG",
-      create_date: "2023-09-27T13:55:14.503214",
-    },
-    {
-      group_name: "다산자이어쩌구",
-      position_code: 4,
-      salary: "weekly",
-      default_wage: 500000,
-      start_period: "2023-09-27",
-      end_period: "2023-09-30",
-      id: "aU8U3h",
-      create_date: "2023-09-27T13:55:26.952808",
-    },
-    {
-      group_name: "다산자이어쩌구",
-      position_code: 1,
-      salary: "weekly",
-      default_wage: 4000000,
-      start_period: "2023-09-27",
-      end_period: "2023-09-30",
-      id: "7ssomC",
-      create_date: "2023-09-27T13:55:34.015529",
-    },
-    {
-      group_name: "가나다라마바사",
-      position_code: 3,
-      salary: "daily",
-      default_wage: 80000,
-      start_period: "2023-10-01",
-      end_period: "2023-10-31",
-      id: "h391h7",
-      create_date: "2023-10-01T22:28:27.897438",
-    },
-    {
-      group_name: "가나다라마바사",
-      position_code: 3,
-      salary: "daily",
-      default_wage: 80000,
-      start_period: "2023-10-01",
-      end_period: "2023-10-31",
-      id: "En72A9",
-      create_date: "2023-10-01T22:28:29.099768",
-    },
-  ];
-  const data: ContractResponse[] = snakeToCamel(dataJson);
+  const { data } = useQuery(["draft"], fetchAllContractDraft());
 
   return (
     <StyledFormHistoryView>
       {data ? (
-        data.map((data) => {
-          return (
-            <div
-              className="draft-item"
-              key={data.id}
-              onClick={() => onCopy(data.id)}
-            >
-              <div className="row header">
-                <span className="group-name-text">{data.groupName}</span>
-                <span className="id-chip">{data.id}</span>
+        data
+          .slice()
+          .reverse()
+          .map((data) => {
+            return (
+              <div
+                className="draft-item"
+                key={data.id}
+                onClick={() => onCopy(data.id)}
+              >
+                <div className="row header">
+                  <span className="group-name-text">{data.groupName}</span>
+                  <span className="id-chip">{data.id}</span>
+                </div>
+                <section>
+                  <div className="row">
+                    <span className="label-text">직위</span>
+                    <span>
+                      <b>{POSITION_CODE[data.positionCode]}</b>
+                    </span>
+                  </div>
+
+                  <div className="row">
+                    <span className="label-text">
+                      {SALARY_CODE[data.salary]}
+                    </span>
+                    <span className="wage">
+                      {Number(data.defaultWage).toLocaleString()}원
+                    </span>
+                  </div>
+
+                  <div className="row">
+                    <span className="label-text">계약 기간</span>
+                    <span>
+                      {formatDate(data.startPeriod, true)} ~{" "}
+                      {formatDate(data.endPeriod, true)}
+                    </span>
+                  </div>
+                </section>
               </div>
-              <section>
-                <div className="row">
-                  <span className="label-text">직위</span>
-                  <span>{POSITION_CODE[data.positionCode]}</span>
-                </div>
-
-                <div className="row">
-                  <span className="label-text">{SALARY_CODE[data.salary]}</span>
-                  <span className="wage">
-                    {Number(data.defaultWage).toLocaleString()}원
-                  </span>
-                </div>
-
-                <div className="row">
-                  <span className="label-text">계약 기간</span>
-                  <span>
-                    {formatDate(data.startPeriod)}~{formatDate(data.endPeriod)}
-                  </span>
-                </div>
-              </section>
-            </div>
-          );
-        })
+            );
+          })
       ) : (
         <Empty description="기록 없음" />
       )}
@@ -114,19 +67,18 @@ export function FormHistoryView({ onCopy }: FormHistoryViewProps) {
 const StyledFormHistoryView = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 1.4rem;
+  gap: 3.4rem;
 
   font-size: var(--font-size-m);
   color: var(--text);
 
   .draft-item {
-    padding: 1.4rem;
     cursor: pointer;
 
     section {
       display: flex;
       flex-direction: column;
-      gap: 1.2rem;
+      gap: 1rem;
       padding: 0.4rem;
       margin-top: 1.2rem;
     }
@@ -145,7 +97,7 @@ const StyledFormHistoryView = styled.div`
     .id-chip {
       color: var(--text-sub);
       border-radius: 4px;
-      padding: 0.8rem 1.4rem;
+      padding: 0.4rem 0.8rem;
       background-color: var(--inner-color);
     }
 

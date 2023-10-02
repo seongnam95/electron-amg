@@ -31,5 +31,4 @@ export function App() {
 
 const StyledApp = styled.div`
   height: calc(var(--vh, 1vh) * 100);
-  overflow: hidden;
 `;

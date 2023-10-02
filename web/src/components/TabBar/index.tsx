@@ -1,5 +1,5 @@
 import { LayoutGroup, motion } from "framer-motion";
-import { HTMLAttributes, ReactNode, useState } from "react";
+import { HTMLAttributes, ReactNode, useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 
 export interface TabBarItem {
@@ -13,7 +13,14 @@ interface TabBarProps extends HTMLAttributes<HTMLDivElement> {
 }
 
 export function TabBar({ items, selected, ...props }: TabBarProps) {
+  const contentDivRef = useRef<HTMLDivElement>(null);
   const [selectedIndex, setSelectedIndex] = useState<number>(selected || 0);
+
+  useEffect(() => {
+    if (contentDivRef.current) {
+      contentDivRef.current.scrollTo({ top: 0 });
+    }
+  }, [selectedIndex]);
 
   return (
     <StyledTabBar {...props}>
@@ -23,6 +30,7 @@ export function TabBar({ items, selected, ...props }: TabBarProps) {
             const isActivated = index === selectedIndex;
             return (
               <TabBarItem
+                key={index}
                 activated={isActivated}
                 onClick={() => setSelectedIndex(index)}
               >
@@ -45,7 +53,9 @@ export function TabBar({ items, selected, ...props }: TabBarProps) {
         </LayoutGroup>
       </ul>
 
-      <div className="tab-view-content">{items[selectedIndex].view}</div>
+      <div ref={contentDivRef} className="tab-view-content">
+        {items[selectedIndex].view}
+      </div>
     </StyledTabBar>
   );
 }
@@ -60,7 +70,7 @@ const StyledTabBar = styled.div`
   }
 
   .tab-view-content {
-    padding-top: 3.4rem;
+    padding: 3.4rem 2rem 0 2rem;
     overflow-y: scroll;
     -ms-overflow-style: none;
 
@@ -81,9 +91,8 @@ const TabBarItem = styled.li<{ activated?: boolean }>`
   border-bottom: 1px solid var(--border-color);
   font-size: var(--font-size-m);
   color: ${(p) => (p.activated ? "var(--blue)" : "var(--text-hint)")};
-  font-weight: ${(p) => (p.activated ? "bold" : "normal")};
 
-  transition: all 200ms;
+  transition: all 240ms;
   cursor: pointer;
 
   .tab-active {

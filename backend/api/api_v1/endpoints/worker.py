@@ -79,8 +79,8 @@ def read_worker_with_personal(
     # user: User = Depends(deps.get_current_user),
     worker: models.Worker = Depends(deps.get_worker),
 ):
-    response = _decrypt_worker(worker)
-    return DataResponse(success=True, msg="정상 처리되었습니다.", result=response)
+    worker_dec = _decrypt_worker(worker)
+    return DataResponse(success=True, msg="정상 처리되었습니다.", result=worker_dec)
 
 
 # 전체 근로자 불러오기
@@ -92,8 +92,10 @@ def read_all_worker(
     limit: int = 100,
 ):
     workers = crud.worker.get_multi(db, skip=skip, limit=limit)
+    workers_dec = [_decrypt_worker(worker) for worker in workers]
+
     return ListResponse(
-        success=True, msg="정상 처리되었습니다.", count=len(workers), result=workers
+        success=True, msg="정상 처리되었습니다.", count=len(workers), result=workers_dec
     )
 
 
@@ -105,7 +107,7 @@ def update_worker(
     db: Session = Depends(deps.get_db),
     worker: models.Worker = Depends(deps.get_worker),
 ):
-    crud.worker.update(db=db, db_obj=worker, obj_in=worker_in)
+    crud.worker.update_worker(db=db, worker_obj=worker, worker_in=worker_in)
     return BaseResponse(success=True, msg="정상 처리되었습니다.")
 
 

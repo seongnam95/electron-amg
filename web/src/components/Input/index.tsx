@@ -57,6 +57,8 @@ export const Input = ({
 };
 
 export const InputStyled = styled.label<{ doseExist: boolean }>`
+  flex: 1;
+
   .input-wrap {
     position: relative;
 

@@ -16,8 +16,9 @@ export { ConsentCheck } from "./ConsentCheck";
 export { NextButton } from "./NextButton";
 export { PersonalConsent } from "./PersonalConsent";
 export { Signature } from "./Signature";
-export { PositionSelector } from "./PositionSelector";
+export { Selector } from "./Selector";
 export { TabBar } from "./TabBar";
 
 export { BankIcon } from "./BankIcon";
 export type { BankIconType } from "./BankIcon";
+export type { IconType } from "./Icon";

@@ -8,8 +8,8 @@ import {
   PersonalConsent,
   Signature,
 } from "@components";
-import { useRecoilValue } from "recoil";
-import { ContractorState } from "@stores";
+import { useRecoilValue, useSetRecoilState } from "recoil";
+import { ContractState, ContractorState } from "@stores";
 import { useState } from "react";
 import { useFormikContext } from "formik";
 import useValidFormCheck from "@hooks/useValidFormCheck";
@@ -17,18 +17,22 @@ import { AnimatePresence, motion } from "framer-motion";
 
 export function ArticleView() {
   const isValidForm = useValidFormCheck();
+  const { handleSubmit } = useFormikContext();
+
+  const setContract = useSetRecoilState(ContractState);
   const contractor = useRecoilValue(ContractorState);
 
-  const { setFieldValue, handleSubmit } = useFormikContext();
-
-  const [sign, setSign] = useState<string>("");
   const [showSignModal, setShowSignModal] = useState<boolean>(false);
   const [contractConsent, setContractConsent] = useState<boolean>(false);
   const [personalConsent, setPersonalConsent] = useState<boolean>(false);
 
   const handleSignatureComplete = (data: string) => {
-    setSign(data);
-    setFieldValue("signBase64", data);
+    setContract((prev) => {
+      return {
+        ...prev,
+        signBase64: data,
+      };
+    });
     setShowSignModal(false);
   };
 
@@ -51,10 +55,7 @@ export function ArticleView() {
       </div>
 
       {/* 계약자 */}
-      <Contractor
-        signBase64={sign}
-        onClickSign={() => setShowSignModal(true)}
-      />
+      <Contractor onClickSign={() => setShowSignModal(true)} />
 
       <AnimatePresence>
         {isValidForm && contractConsent && personalConsent && (
@@ -94,7 +95,6 @@ const StyledArticleView = styled.div`
   display: flex;
   flex-direction: column;
   gap: 2.4rem;
-  padding-bottom: 10rem;
 
   .check-wrap {
     display: flex;
