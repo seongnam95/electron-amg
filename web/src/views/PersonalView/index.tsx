@@ -34,8 +34,14 @@ export function PersonalView() {
 
     getWorker(name, ssn)
       .then((res) => {
-        const data = res.data.result;
-        setWorker(serviceWorker(data));
+        const data = serviceWorker(res.data.result);
+        setWorker(data);
+        setContractor((prev) => {
+          return {
+            ...prev,
+            id: data.id,
+          };
+        });
       })
       .catch(() => {});
   };
@@ -55,29 +61,16 @@ export function PersonalView() {
     return worker;
   };
 
-  // TODO 새로운 계약서 작성하더라도 중복 Worker 처리
-  const saveContractor = () => {};
-
   // 이전 기록으로 계약 진행
   const handleClickSkip = () => {
     if (worker) {
-      setContractor({
-        id: worker.id,
-        name: worker.name,
-        phone: worker.phone,
-        residence: worker.residence,
-      });
-      setStep(3);
-    }
-  };
-
-  const handleClickNew = () => {
-    if (worker) {
-      setContractor({
-        id: worker.id,
-        name: worker.name,
-        phone: worker.phone,
-        residence: worker.residence,
+      setContractor((prev) => {
+        return {
+          ...prev,
+          name: worker.name,
+          phone: worker.phone,
+          residence: worker.residence,
+        };
       });
       setStep(3);
     }

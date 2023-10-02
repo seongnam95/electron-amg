@@ -23,7 +23,7 @@ def delete_contract(
     db: Session = Depends(deps.get_db),
     contract: schemas.Contract = Depends(get_contract),
 ):
-    contract = crud.contract.remove(db=db, id=contract.id)
+    crud.contract.remove(db=db, id=contract.id)
     return BaseResponse(success=True, msg="정상 처리되었습니다.")
 
 
@@ -35,7 +35,11 @@ def create_contract(
     worker: schemas.Worker = Depends(deps.get_worker),
     contract_in: schemas.ContractCreate,
 ):
-    crud.contract.create_contract(db=db, contract_obj=contract_in, worker_id=worker.id)
+    crud.contract.create_contract(
+        db=db,
+        worker_id=worker.id,
+        contract_obj=contract_in,
+    )
     return BaseResponse(success=True, msg="정상 처리되었습니다.")
 
 
@@ -48,7 +52,6 @@ def read_all_contract_for_worker(
     worker: schemas.Worker = Depends(deps.get_worker),
     db: Session = Depends(deps.get_db),
 ):
-    print(worker.name)
     contracts = crud.contract.get_multi_for_worker(db=db, worker_id=worker.id)
     if not contracts:
         raise HTTPException(status_code=404, detail="작성 된 계약서가 없습니다.")
@@ -67,4 +70,4 @@ def read_all_contract_for_worker(
         prev_contracts=prev_contracts,
     )
 
-    return DataResponse(success=True, result=response)
+    return DataResponse(success=True, msg="정상 처리되었습니다.", result=response)

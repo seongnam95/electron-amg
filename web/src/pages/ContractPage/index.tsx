@@ -1,34 +1,43 @@
-import { useEffect, useMemo } from "react";
+import { useEffect, useLayoutEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import styled from "styled-components";
 import { motion } from "framer-motion";
 import { useFormik, FormikProvider } from "formik";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useRecoilState } from "recoil";
 
 import { Header } from "@components";
 import { Contractor } from "@types";
-import { ContractState, ContractorState, stepState } from "@stores";
+import {
+  ContractState,
+  ContractorState,
+  initContractor,
+  stepState,
+} from "@stores";
 import { fetchContractDraft } from "@api/draft";
-import { createWorker } from "@api/worker";
+import { createWorker, updateWorker } from "@api/worker";
 import { createContract } from "@api/contract";
 
 import { STEPS } from "./steps";
 
 export const ContractPage = () => {
   const [contract, setContract] = useRecoilState(ContractState);
-  const Contractor = useRecoilValue(ContractorState);
+  const [Contractor, setContractor] = useRecoilState(ContractorState);
   const navigate = useNavigate();
 
-  const step = useRecoilValue(stepState);
+  // console.log("랜더링");
+
+  const [step, setStep] = useRecoilState(stepState);
   const currentStep = STEPS[step];
   if (!currentStep) throw new Error(`Undefined step: ${step}`);
 
-  const { params } = useParams();
+  const { id } = useParams();
   useEffect(() => {
-    if (!params) return;
+    if (!id) return;
+    console.log(id);
     let isMounted = true;
 
-    fetchContractDraft(params)
+    setContractor(initContractor);
+    fetchContractDraft(id)
       .then((data) => {
         const contract = data.result;
         setContract(contract);
@@ -36,14 +45,14 @@ export const ContractPage = () => {
       .catch(() => {
         if (!isMounted) return;
 
-        // navigate("/");
-        // alert("유효하지 않은 폼입니다.");
+        navigate("/");
+        alert("유효하지 않은 폼입니다.");
       });
 
     return () => {
       isMounted = false;
     };
-  }, [params]);
+  }, [id]);
 
   const initValues: Contractor = {
     name: "",
@@ -106,27 +115,34 @@ export const ContractPage = () => {
   );
 
   const handleSubmit = (values: Contractor) => {
-    console.log(values);
-
     if (Contractor.id) {
-      console.log("아이디 있음", values);
+      updateWorker(Contractor.id, values).then((res) => {
+        const id = res.data.result.id;
+        createContract(id, contract).then((res) => {
+          if (res.data.success) completeDraw();
+        });
+      });
     } else {
       createWorker(values).then((res) => {
         const id = res.data.result.id;
         createContract(id, contract).then((res) => {
-          if (res.data.success) handleCompleted();
+          if (res.data.success) completeDraw();
         });
       });
     }
   };
-
-  const handleCompleted = () => {};
 
   const formik = useFormik({
     initialValues: initValues,
     validationSchema: currentStep.validationSchema,
     onSubmit: handleSubmit,
   });
+
+  const completeDraw = () => {
+    navigate("/complete");
+    formik.resetForm();
+    setStep(0);
+  };
 
   return (
     <ContractPageStyled>
@@ -149,6 +165,7 @@ export const ContractPage = () => {
 
 const ContractPageStyled = styled.div`
   padding: 3.4rem 0;
+  width: 100vw;
 
   .content-wrap {
     padding: 0 2rem;

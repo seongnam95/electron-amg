@@ -8,7 +8,7 @@ export type ContractResponse = {
 export const createContractDraft =
   <T = ContractResponse>() =>
   async (body: Contract): Promise<DataResponse<T>> => {
-    const { data } = await axios.post<DataResponse<T>>("/draft", body);
+    const { data } = await axios.post<DataResponse<T>>("/draft/", body);
     return data;
   };
 
@@ -22,6 +22,6 @@ export const fetchContractDraft = async <T = ContractResponse>(
 export const fetchAllContractDraft =
   () =>
   async <T = Array<ContractResponse>>(): Promise<T> => {
-    const response = await axios.get<DataResponse<T>>("/draft");
+    const response = await axios.get<DataResponse<T>>("/draft/");
     return response.data.result;
   };

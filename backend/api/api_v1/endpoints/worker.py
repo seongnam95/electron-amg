@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException
+from fastapi.encoders import jsonable_encoder
 from sqlalchemy.orm import Session
 from response_model import BaseResponse, ListResponse, DataResponse
 from ... import deps
@@ -60,7 +61,7 @@ def create_worker(worker_in: WorkerCreate, db: Session = Depends(deps.get_db)):
 
 # 개인정보로 근로자 불러오기
 @router.get("/search/", response_model=DataResponse[CoveringWorkerResponse])
-def read_worker_with_personal(name: str, ssn: str, db: Session = Depends(deps.get_db)):
+def search_worker(name: str, ssn: str, db: Session = Depends(deps.get_db)):
     worker = crud.worker.get_worker_search(db=db, name=name, ssn=ssn)
     if not worker:
         raise HTTPException(status_code=404, detail="해당하는 근로자를 찾을 수 없습니다.")
@@ -75,7 +76,7 @@ def read_worker_with_personal(name: str, ssn: str, db: Session = Depends(deps.ge
 
 # ID로 근로자 불러오기
 @router.get("/{worker_id}", response_model=DataResponse[Worker])
-def read_worker_with_personal(
+def read_worker(
     # user: User = Depends(deps.get_current_user),
     worker: models.Worker = Depends(deps.get_worker),
 ):
@@ -100,15 +101,15 @@ def read_all_worker(
 
 
 # 근로자 업데이트
-@router.put("/{worker_id}", response_model=BaseResponse)
+@router.put("/{worker_id}", response_model=DataResponse[WorkerBaseResponse])
 def update_worker(
     # user: User = Depends(deps.get_current_user),
     worker_in: WorkerUpdate,
     db: Session = Depends(deps.get_db),
     worker: models.Worker = Depends(deps.get_worker),
 ):
-    crud.worker.update_worker(db=db, worker_obj=worker, worker_in=worker_in)
-    return BaseResponse(success=True, msg="정상 처리되었습니다.")
+    worker = crud.worker.update_worker(db=db, worker_obj=worker, worker_in=worker_in)
+    return DataResponse(success=True, msg="정상 처리되었습니다.", result=worker)
 
 
 # 근로자 삭제
@@ -118,5 +119,5 @@ def delete_worker(
     db: Session = Depends(deps.get_db),
     worker: models.Worker = Depends(deps.get_worker),
 ):
-    crud.worker.remove(db=db, id=worker.id)
+    crud.worker.remove_worker(db=db, id=worker.id)
     return BaseResponse(success=True, msg="정상 처리되었습니다.")

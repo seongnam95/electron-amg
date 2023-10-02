@@ -4,6 +4,8 @@ from fastapi.middleware import Middleware, cors
 from api.api_v1.api import api_router
 from exception_handlers import http_exception_handler
 
+from scheduled import sched
+
 
 middleware = [
     Middleware(
@@ -26,3 +28,13 @@ app = FastAPI(middleware=middleware)
 
 app.include_router(api_router, prefix="/api/v1")
 app.exception_handler(HTTPException)(http_exception_handler)
+
+
+@app.on_event("startup")
+def start_scheduler():
+    sched.start()
+
+
+@app.on_event("shutdown")
+def stop_scheduler():
+    sched.shutdown()

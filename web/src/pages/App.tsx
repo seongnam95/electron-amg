@@ -20,7 +20,7 @@ export function App() {
       <RecoilRoot>
         <Routes>
           <Route path="/admin" element={<AdminPage />} />
-          <Route path="/draw/:params" element={<ContractPage />} />
+          <Route path="/draw/:id" element={<ContractPage />} />
           <Route path="/complete" element={<CompletePage />} />
           <Route path="/document" element={<DocumentPage />} />
         </Routes>

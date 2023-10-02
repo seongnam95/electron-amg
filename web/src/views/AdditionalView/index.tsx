@@ -17,7 +17,6 @@ export function AdditionalView() {
   const setContractor = useSetRecoilState(ContractorState);
   const { values } = useFormikContext<Contractor>();
 
-  // 스킵 또는 기록 없음
   const handleNext = () => {
     setContractor((prev) => {
       return {

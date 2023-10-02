@@ -1,40 +1,33 @@
-from typing import List, Optional
+from typing import Optional
 
-from fastapi import HTTPException
-from fastapi.encoders import jsonable_encoder
 from crud.base import CRUDBase
 from models import Worker
 from schemas import WorkerCreate, WorkerUpdate
 from sqlalchemy.orm import Session
-from util.crypto import encrypt, decrypt, verify
-from sqlalchemy.exc import IntegrityError
-from util.image_converter import base64_to_image, image_to_base64
+from util.crypto import encrypt, verify
+from util.image_converter import base64_to_image, remove_image
 
 
 class CRUDWorker(CRUDBase[Worker, WorkerCreate, WorkerUpdate]):
-    def _encrypt_worker(
-        self, worker_in: WorkerCreate | WorkerUpdate
-    ) -> Optional[Worker]:
-        ssn_enc = encrypt(worker_in.ssn)
-        bank_num_enc = encrypt(worker_in.bank_num)
-        bank_book_file_nm = base64_to_image(worker_in.bank_book)
-        id_card_file_nm = base64_to_image(worker_in.id_card)
+    # 필드 암호화 및 이미지 저장
+    def _encrypt_worker(self, worker_in: WorkerCreate | WorkerUpdate) -> dict:
+        worker_dict = worker_in.model_dump(exclude_unset=True)
 
-        return Worker(
-            name=worker_in.name,
-            phone=worker_in.phone,
-            residence=worker_in.residence,
-            gender_code=worker_in.gender_code,
-            bank=worker_in.bank,
-            ssn_enc=ssn_enc,
-            bank_num_enc=bank_num_enc,
-            bank_book_file_nm=bank_book_file_nm,
-            id_card_file_nm=id_card_file_nm,
-        )
+        for field in list(worker_dict.keys()):
+            if field in ["ssn", "bank_num"]:
+                worker_dict[f"{field}_enc"] = encrypt(worker_dict.pop(field))
+
+            elif field in ["bank_book", "id_card"]:
+                worker_dict[f"{field}_file_nm"] = base64_to_image(
+                    worker_dict.pop(field)
+                )
+
+        return worker_dict
 
     # 근로자 생성
-    def create_worker(self, db: Session, worker_in: WorkerCreate) -> Optional[Worker]:
-        worker_obj = self._encrypt_worker(worker_in)
+    def create_worker(self, db: Session, worker_in: WorkerCreate) -> Worker:
+        worker_enc_dict = self._encrypt_worker(worker_in)
+        worker_obj = Worker(**worker_enc_dict)
 
         db.add(worker_obj)
         db.commit()
@@ -42,23 +35,30 @@ class CRUDWorker(CRUDBase[Worker, WorkerCreate, WorkerUpdate]):
 
         return worker_obj
 
+    # 근로자 업데이트
     def update_worker(
         self, db: Session, worker_obj: Worker, worker_in: WorkerUpdate
-    ) -> Optional[Worker]:
-        obj_data = jsonable_encoder(worker_obj)
+    ) -> Worker:
+        update_data = self._encrypt_worker(worker_in)
 
-        if isinstance(worker_in, dict):
-            update_data = self._encrypt_worker(worker_in)
-        else:
-            update_data = self._encrypt_worker(worker_in.model_dump(exclude_unset=True))
-
-        for field in obj_data:
-            if field in update_data:
-                setattr(worker_obj, field, update_data[field])
+        for field in update_data.keys():
+            setattr(worker_obj, field, update_data[field])
 
         db.add(worker_obj)
         db.commit()
         db.refresh(worker_obj)
+
+        return worker_obj
+
+    # 근로자 삭제
+    def remove_worker(self, db: Session, *, id: int):
+        worker_obj: Worker = db.query(Worker).get(id)
+
+        remove_image(worker_obj.bank_book_file_nm)
+        remove_image(worker_obj.id_card_file_nm)
+
+        db.delete(worker_obj)
+        db.commit()
 
     # 근로자 검색
     def get_worker_search(self, db: Session, name: str, ssn: str) -> Optional[Worker]:

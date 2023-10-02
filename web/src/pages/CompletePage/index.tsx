@@ -1,15 +1,50 @@
 import styled from "styled-components";
 import Lottie from "lottie-react";
-import { useNavigate } from "react-router-dom";
 import completeLottie from "@lotties/complete.json";
 import { useRecoilValue } from "recoil";
 import { ContractState, ContractorState } from "@stores";
 import { formatDate } from "@utils/formatDate";
+import { useEffect, useRef } from "react";
+import { DocumentPage } from "@pages";
+import html2canvas from "html2canvas";
+import { useNavigate } from "react-router-dom";
 
 export function CompletePage() {
   const navigate = useNavigate();
+  const contractRef = useRef<HTMLDivElement>(null);
   const contract = useRecoilValue(ContractState);
   const contractor = useRecoilValue(ContractorState);
+
+  const salaryText =
+    contract.salary === "daily"
+      ? "일당"
+      : contract.salary === "weekly"
+      ? "주급"
+      : "월급";
+
+  useEffect(() => {
+    if (!contractor.name) {
+      navigate(-1);
+    }
+  }, []);
+
+  const handleSaveDocument = async () => {
+    if (contractRef.current) {
+      const doc = await html2canvas(contractRef.current, { useCORS: true });
+      const base64doc = doc.toDataURL("image/jpeg", 1);
+      const link = document.createElement("a");
+
+      link.href = base64doc;
+      link.download = `amg_contract_${formatDate(
+        contract.startPeriod,
+        false,
+        true
+      )}.jpeg`;
+      link.click();
+
+      document.body.removeChild(link);
+    }
+  };
 
   return (
     <StyledCompletePage>
@@ -33,7 +68,7 @@ export function CompletePage() {
           <div className="info-label">
             <p>계약자</p>
             <p>계약기간</p>
-            <p>용역 수수료</p>
+            <p>수수료 ({salaryText})</p>
           </div>
 
           <div className="info-text">
@@ -46,13 +81,11 @@ export function CompletePage() {
           </div>
         </div>
 
-        <button
-          className="document-check-btn"
-          onClick={() => navigate("/document")}
-        >
-          계약서 원부 확인하기
+        <button className="save-document-btn" onClick={handleSaveDocument}>
+          계약서 저장하기
         </button>
       </div>
+      <DocumentPage className="document-page" inputRef={contractRef} />
     </StyledCompletePage>
   );
 }
@@ -61,7 +94,7 @@ const StyledCompletePage = styled.div`
   position: relative;
 
   width: 100vw;
-  height: 100vh;
+  height: 100%;
   background-color: var(--inner-color);
 
   .complete-card {
@@ -137,7 +170,7 @@ const StyledCompletePage = styled.div`
     }
   }
 
-  .document-check-btn {
+  .save-document-btn {
     border: none;
     outline: none;
 
@@ -149,5 +182,10 @@ const StyledCompletePage = styled.div`
     padding: 1.6rem 0 1.4rem;
     border-radius: 50rem;
     box-shadow: var(--shadow-gray-100);
+  }
+
+  .document-page {
+    position: absolute;
+    bottom: 100%;
   }
 `;

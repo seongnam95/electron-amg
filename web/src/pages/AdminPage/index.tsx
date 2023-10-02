@@ -2,6 +2,7 @@ import { BottomSheetModal, Header } from "@components";
 import styled from "styled-components";
 import { useRef, useState } from "react";
 import { DraftContractView, FormHistoryView } from "@views";
+import { motion } from "framer-motion";
 
 export function AdminPage() {
   const inputRef = useRef<HTMLInputElement>(null);
@@ -35,7 +36,16 @@ export function AdminPage() {
           setShowModal(true);
         }}
       />
-      <DraftContractView onCopy={handleOnCopy} />
+      <motion.div
+        className="content-wrap"
+        style={{ height: "100%" }}
+        initial={{ opacity: 0, x: 20 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ duration: 0.5 }}
+      >
+        <DraftContractView onCopy={handleOnCopy} />
+      </motion.div>
+
       <BottomSheetModal
         open={showModal}
         title="이전 기록"

@@ -1,6 +1,4 @@
 import { ContractArticle, Contractor } from "@components";
-import { ContractState, ContractorState } from "@stores";
-import { useRecoilValue } from "recoil";
 
 import styled from "styled-components";
 
@@ -10,16 +8,13 @@ interface DocumentPageProps {
 }
 
 export function DocumentPage({ className, inputRef }: DocumentPageProps) {
-  const contract = useRecoilValue(ContractState);
-  const contractor = useRecoilValue(ContractorState);
-
   return (
     <StyledDocumentPage className={className} ref={inputRef}>
       <div className="contract-wrap">
         <div className="contract-title">용역 계약서</div>
         <div className="contract-content">
-          <ContractArticle printView name={contractor.name} />
-          <Contractor printView signBase64={contract.signBase64} />
+          <ContractArticle printView />
+          <Contractor printView />
         </div>
       </div>
     </StyledDocumentPage>

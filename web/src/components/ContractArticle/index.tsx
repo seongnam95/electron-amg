@@ -1,14 +1,14 @@
-import { ContractState } from "@stores";
+import { ContractState, ContractorState } from "@stores";
 import { formatDate } from "@utils/formatDate";
 import { useRecoilValue } from "recoil";
 import styled from "styled-components";
 
 interface ContractArticleProps {
-  name: string;
   printView?: boolean;
 }
 
-export function ContractArticle({ name, printView }: ContractArticleProps) {
+export function ContractArticle({ printView }: ContractArticleProps) {
+  const { name } = useRecoilValue(ContractorState);
   const { salary, defaultWage, startPeriod, endPeriod, groupName } =
     useRecoilValue(ContractState);
   const salaryText =

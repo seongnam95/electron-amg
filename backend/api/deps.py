@@ -1,10 +1,10 @@
-from fastapi import Cookie, HTTPException, Depends, Header
+from fastapi import HTTPException, Depends, Header
 from sqlalchemy.orm import Session
 from typing import Generator
 from exceptions import TokenExpiredError, TokenInvalidError
 
 from db.session import SessionLocal
-import crud, schemas, models
+import crud, models
 from util.jwt_token import Jwt
 
 
