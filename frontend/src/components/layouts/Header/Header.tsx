@@ -5,7 +5,8 @@ import clsx from 'clsx';
 import { motion } from 'framer-motion';
 import { useRecoilValue } from 'recoil';
 
-import Button from '~/components/common/Button';
+import { Button } from '@components/common';
+
 import { useLogout } from '~/hooks/useLogout';
 import { layoutStore } from '~/stores/layout';
 

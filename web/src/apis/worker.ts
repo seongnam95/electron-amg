@@ -1,4 +1,4 @@
-import { Contractor } from "@types";
+import { ContractorType } from "@type/contract";
 import { removeEmptyValueObj } from "@utils/objectUtil";
 import axios from "axios";
 
@@ -12,9 +12,9 @@ const getGenderCode: { [key: string]: string } = {
 type CreateWorkerBody = {
   ssn: string;
   genderCode: string;
-} & Omit<Contractor, "idBack" | "idFront">;
+} & Omit<ContractorType, "idBack" | "idFront">;
 
-export function createWorker(contractor: Contractor) {
+export function createWorker(contractor: ContractorType) {
   const { idFront, idBack, ...rest } = contractor;
   const body: CreateWorkerBody = {
     ...rest,
@@ -25,7 +25,7 @@ export function createWorker(contractor: Contractor) {
   return axios.post("/worker/", body);
 }
 
-export function updateWorker(id: string, contractor: Contractor) {
+export function updateWorker(id: string, contractor: ContractorType) {
   const { idFront, idBack, ...rest } = contractor;
   const body: Partial<CreateWorkerBody> = {
     ...rest,

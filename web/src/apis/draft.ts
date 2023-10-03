@@ -1,13 +1,13 @@
-import { Contract, DataResponse } from "@types";
+import { ContractType, DataResponse } from "@type/contract";
 import axios from "axios";
 
 export type ContractResponse = {
   id: string;
-} & Omit<Contract, "signBase64">;
+} & Omit<ContractType, "signBase64">;
 
 export const createContractDraft =
   <T = ContractResponse>() =>
-  async (body: Contract): Promise<DataResponse<T>> => {
+  async (body: ContractType): Promise<DataResponse<T>> => {
     const { data } = await axios.post<DataResponse<T>>("/draft/", body);
     return data;
   };

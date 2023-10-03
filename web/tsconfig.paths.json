@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    "paths": {
+      "@com/common": ["./src/components/common/index"],
+      "@com/contract": ["./src/components/contract/index"],
+      "@com/layout": ["./src/components/layout/index"],
+      "@com/manager": ["./src/components/manager/index"],
+      "@com/view": ["./src/components/view/index"],
+
+      "@images/*": ["./src/assets/images/*"],
+      "@lotties/*": ["./src/assets/lotties/*"],
+      "@svg/*": ["./src/assets/svg/*"],
+
+      "@apis/*": ["./src/apis/*"],
+      "@hooks/*": ["./src/hooks/*"],
+      "@stores/*": ["./src/stores/*"],
+      "@styles/*": ["./src/styles/*"],
+      "@type/*": ["./src/types/*"],
+      "@utils/*": ["./src/utils/*"]
+    }
+  }
+}
