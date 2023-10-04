@@ -11,12 +11,12 @@ export const InputStyled = styled.label<{ doseExist: boolean }>`
 
       width: 100%;
 
-      color: var(--text);
-      font-size: var(--font-size-2xl);
+      color: ${(p) => p.theme.colors.textColor1};
+      font-size: ${(p) => p.theme.sizes.textLazy};
 
       outline: none;
       border: none;
-      border-bottom: solid 1px var(--border-color);
+      border-bottom: solid 1px ${(p) => p.theme.colors.borderColor};
       border-radius: 0;
 
       padding-bottom: 0.8rem;
@@ -50,9 +50,10 @@ export const InputStyled = styled.label<{ doseExist: boolean }>`
       bottom: ${(p) => (p.doseExist ? "calc(100% + 1rem)" : "1rem")};
       left: 0.4rem;
 
-      color: ${(p) => (p.doseExist ? "var(--text-sub)" : "var(--text-hint)")};
+      color: ${(p) =>
+        p.doseExist ? p.theme.colors.textColor2 : p.theme.colors.textColor3};
       font-size: ${(p) =>
-        p.doseExist ? "var(--font-size-s)" : "var(--font-size-2xl)"};
+        p.doseExist ? p.theme.sizes.textSmall : p.theme.sizes.textLazy};
       transition: all 0.2s;
     }
   }
@@ -62,8 +63,8 @@ export const InputStyled = styled.label<{ doseExist: boolean }>`
   }
 
   .hint-text {
-    color: var(--text-hint);
-    font-size: var(--font-size-2xs);
+    color: ${(p) => p.theme.colors.textColor3};
+    font-size: ${(p) => p.theme.sizes.textSmall};
     margin: 1.2rem 0 0 0.6rem;
   }
 `;

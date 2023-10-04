@@ -1,6 +1,6 @@
-import { useSetRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import { ContractState } from "@stores/contract";
-import { useState } from "react";
+import { HTMLAttributes, useState } from "react";
 import { useFormikContext } from "formik";
 import useValidFormCheck from "@hooks/useValidFormCheck";
 import { AnimatePresence, motion } from "framer-motion";
@@ -14,11 +14,15 @@ import {
 } from "@com/contract";
 import { BottomSheetModal, Button } from "@com/common";
 
-function ArticleView() {
+interface ArticleViewProps extends HTMLAttributes<HTMLDivElement> {
+  viewRef?: React.RefObject<HTMLDivElement>;
+}
+
+function ArticleView({ viewRef, ...props }: ArticleViewProps) {
   const isValidForm = useValidFormCheck();
   const { handleSubmit } = useFormikContext();
 
-  const setContract = useSetRecoilState(ContractState);
+  const [contract, setContract] = useRecoilState(ContractState);
 
   const [showSignModal, setShowSignModal] = useState<boolean>(false);
   const [contractConsent, setContractConsent] = useState<boolean>(false);
@@ -35,7 +39,7 @@ function ArticleView() {
   };
 
   return (
-    <ArticleViewStyled>
+    <ArticleViewStyled ref={viewRef} {...props}>
       {/* 계약 내용 및 개인정보이용 동의 체크박스 */}
       <div className="check-wrap">
         <ConsentCheck
@@ -56,7 +60,7 @@ function ArticleView() {
       <ContractorInfoTable onClickSign={() => setShowSignModal(true)} />
 
       <AnimatePresence>
-        {isValidForm && contractConsent && personalConsent && (
+        {contract.signBase64 && contractConsent && personalConsent && (
           <motion.div
             className="btn-wrap"
             initial={{ opacity: 0, x: -14 }}

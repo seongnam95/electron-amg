@@ -2,7 +2,7 @@ import ReactDOM from "react-dom";
 import { ReactNode, useEffect, useRef } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { BottomSheetModalStyled } from "./styled";
-import { Close } from "@material-ui/icons";
+import { AiOutlineClose } from "react-icons/ai";
 
 interface BottomSheetModalProps {
   children?: ReactNode;
@@ -70,7 +70,9 @@ const BottomSheetModal = ({
           >
             <div className="modal-header">
               {title}
-              <Close onClick={onClose} />
+              <button className="close-btn" onClick={onClose}>
+                <AiOutlineClose />
+              </button>
             </div>
             <div className="modal-content">{children}</div>
           </motion.div>

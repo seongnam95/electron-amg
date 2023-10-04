@@ -1,6 +1,11 @@
 import * as Yup from "yup";
 
-import { AdditionalView, ArticleView, PersonalView, UploadView } from "@views";
+import {
+  AdditionalView,
+  ArticleView,
+  PersonalView,
+  UploadView,
+} from "@com/view";
 
 const validationSchemas = {
   // 이름, 연락처, 주민등록번호

@@ -1,6 +1,8 @@
 import { ReactNode, useState, ChangeEvent } from "react";
 import { ConsentCheckStyled } from "./styled";
 import { BottomSheetModal } from "@com/common";
+import { FaAngleDown } from "react-icons/fa6";
+import { AiOutlineCheck } from "react-icons/ai";
 
 interface ConsentCheckProps {
   name?: string;
@@ -29,13 +31,13 @@ const ConsentCheck = ({
 
       <div className="check-box-wrap">
         <div className="check-box">
-          <Icon icon="check" />
+          <AiOutlineCheck icon="check" />
         </div>
         <span className="btn-text">{label}</span>
       </div>
 
       <button className="more-btn" onClick={handleMoreClick}>
-        <Icon icon="downArrow" />
+        <FaAngleDown className="down-arrow-icon" />
       </button>
 
       {content && (

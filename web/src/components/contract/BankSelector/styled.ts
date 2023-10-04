@@ -31,8 +31,8 @@ export const BankListStyled = styled.div`
     border: none;
     overflow: hidden;
 
-    color: var(--text);
-    font-size: var(--font-size-s);
+    color: ${(p) => p.theme.colors.textColor1};
+    font-size: ${(p) => p.theme.sizes.textSmall};
     white-space: nowrap;
   }
 `;

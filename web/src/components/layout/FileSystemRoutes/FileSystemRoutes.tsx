@@ -1,5 +1,9 @@
-import { Fragment } from 'react';
-import { RouteObject, RouterProvider, createHashRouter } from 'react-router-dom';
+import { Fragment } from "react";
+import {
+  RouteObject,
+  RouterProvider,
+  createHashRouter,
+} from "react-router-dom";
 
 type Element = () => JSX.Element;
 
@@ -7,23 +11,26 @@ interface Module {
   default: Element;
 }
 
-const PRESERVED = import.meta.glob<Module>('/src/pages/(_app|404).tsx', { eager: true });
-const ROUTES = import.meta.glob<Module>('/src/pages/**/[a-z[]*.tsx', { eager: true });
+const PRESERVED = import.meta.glob<Module>("/src/pages/(_app|404).tsx", {
+  eager: true,
+});
+const ROUTES = import.meta.glob<Module>("/src/pages/**/[a-z[]*.tsx", {
+  eager: true,
+});
 
-const preservedRoutes: Partial<Record<string, Element>> = Object.keys(PRESERVED).reduce(
-  (routes, key) => {
-    const path = key.replace(/\/src\/pages\/|\.tsx$/g, '');
-    return { ...routes, [path]: PRESERVED[key]?.default };
-  },
-  {},
-);
+const preservedRoutes: Partial<Record<string, Element>> = Object.keys(
+  PRESERVED
+).reduce((routes, key) => {
+  const path = key.replace(/\/src\/pages\/|\.tsx$/g, "");
+  return { ...routes, [path]: PRESERVED[key]?.default };
+}, {});
 
-const App = preservedRoutes?.['_app'] || Fragment;
-const NotFound = preservedRoutes?.['404'] || Fragment;
+const App = preservedRoutes?.["_app"] || Fragment;
+const NotFound = preservedRoutes?.["404"] || Fragment;
 
 const router = createHashRouter([
   {
-    path: '/',
+    path: "/",
     element: <App />,
     children: Object.keys(ROUTES).reduce<RouteObject[]>(
       (routes, key) => {
@@ -34,21 +41,21 @@ const router = createHashRouter([
         };
 
         const segments = key
-          .replace(/\/src\/pages|\.tsx$/g, '')
-          .replace(/\[\.{3}.+\]/, '*')
-          .replace(/\[([^\]]+)\]/g, ':$1')
-          .split('/')
+          .replace(/\/src\/pages|\.tsx$/g, "")
+          .replace(/\[\.{3}.+\]/, "*")
+          .replace(/\[([^\]]+)\]/g, ":$1")
+          .split("/")
           .filter(Boolean);
 
         segments.reduce((parent, segment, index) => {
-          const path = segment.replace(/index|\./g, '');
+          const path = segment.replace(/index|\./g, "");
           const root = index === 0;
           const leaf = index === segments.length - 1 && segments.length > 1;
           const node = !root && !leaf;
-          const insert = /^\w|\//.test(path) ? 'unshift' : 'push';
+          const insert = /^\w|\//.test(path) ? "unshift" : "push";
 
           if (root) {
-            const dynamic = path.startsWith(':') || path === '*';
+            const dynamic = path.startsWith(":") || path === "*";
             if (dynamic) return parent;
 
             const last = segments.length === 1;
@@ -60,11 +67,14 @@ const router = createHashRouter([
 
           if (root || node) {
             const current = root ? routes : parent.children;
-            const found = current?.find(route => route.path === path);
+            const found = current?.find((route) => route.path === path);
             if (found) found.children ??= [];
             else current?.[insert]({ path, children: [] });
             return (
-              found || (current?.[insert === 'unshift' ? 0 : current.length - 1] as RouteObject)
+              found ||
+              (current?.[
+                insert === "unshift" ? 0 : current.length - 1
+              ] as RouteObject)
             );
           }
 
@@ -76,7 +86,7 @@ const router = createHashRouter([
         }, {} as RouteObject);
         return routes;
       },
-      [{ path: '*', element: <NotFound /> }],
+      [{ path: "*", element: <NotFound /> }]
     ),
   },
 ]);

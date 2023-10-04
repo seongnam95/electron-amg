@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
-export const AdminStyled = styled.div`
+export const DraftPageStyled = styled.div`
   position: relative;
   display: flex;
   flex-direction: column;

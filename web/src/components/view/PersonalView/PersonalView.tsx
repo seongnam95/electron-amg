@@ -8,11 +8,16 @@ import { PersonalViewStyled } from "./styled";
 import { ContractorType, WorkerType } from "@type/contract";
 import { Input } from "@com/common";
 import { NextButton, WorkerSkipModal } from "@com/contract";
+import { HTMLAttributes } from "react";
 
 /**
  * [ STEP 1 ] 개인정보 입력 폼
  */
-function PersonalView() {
+interface PersonalViewProps extends HTMLAttributes<HTMLDivElement> {
+  viewRef?: React.RefObject<HTMLDivElement>;
+}
+
+function PersonalView({ viewRef, ...props }: PersonalViewProps) {
   const isValidForm = useValidFormCheck();
   const { values } = useFormikContext<ContractorType>();
 
@@ -90,7 +95,7 @@ function PersonalView() {
   };
 
   return (
-    <PersonalViewStyled>
+    <PersonalViewStyled ref={viewRef} {...props}>
       {/* 이름 */}
       <Field as={Input} name="name" placeholder="계약자 성명" />
       {/* 연락처 */}

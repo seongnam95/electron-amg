@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
     "paths": {
+      "~/*": ["./src/*"],
       "@com/common": ["./src/components/common/index"],
       "@com/contract": ["./src/components/contract/index"],
       "@com/layout": ["./src/components/layout/index"],

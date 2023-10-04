@@ -14,9 +14,9 @@ export const AddressInputStyled = styled.div`
   }
 
   .field-label {
-    font-size: var(--font-size-xs);
+    font-size: ${(p) => p.theme.sizes.textSmall};
     font-weight: bold;
-    color: var(--text);
+    color: ${(p) => p.theme.colors.textColor1};
     padding-left: 0.4rem;
   }
 `;

@@ -15,7 +15,7 @@ const useValidFormCheck = () => {
 
     validateFormCheck();
   }, [values, errors, isValid, dirty, validateForm]);
-
+  if (isValidForm) window.scrollTo({ top: 0 });
   return isValidForm;
 };
 

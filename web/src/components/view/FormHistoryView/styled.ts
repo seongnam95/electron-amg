@@ -5,8 +5,8 @@ export const FormHistoryViewStyled = styled.div`
   flex-direction: column;
   gap: 3.4rem;
 
-  font-size: var(--font-size-m);
-  color: var(--text);
+  font-size: ${(p) => p.theme.sizes.textMedium};
+  color: ${(p) => p.theme.colors.textColor1};
 
   .draft-item {
     cursor: pointer;
@@ -27,19 +27,19 @@ export const FormHistoryViewStyled = styled.div`
 
     .group-name-text {
       font-weight: bold;
-      font-size: var(--font-size-2xl);
+      font-size: ${(p) => p.theme.sizes.textLazy};
     }
 
     .id-chip {
-      color: var(--text-sub);
+      color: ${(p) => p.theme.colors.textColor2};
       border-radius: 4px;
       padding: 0.4rem 0.8rem;
-      background-color: var(--inner-color);
+      background-color: ${(p) => p.theme.colors.innerBg};
     }
 
     .wage {
       font-weight: bold;
-      color: var(--blue);
+      color: ${(p) => p.theme.colors.accent};
     }
   }
 `;

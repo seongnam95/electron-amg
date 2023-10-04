@@ -11,20 +11,20 @@ export const PersonalConsentStyled = styled.div`
   }
 
   h1 {
-    font-size: var(--font-size-2xl);
+    font-size: ${(p) => p.theme.sizes.textLazy};
     font-weight: bold;
     margin-bottom: 2rem;
     line-height: 120%;
   }
 
   h2 {
-    font-size: var(--font-size-m);
+    font-size: ${(p) => p.theme.sizes.textMedium};
     font-weight: bold;
     margin-bottom: 0.6rem;
   }
 
   p {
-    font-size: var(--font-size-m);
+    font-size: ${(p) => p.theme.sizes.textMedium};
     line-height: 130%;
     margin-bottom: 0.4rem;
   }

@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
-export const ContractStyled = styled.div`
+export const ContractPageStyled = styled.div`
   padding: 3.4rem 0;
   width: 100vw;
 

@@ -6,10 +6,10 @@ import { formatDate } from "@utils/formatDate";
 import { useEffect, useRef } from "react";
 import html2canvas from "html2canvas";
 import { useNavigate } from "react-router-dom";
-import { CompleteStyled } from "@styles/pageStyled/completePageStyled";
 import { DocumentView } from "@com/view";
+import { CompletePageStyled } from "./styled";
 
-function Complete() {
+function CompletePage() {
   const navigate = useNavigate();
   const contractRef = useRef<HTMLDivElement>(null);
   const contract = useRecoilValue(ContractState);
@@ -47,7 +47,7 @@ function Complete() {
   };
 
   return (
-    <CompleteStyled>
+    <CompletePageStyled>
       <div className="complete-card">
         <div className="card-text-wrap">
           <Lottie
@@ -85,9 +85,9 @@ function Complete() {
           계약서 저장하기
         </button>
       </div>
-      <DocumentView className="document-view" inputRef={contractRef} />
-    </CompleteStyled>
+      <DocumentView className="document-view" viewRef={contractRef} />
+    </CompletePageStyled>
   );
 }
 
-export default Complete;
+export default CompletePage;

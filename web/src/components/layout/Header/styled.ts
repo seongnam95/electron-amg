@@ -15,8 +15,8 @@ export const HeaderStyled = styled.div<{ height?: string }>`
       justify-content: space-between;
 
       .title-text {
-        color: var(--text);
-        font-size: var(--font-size-2xl);
+        color: ${(p) => p.theme.colors.textColor1};
+        font-size: 2.4rem;
         font-weight: bold;
       }
 
@@ -30,14 +30,15 @@ export const HeaderStyled = styled.div<{ height?: string }>`
         transition: all 200ms;
 
         > svg {
-          fill: var(--text) !important;
+          font-size: 2.4rem;
+          color: ${(p) => p.theme.colors.textColor1};
         }
       }
     }
 
     .description-content {
-      color: var(--text-sub);
-      font-size: var(--font-size-xs);
+      color: ${(p) => p.theme.colors.textColor2};
+      font-size: ${(p) => p.theme.sizes.textSmall};
       line-height: 150%;
     }
   }

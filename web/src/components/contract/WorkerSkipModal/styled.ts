@@ -20,18 +20,18 @@ export const WorkerSkipModalStyled = styled.div`
     background-color: white;
     padding: 3.4rem 3rem 1.4rem;
     border-radius: 1rem;
-    color: var(--text);
-    font-size: var(--font-size-m);
+    color: ${(p) => p.theme.colors.textColor1};
+    font-size: ${(p) => p.theme.sizes.textMedium};
 
     .modal-header-text {
-      font-size: var(--font-size-2xl);
+      font-size: ${(p) => p.theme.sizes.textLazy};
       font-weight: bold;
       margin-bottom: 0.7rem;
     }
 
     .modal-header-sub-text {
-      color: var(--text-hint);
-      font-size: var(--font-size-xs);
+      color: ${(p) => p.theme.colors.textColor3};
+      font-size: ${(p) => p.theme.sizes.textSmall};
       font-weight: 300;
       padding-left: 0.2rem;
       margin-bottom: 3.4rem;
@@ -44,15 +44,15 @@ export const WorkerSkipModalStyled = styled.div`
       height: 3.4rem;
 
       > span:first-child {
-        color: var(--text-sub);
+        color: ${(p) => p.theme.colors.textColor2};
         width: 30%;
       }
 
       .bank-name {
-        font-size: var(--font-size-xs);
-        color: var(--text-sub);
+        font-size: ${(p) => p.theme.sizes.textSmall};
+        color: ${(p) => p.theme.colors.textColor2};
         padding: 0.4rem 0.8rem;
-        background-color: var(--inner-color);
+        background-color: ${(p) => p.theme.colors.innerBg};
         border-radius: 0.2rem;
         margin-right: 0.8rem;
       }
@@ -85,7 +85,7 @@ export const WorkerSkipModalStyled = styled.div`
         gap: 0.6rem;
 
         color: rgb(255, 255, 255, 0.8);
-        font-size: var(--font-size-s);
+        font-size: ${(p) => p.theme.sizes.textSmall};
 
         .text-name {
           font-weight: bold;
@@ -99,17 +99,17 @@ export const WorkerSkipModalStyled = styled.div`
       .btn-label {
         color: white;
         font-weight: bold;
-        font-size: var(--font-size-l);
+        font-size: ${(p) => p.theme.sizes.textLazy};
       }
 
       &.link {
         background-color: transparent;
 
         .btn-label {
-          color: var(--text-sub);
+          color: ${(p) => p.theme.colors.textColor2};
           font-weight: normal;
           padding: 0 4px 4px 4px;
-          border-bottom: 1px solid var(--text-hint);
+          border-bottom: 1px solid ${(p) => p.theme.colors.borderColor};
         }
       }
     }

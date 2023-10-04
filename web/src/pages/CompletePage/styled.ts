@@ -1,11 +1,11 @@
 import styled from "styled-components";
 
-export const CompleteStyled = styled.div`
+export const CompletePageStyled = styled.div`
   position: relative;
 
-  width: 100vw;
+  width: 100%;
   height: 100%;
-  background-color: var(--inner-color);
+  overflow: hidden;
 
   .complete-card {
     position: absolute;
@@ -20,7 +20,9 @@ export const CompleteStyled = styled.div`
     justify-content: center;
     align-items: center;
 
-    background-color: white;
+    background-color: ${(p) => p.theme.colors.innerBg};
+    border: 1px solid ${(p) => p.theme.colors.borderColor};
+
     padding: 3rem;
     border-radius: 0.8rem;
     box-shadow: var(--shadow-gray-100);
@@ -33,15 +35,15 @@ export const CompleteStyled = styled.div`
 
       .card-title {
         flex: 1;
-        font-size: var(--font-size-2xl);
+        font-size: ${(p) => p.theme.sizes.textLazy};
         font-weight: bold;
-        color: var(--text);
+        color: ${(p) => p.theme.colors.textColor1};
       }
 
       .card-text {
         text-align: center;
-        font-size: var(--font-size-m);
-        color: var(--text-sub);
+        font-size: ${(p) => p.theme.sizes.textMedium};
+        color: ${(p) => p.theme.colors.textColor2};
         line-height: 1.6rem;
       }
     }
@@ -56,8 +58,8 @@ export const CompleteStyled = styled.div`
     display: flex;
     gap: 2.4rem;
     padding: 1.4rem 1rem;
-    border-top: 1px solid var(--border-color);
-    border-bottom: 1px solid var(--border-color);
+    border-top: 1px solid ${(p) => p.theme.colors.borderColor};
+    border-bottom: 1px solid ${(p) => p.theme.colors.borderColor};
     width: 100%;
 
     .info-label {
@@ -65,8 +67,8 @@ export const CompleteStyled = styled.div`
       flex-direction: column;
       gap: 0.8rem;
 
-      color: var(--text);
-      font-size: var(--font-size-xs);
+      color: ${(p) => p.theme.colors.textColor1};
+      font-size: ${(p) => p.theme.sizes.textSmall};
       font-weight: bold;
     }
 
@@ -75,8 +77,8 @@ export const CompleteStyled = styled.div`
       flex-direction: column;
       gap: 0.8rem;
 
-      color: var(--text);
-      font-size: var(--font-size-xs);
+      color: ${(p) => p.theme.colors.textColor1};
+      font-size: ${(p) => p.theme.sizes.textSmall};
     }
   }
 
@@ -84,18 +86,18 @@ export const CompleteStyled = styled.div`
     border: none;
     outline: none;
 
-    font-size: var(--font-size-l);
+    font-size: ${(p) => p.theme.sizes.textLazy};
     color: white;
 
     width: 100%;
-    background-color: var(--primary);
+    background-color: ${(p) => p.theme.colors.primary};
     padding: 1.6rem 0 1.4rem;
     border-radius: 50rem;
     box-shadow: var(--shadow-gray-100);
   }
 
-  .document-page {
+  .document-view {
     position: absolute;
-    bottom: 100%;
+    bottom: 150%;
   }
 `;

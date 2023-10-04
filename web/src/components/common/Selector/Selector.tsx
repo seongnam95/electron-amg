@@ -2,6 +2,7 @@ import styled from "styled-components";
 import { InputHTMLAttributes, useState } from "react";
 import { SelectorStyled } from "./styled";
 import { BottomSheetModal, Input } from "@com/common";
+import { FaAngleDown } from "react-icons/fa6";
 
 interface ItemType {
   value: string;
@@ -45,7 +46,7 @@ function Selector({
         value={currentLabel || ""}
         onFocus={() => setShowModal(true)}
       />
-      <Icon className="down-arrow-icon" icon="downArrow" />
+      <FaAngleDown className="down-arrow-icon" />
       <BottomSheetModal
         open={showModal}
         height="70%"
@@ -68,12 +69,12 @@ function Selector({
   );
 }
 
-const ListItem = styled.ul<{ active?: boolean }>`
+const ListItem = styled.li<{ active?: boolean }>`
   display: flex;
   align-items: center;
-  color: var(--text);
-  font-size: var(--font-size-l);
-  height: 5.6rem;
+  color: ${(p) => p.theme.colors.textColor1};
+  font-size: ${(p) => p.theme.sizes.textLazy};
+  height: 5rem;
   padding: 0 1.2rem;
   font-weight: ${(p) => (p.active ? "bold" : "normal")};
   cursor: pointer;

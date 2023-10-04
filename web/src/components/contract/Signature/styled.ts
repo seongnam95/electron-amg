@@ -15,8 +15,8 @@ export const SignatureStyled = styled.div`
     height: 100%;
 
     .header-text {
-      font-size: var(--font-size-m);
-      color: var(--text);
+      font-size: ${(p) => p.theme.sizes.textMedium};
+      color: ${(p) => p.theme.colors.textColor1};
       line-height: 120%;
     }
 
@@ -24,8 +24,8 @@ export const SignatureStyled = styled.div`
       width: 100%;
       height: 60%;
 
-      border: 1px solid var(--border-color);
-      background-color: var(--inner-color);
+      border: 1px solid ${(p) => p.theme.colors.borderColor};
+      background-color: ${(p) => p.theme.colors.innerBg};
       border-radius: 0.4rem;
     }
   }

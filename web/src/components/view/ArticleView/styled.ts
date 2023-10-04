@@ -27,8 +27,8 @@ export const ArticleViewStyled = styled.div`
     display: flex;
     gap: 2.4rem;
     padding: 2.4rem 1rem;
-    border-top: 1px solid var(--border-color);
-    border-bottom: 1px solid var(--border-color);
+    border-top: 1px solid ${(p) => p.theme.colors.borderColor};
+    border-bottom: 1px solid ${(p) => p.theme.colors.borderColor};
     width: 100%;
 
     .info-label {
@@ -36,8 +36,8 @@ export const ArticleViewStyled = styled.div`
       flex-direction: column;
       gap: 1.4rem;
 
-      color: var(--text);
-      font-size: var(--font-size-m);
+      color: ${(p) => p.theme.colors.textColor1};
+      font-size: ${(p) => p.theme.sizes.textMedium};
       font-weight: bold;
     }
 
@@ -46,8 +46,8 @@ export const ArticleViewStyled = styled.div`
       flex-direction: column;
       gap: 1.4rem;
 
-      color: var(--text);
-      font-size: var(--font-size-m);
+      color: ${(p) => p.theme.colors.textColor1};
+      font-size: ${(p) => p.theme.sizes.textMedium};
     }
   }
 `;

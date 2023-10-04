@@ -11,14 +11,13 @@ export const ConsentCheckStyled = styled.label`
     display: none;
 
     &:checked + .check-box-wrap > .check-box {
-      background-color: var(--primary);
+      background-color: ${(p) => p.theme.colors.primary};
     }
   }
 
   .btn-text {
-    color: var(--text);
-    font-size: var(--font-size-m);
-    padding-top: 4px;
+    color: ${(p) => p.theme.colors.textColor1};
+    font-size: ${(p) => p.theme.sizes.textSmall};
   }
 
   .check-box-wrap {
@@ -34,7 +33,7 @@ export const ConsentCheckStyled = styled.label`
       width: 2rem;
       height: 2rem;
 
-      border: 1px solid var(--border-color);
+      border: 1px solid ${(p) => p.theme.colors.borderColor};
       border-radius: 4px;
       padding: 2px;
 
@@ -52,8 +51,10 @@ export const ConsentCheckStyled = styled.label`
     outline: none;
     background-color: transparent;
 
-    > .icon {
-      transform: rotate(-90deg);
+    .down-arrow-icon {
+      padding-top: 2px;
+      font-size: 1.4rem;
+      color: ${(p) => p.theme.colors.textColor2};
     }
   }
 `;

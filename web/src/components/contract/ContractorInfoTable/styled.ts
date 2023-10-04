@@ -5,8 +5,8 @@ export const ContractorInfoTableStyled = styled.div`
   flex-direction: column;
   gap: 1.4rem;
 
-  font-size: var(--font-size-s);
-  color: var(--text);
+  font-size: ${(p) => p.theme.sizes.textSmall};
+  color: ${(p) => p.theme.colors.textColor1};
 
   .stamp-img {
     position: absolute;
@@ -21,8 +21,8 @@ export const ContractorInfoTableStyled = styled.div`
   .sign-hint {
     text-align: right;
     padding-right: 0.8rem;
-    font-size: var(--font-size-xs);
-    color: var(--blue);
+    font-size: ${(p) => p.theme.sizes.textSmall};
+    color: ${(p) => p.theme.colors.accent};
   }
 
   .contractor-wrap {
@@ -38,7 +38,7 @@ export const ContractorInfoTableStyled = styled.div`
       align-items: center;
       font-weight: bold;
       padding: 1rem 1.2rem;
-      font-size: var(--font-size-l);
+      font-size: ${(p) => p.theme.sizes.textLazy};
     }
 
     .field-list {
@@ -62,7 +62,7 @@ export const ContractorInfoTableStyled = styled.div`
 
           > span {
             position: relative;
-            color: var(--text-hint);
+            color: ${(p) => p.theme.colors.textColor3};
           }
         }
       }
@@ -73,14 +73,14 @@ export const ContractorInfoTableStyled = styled.div`
 // styled
 export const ContractorInfoTablePrintStyled = styled.div`
   display: flex;
-  font-size: var(--font-size-2xs);
+  font-size: ${(p) => p.theme.sizes.textSmall};
 
   @media print {
     print-color-adjust: exact;
     -webkit-print-color-adjust: exact;
 
     .field-title {
-      background-color: var(--canvas-color) !important;
+      background-color: ${(p) => p.theme.colors.contentBG} !important;
     }
   }
 
@@ -93,7 +93,7 @@ export const ContractorInfoTablePrintStyled = styled.div`
 
   .contractor-wrap {
     display: flex;
-    border: 1px solid var(--text);
+    border: 1px solid ${(p) => p.theme.colors.textColor1};
     width: 100%;
 
     :first-child {
@@ -107,9 +107,9 @@ export const ContractorInfoTablePrintStyled = styled.div`
       text-align: center;
       line-height: 150%;
       font-weight: bold;
-      border-right: 1px solid var(--text);
+      border-right: 1px solid ${(p) => p.theme.colors.textColor1};
       padding: 0.4rem 0.6rem 0 0.6rem;
-      background-color: var(--canvas-color) !important;
+      background-color: ${(p) => p.theme.colors.contentBG} !important;
     }
 
     .field-list {
@@ -117,10 +117,10 @@ export const ContractorInfoTablePrintStyled = styled.div`
 
       .field-list-row {
         display: flex;
-        border-bottom: 1px solid var(--text);
+        border-bottom: 1px solid ${(p) => p.theme.colors.textColor1};
 
         .address-text {
-          font-size: var(--font-size-3xs);
+          font-size: ${(p) => p.theme.sizes.textSmall};
         }
 
         &:last-child {
@@ -131,7 +131,7 @@ export const ContractorInfoTablePrintStyled = styled.div`
           text-align: center;
           width: 6.4rem;
           font-weight: bold;
-          border-right: 1px solid var(--text);
+          border-right: 1px solid ${(p) => p.theme.colors.textColor1};
           padding: 0.5rem 0 0.3rem 0;
         }
 
@@ -143,8 +143,8 @@ export const ContractorInfoTablePrintStyled = styled.div`
           justify-content: space-between;
 
           > span {
-            color: var(--text-hint);
-            font-size: var(--font-size-3xs);
+            color: ${(p) => p.theme.colors.textColor3};
+            font-size: ${(p) => p.theme.sizes.textSmall};
           }
         }
       }

@@ -2,6 +2,7 @@ import { useField, useFormikContext } from "formik";
 import { ChangeEvent, useState, useEffect } from "react";
 import imageCompression from "browser-image-compression";
 import { UploadBoxStyled } from "./styled";
+import { BsUpload } from "react-icons/bs";
 
 interface FileUploadBoxProps {
   name: string;
@@ -56,7 +57,7 @@ function FileUploadBox({ name, label }: FileUploadBoxProps) {
         <img className="preview-img" src={preview.toString()} alt="preview" />
       ) : null}
       <div className="upload-hint">
-        <i className="material-symbols-outlined" />
+        <BsUpload className="upload-icon" />
 
         <span>{label}</span>
       </div>

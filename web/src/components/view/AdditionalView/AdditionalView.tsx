@@ -6,11 +6,17 @@ import { useSetRecoilState } from "recoil";
 import { AdditionalViewStyled } from "./styled";
 import { AddressInput, BankSelector, NextButton } from "@com/contract";
 import { Input } from "@com/common";
+import { HTMLAttributes } from "react";
 
 /**
  * [ STEP 2 ] 추가 정보 입력 폼
  */
-function AdditionalView() {
+
+interface AdditionalViewProps extends HTMLAttributes<HTMLDivElement> {
+  viewRef?: React.RefObject<HTMLDivElement>;
+}
+
+function AdditionalView({ viewRef, ...props }: AdditionalViewProps) {
   const bankNumRef = useRef<HTMLInputElement>(null);
   const bankRef = useRef<HTMLInputElement>(null);
 
@@ -29,7 +35,7 @@ function AdditionalView() {
   };
 
   return (
-    <AdditionalViewStyled>
+    <AdditionalViewStyled ref={viewRef} {...props}>
       {/* 주소 */}
       <Field
         as={AddressInput}

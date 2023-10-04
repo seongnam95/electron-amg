@@ -6,7 +6,7 @@ interface HeaderProps {
   title?: string;
   subTitle?: ReactNode;
   height?: string;
-  actionIcon?: string;
+  actionIcon?: ReactNode;
   actionOnClick?: (e: MouseEvent<HTMLButtonElement>) => void;
 }
 
@@ -29,7 +29,7 @@ function Header({
           <span className="title-text">{title}</span>
           {actionIcon ? (
             <button className="action-btn" onClick={actionOnClick}>
-              <i className={actionIcon} color="var(--text)" />
+              {actionIcon}
             </button>
           ) : null}
         </div>

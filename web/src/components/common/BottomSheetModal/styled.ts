@@ -30,12 +30,24 @@ export const BottomSheetModalStyled = styled.div<{ height?: string }>`
       justify-content: space-between;
       align-items: center;
 
-      color: var(--text);
+      color: ${(p) => p.theme.colors.textColor1};
       font-weight: bold;
       font-size: 22px;
 
       height: 2.5rem;
       margin-bottom: 4.2rem;
+
+      .close-btn {
+        border: none;
+        outline: none;
+        background-color: transparent;
+        -webkit-tap-highlight-color: transparent;
+
+        > svg {
+          width: 1.8rem;
+          color: ${(p) => p.theme.colors.textColor1};
+        }
+      }
     }
 
     .modal-content {

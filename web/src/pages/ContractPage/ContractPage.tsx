@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useFormik, FormikProvider } from "formik";
@@ -16,10 +16,12 @@ import { createWorker, updateWorker } from "@apis/worker";
 import { createContract } from "@apis/contract";
 
 import { STEPS } from "./contractSteps";
-import { ContractStyled } from "@styles/pageStyled/contractPageStyled";
 import { Header } from "@com/layout";
+import { ContractPageStyled } from "./styled";
 
-export const ContractPage = () => {
+const ContractPage = () => {
+  const divRef = useRef<HTMLDivElement>(null);
+  const [viewSize, setViewSize] = useState<string>("");
   const [contract, setContract] = useRecoilState(ContractState);
   const [Contractor, setContractor] = useRecoilState(ContractorState);
   const navigate = useNavigate();
@@ -30,29 +32,32 @@ export const ContractPage = () => {
   const currentStep = STEPS[step];
   if (!currentStep) throw new Error(`Undefined step: ${step}`);
 
-  const { id } = useParams();
   useEffect(() => {
-    if (!id) return;
-    console.log(id);
-    let isMounted = true;
+    window.scrollTo({ top: 0 });
+  }, [step]);
 
-    setContractor(initContractor);
-    fetchContractDraft(id)
-      .then((data) => {
-        const contract = data.result;
-        setContract(contract);
-      })
-      .catch(() => {
-        if (!isMounted) return;
+  const { id } = useParams();
+  // useEffect(() => {
+  //   if (!id) return;
+  //   let isMounted = true;
 
-        navigate("/");
-        alert("유효하지 않은 폼입니다.");
-      });
+  //   setContractor(initContractor);
+  //   fetchContractDraft(id)
+  //     .then((data) => {
+  //       const contract = data.result;
+  //       setContract(contract);
+  //     })
+  //     .catch(() => {
+  //       if (!isMounted) return;
 
-    return () => {
-      isMounted = false;
-    };
-  }, [id]);
+  //       // navigate("/");
+  //       // alert("유효하지 않은 폼입니다.");
+  //     });
+
+  //   return () => {
+  //     isMounted = false;
+  //   };
+  // }, [id]);
 
   const initValues: ContractorType = {
     name: "",
@@ -115,6 +120,7 @@ export const ContractPage = () => {
   );
 
   const handleSubmit = (values: ContractorType) => {
+    completeDraw();
     if (Contractor.id) {
       updateWorker(Contractor.id, values).then((res) => {
         const id = res.data.result.id;
@@ -145,7 +151,10 @@ export const ContractPage = () => {
   };
 
   return (
-    <ContractStyled>
+    <ContractPageStyled>
+      <div style={{ position: "absolute", top: 0, fontSize: "14px" }}>
+        {viewSize}
+      </div>
       <Header height="12rem" {...StepHeaders[step]} />
       <FormikProvider key={step} value={formik}>
         <motion.div
@@ -156,9 +165,11 @@ export const ContractPage = () => {
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.3 }}
         >
-          <currentStep.viewComponent />
+          <currentStep.viewComponent viewRef={divRef} />
         </motion.div>
       </FormikProvider>
-    </ContractStyled>
+    </ContractPageStyled>
   );
 };
+
+export default ContractPage;

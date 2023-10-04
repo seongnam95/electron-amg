@@ -1,11 +1,12 @@
 import { useRef, useState } from "react";
 import { motion } from "framer-motion";
-import { AdminStyled } from "@styles/pageStyled/adminPageStyled";
 import { Header } from "@com/layout";
 import { DraftContractView, FormHistoryView } from "@com/view";
 import { BottomSheetModal } from "@com/common";
+import { DraftPageStyled } from "./styled";
+import { BiHistory } from "react-icons/bi";
 
-export function Admin() {
+function DraftPage() {
   const inputRef = useRef<HTMLInputElement>(null);
   const [showModal, setShowModal] = useState<boolean>(false);
 
@@ -28,11 +29,11 @@ export function Admin() {
   };
 
   return (
-    <AdminStyled>
+    <DraftPageStyled>
       <Header
         height="4rem"
         title="AMG"
-        actionIcon="history"
+        actionIcon={<BiHistory />}
         actionOnClick={() => {
           setShowModal(true);
         }}
@@ -44,7 +45,7 @@ export function Admin() {
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.5 }}
       >
-        <DraftContractView onCopy={handleOnCopy} />
+        <DraftContractView onCopyId={handleOnCopy} />
       </motion.div>
 
       <BottomSheetModal
@@ -57,6 +58,8 @@ export function Admin() {
         <FormHistoryView onCopy={handleOnCopy} />
       </BottomSheetModal>
       <input readOnly ref={inputRef} className="link-text" />
-    </AdminStyled>
+    </DraftPageStyled>
   );
 }
+
+export default DraftPage;

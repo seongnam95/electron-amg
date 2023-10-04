@@ -5,12 +5,18 @@ import { useMutation, useQueryClient } from "react-query";
 import { DraftContractViewStyled } from "./styled";
 import { ContractType } from "@type/contract";
 import { Button, Input, Selector } from "@com/common";
+import { HTMLAttributes } from "react";
 
-interface DraftContractViewProps {
-  onCopy: (formId: string) => void;
+interface DraftContractViewProps extends HTMLAttributes<HTMLDivElement> {
+  onCopyId: (formId: string) => void;
+  inputRef?: React.RefObject<HTMLDivElement>;
 }
 
-function DraftContractView({ onCopy }: DraftContractViewProps) {
+function DraftContractView({
+  onCopyId,
+  inputRef,
+  ...props
+}: DraftContractViewProps) {
   const queryClient = useQueryClient();
   const { today, endOfMonth } = getDefaultDate();
   const { mutate } = useMutation(["draft"], createContractDraft());
@@ -42,14 +48,14 @@ function DraftContractView({ onCopy }: DraftContractViewProps) {
   const handleSubmit = (contract: ContractType) => {
     mutate(contract, {
       onSuccess: (data) => {
-        onCopy(data.result.id);
+        onCopyId(data.result.id);
         queryClient.invalidateQueries(["draft"]);
       },
     });
   };
 
   return (
-    <DraftContractViewStyled>
+    <DraftContractViewStyled ref={inputRef} {...props}>
       <Formik initialValues={initValues} onSubmit={handleSubmit}>
         {({ values }) => {
           const wageLabel =
@@ -109,7 +115,7 @@ function DraftContractView({ onCopy }: DraftContractViewProps) {
                 type="submit"
                 className="create-btn"
                 style={{ borderRadius: 0 }}
-                disabled={!values.defaultWage}
+                disabled={!values.groupName || !values.defaultWage}
               >
                 클립보드에 링크 복사
               </Button>

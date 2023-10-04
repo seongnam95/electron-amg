@@ -21,20 +21,20 @@ export const ButtonStyled = styled.button<{
   min-height: 6.8rem;
 
   padding-top: 0.4rem;
-  background-color: var(--primary);
+  background-color: ${(p) => p.theme.colors.primary};
   border-radius: 0.6rem;
 
-  font-size: var(--font-size-2xl);
+  font-size: ${(p) => p.theme.sizes.textLazy};
   color: white;
 
-  transition: all var(--ease-in-out-1);
+  transition: all 0.1s ease-in-out;
 
   &:disabled {
-    color: var(--text-hint);
-    background-color: var(--disable-color);
+    color: ${(p) => p.theme.colors.textColor3};
+    background-color: ${(p) => p.theme.colors.disableBg};
   }
 
   &:not(:disabled):active {
-    background-color: var(--text);
+    background-color: ${(p) => p.theme.colors.textColor1};
   }
 `;

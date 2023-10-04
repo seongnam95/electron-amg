@@ -1,14 +1,14 @@
 import { ContractArticle, ContractorInfoTable } from "@com/contract";
 import { DocumentViewStyled } from "./styled";
+import { HTMLAttributes } from "react";
 
-interface DocumentPageProps {
-  className?: string;
-  inputRef?: React.RefObject<HTMLDivElement>;
+interface DocumentViewProps extends HTMLAttributes<HTMLDivElement> {
+  viewRef?: React.RefObject<HTMLDivElement>;
 }
 
-function DocumentView({ className, inputRef }: DocumentPageProps) {
+function DocumentView({ viewRef, ...props }: DocumentViewProps) {
   return (
-    <DocumentViewStyled className={className} ref={inputRef}>
+    <DocumentViewStyled ref={viewRef} {...props}>
       <div className="contract-wrap">
         <div className="contract-title">용역 계약서</div>
         <div className="contract-content">

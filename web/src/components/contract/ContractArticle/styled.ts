@@ -5,16 +5,16 @@ export const ContractArticleStyled = styled.div`
   flex-direction: column;
   gap: 3.4rem;
 
-  font-size: var(--font-size-s);
+  font-size: ${(p) => p.theme.sizes.textSmall};
   font-weight: 500;
-  color: var(--text);
+  color: ${(p) => p.theme.colors.textColor1};
   line-height: 160%;
   letter-spacing: 0.8px;
 
   background-color: white;
 
   .text-accent {
-    color: var(--blue);
+    color: ${(p) => p.theme.colors.accent};
     font-weight: bold;
   }
 
@@ -33,7 +33,7 @@ export const ContractArticleStyled = styled.div`
       gap: 0.4rem;
 
       .text-title {
-        font-size: var(--font-size-l);
+        font-size: ${(p) => p.theme.sizes.textLazy};
         font-weight: bold;
         margin-bottom: 0.4rem;
       }
@@ -67,7 +67,7 @@ export const ContractArticlePrintStyled = styled.div`
   flex-direction: column;
   gap: 2.6rem;
 
-  font-size: var(--font-size-xs);
+  font-size: ${(p) => p.theme.sizes.textSmall};
   color: black;
   line-height: 110%;
   letter-spacing: 0.8px;

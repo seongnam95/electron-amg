@@ -28,14 +28,14 @@ export const DocumentViewStyled = styled.div`
   }
 
   .contract-wrap {
-    border: 1px solid var(--text);
+    border: 1px solid ${(p) => p.theme.colors.textColor1};
 
     .contract-title {
-      font-size: var(--font-size-xl);
+      font-size: ${(p) => p.theme.sizes.textLazy};
       font-weight: bold;
       text-align: center;
       padding: 0.7rem 0 0.5rem 0;
-      border-bottom: 1px solid var(--text);
+      border-bottom: 1px solid ${(p) => p.theme.colors.textColor1};
     }
 
     .contract-content {
