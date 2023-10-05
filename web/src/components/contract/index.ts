@@ -1,7 +1,7 @@
 export { default as AddressInput } from "./AddressInput";
 export { default as BankSelector } from "./BankSelector";
 export { default as ConsentCheck } from "./ConsentCheck";
-export { default as ContractArticle } from "./ContractArticle";
+export { default as ContractClause } from "./ContractClause";
 export { default as ContractorInfoTable } from "./ContractorInfoTable";
 export { default as NextButton } from "./NextButton";
 export { default as PersonalConsent } from "./PersonalConsent";

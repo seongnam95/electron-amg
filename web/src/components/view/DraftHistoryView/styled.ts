@@ -1,9 +1,14 @@
 import styled from "styled-components";
 
-export const FormHistoryViewStyled = styled.div`
+export const DraftHistoryViewStyled = styled.div`
+  position: relative;
   display: flex;
   flex-direction: column;
-  gap: 3.4rem;
+  gap: 2.4rem;
+  padding: 0 0.6rem;
+
+  width: 100%;
+  height: 100%;
 
   font-size: ${(p) => p.theme.sizes.textMedium};
   color: ${(p) => p.theme.colors.textColor1};
@@ -14,9 +19,9 @@ export const FormHistoryViewStyled = styled.div`
     section {
       display: flex;
       flex-direction: column;
-      gap: 1rem;
+      gap: 0.6rem;
       padding: 0.4rem;
-      margin-top: 1.2rem;
+      margin-top: 0.8rem;
     }
 
     .row {
@@ -41,5 +46,12 @@ export const FormHistoryViewStyled = styled.div`
       font-weight: bold;
       color: ${(p) => p.theme.colors.accent};
     }
+  }
+
+  .empty-view {
+    position: absolute;
+    left: 50%;
+    top: 24%;
+    transform: translateX(-50%);
   }
 `;

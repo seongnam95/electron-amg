@@ -9,7 +9,6 @@ export const DraftPageStyled = styled.div`
 
   width: 100vw;
   height: 100%;
-  overflow: hidden;
 
   .tab-bar-wrap {
     height: calc(100% - 5.6rem);

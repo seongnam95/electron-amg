@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
-export const ArticleViewStyled = styled.div`
+export const ConsentViewStyled = styled.div`
   display: flex;
   flex-direction: column;
   gap: 2.4rem;

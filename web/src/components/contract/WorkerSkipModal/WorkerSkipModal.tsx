@@ -8,14 +8,14 @@ interface WorkerSkipModalProps {
   worker: WorkerType;
   open?: boolean;
   onSkip?: () => void;
-  onNew?: () => void;
+  onClose?: () => void;
 }
 
 function WorkerSkipModal({
   worker,
   open = false,
   onSkip,
-  onNew,
+  onClose,
 }: WorkerSkipModalProps) {
   useEffect(() => {
     if (open) document.body.style.overflow = "hidden";
@@ -68,8 +68,8 @@ function WorkerSkipModal({
               <button type="button" className="card-btn" onClick={onSkip}>
                 <p className="btn-label">이전 계약 정보로 진행하기</p>
               </button>
-              <button type="button" className="card-btn link" onClick={onNew}>
-                <p className="btn-label">새로운 정보로 진행하기</p>
+              <button type="button" className="card-btn link" onClick={onClose}>
+                <p className="btn-label">닫기</p>
               </button>
             </div>
           </motion.div>

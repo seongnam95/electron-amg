@@ -10,9 +10,7 @@ export const DraftContractViewStyled = styled.div`
   }
 
   .create-btn {
-    position: fixed;
-    bottom: 0;
-    left: 0;
+    margin-top: 2.4rem;
   }
 
   .row-wrap {

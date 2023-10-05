@@ -1,29 +1,23 @@
-import { ReactNode, useState, ChangeEvent } from "react";
+import { ReactNode, useState, ChangeEvent, InputHTMLAttributes } from "react";
 import { ConsentCheckStyled } from "./styled";
 import { BottomSheetModal } from "@com/common";
 import { FaAngleDown } from "react-icons/fa6";
 import { AiOutlineCheck } from "react-icons/ai";
 
-interface ConsentCheckProps {
-  name?: string;
-  checked?: boolean;
+interface ConsentCheckProps extends InputHTMLAttributes<HTMLInputElement> {
   label?: string;
-  content?: ReactNode;
+  contentComponent?: ReactNode;
   contentTitle?: string;
   onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
 }
 
 const ConsentCheck = ({
   label,
-  content,
+  contentComponent,
   contentTitle,
   ...rest
 }: ConsentCheckProps) => {
   const [showContentModal, setShowContentModal] = useState<boolean>(false);
-
-  const handleMoreClick = () => {
-    if (content) setShowContentModal(true);
-  };
 
   return (
     <ConsentCheckStyled>
@@ -36,19 +30,17 @@ const ConsentCheck = ({
         <span className="btn-text">{label}</span>
       </div>
 
-      <button className="more-btn" onClick={handleMoreClick}>
+      <button className="more-btn" onClick={() => setShowContentModal(true)}>
         <FaAngleDown className="down-arrow-icon" />
       </button>
 
-      {content && (
-        <BottomSheetModal
-          open={showContentModal}
-          title={contentTitle}
-          onClose={() => setShowContentModal(false)}
-        >
-          {content}
-        </BottomSheetModal>
-      )}
+      <BottomSheetModal
+        open={showContentModal}
+        title={contentTitle}
+        onClose={() => setShowContentModal(false)}
+      >
+        {contentComponent}
+      </BottomSheetModal>
     </ConsentCheckStyled>
   );
 };

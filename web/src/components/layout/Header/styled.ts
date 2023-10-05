@@ -2,6 +2,7 @@ import styled from "styled-components";
 
 export const HeaderStyled = styled.div<{ height?: string }>`
   padding: 0 2rem;
+  margin-bottom: 3rem;
 
   .title-wrap {
     display: flex;

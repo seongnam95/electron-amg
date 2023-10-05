@@ -16,6 +16,7 @@ type CreateWorkerBody = {
 
 export function createWorker(contractor: ContractorType) {
   const { idFront, idBack, ...rest } = contractor;
+
   const body: CreateWorkerBody = {
     ...rest,
     ssn: `${idFront}${idBack}`,

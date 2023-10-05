@@ -67,8 +67,10 @@ function DraftContractView({
 
           return (
             <Form className="form-wrap">
+              {/* 그룹 명칭 */}
               <Field as={Input} name="groupName" placeholder="그룹명" />
 
+              {/* 직위 구분 */}
               <Field
                 as={Selector}
                 name="positionCode"
@@ -77,6 +79,7 @@ function DraftContractView({
                 placeholder="직위 구분"
               />
 
+              {/* 급여 구분 */}
               <section className="row-wrap">
                 <Field
                   as={Selector}
@@ -96,6 +99,7 @@ function DraftContractView({
                 />
               </section>
 
+              {/* 계약 기간 */}
               <section className="row-wrap">
                 <Field
                   as={Input}
@@ -114,7 +118,6 @@ function DraftContractView({
               <Button
                 type="submit"
                 className="create-btn"
-                style={{ borderRadius: 0 }}
                 disabled={!values.groupName || !values.defaultWage}
               >
                 클립보드에 링크 복사

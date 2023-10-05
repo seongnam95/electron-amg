@@ -76,8 +76,14 @@ const ListItem = styled.li<{ active?: boolean }>`
   font-size: ${(p) => p.theme.sizes.textLazy};
   height: 5rem;
   padding: 0 1.2rem;
+  border-radius: 0.4rem;
   font-weight: ${(p) => (p.active ? "bold" : "normal")};
+  transition: all 200ms;
   cursor: pointer;
+
+  :active {
+    background-color: rgba(60, 60, 60, 0.2);
+  }
 `;
 
 export default Selector;

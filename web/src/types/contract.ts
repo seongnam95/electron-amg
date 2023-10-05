@@ -55,3 +55,18 @@ export interface DataResponse<T> {
   count?: number;
   result: T;
 }
+
+export interface FormValueType {
+  name: string;
+  phone: string;
+  idFront: string;
+  idBack: string;
+  residence: string;
+  bank: string;
+  bankNum: string;
+  idCard: string;
+  bankBook: string;
+  contractConsent: boolean;
+  personalConsent: boolean;
+  signBase64: string;
+}

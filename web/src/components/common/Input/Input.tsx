@@ -21,8 +21,8 @@ function Input({
 }: InputProps) {
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
-    if (maxLength && value.length >= maxLength) onCompleted?.(value);
     onChange?.(e);
+    if (maxLength && value.length >= maxLength) onCompleted?.(value);
   };
 
   return (

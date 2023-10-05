@@ -1,13 +1,13 @@
 import { ContractState, ContractorState } from "@stores/contract";
 import { formatDate } from "@utils/formatDate";
 import { useRecoilValue } from "recoil";
-import { ContractArticlePrintStyled, ContractArticleStyled } from "./styled";
+import { ContractClausePrintStyled, ContractClauseStyled } from "./styled";
 
-interface ContractArticleProps {
+interface ContractClauseProps {
   printView?: boolean;
 }
 
-function ContractArticle({ printView }: ContractArticleProps) {
+function ContractClause({ printView }: ContractClauseProps) {
   const { name } = useRecoilValue(ContractorState);
   const { salary, defaultWage, startPeriod, endPeriod, groupName } =
     useRecoilValue(ContractState);
@@ -202,11 +202,11 @@ function ContractArticle({ printView }: ContractArticleProps) {
   );
   if (printView) {
     return (
-      <ContractArticlePrintStyled>{ArticleContent}</ContractArticlePrintStyled>
+      <ContractClausePrintStyled>{ArticleContent}</ContractClausePrintStyled>
     );
   } else {
-    return <ContractArticleStyled>{ArticleContent}</ContractArticleStyled>;
+    return <ContractClauseStyled>{ArticleContent}</ContractClauseStyled>;
   }
 }
 
-export default ContractArticle;
+export default ContractClause;

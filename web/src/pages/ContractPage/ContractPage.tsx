@@ -1,10 +1,10 @@
-import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useFormik, FormikProvider } from "formik";
 import { useRecoilState } from "recoil";
 
-import { ContractorType } from "@type/contract";
+import { FormValueType } from "@type/contract";
 import {
   ContractState,
   ContractorState,
@@ -18,58 +18,57 @@ import { createContract } from "@apis/contract";
 import { STEPS } from "./contractSteps";
 import { Header } from "@com/layout";
 import { ContractPageStyled } from "./styled";
+import { NextButton } from "~/components/contract";
+import { Empty } from "antd";
 
 const ContractPage = () => {
   const divRef = useRef<HTMLDivElement>(null);
-  const [viewSize, setViewSize] = useState<string>("");
   const [contract, setContract] = useRecoilState(ContractState);
   const [Contractor, setContractor] = useRecoilState(ContractorState);
   const navigate = useNavigate();
 
-  // console.log("랜더링");
-
   const [step, setStep] = useRecoilState(stepState);
   const currentStep = STEPS[step];
-  if (!currentStep) throw new Error(`Undefined step: ${step}`);
+  const lastStep = STEPS.length - 1;
 
-  useEffect(() => {
-    window.scrollTo({ top: 0 });
-  }, [step]);
+  if (!currentStep)
+    return (
+      <Empty
+        description="잘못 된 접근입니다."
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          height: "100%",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      />
+    );
+
+  useEffect(() => window.scrollTo({ top: 0 }), [step]);
 
   const { id } = useParams();
-  // useEffect(() => {
-  //   if (!id) return;
-  //   let isMounted = true;
+  useEffect(() => {
+    if (!id) return;
+    let isMounted = true;
 
-  //   setContractor(initContractor);
-  //   fetchContractDraft(id)
-  //     .then((data) => {
-  //       const contract = data.result;
-  //       setContract(contract);
-  //     })
-  //     .catch(() => {
-  //       if (!isMounted) return;
+    setContractor(initContractor);
+    fetchContractDraft(id)
+      .then((data) => {
+        const contract = data.result;
+        setContract(contract);
+      })
+      .catch(() => {
+        if (!isMounted) return;
 
-  //       // navigate("/");
-  //       // alert("유효하지 않은 폼입니다.");
-  //     });
+        // navigate("/");
+        // alert("유효하지 않은 폼입니다.");
+      });
 
-  //   return () => {
-  //     isMounted = false;
-  //   };
-  // }, [id]);
-
-  const initValues: ContractorType = {
-    name: "",
-    phone: "",
-    idFront: "",
-    idBack: "",
-    residence: "",
-    bank: "",
-    bankNum: "",
-    idCard: "",
-    bankBook: "",
-  };
+    return () => {
+      isMounted = false;
+    };
+  }, [id]);
 
   const StepHeaders = useMemo(
     () => [
@@ -119,17 +118,21 @@ const ContractPage = () => {
     []
   );
 
-  const handleSubmit = (values: ContractorType) => {
-    completeDraw();
+  const handleSubmit = (values: FormValueType) => {
+    const { contractConsent, personalConsent, signBase64, ...rest } = values;
+    // TODO : 테스트 후 completeDraw(); 삭제
+    // completeDraw();
+
+    //  기존 계약정보가 존재할 경우
     if (Contractor.id) {
-      updateWorker(Contractor.id, values).then((res) => {
+      updateWorker(Contractor.id, rest).then((res) => {
         const id = res.data.result.id;
         createContract(id, contract).then((res) => {
           if (res.data.success) completeDraw();
         });
       });
     } else {
-      createWorker(values).then((res) => {
+      createWorker(rest).then((res) => {
         const id = res.data.result.id;
         createContract(id, contract).then((res) => {
           if (res.data.success) completeDraw();
@@ -138,23 +141,20 @@ const ContractPage = () => {
     }
   };
 
-  const formik = useFormik({
-    initialValues: initValues,
-    validationSchema: currentStep.validationSchema,
-    onSubmit: handleSubmit,
-  });
-
   const completeDraw = () => {
     navigate("/complete");
     formik.resetForm();
     setStep(0);
   };
 
+  const formik = useFormik({
+    initialValues: currentStep.initialValues,
+    validationSchema: currentStep.validationSchema,
+    onSubmit: handleSubmit,
+  });
+
   return (
     <ContractPageStyled>
-      <div style={{ position: "absolute", top: 0, fontSize: "14px" }}>
-        {viewSize}
-      </div>
       <Header height="12rem" {...StepHeaders[step]} />
       <FormikProvider key={step} value={formik}>
         <motion.div
@@ -163,9 +163,10 @@ const ContractPage = () => {
           style={{ height: "100%" }}
           initial={{ opacity: 0, x: 100 }}
           animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.3 }}
+          transition={{ duration: 0.3, ease: "easeInOut" }}
         >
           <currentStep.viewComponent viewRef={divRef} />
+          <NextButton className="next-btn" lastStep={lastStep} />
         </motion.div>
       </FormikProvider>
     </ContractPageStyled>

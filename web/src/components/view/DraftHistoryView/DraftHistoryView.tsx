@@ -2,19 +2,19 @@ import { fetchAllContractDraft } from "@apis/draft";
 import { formatDate } from "@utils/formatDate";
 import { Empty } from "antd";
 import { useQuery } from "react-query";
-import { FormHistoryViewStyled } from "./styled";
+import { DraftHistoryViewStyled } from "./styled";
 import { POSITION_CODE, SALARY_CODE } from "@type/contract";
 
-interface FormHistoryViewProps {
+interface DraftHistoryViewProps {
   onCopy: (formId: string) => void;
 }
 
-function FormHistoryView({ onCopy }: FormHistoryViewProps) {
+function DraftHistoryView({ onCopy }: DraftHistoryViewProps) {
   const { data } = useQuery(["draft"], fetchAllContractDraft());
 
   return (
-    <FormHistoryViewStyled>
-      {data ? (
+    <DraftHistoryViewStyled>
+      {data && data?.length !== 0 ? (
         data
           .slice()
           .reverse()
@@ -58,10 +58,10 @@ function FormHistoryView({ onCopy }: FormHistoryViewProps) {
             );
           })
       ) : (
-        <Empty description="기록 없음" />
+        <Empty className="empty-view" description="기록 없음" />
       )}
-    </FormHistoryViewStyled>
+    </DraftHistoryViewStyled>
   );
 }
 
-export default FormHistoryView;
+export default DraftHistoryView;

@@ -1,7 +1,7 @@
 import { useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { Header } from "@com/layout";
-import { DraftContractView, FormHistoryView } from "@com/view";
+import { DraftContractView, DraftHistoryView } from "@com/view";
 import { BottomSheetModal } from "@com/common";
 import { DraftPageStyled } from "./styled";
 import { BiHistory } from "react-icons/bi";
@@ -38,6 +38,7 @@ function DraftPage() {
           setShowModal(true);
         }}
       />
+
       <motion.div
         className="content-wrap"
         style={{ height: "100%" }}
@@ -51,11 +52,9 @@ function DraftPage() {
       <BottomSheetModal
         open={showModal}
         title="이전 기록"
-        onClose={() => {
-          setShowModal(false);
-        }}
+        onClose={() => setShowModal(false)}
       >
-        <FormHistoryView onCopy={handleOnCopy} />
+        <DraftHistoryView onCopy={handleOnCopy} />
       </BottomSheetModal>
       <input readOnly ref={inputRef} className="link-text" />
     </DraftPageStyled>

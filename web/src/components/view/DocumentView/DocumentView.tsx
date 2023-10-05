@@ -1,4 +1,4 @@
-import { ContractArticle, ContractorInfoTable } from "@com/contract";
+import { ContractClause, ContractorInfoTable } from "@com/contract";
 import { DocumentViewStyled } from "./styled";
 import { HTMLAttributes } from "react";
 
@@ -12,7 +12,7 @@ function DocumentView({ viewRef, ...props }: DocumentViewProps) {
       <div className="contract-wrap">
         <div className="contract-title">용역 계약서</div>
         <div className="contract-content">
-          <ContractArticle printView />
+          <ContractClause printView />
           <ContractorInfoTable printView />
         </div>
       </div>
