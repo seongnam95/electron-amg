@@ -6,25 +6,22 @@ import { motion } from 'framer-motion';
 import { ContentStyled } from './styled';
 
 export interface ContentProps {
-  className?: string;
   children: React.ReactNode;
 }
 
-const Content = ({ className, children }: ContentProps) => {
+const Content = ({ children }: ContentProps) => {
   const { pathname } = useLocation();
 
   return (
-    <ContentStyled className={clsx('Content', className)}>
-      <div className="content">
-        <motion.div
-          key={pathname}
-          initial={{ opacity: 0, y: -12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3 }}
-        >
-          {children}
-        </motion.div>
-      </div>
+    <ContentStyled className="Content">
+      <motion.div
+        key={pathname}
+        initial={{ opacity: 0, x: -12 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ duration: 0.3, ease: 'easeInOut' }}
+      >
+        {children}
+      </motion.div>
     </ContentStyled>
   );
 };

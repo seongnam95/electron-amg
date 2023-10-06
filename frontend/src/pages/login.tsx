@@ -1,6 +1,7 @@
-import { ChangeEvent, FormEvent, useEffect, useState } from 'react';
+import { ChangeEvent, FormEvent, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { notification } from 'antd';
 import axios from 'axios';
 import { useSetRecoilState } from 'recoil';
 
@@ -19,12 +20,20 @@ interface GeoLocationI {
 }
 
 const Login = () => {
+  const passwordInputRef = useRef<HTMLInputElement>(null);
   const setUser = useSetRecoilState(userState);
   const navigate = useNavigate();
 
+  const [api, contextHolder] = notification.useNotification({ top: 120 });
+  const openNotificationWithIcon = (msg: string) => {
+    api.error({
+      message: msg,
+      duration: 2,
+    });
+  };
+
   const [geoData, setGeoData] = useState<GeoLocationI>();
   const [account, setAccount] = useState({ username: '', password: '' });
-  const [errMsg, setErrMsg] = useState<string>('');
 
   const isValid = account.username.trim() !== '' && account.password.trim() !== '';
 
@@ -75,7 +84,10 @@ const Login = () => {
           setUser(user);
           navigate('/manager/employee');
         })
-        .catch(err => setErrMsg(err.response.data.msg));
+        .catch(err => {
+          passwordInputRef.current?.focus();
+          openNotificationWithIcon(err.response.data.msg);
+        });
     }
   };
 
@@ -84,12 +96,19 @@ const Login = () => {
       <p className="title">LOGIN</p>
       <form className="login-form" onSubmit={handleOnSubmit}>
         <Input onChange={handleOnChange} id="username" icon="bx-user" />
-        <Input onChange={handleOnChange} id="password" icon="bx-lock" type="password" />
+        <Input
+          inputRef={passwordInputRef}
+          onChange={handleOnChange}
+          id="password"
+          icon="bx-lock"
+          type="password"
+        />
         <Button type="submit" disabled={!isValid} $primary $btnSize="lazy">
           로그인
         </Button>
       </form>
-      {errMsg ? <p>{errMsg}</p> : null}
+
+      {contextHolder}
     </LoginPageStyled>
   );
 };

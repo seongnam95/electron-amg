@@ -4,5 +4,5 @@ export { default as Layout } from './Layout';
 export { default as LayoutConfig } from './LayoutConfig';
 export { default as NavBar } from './NavBar';
 export { default as Section } from './Section';
-export { default as Sidebar } from './Sidebar';
+export { default as SideNavbar } from './SideNavbar';
 export { default as Titlebar } from './Titlebar';

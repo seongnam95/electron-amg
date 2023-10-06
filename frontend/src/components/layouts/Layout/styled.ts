@@ -2,7 +2,7 @@ import styled from 'styled-components';
 
 export const LayoutStyled = styled.div`
   display: flex;
-  flex-direction: column;
-  width: 100%;
-  height: calc(100% - 32px);
+
+  width: 100vw;
+  height: calc(100% - ${p => p.theme.sizes.titleBarHeight});
 `;

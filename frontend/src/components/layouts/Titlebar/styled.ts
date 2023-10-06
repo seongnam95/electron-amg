@@ -3,37 +3,52 @@ import styled from 'styled-components';
 
 export const TitlebarStyled = styled.div`
   display: flex;
+  align-items: center;
   justify-content: space-between;
-  width: 100%;
-  height: 3.2rem;
+
+  width: 100vw;
+  height: ${p => p.theme.sizes.titleBarHeight};
   background-color: ${p => p.theme.colors.titleBg};
+
   -webkit-app-region: drag;
 
   .logo {
-    height: 100%;
-
-    margin-bottom: 2rem;
-    padding: 0 1rem;
-    font-family: 'Aquatico';
-    font-size: 1.1rem;
-    color: ${p => p.theme.colors.textColorWhite2};
     display: flex;
     align-items: center;
+    gap: 1rem;
+    font-family: 'Aquatico';
+    font-size: 1.3rem;
+    padding: 0 1rem;
+    color: ${p => p.theme.colors.textColorWhite2};
+  }
 
-    img {
-      margin-right: 0.6rem;
+  .control-wrap {
+    display: flex;
+    height: 100%;
+
+    .controls:first-child {
+      align-items: center;
+
+      ::after {
+        content: '';
+        width: 1px;
+        height: 50%;
+        background-color: ${p => p.theme.colors.textColorWhite3};
+        margin: 0 0.8rem;
+      }
     }
   }
 
   .controls {
     display: flex;
+    height: 100%;
 
     > div {
       display: flex;
       align-items: center;
       justify-content: center;
 
-      width: 3.8rem;
+      width: 4rem;
       height: 100%;
 
       color: ${props => props.theme.colors.titleTextColor};
@@ -43,7 +58,7 @@ export const TitlebarStyled = styled.div`
       -webkit-app-region: no-drag;
 
       > i {
-        font-size: 1.4rem;
+        font-size: 1.6rem;
       }
 
       &:hover {
@@ -53,19 +68,6 @@ export const TitlebarStyled = styled.div`
         &.close {
           background-color: ${props => props.theme.colors.error};
         }
-      }
-
-      &.minimize > i {
-        font-size: 1.6rem;
-        margin-top: 0.4rem;
-      }
-
-      &.close > i {
-        font-size: 2.1rem;
-      }
-
-      &:first-child > i {
-        margin-top: 1px;
       }
     }
   }

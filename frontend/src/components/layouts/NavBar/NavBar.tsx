@@ -26,11 +26,6 @@ const NavBar = ({ className }: NavBarProps) => {
         link: '/manager/tracker',
         text: '근태',
       },
-      {
-        icon: 'bx-cog',
-        link: '/settings',
-        text: '설정',
-      },
     ],
     [],
   );

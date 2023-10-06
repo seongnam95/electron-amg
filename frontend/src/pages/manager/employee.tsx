@@ -8,7 +8,7 @@ import LayoutConfig from '~/components/layouts/LayoutConfig/LayoutConfig';
 import { useGroupQuery } from '~/hooks/queryHooks/useGroupQuery';
 import { EmployeePageStyled } from '~/styles/pageStyled/employeePageStyled';
 
-const Employee = () => {
+const EmployeePage = () => {
   const [selectedGroupId, setSelectedGroupId] = useState<string>('all');
   const [showEditor, setShowEditor] = useState<boolean>(false);
   const [showCreator, setShowCreator] = useState<boolean>(false);
@@ -22,15 +22,6 @@ const Employee = () => {
   return (
     <EmployeePageStyled className="EmployeePage">
       <LayoutConfig breadcrumbs={['매니저', '직원 관리']} />
-
-      {/* 그룹 사이드 바 */}
-      <GroupSideBar
-        isLoading={isGroupLoading}
-        groups={groups}
-        selected={selectedGroupId}
-        onChange={e => setSelectedGroupId(e.currentTarget.id)}
-        onCreate={() => setShowCreator(true)}
-      />
 
       <motion.div
         key={selectedGroupId}
@@ -67,4 +58,4 @@ const Employee = () => {
   );
 };
 
-export default Employee;
+export default EmployeePage;

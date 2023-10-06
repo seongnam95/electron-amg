@@ -10,7 +10,8 @@ export const sizes = {
   iconMedium: '20px',
   iconLazy: '22px',
 
-  navBarHeight: '70px',
+  titleBarHeight: '4rem',
+  navBarWidth: '8rem',
 };
 
 const _colors = {
@@ -21,12 +22,12 @@ const _colors = {
   titleBgHover: '#2C2C2C',
   titleTextColor: '#b9b9b9',
 
-  sidebarBG: '#fff',
+  sidebarBG: '#F5F5F5',
   sidebarSelected: '',
 
   selectedBg: '#F6F9FF',
   selectedHoverBg: '#F1F5FF',
-  innerBg: '#f9f9f9',
+  innerBg: '#F5F5F5',
   contentBG: '#ffffff',
   formFieldBG: '#f9f9f9',
   disableBg: '#bdbdbd',
@@ -43,6 +44,7 @@ const _colors = {
 
   textColorWhite1: '',
   textColorWhite2: '',
+  textColorWhite3: '',
 
   success: '#4caf50',
   error: '#fe6968',
@@ -50,9 +52,10 @@ const _colors = {
   accent: '#1e41d0',
 };
 
-_colors.sidebarSelected = darken(0.04, _colors.sidebarBG);
+_colors.sidebarSelected = darken(0.05, _colors.sidebarBG);
 _colors.textColorWhite1 = rgba('#FFF', 0.86);
 _colors.textColorWhite2 = rgba('#FFF', 0.66);
+_colors.textColorWhite3 = rgba('#FFF', 0.38);
 
 export const colors = _colors;
 

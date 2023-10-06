@@ -273,22 +273,28 @@ export const InitGlobalStyled = memo(createGlobalStyle`
     }
 
     .ant-notification {
-      top: 3rem !important;
+      top: 5rem !important;
     }
 
     .ant-notification-notice {
-      border-radius: 5px;
-      padding: 1.5rem 2rem;
-      width: 25rem;
-      background-color: ${props => lighten(0.1, props.theme.colors.contentBG)};
+      display: flex !important;
+      padding: 1.5rem 2rem !important;
+      max-width: 38rem !important;
+      background-color: ${props => lighten(0.1, props.theme.colors.contentBG)} !important;
       color: ${props => darken(0.15, props.theme.colors.textColor1)};
 
       .ant-notification-notice-message {
-        color: ${props => props.theme.colors.textColor1};
+        padding-top: 0.2rem !important;
+        margin-inline-start: 38px !important;
+        margin-bottom: 0 !important;
+        font-size: ${props => props.theme.sizes.textMedium} !important;
+        color: ${props => props.theme.colors.textColor1} !important;
       }
 
       .ant-notification-notice-close {
-        color: ${props => props.theme.colors.textColor1};
+        top: 17px !important;
+        color: ${props => props.theme.colors.textColor2} !important;
+        inset-inline-end: 14px !important;
       }
     }
 
