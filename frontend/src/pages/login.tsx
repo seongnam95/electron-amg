@@ -1,5 +1,4 @@
 import { ChangeEvent, FormEvent, useEffect, useState } from 'react';
-import { useMutation } from 'react-query';
 import { useNavigate } from 'react-router-dom';
 
 import axios from 'axios';
@@ -25,23 +24,24 @@ const Login = () => {
 
   const [geoData, setGeoData] = useState<GeoLocationI>();
   const [account, setAccount] = useState({ username: '', password: '' });
+  const [errMsg, setErrMsg] = useState<string>('');
 
   const isValid = account.username.trim() !== '' && account.password.trim() !== '';
 
   // 유저 위치 정보 수집
   useEffect(() => {
     const fetchGeoData = async () => {
-      try {
-        const res = await axios.get('https://geolocation-db.com/json/');
-        setGeoData({
-          ip: res.data.IPv4,
-          countryName: res.data.country_name,
-          lat: res.data.latitude,
-          lng: res.data.longitude,
-        });
-      } catch (error) {
-        console.error('Failed to fetch geo data:', error);
-      }
+      await axios
+        .get('https://geolocation-db.com/json/')
+        .then(res => {
+          setGeoData({
+            ip: res.data.IPv4,
+            countryName: res.data.country_name,
+            lat: res.data.latitude,
+            lng: res.data.longitude,
+          });
+        })
+        .catch(() => alert('IP를 조회할 수 없습니다.'));
     };
 
     fetchGeoData();
@@ -62,18 +62,20 @@ const Login = () => {
         access_ip: geoData?.ip,
       };
 
-      loginUser(body).then(res => {
-        const accessToken = res.headers['authorization'];
-        sessionStorage.setItem('authorization', accessToken);
+      loginUser(body)
+        .then(res => {
+          const accessToken = res.headers['authorization'];
+          sessionStorage.setItem('authorization', accessToken);
 
-        const user: CurrentUser = {
-          isLogin: true,
-          user: res.data,
-        };
+          const user: CurrentUser = {
+            isLogin: true,
+            user: res.data,
+          };
 
-        setUser(user);
-        navigate('/manager/employee');
-      });
+          setUser(user);
+          navigate('/manager/employee');
+        })
+        .catch(err => setErrMsg(err.response.data.msg));
     }
   };
 
@@ -87,6 +89,7 @@ const Login = () => {
           로그인
         </Button>
       </form>
+      {errMsg ? <p>{errMsg}</p> : null}
     </LoginPageStyled>
   );
 };

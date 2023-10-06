@@ -10,15 +10,15 @@ from sqlalchemy.orm import Session
 
 class CRUDWorkLog(CRUDBase[WorkLog, WorkLogCreate, WorkLogUpdate]):
     # 특정 Employee, 특정 날짜의 Worklog 불러오기
-    def get_worklog_for_worker_by_date(
+    def get_worklog_for_employee_by_date(
         self,
-        worker_id: int,
+        employee_id: int,
         date_str: str,
         db: Session,
     ) -> WorkLog:
         return (
             db.query(self.model)
-            .filter(self.model.worker_id == worker_id)
+            .filter(self.model.employee_id == employee_id)
             .filter(self.model.working_date_str == date_str)
             .first()
         )

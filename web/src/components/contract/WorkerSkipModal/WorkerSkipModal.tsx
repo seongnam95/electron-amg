@@ -1,22 +1,22 @@
 import { useEffect } from "react";
 import ReactDOM from "react-dom";
 import { AnimatePresence, motion } from "framer-motion";
-import { WorkerType } from "@type/contract";
-import { WorkerSkipModalStyled } from "./styled";
+import { EmployeeType } from "@type/contract";
+import { EmployeeSkipModalStyled } from "./styled";
 
-interface WorkerSkipModalProps {
-  employee: WorkerType;
+interface EmployeeSkipModalProps {
+  employee: EmployeeType;
   open?: boolean;
   onSkip?: () => void;
   onClose?: () => void;
 }
 
-function WorkerSkipModal({
+function EmployeeSkipModal({
   employee,
   open = false,
   onSkip,
   onClose,
-}: WorkerSkipModalProps) {
+}: EmployeeSkipModalProps) {
   useEffect(() => {
     if (open) document.body.style.overflow = "hidden";
     else document.body.style.overflow = "unset";
@@ -25,7 +25,7 @@ function WorkerSkipModal({
   return ReactDOM.createPortal(
     <AnimatePresence>
       {open && (
-        <WorkerSkipModalStyled>
+        <EmployeeSkipModalStyled>
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -73,11 +73,11 @@ function WorkerSkipModal({
               </button>
             </div>
           </motion.div>
-        </WorkerSkipModalStyled>
+        </EmployeeSkipModalStyled>
       )}
     </AnimatePresence>,
     document.body
   );
 }
 
-export default WorkerSkipModal;
+export default EmployeeSkipModal;

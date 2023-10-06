@@ -41,7 +41,7 @@ export interface ContractorType {
   bankBook: string;
 }
 
-export interface WorkerType {
+export interface EmployeeType {
   id: string;
   name: string;
   phone: string;

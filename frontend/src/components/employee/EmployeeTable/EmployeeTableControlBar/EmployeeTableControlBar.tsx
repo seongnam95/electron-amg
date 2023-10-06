@@ -5,9 +5,9 @@ import { AnimatePresence, motion } from 'framer-motion';
 import Button from '~/components/common/Button';
 import Input from '~/components/common/Input';
 
-import { StyledWorkerTableControlBar } from './styled';
+import { StyledEmployeeTableControlBar } from './styled';
 
-interface WorkerTableControlBarProps {
+interface EmployeeTableControlBarProps {
   checked: boolean;
   onMoveGroup: () => void;
   onChangeSort: (sort: Sort) => void;
@@ -19,12 +19,12 @@ export enum Sort {
   NAME = 'name',
 }
 
-const WorkerTableControlBar = ({
+const EmployeeTableControlBar = ({
   checked,
   onMoveGroup,
   onChangeSort,
   onSearch,
-}: WorkerTableControlBarProps) => {
+}: EmployeeTableControlBarProps) => {
   const [sort, setSort] = useState<Sort>(Sort.NORMAL);
 
   const handleOnChangeSort = () => {
@@ -34,7 +34,7 @@ const WorkerTableControlBar = ({
   };
 
   return (
-    <StyledWorkerTableControlBar>
+    <StyledEmployeeTableControlBar>
       <Input icon="bx-search" variations="fill" onChange={onSearch} />
 
       <AnimatePresence>
@@ -76,8 +76,8 @@ const WorkerTableControlBar = ({
           </motion.div>
         )}
       </AnimatePresence>
-    </StyledWorkerTableControlBar>
+    </StyledEmployeeTableControlBar>
   );
 };
 
-export default WorkerTableControlBar;
+export default EmployeeTableControlBar;

@@ -32,7 +32,7 @@ export const useUserQuery = ({ userId, params, onSuccess, onError }: UserQueryOp
 };
 
 export const useUserMutation = (queryKey: string[], options?: QueryDefaultOptions) => {
-  const endpoint = import.meta.env.VITE_WORKER_API_URL;
+  const endpoint = import.meta.env.VITE_EMPLOYEE_API_URL;
 
   const { createMutate, updateMutate, removeMutate, isLoading } = baseMutation<
     UserCreateBody,

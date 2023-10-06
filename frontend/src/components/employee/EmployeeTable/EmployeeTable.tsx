@@ -4,35 +4,35 @@ import { Empty, Skeleton } from 'antd';
 import { CheckboxChangeEvent } from 'antd/es/checkbox';
 import clsx from 'clsx';
 
-import { useWorkerQuery } from '~/hooks/queryHooks/useWorkerQuery';
-import { WorkerData } from '~/types/employee';
+import { useEmployeeQuery } from '~/hooks/queryHooks/useEmployeeQuery';
+import { EmployeeData } from '~/types/employee';
 
-import WorkerGroupMoveModal from '../WorkerGroupMoveModal';
-import WorkerTableControlBar, { Sort } from './WorkerTableControlBar';
-import WorkerListItem from './WorkerTableItem';
-import { WorkerTableStyled } from './styled';
+import EmployeeGroupMoveModal from '../EmployeeGroupMoveModal';
+import EmployeeTableControlBar, { Sort } from './EmployeeTableControlBar';
+import EmployeeListItem from './EmployeeTableItem';
+import { EmployeeTableStyled } from './styled';
 
-export interface WorkerTableProps {
+export interface EmployeeTableProps {
   groupId: string;
   className?: string;
-  onClick?: (employee: WorkerData) => void;
+  onClick?: (employee: EmployeeData) => void;
 }
 
-const WorkerTable = ({ groupId, className, onClick }: WorkerTableProps) => {
+const EmployeeTable = ({ groupId, className, onClick }: EmployeeTableProps) => {
   const [isOpenGroupMoveModal, setIsOpenGroupMoveModal] = useState<boolean>(false);
   const [allSelected, setAllSelected] = useState<boolean>(false);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [sort, setSort] = useState<Sort>(Sort.NORMAL);
   const [searchTerm, setSearchTerm] = useState<string>('');
 
-  const { workers, isWorkerLoading } = useWorkerQuery({
+  const { employees, isEmployeeLoading } = useEmployeeQuery({
     groupId: groupId !== 'all' ? groupId : undefined,
   });
 
-  const isEmptyWorker = workers.length === 0;
+  const isEmptyEmployee = employees.length === 0;
 
   // Employee 키워드 검색
-  const searchWorker = (data: Array<WorkerData>): Array<WorkerData> => {
+  const searchEmployee = (data: Array<EmployeeData>): Array<EmployeeData> => {
     return data.filter(
       employee =>
         employee.name.includes(searchTerm) ||
@@ -42,27 +42,27 @@ const WorkerTable = ({ groupId, className, onClick }: WorkerTableProps) => {
   };
 
   // Employee 정렬 방식
-  const sortedWorkers = useMemo(() => {
-    let filteredWorkers: Array<WorkerData> = searchTerm ? searchWorker(workers) : workers;
+  const sortedEmployees = useMemo(() => {
+    let filteredEmployees: Array<EmployeeData> = searchTerm ? searchEmployee(employees) : employees;
 
     switch (sort) {
       case Sort.NAME:
-        return [...filteredWorkers].sort((a, b) => a.name.localeCompare(b.name));
+        return [...filteredEmployees].sort((a, b) => a.name.localeCompare(b.name));
 
       case Sort.NORMAL:
       default:
-        return filteredWorkers;
+        return filteredEmployees;
     }
-  }, [workers, searchTerm, sort]);
+  }, [employees, searchTerm, sort]);
 
   // 단일 체크박스 기준 전체 체크박스 활성화/비활성화
   useEffect(() => {
-    setAllSelected(selectedIds.length === workers.length);
+    setAllSelected(selectedIds.length === employees.length);
   }, [selectedIds]);
 
   // 전체 체크박스 클릭 핸들러
   const handleOnChangeAllChecked = (e: CheckboxChangeEvent) => {
-    setSelectedIds(e.target.checked ? workers.map(employee => employee.id) : []);
+    setSelectedIds(e.target.checked ? employees.map(employee => employee.id) : []);
   };
 
   // 체크박스 클릭 핸들러
@@ -78,19 +78,19 @@ const WorkerTable = ({ groupId, className, onClick }: WorkerTableProps) => {
   };
 
   return (
-    <WorkerTableStyled className={clsx('WorkerTable', className)}>
-      <WorkerTableControlBar
+    <EmployeeTableStyled className={clsx('EmployeeTable', className)}>
+      <EmployeeTableControlBar
         onMoveGroup={() => setIsOpenGroupMoveModal(true)}
         onSearch={e => setSearchTerm(e.target.value)}
         onChangeSort={sort => setSort(sort)}
         checked={!!selectedIds.length}
       />
-      {!isWorkerLoading ? (
-        !isEmptyWorker ? (
+      {!isEmployeeLoading ? (
+        !isEmptyEmployee ? (
           <ul className="employee-list">
-            {sortedWorkers.map(employee => {
+            {sortedEmployees.map(employee => {
               return (
-                <WorkerListItem
+                <EmployeeListItem
                   key={employee.id}
                   employee={employee}
                   checked={selectedIds.includes(employee.id)}
@@ -108,13 +108,13 @@ const WorkerTable = ({ groupId, className, onClick }: WorkerTableProps) => {
         <Skeleton active style={{ padding: '2rem' }} />
       )}
 
-      <WorkerGroupMoveModal
-        selectedWorkerIds={selectedIds}
+      <EmployeeGroupMoveModal
+        selectedEmployeeIds={selectedIds}
         open={isOpenGroupMoveModal}
         onClose={() => setIsOpenGroupMoveModal(false)}
       />
-    </WorkerTableStyled>
+    </EmployeeTableStyled>
   );
 };
 
-export default WorkerTable;
+export default EmployeeTable;

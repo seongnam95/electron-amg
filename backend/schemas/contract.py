@@ -33,7 +33,7 @@ class ContractUpdate(ContractBase):
 
 class Contract(ContractBase):
     id: int
-    worker_id: int
+    employee_id: int
     create_date: datetime
     valid: bool
 
@@ -41,7 +41,7 @@ class Contract(ContractBase):
         from_attributes = True
 
 
-class WorkerContractModel(BaseModel):
+class EmployeeContractModel(BaseModel):
     valid_contract: Contract
     prev_contract_count: int
     prev_contracts: List[Contract]

@@ -1,7 +1,7 @@
 import { Modal } from 'antd';
 import styled from 'styled-components';
 
-export const WorkerGroupMoveModalStyled = styled(Modal)`
+export const EmployeeGroupMoveModalStyled = styled(Modal)`
   max-width: 34rem;
 
   .ant-modal-body {

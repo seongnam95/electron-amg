@@ -1,22 +1,22 @@
 // util.ts
 import dayjs from 'dayjs';
 
-import { CommuteData } from '~/types/worker';
+import { CommuteData } from '~/types/employee';
 
-export const groupDataByWorker = (commutes: CommuteData[]): Record<string, CommuteData[]> => {
+export const groupDataByEmployee = (commutes: CommuteData[]): Record<string, CommuteData[]> => {
   return commutes.reduce((acc, commute) => {
-    if (!acc[commute.workerId]) {
-      acc[commute.workerId] = [];
+    if (!acc[commute.employeeId]) {
+      acc[commute.employeeId] = [];
     }
-    acc[commute.workerId].push(commute);
+    acc[commute.employeeId].push(commute);
     return acc;
   }, {} as Record<string, CommuteData[]>);
 };
 
 export const findWorkingRanges = (
-  dataByWorker: Record<string, CommuteData[]>,
+  dataByEmployee: Record<string, CommuteData[]>,
 ): Record<string, CommuteData[][]> => {
-  return Object.entries(dataByWorker).reduce((acc, [workerId, data]) => {
+  return Object.entries(dataByEmployee).reduce((acc, [employeeId, data]) => {
     const sortedData = data.sort((a, b) => a.workingDay.localeCompare(b.workingDay));
     const ranges = sortedData.reduce((acc, curr, i, arr) => {
       if (
@@ -32,7 +32,7 @@ export const findWorkingRanges = (
       }
       return acc;
     }, [] as CommuteData[][]);
-    acc[workerId] = ranges;
+    acc[employeeId] = ranges;
     return acc;
   }, {} as Record<string, CommuteData[][]>);
 };

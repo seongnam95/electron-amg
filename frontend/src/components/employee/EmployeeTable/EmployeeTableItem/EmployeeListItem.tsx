@@ -8,19 +8,19 @@ import { CSSProperties } from 'styled-components';
 
 import Button from '~/components/common/Button';
 import Chip from '~/components/common/Chip';
-import { WorkerData, POSITION_CODE } from '~/types/employee';
+import { EmployeeData, POSITION_CODE } from '~/types/employee';
 import { formatPhoneNumber } from '~/utils/formatData';
 
-import { WorkerListItemStyled } from './styled';
+import { EmployeeListItemStyled } from './styled';
 
-export interface WorkerListItemProps {
-  employee: WorkerData;
+export interface EmployeeListItemProps {
+  employee: EmployeeData;
   className?: string;
   checked?: boolean;
   onChecked?: (e: CheckboxChangeEvent) => void;
 }
 
-const WorkerListItem = ({ className, employee, checked, onChecked }: WorkerListItemProps) => {
+const EmployeeListItem = ({ className, employee, checked, onChecked }: EmployeeListItemProps) => {
   const menuItemStyle: CSSProperties = {
     display: 'flex',
     alignItems: 'center',
@@ -64,7 +64,7 @@ const WorkerListItem = ({ className, employee, checked, onChecked }: WorkerListI
   );
 
   return (
-    <WorkerListItemStyled className={clsx('WorkerListItem', className)}>
+    <EmployeeListItemStyled className={clsx('EmployeeListItem', className)}>
       <Checkbox id={employee.id} onChange={onChecked} checked={checked} />
       <span className="item name">{employee.name}</span>
       <span className="item position">{POSITION_CODE[employee.positionCode]}</span>
@@ -75,8 +75,8 @@ const WorkerListItem = ({ className, employee, checked, onChecked }: WorkerListI
           <i className="bx bx-dots-vertical-rounded" />
         </Button>
       </Dropdown>
-    </WorkerListItemStyled>
+    </EmployeeListItemStyled>
   );
 };
 
-export default WorkerListItem;
+export default EmployeeListItem;

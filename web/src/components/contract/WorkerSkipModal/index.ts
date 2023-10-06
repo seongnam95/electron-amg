@@ -1,2 +1,2 @@
-export * from "./WorkerSkipModal";
-export { default } from "./WorkerSkipModal";
+export * from "./EmployeeSkipModal";
+export { default } from "./EmployeeSkipModal";

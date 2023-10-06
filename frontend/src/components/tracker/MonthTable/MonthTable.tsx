@@ -4,8 +4,8 @@ import { useRecoilValue } from 'recoil';
 import styled, { css } from 'styled-components';
 
 import { commuteMonthlySelector } from '~/stores/commute';
-import { WorkerData } from '~/types/employee';
-import { findWorkingRanges, groupDataByWorker } from '~/utils/commuteRange';
+import { EmployeeData } from '~/types/employee';
+import { findWorkingRanges, groupDataByEmployee } from '~/utils/commuteRange';
 
 import { MonthTableStyled } from './styled';
 
@@ -16,12 +16,12 @@ export interface MonthTableProps {
 const MonthTable = ({ selectedDay }: MonthTableProps) => {
   const commutes = useRecoilValue(commuteMonthlySelector(selectedDay.format('YYYYMM')));
 
-  const workers = [];
+  const employees = [];
 
   const dayCount = selectedDay.daysInMonth();
   const daysOfMonth = Array.from({ length: dayCount }, (_, i) => dayjs(selectedDay).date(i + 1));
-  const dataByWorker = groupDataByWorker(commutes);
-  const rangesByWorker = findWorkingRanges(dataByWorker);
+  const dataByEmployee = groupDataByEmployee(commutes);
+  const rangesByEmployee = findWorkingRanges(dataByEmployee);
 
   return (
     <MonthTableStyled className="MonthTable">
@@ -38,14 +38,14 @@ const MonthTable = ({ selectedDay }: MonthTableProps) => {
 
       <tbody>
         {/* Employee Row */}
-        {workers?.map((employee: WorkerData) => (
+        {employees?.map((employee: EmployeeData) => (
           <tr key={'row' + employee.id}>
             <td className="name-column">{employee.name}</td>
 
             {/* Working Day Column */}
             {daysOfMonth.map((day: Dayjs) => {
               const dayFormatted = day.format('YYYYMMDD');
-              const range = rangesByWorker[employee.id]?.find(range =>
+              const range = rangesByEmployee[employee.id]?.find(range =>
                 range.some(item => item.workingDay === dayFormatted),
               );
 

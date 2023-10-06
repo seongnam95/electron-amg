@@ -1,61 +1,61 @@
 import dayjs, { Dayjs } from 'dayjs';
 import { atom, selectorFamily } from 'recoil';
 
-import { CommuteData } from '~/types/worker';
+import { CommuteData } from '~/types/employee';
 
 const initCommute: CommuteData[] = [
   {
     id: '1',
-    workerId: '1',
+    employeeId: '1',
     workingDay: '20230801',
     startTimeStamp: 1693006200,
     endTimeStamp: 1693006300,
   },
   {
     id: '2',
-    workerId: '1',
+    employeeId: '1',
     workingDay: '20230803',
     startTimeStamp: 1693006300,
     endTimeStamp: 1693008500,
   },
   {
     id: '3',
-    workerId: '2',
+    employeeId: '2',
     workingDay: '20230802',
     startTimeStamp: 1693006200,
     endTimeStamp: 1693014300,
   },
   {
     id: '4',
-    workerId: '2',
+    employeeId: '2',
     workingDay: '20230803',
     startTimeStamp: 1693006300,
     endTimeStamp: 1693018500,
   },
   {
     id: '5',
-    workerId: '4',
+    employeeId: '4',
     workingDay: '20230803',
     startTimeStamp: 1693006300,
     endTimeStamp: 1693018500,
   },
   {
     id: '6',
-    workerId: '5',
+    employeeId: '5',
     workingDay: '20230801',
     startTimeStamp: 1693006300,
     endTimeStamp: 1693018500,
   },
   {
     id: '7',
-    workerId: '5',
+    employeeId: '5',
     workingDay: '20230802',
     startTimeStamp: 1693006300,
     endTimeStamp: 1693018500,
   },
   {
     id: '8',
-    workerId: '5',
+    employeeId: '5',
     workingDay: '20230803',
     startTimeStamp: 1693006300,
     endTimeStamp: 1693018500,

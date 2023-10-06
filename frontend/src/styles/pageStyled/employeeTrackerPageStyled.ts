@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-export const WorkerTrackerPageStyled = styled.div`
+export const EmployeeTrackerPageStyled = styled.div`
   height: 100%;
   overflow: hidden;
 

@@ -12,7 +12,7 @@ import {
   stepState,
 } from "@stores/contract";
 import { fetchContractDraft } from "@apis/draft";
-import { createWorker, updateWorker } from "@apis/employee";
+import { createEmployee, updateEmployee } from "@apis/employee";
 import { createContract } from "@apis/contract";
 
 import { STEPS } from "./contractSteps";
@@ -125,14 +125,14 @@ const ContractPage = () => {
 
     //  기존 계약정보가 존재할 경우
     if (Contractor.id) {
-      updateWorker(Contractor.id, rest).then((res) => {
+      updateEmployee(Contractor.id, rest).then((res) => {
         const id = res.data.result.id;
         createContract(id, contract).then((res) => {
           if (res.data.success) completeDraw();
         });
       });
     } else {
-      createWorker(rest).then((res) => {
+      createEmployee(rest).then((res) => {
         const id = res.data.result.id;
         createContract(id, contract).then((res) => {
           if (res.data.success) completeDraw();

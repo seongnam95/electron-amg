@@ -2,11 +2,11 @@ import { Field, useFormikContext } from "formik";
 import { useEffect, useRef, useState } from "react";
 import { useSetRecoilState } from "recoil";
 import { ContractorState, stepState } from "@stores/contract";
-import { getWorker } from "@apis/employee";
+import { getEmployee } from "@apis/employee";
 import { PersonalViewStyled } from "./styled";
-import { ContractorType, FormValueType, WorkerType } from "@type/contract";
+import { ContractorType, FormValueType, EmployeeType } from "@type/contract";
 import { Input } from "@com/common";
-import { AddressInput, WorkerSkipModal } from "@com/contract";
+import { AddressInput, EmployeeSkipModal } from "@com/contract";
 import { HTMLAttributes } from "react";
 
 /**
@@ -21,7 +21,7 @@ function PersonalView({ viewRef, ...props }: PersonalViewProps) {
   const setStep = useSetRecoilState(stepState);
   const setContractor = useSetRecoilState(ContractorState);
 
-  const [employee, setWorker] = useState<WorkerType | undefined>();
+  const [employee, setEmployee] = useState<EmployeeType | undefined>();
   const [showModal, setShowModal] = useState<boolean>(false);
 
   const nameRef = useRef<HTMLInputElement>(null);
@@ -35,22 +35,22 @@ function PersonalView({ viewRef, ...props }: PersonalViewProps) {
   useEffect(() => {
     const validateFormCheck = async () => {
       const { name, idFront, idBack } = await validateForm();
-      if (!name && !idFront && !idBack) getWorkerList();
+      if (!name && !idFront && !idBack) getEmployeeList();
     };
 
     validateFormCheck();
   }, [values, errors]);
 
   // 기존 근로자 API 호출
-  const getWorkerList = async () => {
+  const getEmployeeList = async () => {
     if (nameRef.current && frontRef.current && backRef.current) {
       const name = nameRef.current.value;
       const ssn = frontRef.current.value + backRef.current.value;
 
-      await getWorker(name, ssn)
+      await getEmployee(name, ssn)
         .then((res) => {
           const data = res.data.result;
-          setWorker(data);
+          setEmployee(data);
           setContractor((prev) => {
             return {
               ...prev,
@@ -120,7 +120,7 @@ function PersonalView({ viewRef, ...props }: PersonalViewProps) {
       />
 
       {employee && (
-        <WorkerSkipModal
+        <EmployeeSkipModal
           employee={employee}
           open={showModal}
           onClose={() => setShowModal(false)}

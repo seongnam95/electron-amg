@@ -21,7 +21,7 @@ class WorkLogUpdate(WorkLogBase):
 
 class WorkLog(WorkLogBase):
     id: int
-    worker_id: int
+    employee_id: int
 
     class Config:
         from_attributes = True

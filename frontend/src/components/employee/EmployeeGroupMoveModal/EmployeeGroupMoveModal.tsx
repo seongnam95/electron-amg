@@ -3,34 +3,34 @@ import { useState } from 'react';
 import { ModalProps, Skeleton } from 'antd';
 
 import Button from '~/components/common/Button';
+import { useEmployeeMutation, employeeKeys } from '~/hooks/queryHooks/useEmployeeQuery';
 import { useGroupQuery } from '~/hooks/queryHooks/useGroupQuery';
-import { useWorkerMutation, workerKeys } from '~/hooks/queryHooks/useWorkerQuery';
 
 import GroupItem from '../GroupSideBar/GroupItem';
-import { WorkerGroupMoveModalStyled } from './styled';
+import { EmployeeGroupMoveModalStyled } from './styled';
 
-export interface WorkerGroupMoveModalProps extends ModalProps {
-  selectedWorkerIds: string[];
+export interface EmployeeGroupMoveModalProps extends ModalProps {
+  selectedEmployeeIds: string[];
   className?: string;
   onClose?: () => void;
 }
 
-const WorkerGroupMoveModal = ({
-  selectedWorkerIds,
+const EmployeeGroupMoveModal = ({
+  selectedEmployeeIds,
   open,
   onClose,
   ...rest
-}: WorkerGroupMoveModalProps) => {
+}: EmployeeGroupMoveModalProps) => {
   const [targetGroupID, setTargetGroupID] = useState<string>('');
 
-  const { groupMoveMutate } = useWorkerMutation(workerKeys.all);
+  const { groupMoveMutate } = useEmployeeMutation(employeeKeys.all);
   const { groups, isGroupLoading } = useGroupQuery();
 
   const handleSubmit = () => {
     groupMoveMutate(
       {
         groupId: targetGroupID !== 'etc' ? targetGroupID : undefined,
-        workerIds: selectedWorkerIds,
+        employeeIds: selectedEmployeeIds,
       },
       { onSuccess: () => handleClose() },
     );
@@ -62,7 +62,7 @@ const WorkerGroupMoveModal = ({
   );
 
   return (
-    <WorkerGroupMoveModalStyled
+    <EmployeeGroupMoveModalStyled
       title="그룹 선택"
       open={open}
       centered
@@ -92,8 +92,8 @@ const WorkerGroupMoveModal = ({
       ) : (
         <Skeleton active />
       )}
-    </WorkerGroupMoveModalStyled>
+    </EmployeeGroupMoveModalStyled>
   );
 };
 
-export default WorkerGroupMoveModal;
+export default EmployeeGroupMoveModal;

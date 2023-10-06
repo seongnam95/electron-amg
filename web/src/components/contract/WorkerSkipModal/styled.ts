@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
-export const WorkerSkipModalStyled = styled.div`
+export const EmployeeSkipModalStyled = styled.div`
   position: fixed;
   display: flex;
   justify-content: center;
@@ -79,7 +79,7 @@ export const WorkerSkipModalStyled = styled.div`
 
       background-color: #333333;
 
-      .worker-info {
+      .employee-info {
         display: flex;
         flex-direction: column;
         gap: 0.6rem;

@@ -7,9 +7,9 @@ import LayoutConfig from '~/components/layouts/LayoutConfig/LayoutConfig';
 import DayTable from '~/components/tracker/DayTable';
 import MonthTable from '~/components/tracker/MonthTable';
 import { useDragScroll } from '~/hooks/useDragScroll';
-import { WorkerTrackerPageStyled } from '~/styles/pageStyled/workerTrackerPageStyled';
+import { EmployeeTrackerPageStyled } from '~/styles/pageStyled/employeeTrackerPageStyled';
 
-const WorkerTracker = () => {
+const EmployeeTracker = () => {
   const dragRef = useDragScroll();
 
   const [selectedDay, setSelectedDay] = useState<Dayjs>(dayjs());
@@ -28,7 +28,7 @@ const WorkerTracker = () => {
   }
 
   return (
-    <WorkerTrackerPageStyled>
+    <EmployeeTrackerPageStyled>
       <LayoutConfig breadcrumbs={['매니저', '근태']} />
       <div className="tracker-header">
         <Radio.Group
@@ -48,7 +48,6 @@ const WorkerTracker = () => {
           allowClear={false}
           monthCellRender={monthCellRender}
           disabledDate={disabledDate}
-          onChange={handleOnChangeDate}
         />
       </div>
 
@@ -66,8 +65,8 @@ const WorkerTracker = () => {
       <div className="table-wrap" ref={dragRef}>
         {viewType === 'month' ? <MonthTable selectedDay={selectedDay} /> : <DayTable />}
       </div>
-    </WorkerTrackerPageStyled>
+    </EmployeeTrackerPageStyled>
   );
 };
 
-export default WorkerTracker;
+export default EmployeeTracker;

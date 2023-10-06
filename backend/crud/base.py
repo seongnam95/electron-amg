@@ -75,30 +75,32 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
 
     # For Employee
 
-    def get_for_worker(
+    def get_for_employee(
         self,
         db: Session,
         *,
-        worker_id: Any,
+        employee_id: Any,
     ) -> Optional[ModelType]:
-        return db.query(self.model).filter(self.model.worker_id == worker_id).first()
+        return (
+            db.query(self.model).filter(self.model.employee_id == employee_id).first()
+        )
 
-    def get_multi_for_worker(
-        self, db: Session, *, worker_id: Any, skip: int = 0, limit: int = 100
+    def get_multi_for_employee(
+        self, db: Session, *, employee_id: Any, skip: int = 0, limit: int = 100
     ) -> List[ModelType]:
         return (
             db.query(self.model)
-            .filter(self.model.worker_id == worker_id)
+            .filter(self.model.employee_id == employee_id)
             .offset(skip)
             .limit(limit)
             .all()
         )
 
-    def create_for_worker(
-        self, db: Session, *, obj_in: CreateSchemaType, worker_id: int
+    def create_for_employee(
+        self, db: Session, *, obj_in: CreateSchemaType, employee_id: int
     ) -> ModelType:
         obj_in_data = obj_in.model_dump()
-        obj_in_data["worker_id"] = worker_id
+        obj_in_data["employee_id"] = employee_id
         db_obj = self.model(**obj_in_data)
 
         db.add(db_obj)

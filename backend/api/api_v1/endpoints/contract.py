@@ -28,16 +28,16 @@ def delete_contract(
 
 
 # 해당 근로자 계약서 생성
-@router.post("/employee/{worker_id}", response_model=BaseResponse)
+@router.post("/employee/{employee_id}", response_model=BaseResponse)
 def create_contract(
     db: Session = Depends(deps.get_db),
     *,
-    employee: schemas.Employee = Depends(deps.get_worker),
+    employee: schemas.Employee = Depends(deps.get_employee),
     contract_in: schemas.ContractCreate,
 ):
     crud.contract.create_contract(
         db=db,
-        worker_id=employee.id,
+        employee_id=employee.id,
         contract_obj=contract_in,
     )
     return BaseResponse(success=True, msg="정상 처리되었습니다.")
@@ -45,14 +45,14 @@ def create_contract(
 
 # 해당 근로자 전체 계약서 불러오기
 @router.get(
-    "/employee/{worker_id}",
-    response_model=DataResponse[schemas.WorkerContractModel],
+    "/employee/{employee_id}",
+    response_model=DataResponse[schemas.EmployeeContractModel],
 )
-def read_all_contract_for_worker(
-    employee: schemas.Employee = Depends(deps.get_worker),
+def read_all_contract_for_employee(
+    employee: schemas.Employee = Depends(deps.get_employee),
     db: Session = Depends(deps.get_db),
 ):
-    contracts = crud.contract.get_multi_for_worker(db=db, worker_id=employee.id)
+    contracts = crud.contract.get_multi_for_employee(db=db, employee_id=employee.id)
     if not contracts:
         raise HTTPException(status_code=404, detail="작성 된 계약서가 없습니다.")
 
@@ -64,7 +64,7 @@ def read_all_contract_for_worker(
         else:
             prev_contracts.append(contract)
 
-    response = schemas.WorkerContractModel(
+    response = schemas.EmployeeContractModel(
         valid_contract=valid_contract,
         prev_contract_count=len(prev_contracts),
         prev_contracts=prev_contracts,

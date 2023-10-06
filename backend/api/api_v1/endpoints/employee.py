@@ -6,10 +6,10 @@ from ... import deps
 
 from schemas import (
     Employee,
-    WorkerCreate,
-    WorkerUpdate,
-    CoveringWorkerResponse,
-    WorkerBaseResponse,
+    EmployeeCreate,
+    EmployeeUpdate,
+    CoveringEmployeeResponse,
+    EmployeeBaseResponse,
 )
 import crud, models
 from util.crypto import decrypt
@@ -19,7 +19,7 @@ from util.image_converter import image_to_base64
 router = APIRouter()
 
 
-def _decrypt_worker(employee: models.Employee):
+def _decrypt_employee(employee: models.Employee):
     return Employee(
         id=employee.id,
         name=employee.name,
@@ -35,12 +35,12 @@ def _decrypt_worker(employee: models.Employee):
     )
 
 
-def _covering_worker(employee: models.Employee):
+def _covering_employee(employee: models.Employee):
     bank_num_dec = decrypt(employee.bank_num_enc)
     bank_num_cover = (
         bank_num_dec[:4] + "*" * (len(bank_num_dec) - 7) + bank_num_dec[-3:]
     )
-    return CoveringWorkerResponse(
+    return CoveringEmployeeResponse(
         id=employee.id,
         name=employee.name,
         phone=employee.phone,
@@ -53,19 +53,19 @@ def _covering_worker(employee: models.Employee):
 
 
 # 근로자 생성
-@router.post("/", response_model=DataResponse[WorkerBaseResponse])
-def create_worker(worker_in: WorkerCreate, db: Session = Depends(deps.get_db)):
-    employee = crud.employee.create_worker(db=db, worker_in=worker_in)
+@router.post("/", response_model=DataResponse[EmployeeBaseResponse])
+def create_employee(employee_in: EmployeeCreate, db: Session = Depends(deps.get_db)):
+    employee = crud.employee.create_employee(db=db, employee_in=employee_in)
     return DataResponse(success=True, msg="정상 처리되었습니다.", result=employee)
 
 
 # 개인정보로 근로자 불러오기
-@router.get("/search/", response_model=DataResponse[CoveringWorkerResponse])
-def search_worker(name: str, ssn: str, db: Session = Depends(deps.get_db)):
-    employee = crud.employee.get_worker_search(db=db, name=name, ssn=ssn)
+@router.get("/search/", response_model=DataResponse[CoveringEmployeeResponse])
+def search_employee(name: str, ssn: str, db: Session = Depends(deps.get_db)):
+    employee = crud.employee.get_employee_search(db=db, name=name, ssn=ssn)
     if not employee:
         raise HTTPException(status_code=404, detail="해당하는 근로자를 찾을 수 없습니다.")
-    response = _covering_worker(employee)
+    response = _covering_employee(employee)
     return DataResponse(success=True, msg="정상 처리되었습니다.", result=response)
 
 
@@ -75,51 +75,51 @@ def search_worker(name: str, ssn: str, db: Session = Depends(deps.get_db)):
 
 
 # ID로 근로자 불러오기
-@router.get("/{worker_id}", response_model=DataResponse[Employee])
-def read_worker(
+@router.get("/{employee_id}", response_model=DataResponse[Employee])
+def read_employee(
     # user: User = Depends(deps.get_current_user),
-    employee: models.Employee = Depends(deps.get_worker),
+    employee: models.Employee = Depends(deps.get_employee),
 ):
-    worker_dec = _decrypt_worker(employee)
-    return DataResponse(success=True, msg="정상 처리되었습니다.", result=worker_dec)
+    employee_dec = _decrypt_employee(employee)
+    return DataResponse(success=True, msg="정상 처리되었습니다.", result=employee_dec)
 
 
 # 전체 근로자 불러오기
 @router.get("/", response_model=ListResponse[Employee])
-def read_all_worker(
+def read_all_employee(
     # user: User = Depends(deps.get_current_user),
     db: Session = Depends(deps.get_db),
     skip: int = 0,
     limit: int = 100,
 ):
-    workers = crud.employee.get_multi(db, skip=skip, limit=limit)
-    workers_dec = [_decrypt_worker(employee) for employee in workers]
+    employees = crud.employee.get_multi(db, skip=skip, limit=limit)
+    employees_dec = [_decrypt_employee(employee) for employee in employees]
 
     return ListResponse(
-        success=True, msg="정상 처리되었습니다.", count=len(workers), result=workers_dec
+        success=True, msg="정상 처리되었습니다.", count=len(employees), result=employees_dec
     )
 
 
 # 근로자 업데이트
-@router.put("/{worker_id}", response_model=DataResponse[WorkerBaseResponse])
-def update_worker(
+@router.put("/{employee_id}", response_model=DataResponse[EmployeeBaseResponse])
+def update_employee(
     # user: User = Depends(deps.get_current_user),
-    worker_in: WorkerUpdate,
+    employee_in: EmployeeUpdate,
     db: Session = Depends(deps.get_db),
-    employee: models.Employee = Depends(deps.get_worker),
+    employee: models.Employee = Depends(deps.get_employee),
 ):
-    employee = crud.employee.update_worker(
-        db=db, worker_obj=employee, worker_in=worker_in
+    employee = crud.employee.update_employee(
+        db=db, employee_obj=employee, employee_in=employee_in
     )
     return DataResponse(success=True, msg="정상 처리되었습니다.", result=employee)
 
 
 # 근로자 삭제
-@router.delete("/{worker_id}", response_model=BaseResponse)
-def delete_worker(
+@router.delete("/{employee_id}", response_model=BaseResponse)
+def delete_employee(
     # user: User = Depends(deps.get_current_user),
     db: Session = Depends(deps.get_db),
-    employee: models.Employee = Depends(deps.get_worker),
+    employee: models.Employee = Depends(deps.get_employee),
 ):
-    crud.employee.remove_worker(db=db, id=employee.id)
+    crud.employee.remove_employee(db=db, id=employee.id)
     return BaseResponse(success=True, msg="정상 처리되었습니다.")

@@ -7,22 +7,22 @@ from typing import List, Any, Optional
 
 
 class CRUDContract(CRUDBase[Contract, ContractCreate, ContractUpdate]):
-    def get_all_contract_for_worker(
-        self, db: Session, *, worker_obj: Employee, skip: int = 0, limit: int = 100
+    def get_all_contract_for_employee(
+        self, db: Session, *, employee_obj: Employee, skip: int = 0, limit: int = 100
     ) -> List[Contract]:
-        for c in worker_obj.contracts:
+        for c in employee_obj.contracts:
             print(c)
 
         return db.query(Contract).offset(skip).limit(limit).all()
 
     # 계약서 생성
     def create_contract(
-        self, db: Session, *, worker_id: int, contract_obj: ContractCreate
+        self, db: Session, *, employee_id: int, contract_obj: ContractCreate
     ) -> Contract:
-        # 해당 Worker에 유효한 Contract가 있는지 확인
+        # 해당 Employee에 유효한 Contract가 있는지 확인
         existing_valid_contracts = (
             db.query(Contract)
-            .filter(Contract.worker_id == worker_id, Contract.valid == True)
+            .filter(Contract.employee_id == employee_id, Contract.valid == True)
             .all()
         )
 
@@ -32,7 +32,7 @@ class CRUDContract(CRUDBase[Contract, ContractCreate, ContractUpdate]):
             db.commit()
 
         contract_dict = contract_obj.model_dump()
-        contract_dict["worker_id"] = worker_id
+        contract_dict["employee_id"] = employee_id
         contract_obj = Contract(**contract_dict)
 
         db.add(contract_obj)

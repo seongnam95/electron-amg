@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-export const WorkerTableStyled = styled.div`
+export const EmployeeTableStyled = styled.div`
   position: relative;
   height: 100%;
   width: 100%;
@@ -26,7 +26,7 @@ export const WorkerTableStyled = styled.div`
     }
   }
 
-  .worker-list {
+  .employee-list {
     padding: 1.4rem 0;
   }
 

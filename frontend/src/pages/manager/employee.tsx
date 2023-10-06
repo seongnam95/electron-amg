@@ -2,11 +2,11 @@ import { useState } from 'react';
 
 import { motion } from 'framer-motion';
 
-import { GroupEditorModal, GroupSideBar, GroupTitle, WorkerTable } from '@components/employee';
+import { GroupEditorModal, GroupSideBar, GroupTitle, EmployeeTable } from '@components/employee';
 
 import LayoutConfig from '~/components/layouts/LayoutConfig/LayoutConfig';
 import { useGroupQuery } from '~/hooks/queryHooks/useGroupQuery';
-import { WorkerPageStyled } from '~/styles/pageStyled/workerPageStyled';
+import { EmployeePageStyled } from '~/styles/pageStyled/employeePageStyled';
 
 const Employee = () => {
   const [selectedGroupId, setSelectedGroupId] = useState<string>('all');
@@ -20,7 +20,7 @@ const Employee = () => {
     selectedGroupId === 'all' ? '전체' : selectedGroupId === 'etc' ? '기타' : selectedGroup?.name;
 
   return (
-    <WorkerPageStyled className="WorkerPage">
+    <EmployeePageStyled className="EmployeePage">
       <LayoutConfig breadcrumbs={['매니저', '직원 관리']} />
 
       {/* 그룹 사이드 바 */}
@@ -51,7 +51,7 @@ const Employee = () => {
         />
 
         {/* 워커 테이블 */}
-        <WorkerTable groupId={selectedGroupId} />
+        <EmployeeTable groupId={selectedGroupId} />
       </motion.div>
 
       <GroupEditorModal
@@ -63,7 +63,7 @@ const Employee = () => {
           setShowCreator(false);
         }}
       />
-    </WorkerPageStyled>
+    </EmployeePageStyled>
   );
 };
 

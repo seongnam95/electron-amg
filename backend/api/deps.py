@@ -16,8 +16,8 @@ def get_db() -> Generator:
         db.close()
 
 
-def get_worker(worker_id: int, db: Session = Depends(get_db)) -> models.Employee:
-    employee = crud.employee.get(db=db, id=worker_id)
+def get_employee(employee_id: int, db: Session = Depends(get_db)) -> models.Employee:
+    employee = crud.employee.get(db=db, id=employee_id)
     if not employee:
         raise HTTPException(status_code=404, detail="해당하는 근로자를 찾을 수 없습니다.")
     return employee

@@ -16,7 +16,7 @@ export type PositionType = keyof typeof POSITION_CODE;
 export type GenderType = keyof typeof GENDER_CODE;
 
 /** 워커 데이터 인터페이스 */
-export interface WorkerData {
+export interface EmployeeData {
   id: string;
   name: string;
   phone: string;
@@ -28,16 +28,16 @@ export interface WorkerData {
 }
 
 /** 워커 생성 API 바디 */
-export type WorkerCreateBody = Pick<
-  WorkerData,
+export type EmployeeCreateBody = Pick<
+  EmployeeData,
   'name' | 'genderCode' | 'phone' | 'residence' | 'positionCode' | 'groupId'
 >;
 
 /** 워커 업데이트 API 바디 */
-export type WorkerUpdateBody = Partial<Omit<WorkerCreateBody, 'genderCode'>>;
+export type EmployeeUpdateBody = Partial<Omit<EmployeeCreateBody, 'genderCode'>>;
 
 /** 워커 그룹 이동 API 바디 */
-export type WorkerMoveGroupBody = {
+export type EmployeeMoveGroupBody = {
   groupId?: string;
-  workerIds: string[];
+  employeeIds: string[];
 };

@@ -6,4 +6,4 @@ export { default as ContractorInfoTable } from "./ContractorInfoTable";
 export { default as NextButton } from "./NextButton";
 export { default as PersonalConsent } from "./PersonalConsent";
 export { default as Signature } from "./Signature";
-export { default as WorkerSkipModal } from "./WorkerSkipModal";
+export { default as EmployeeSkipModal } from "./EmployeeSkipModal";

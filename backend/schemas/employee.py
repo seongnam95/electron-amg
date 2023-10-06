@@ -11,7 +11,7 @@ from datetime import datetime
 GENDER_CODES = [1, 2]
 
 
-class WorkerBase(BaseModel):
+class EmployeeBase(BaseModel):
     name: str
     gender_code: int
     phone: str
@@ -29,11 +29,11 @@ class WorkerBase(BaseModel):
         return value
 
 
-class WorkerCreate(WorkerBase):
+class EmployeeCreate(EmployeeBase):
     pass
 
 
-class WorkerUpdate(BaseModel):
+class EmployeeUpdate(BaseModel):
     name: Optional[str] = None
     phone: Optional[str] = None
     residence: Optional[str] = None
@@ -48,7 +48,7 @@ class WorkerUpdate(BaseModel):
         return check_update_fields(cls, values)
 
 
-class Employee(WorkerBase):
+class Employee(EmployeeBase):
     id: int
     create_date: datetime
 
@@ -56,14 +56,14 @@ class Employee(WorkerBase):
         from_attributes = True
 
 
-class WorkerBaseResponse(BaseModel):
+class EmployeeBaseResponse(BaseModel):
     id: int
     name: str
     phone: str
     residence: str
 
 
-class CoveringWorkerResponse(WorkerBaseResponse):
+class CoveringEmployeeResponse(EmployeeBaseResponse):
     bank: str
     bank_num_cover: str
     bank_book: str
