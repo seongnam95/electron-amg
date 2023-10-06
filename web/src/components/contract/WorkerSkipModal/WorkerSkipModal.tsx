@@ -5,14 +5,14 @@ import { WorkerType } from "@type/contract";
 import { WorkerSkipModalStyled } from "./styled";
 
 interface WorkerSkipModalProps {
-  worker: WorkerType;
+  employee: WorkerType;
   open?: boolean;
   onSkip?: () => void;
   onClose?: () => void;
 }
 
 function WorkerSkipModal({
-  worker,
+  employee,
   open = false,
   onSkip,
   onClose,
@@ -49,17 +49,17 @@ function WorkerSkipModal({
             <ul>
               <li>
                 <span>이름</span>
-                <span>{worker.name}</span>
+                <span>{employee.name}</span>
               </li>
               <li>
                 <span>주소</span>
-                <span>{worker.residence}</span>
+                <span>{employee.residence}</span>
               </li>
               <li>
                 <span>계좌번호</span>
                 <span>
-                  <span className="bank-name">{worker.bank}</span>
-                  {worker.bankNumCover}
+                  <span className="bank-name">{employee.bank}</span>
+                  {employee.bankNumCover}
                 </span>
               </li>
             </ul>

@@ -5,7 +5,7 @@ from db.base import Base
 
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
-from models import Worker
+from models import Employee
 
 ModelType = TypeVar("ModelType", bound=Base)
 CreateSchemaType = TypeVar("CreateSchemaType", bound=BaseModel)
@@ -73,7 +73,7 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         db.commit()
         return obj
 
-    # For Worker
+    # For Employee
 
     def get_for_worker(
         self,

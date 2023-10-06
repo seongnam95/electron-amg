@@ -1,4 +1,4 @@
-from models.worker import Worker
+from models.employee import Employee
 from crud.base import CRUDBase
 from models import Contract
 from schemas import ContractCreate, ContractUpdate
@@ -8,7 +8,7 @@ from typing import List, Any, Optional
 
 class CRUDContract(CRUDBase[Contract, ContractCreate, ContractUpdate]):
     def get_all_contract_for_worker(
-        self, db: Session, *, worker_obj: Worker, skip: int = 0, limit: int = 100
+        self, db: Session, *, worker_obj: Employee, skip: int = 0, limit: int = 100
     ) -> List[Contract]:
         for c in worker_obj.contracts:
             print(c)

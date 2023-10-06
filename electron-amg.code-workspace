@@ -5,15 +5,14 @@
     }
   ],
   "settings": {
-    "typescript.tsdk": "node_modules/typescript/lib",
     "cSpell.words": [
-      "clsx",
-      "Cryptodome",
-      "jsonable",
-      "sqlalchemy",
-      "unpad",
-      "uselist"
-    ],
-    "python.defaultInterpreterPath": "${workspaceFolder}/backend/venv/bin/python3"
+      "antd",
+      "boxicons",
+      "Flatform",
+      "initlize",
+      "Nanum",
+      "passlib",
+      "starlette"
+    ]
   }
 }

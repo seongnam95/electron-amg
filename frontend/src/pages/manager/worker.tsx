@@ -2,13 +2,13 @@ import { useState } from 'react';
 
 import { motion } from 'framer-motion';
 
-import { GroupEditorModal, GroupSideBar, GroupTitle, WorkerTable } from '@components/worker';
+import { GroupEditorModal, GroupSideBar, GroupTitle, WorkerTable } from '@components/employee';
 
 import LayoutConfig from '~/components/layouts/LayoutConfig/LayoutConfig';
 import { useGroupQuery } from '~/hooks/queryHooks/useGroupQuery';
 import { WorkerPageStyled } from '~/styles/pageStyled/workerPageStyled';
 
-const Worker = () => {
+const Employee = () => {
   const [selectedGroupId, setSelectedGroupId] = useState<string>('all');
   const [showEditor, setShowEditor] = useState<boolean>(false);
   const [showCreator, setShowCreator] = useState<boolean>(false);
@@ -34,7 +34,7 @@ const Worker = () => {
 
       <motion.div
         key={selectedGroupId}
-        className="worker-content"
+        className="employee-content"
         initial={{ opacity: 0, x: -8 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.3 }}
@@ -67,4 +67,4 @@ const Worker = () => {
   );
 };
 
-export default Worker;
+export default Employee;

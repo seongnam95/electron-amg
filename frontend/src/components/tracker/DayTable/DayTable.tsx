@@ -4,8 +4,8 @@ import dayjs, { Dayjs } from 'dayjs';
 import { useRecoilState, useRecoilValue } from 'recoil';
 
 import { commuteStore, workingDayStore } from '~/stores/commute';
-import { workerSelector } from '~/stores/worker';
-import { CommuteData } from '~/types/worker';
+import { workerSelector } from '~/stores/employee';
+import { CommuteData } from '~/types/employee';
 
 import { DayTableStyled } from './styled';
 
@@ -28,11 +28,11 @@ const DayTable = ({}: DayTableProps) => {
       </thead>
       {/* <tbody>
         {commutes.map(commute => {
-          const worker = useRecoilValue(workerSelector({ userId: commute.workerId }));
-          if (worker)
+          const employee = useRecoilValue(workerSelector({ userId: commute.workerId }));
+          if (employee)
             return (
-              <tr key={worker.id + '-' + commute.id}>
-                <td>{worker.name}</td>
+              <tr key={employee.id + '-' + commute.id}>
+                <td>{employee.name}</td>
                 <td>{dayjs.unix(commute.startTimeStamp).format('hh:mm')}</td>
                 <td>{dayjs.unix(commute.endTimeStamp).format('hh:mm')}</td>
               </tr>

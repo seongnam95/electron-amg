@@ -9,7 +9,7 @@ from sqlalchemy.orm import Session
 
 
 class CRUDWorkLog(CRUDBase[WorkLog, WorkLogCreate, WorkLogUpdate]):
-    # 특정 Worker, 특정 날짜의 Worklog 불러오기
+    # 특정 Employee, 특정 날짜의 Worklog 불러오기
     def get_worklog_for_worker_by_date(
         self,
         worker_id: int,

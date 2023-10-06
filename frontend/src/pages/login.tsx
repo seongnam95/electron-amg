@@ -72,7 +72,7 @@ const Login = () => {
         };
 
         setUser(user);
-        navigate('/manager/worker');
+        navigate('/manager/employee');
       });
     }
   };

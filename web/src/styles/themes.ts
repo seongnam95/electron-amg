@@ -2,11 +2,11 @@ import { ThemeConfig } from "antd/es/config-provider/context";
 import { darken, rgba } from "polished";
 
 export const sizes = {
-  textXSmall: "13px",
-  textSmall: "14px",
-  textMedium: "15px",
-  textLazy: "16px",
-  textXLazy: "22px",
+  textXSmall: "15px",
+  textSmall: "16px",
+  textMedium: "17px",
+  textLazy: "18px",
+  textXLazy: "24px",
 };
 
 const _colors = {

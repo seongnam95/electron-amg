@@ -4,8 +4,8 @@ from datetime import datetime
 from sqlalchemy.orm import relationship
 
 
-class Worker(Base):
-    __tablename__ = "worker"
+class Employee(Base):
+    __tablename__ = "employee"
 
     id = Column(Integer, primary_key=True, index=True)  # PK
 
@@ -21,7 +21,7 @@ class Worker(Base):
     id_card_file_nm = Column(String, nullable=False)  # 신분증
     create_date = Column(DateTime(timezone=True), nullable=False, default=datetime.now)
 
-    contracts = relationship("Contract", back_populates="worker")
+    contracts = relationship("Contract", back_populates="employee")
     worklogs = relationship(
-        "WorkLog", back_populates="worker", cascade="all, delete-orphan"
+        "WorkLog", back_populates="employee", cascade="all, delete-orphan"
     )

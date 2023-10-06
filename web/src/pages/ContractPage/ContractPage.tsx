@@ -12,7 +12,7 @@ import {
   stepState,
 } from "@stores/contract";
 import { fetchContractDraft } from "@apis/draft";
-import { createWorker, updateWorker } from "@apis/worker";
+import { createWorker, updateWorker } from "@apis/employee";
 import { createContract } from "@apis/contract";
 
 import { STEPS } from "./contractSteps";

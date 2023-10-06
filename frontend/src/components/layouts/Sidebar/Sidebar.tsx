@@ -24,7 +24,7 @@ const Sidebar = ({ className }: SidebarProps) => {
         items: [
           {
             icon: 'bx-user',
-            link: '/manager/worker',
+            link: '/manager/employee',
             text: '직원 관리',
           },
           {

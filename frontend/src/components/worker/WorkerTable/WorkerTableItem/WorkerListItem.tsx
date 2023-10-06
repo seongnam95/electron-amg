@@ -8,19 +8,19 @@ import { CSSProperties } from 'styled-components';
 
 import Button from '~/components/common/Button';
 import Chip from '~/components/common/Chip';
-import { WorkerData, POSITION_CODE } from '~/types/worker';
+import { WorkerData, POSITION_CODE } from '~/types/employee';
 import { formatPhoneNumber } from '~/utils/formatData';
 
 import { WorkerListItemStyled } from './styled';
 
 export interface WorkerListItemProps {
-  worker: WorkerData;
+  employee: WorkerData;
   className?: string;
   checked?: boolean;
   onChecked?: (e: CheckboxChangeEvent) => void;
 }
 
-const WorkerListItem = ({ className, worker, checked, onChecked }: WorkerListItemProps) => {
+const WorkerListItem = ({ className, employee, checked, onChecked }: WorkerListItemProps) => {
   const menuItemStyle: CSSProperties = {
     display: 'flex',
     alignItems: 'center',
@@ -65,10 +65,10 @@ const WorkerListItem = ({ className, worker, checked, onChecked }: WorkerListIte
 
   return (
     <WorkerListItemStyled className={clsx('WorkerListItem', className)}>
-      <Checkbox id={worker.id} onChange={onChecked} checked={checked} />
-      <span className="item name">{worker.name}</span>
-      <span className="item position">{POSITION_CODE[worker.positionCode]}</span>
-      <span className="item phone">{formatPhoneNumber(worker.phone)}</span>
+      <Checkbox id={employee.id} onChange={onChecked} checked={checked} />
+      <span className="item name">{employee.name}</span>
+      <span className="item position">{POSITION_CODE[employee.positionCode]}</span>
+      <span className="item phone">{formatPhoneNumber(employee.phone)}</span>
       <Chip $palette="warning">계약 종료</Chip>
       <Dropdown menu={{ items }} trigger={['click']} placement="bottomLeft">
         <Button $variations="icon" $btnSize="small">

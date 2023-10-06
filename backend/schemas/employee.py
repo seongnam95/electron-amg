@@ -48,7 +48,7 @@ class WorkerUpdate(BaseModel):
         return check_update_fields(cls, values)
 
 
-class Worker(WorkerBase):
+class Employee(WorkerBase):
     id: int
     create_date: datetime
 

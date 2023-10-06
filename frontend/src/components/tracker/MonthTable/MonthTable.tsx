@@ -4,7 +4,7 @@ import { useRecoilValue } from 'recoil';
 import styled, { css } from 'styled-components';
 
 import { commuteMonthlySelector } from '~/stores/commute';
-import { WorkerData } from '~/types/worker';
+import { WorkerData } from '~/types/employee';
 import { findWorkingRanges, groupDataByWorker } from '~/utils/commuteRange';
 
 import { MonthTableStyled } from './styled';
@@ -37,15 +37,15 @@ const MonthTable = ({ selectedDay }: MonthTableProps) => {
       </thead>
 
       <tbody>
-        {/* Worker Row */}
-        {workers?.map((worker: WorkerData) => (
-          <tr key={'row' + worker.id}>
-            <td className="name-column">{worker.name}</td>
+        {/* Employee Row */}
+        {workers?.map((employee: WorkerData) => (
+          <tr key={'row' + employee.id}>
+            <td className="name-column">{employee.name}</td>
 
             {/* Working Day Column */}
             {daysOfMonth.map((day: Dayjs) => {
               const dayFormatted = day.format('YYYYMMDD');
-              const range = rangesByWorker[worker.id]?.find(range =>
+              const range = rangesByWorker[employee.id]?.find(range =>
                 range.some(item => item.workingDay === dayFormatted),
               );
 
@@ -56,13 +56,13 @@ const MonthTable = ({ selectedDay }: MonthTableProps) => {
               return (
                 <td
                   className={dayjs().isSame(day, 'day') ? 'today' : ''}
-                  key={worker.id + '-' + dayFormatted}
+                  key={employee.id + '-' + dayFormatted}
                 >
                   {isWorking && (
                     <Tooltip placement="top" title={'text'}>
                       <ColorBar
-                        color={worker.positionCode === 1 ? '#29B6F6' : '#FFA726'}
-                        hoverColor={worker.positionCode === 1 ? '#4FC3F7' : '#FFB74D'}
+                        color={employee.positionCode === 1 ? '#29B6F6' : '#FFA726'}
+                        hoverColor={employee.positionCode === 1 ? '#4FC3F7' : '#FFB74D'}
                         isRangeStart={isRangeStart}
                         isRangeEnd={isRangeEnd}
                       />

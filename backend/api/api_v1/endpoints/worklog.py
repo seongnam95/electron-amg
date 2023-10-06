@@ -44,11 +44,11 @@ def read_worklog(worklog: schemas.WorkLog = Depends(get_worklog)):
 
 # 근무로그 생성 (날짜 중복 불가)
 @router.post(
-    "/worker/{worker_id}/worklog", response_model=DataResponse[schemas.WorkLog]
+    "/employee/{worker_id}/worklog", response_model=DataResponse[schemas.WorkLog]
 )
 def create_worklog(
     *,
-    worker: schemas.Worker = Depends(deps.get_worker),
+    employee: schemas.Employee = Depends(deps.get_worker),
     db: Session = Depends(deps.get_db),
     worklog_in: schemas.WorkLogCreate,
 ):
@@ -59,14 +59,14 @@ def create_worklog(
         date_str = current_datetime.strftime("%Y%m%d")
 
     existing_worklog = crud.worklog.get_worklog_for_worker_by_date(
-        db=db, worker_id=worker.id, date_str=date_str
+        db=db, worker_id=employee.id, date_str=date_str
     )
 
     if existing_worklog:
         raise HTTPException(status_code=404, detail="근무로그가 이미 존재합니다.")
 
     worklog = crud.worklog.create_for_worker(
-        db=db, obj_in=worklog_in, worker_id=worker.id
+        db=db, obj_in=worklog_in, worker_id=employee.id
     )
     return DataResponse(success=True, result=worklog)
 
@@ -95,14 +95,16 @@ def delete_worklog(
 
 
 # 근로자 전체 근무로그 조회
-@router.get("/worker/{worker_id}/worklog", response_model=ListResponse[schemas.WorkLog])
+@router.get(
+    "/employee/{worker_id}/worklog", response_model=ListResponse[schemas.WorkLog]
+)
 def read_all_worklog_for_worker(
-    worker: schemas.Worker = Depends(deps.get_worker),
+    employee: schemas.Employee = Depends(deps.get_worker),
     db: Session = Depends(deps.get_db),
     skip: int = 0,
     limit: int = 100,
 ):
     worklogs = crud.worklog.get_multi_for_worker(
-        db, worker_id=worker.id, skip=skip, limit=limit
+        db, worker_id=employee.id, skip=skip, limit=limit
     )
     return ListResponse(success=True, count=len(worklogs), result=worklogs)

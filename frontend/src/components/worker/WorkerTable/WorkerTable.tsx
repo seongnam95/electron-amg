@@ -5,7 +5,7 @@ import { CheckboxChangeEvent } from 'antd/es/checkbox';
 import clsx from 'clsx';
 
 import { useWorkerQuery } from '~/hooks/queryHooks/useWorkerQuery';
-import { WorkerData } from '~/types/worker';
+import { WorkerData } from '~/types/employee';
 
 import WorkerGroupMoveModal from '../WorkerGroupMoveModal';
 import WorkerTableControlBar, { Sort } from './WorkerTableControlBar';
@@ -15,7 +15,7 @@ import { WorkerTableStyled } from './styled';
 export interface WorkerTableProps {
   groupId: string;
   className?: string;
-  onClick?: (worker: WorkerData) => void;
+  onClick?: (employee: WorkerData) => void;
 }
 
 const WorkerTable = ({ groupId, className, onClick }: WorkerTableProps) => {
@@ -31,17 +31,17 @@ const WorkerTable = ({ groupId, className, onClick }: WorkerTableProps) => {
 
   const isEmptyWorker = workers.length === 0;
 
-  // Worker 키워드 검색
+  // Employee 키워드 검색
   const searchWorker = (data: Array<WorkerData>): Array<WorkerData> => {
     return data.filter(
-      worker =>
-        worker.name.includes(searchTerm) ||
-        worker.residence.includes(searchTerm) ||
-        worker.phone.includes(searchTerm),
+      employee =>
+        employee.name.includes(searchTerm) ||
+        employee.residence.includes(searchTerm) ||
+        employee.phone.includes(searchTerm),
     );
   };
 
-  // Worker 정렬 방식
+  // Employee 정렬 방식
   const sortedWorkers = useMemo(() => {
     let filteredWorkers: Array<WorkerData> = searchTerm ? searchWorker(workers) : workers;
 
@@ -62,7 +62,7 @@ const WorkerTable = ({ groupId, className, onClick }: WorkerTableProps) => {
 
   // 전체 체크박스 클릭 핸들러
   const handleOnChangeAllChecked = (e: CheckboxChangeEvent) => {
-    setSelectedIds(e.target.checked ? workers.map(worker => worker.id) : []);
+    setSelectedIds(e.target.checked ? workers.map(employee => employee.id) : []);
   };
 
   // 체크박스 클릭 핸들러
@@ -87,13 +87,13 @@ const WorkerTable = ({ groupId, className, onClick }: WorkerTableProps) => {
       />
       {!isWorkerLoading ? (
         !isEmptyWorker ? (
-          <ul className="worker-list">
-            {sortedWorkers.map(worker => {
+          <ul className="employee-list">
+            {sortedWorkers.map(employee => {
               return (
                 <WorkerListItem
-                  key={worker.id}
-                  worker={worker}
-                  checked={selectedIds.includes(worker.id)}
+                  key={employee.id}
+                  employee={employee}
+                  checked={selectedIds.includes(employee.id)}
                   onChecked={handleOnChangeChecked}
                 />
               );

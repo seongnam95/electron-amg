@@ -1,5 +1,5 @@
-from .worker import (
-    Worker,
+from .employee import (
+    Employee,
     WorkerCreate,
     WorkerUpdate,
     WorkerBaseResponse,

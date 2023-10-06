@@ -2,7 +2,7 @@ import { Field, useFormikContext } from "formik";
 import { useEffect, useRef, useState } from "react";
 import { useSetRecoilState } from "recoil";
 import { ContractorState, stepState } from "@stores/contract";
-import { getWorker } from "@apis/worker";
+import { getWorker } from "@apis/employee";
 import { PersonalViewStyled } from "./styled";
 import { ContractorType, FormValueType, WorkerType } from "@type/contract";
 import { Input } from "@com/common";
@@ -21,7 +21,7 @@ function PersonalView({ viewRef, ...props }: PersonalViewProps) {
   const setStep = useSetRecoilState(stepState);
   const setContractor = useSetRecoilState(ContractorState);
 
-  const [worker, setWorker] = useState<WorkerType | undefined>();
+  const [employee, setWorker] = useState<WorkerType | undefined>();
   const [showModal, setShowModal] = useState<boolean>(false);
 
   const nameRef = useRef<HTMLInputElement>(null);
@@ -119,9 +119,9 @@ function PersonalView({ viewRef, ...props }: PersonalViewProps) {
         placeholder="주소"
       />
 
-      {worker && (
+      {employee && (
         <WorkerSkipModal
-          worker={worker}
+          employee={employee}
           open={showModal}
           onClose={() => setShowModal(false)}
           onSkip={() => setStep(3)}
