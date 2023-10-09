@@ -5,15 +5,18 @@ from schemas.common import check_update_fields
 
 
 class WorkLogBase(BaseModel):
-    date_str: Optional[str] = None
-    remarks: Optional[str] = None
+    position_code: int
+    wage: int
 
 
 class WorkLogCreate(WorkLogBase):
+    working_date: Optional[str] = None
     pass
 
 
 class WorkLogUpdate(WorkLogBase):
+    wage: Optional[int] = None
+
     @model_validator(mode="before")
     def check_fields(cls, values: dict):
         return check_update_fields(cls, values)
@@ -21,6 +24,7 @@ class WorkLogUpdate(WorkLogBase):
 
 class WorkLog(WorkLogBase):
     id: int
+    working_date: str
     employee_id: int
 
     class Config:

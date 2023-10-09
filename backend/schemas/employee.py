@@ -1,6 +1,7 @@
 from typing import List, Optional
 from pydantic import BaseModel, model_validator, field_validator, validator
 from schemas.contract import ContractResponse
+from schemas.worklog import WorkLog
 from schemas.common import check_update_fields
 from util.crypto import encrypt, decrypt
 from util.image_converter import base64_to_image
@@ -71,7 +72,8 @@ class EmployeeWithContract(BaseModel):
     residence: str
     gender_code: int
     create_date: datetime
-    contract: ContractResponse
+    contract: Optional[ContractResponse]
+    worklog: Optional[WorkLog]
 
 
 class CoveringEmployeeResponse(EmployeeBaseResponse):

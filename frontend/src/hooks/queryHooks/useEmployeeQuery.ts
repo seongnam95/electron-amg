@@ -44,18 +44,12 @@ export const useEmployeeMutation = (queryKey: string[], options?: BaseQueryOptio
     isLoading: baseLoading,
   } = baseMutation<EmployeeCreateBody, EmployeeUpdateBody>(queryKey, endpoint, options);
 
-  const { mutate: groupMoveMutate, isLoading: groupMoveLoading } = useMutation(
-    employeeMoveGroupRequest,
-    initOptions,
-  );
-
-  const isLoading = baseLoading || groupMoveLoading;
+  const isLoading = baseLoading;
 
   return {
     isLoading,
     createEmployeeMutate: createMutate,
     updateEmployeeMutate: updateMutate,
     removeEmployeeMutate: removeMutate,
-    groupMoveMutate,
   };
 };

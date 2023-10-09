@@ -1,40 +1,43 @@
 import styled from 'styled-components';
 
-export const EmployeeListItemStyled = styled.li`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-
-  padding: 0.3rem 2rem;
-
-  color: ${p => p.theme.colors.textColor1};
+export const EmployeeListItemStyled = styled.tr`
+  color: ${p => p.theme.colors.textColor2};
   font-size: ${p => p.theme.sizes.textMedium};
-
   transition: all 200ms;
-  cursor: pointer;
 
-  > .item {
+  .employee-name {
     display: flex;
-    justify-content: center;
-    align-items: center;
+    gap: 1.2rem;
+    color: ${p => p.theme.colors.textColor1};
+
+    span:last-child {
+      padding-top: 0.1rem;
+    }
+  }
+
+  > td {
+    padding: 0.9rem 1.2rem 0.7rem;
     white-space: nowrap;
+  }
 
-    &.name {
-      display: flex;
-      gap: 1.4rem;
-      width: 12rem;
+  .commute-btn {
+    color: white;
+    background-color: ${p => p.theme.colors.primary};
+    border: 1px solid transparent;
+    border-radius: 2px;
+    padding: 0.2rem 0.8rem;
+    box-shadow: rgba(140, 140, 140, 0.2) 0 4px 12px;
+    transition: all 200ms;
+    cursor: pointer;
+
+    &.working {
+      border-color: ${p => p.theme.colors.primary};
+      background-color: transparent;
+      color: ${p => p.theme.colors.primary};
     }
 
-    &.position {
-      width: 5rem;
-    }
-
-    &.group-name {
-      width: 13rem;
-    }
-
-    &.wage {
-      width: 12rem;
+    :active {
+      background-color: ${p => p.theme.colors.accent};
     }
   }
 

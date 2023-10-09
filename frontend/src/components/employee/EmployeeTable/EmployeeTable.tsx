@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 
 import { Empty, Skeleton } from 'antd';
-import { CheckboxChangeEvent } from 'antd/es/checkbox';
+import Checkbox, { CheckboxChangeEvent } from 'antd/es/checkbox';
 import clsx from 'clsx';
 
 import { useEmployeeQuery } from '~/hooks/queryHooks/useEmployeeQuery';
@@ -79,28 +79,44 @@ const EmployeeTable = ({ className, onClick }: EmployeeTableProps) => {
         onChangeSort={sort => setSort(sort)}
         checked={!!selectedIds.length}
       />
-      {!isEmployeeLoading ? (
-        !isEmptyEmployee ? (
-          <ul className="employee-list">
-            {sortedEmployees.map(employee => {
-              return (
-                <EmployeeListItem
-                  key={employee.id}
-                  employee={employee}
-                  checked={selectedIds.includes(employee.id)}
-                  onChecked={handleOnChangeChecked}
-                />
-              );
-            })}
-          </ul>
+      <div className="table-wrap">
+        {!isEmployeeLoading ? (
+          !isEmptyEmployee ? (
+            <table className="employee-table">
+              <thead>
+                <tr>
+                  <th>
+                    <Checkbox />
+                  </th>
+                  <th>이름</th>
+                  <th>연락처</th>
+                  <th>거주지</th>
+                  <th>그룹</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                {sortedEmployees.map(employee => {
+                  return (
+                    <EmployeeListItem
+                      key={employee.id}
+                      employee={employee}
+                      checked={selectedIds.includes(employee.id)}
+                      onChecked={handleOnChangeChecked}
+                    />
+                  );
+                })}
+              </tbody>
+            </table>
+          ) : (
+            <div className="empty-wrap">
+              <Empty description="그룹이 비었습니다" />
+            </div>
+          )
         ) : (
-          <div className="empty-wrap">
-            <Empty description="그룹이 비었습니다" />
-          </div>
-        )
-      ) : (
-        <Skeleton active style={{ padding: '2rem' }} />
-      )}
+          <Skeleton active style={{ padding: '2rem' }} />
+        )}
+      </div>
     </EmployeeTableStyled>
   );
 };

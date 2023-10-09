@@ -4,7 +4,6 @@ import { motion } from 'framer-motion';
 
 import { EmployeeSidebar, EmployeeTable } from '@components/employee';
 
-import LayoutConfig from '~/components/layouts/LayoutConfig/LayoutConfig';
 import { EmployeePageStyled } from '~/styles/pageStyled/employeePageStyled';
 
 const EmployeePage = () => {

@@ -5,8 +5,8 @@ export const StyledEmployeeTableControlBar = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  height: 6rem;
-  padding: 0 2rem;
+  height: 7rem;
+  padding: 1.2rem 2rem 0;
   border-bottom: 1px solid ${p => p.theme.colors.borderColor};
 
   > .control-wrap {

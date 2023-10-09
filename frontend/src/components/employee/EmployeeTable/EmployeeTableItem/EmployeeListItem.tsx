@@ -8,6 +8,7 @@ import { CSSProperties } from 'styled-components';
 
 import Button from '~/components/common/Button';
 import Chip from '~/components/common/Chip';
+import { useWorklogMutation, worklogKeys } from '~/hooks/queryHooks/useWorklogQuery';
 import { POSITION_CODE, POSITION_COLORS } from '~/types/contract';
 import { EmployeeData } from '~/types/employee';
 import { formatPhoneNumber } from '~/utils/formatData';
@@ -22,72 +23,46 @@ export interface EmployeeListItemProps {
 }
 
 const EmployeeListItem = ({ className, employee, checked, onChecked }: EmployeeListItemProps) => {
-  const { contract } = employee;
-  const menuItemStyle: CSSProperties = {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    gap: '32px',
-    padding: '0 4px',
-  };
-
-  const items: ItemType[] = useMemo(
-    () => [
-      {
-        key: 'create-contract',
-        label: (
-          <p style={menuItemStyle}>
-            <i className="bx bx-dock-top" />
-            그룹 이동
-          </p>
-        ),
-      },
-      {
-        key: 'group-edit',
-        label: (
-          <p style={menuItemStyle}>
-            <i className="bx bx-edit" />
-            그룹 편집
-          </p>
-        ),
-      },
-      {
-        key: 'group-remove',
-        danger: true,
-        label: (
-          <p style={menuItemStyle}>
-            <i className="bx bx-trash" />
-            그룹 삭제
-          </p>
-        ),
-      },
-    ],
-    [],
+  const { contract, worklog } = employee;
+  const isWorking = !!worklog;
+  const { createWorklogMutate, removeWorklogMutate } = useWorklogMutation(
+    isWorking ? worklogKeys.byId(worklog.id) : worklogKeys.all,
   );
+
+  const handleAttendance = () => {
+    if (isWorking) removeWorklogMutate(worklog.id);
+    else
+      createWorklogMutate({
+        wage: contract.defaultWage,
+        positionCode: contract.positionCode,
+      });
+  };
 
   return (
     <EmployeeListItemStyled className={clsx('EmployeeListItem', className)}>
-      <Checkbox id={employee.id} onChange={onChecked} checked={checked} />
-      <span className="item name">
-        <Chip
-          $color="white"
-          $borderColor="transparent"
-          $bgColor={POSITION_COLORS[contract.positionCode]}
-        >
-          {POSITION_CODE[contract.positionCode]}
-        </Chip>
-        {employee.name}
-      </span>
-      <span className="item phone">{formatPhoneNumber(employee.phone)}</span>
-      <span className="item group-name">{contract.groupName}</span>
-      <span className="item wage">{contract.defaultWage.toLocaleString()}원</span>
-
-      <Chip $palette="warning">계약 종료</Chip>
-      <Dropdown menu={{ items }} trigger={['click']} placement="bottomLeft">
-        <Button $variations="icon" $btnSize="small">
-          <i className="bx bx-dots-vertical-rounded" />
-        </Button>
-      </Dropdown>
+      <td>
+        <Checkbox id={employee.id} onChange={onChecked} checked={checked} />
+      </td>
+      <td>
+        <div className="employee-name">
+          <Chip
+            $color="white"
+            $borderColor="transparent"
+            $bgColor={POSITION_COLORS[contract.positionCode]}
+          >
+            {POSITION_CODE[contract.positionCode]}
+          </Chip>
+          <span>{employee.name}</span>
+        </div>
+      </td>
+      <td>{formatPhoneNumber(employee.phone)}</td>
+      <td>{employee.residence}</td>
+      <td className="text-accent">{contract.groupName}</td>
+      <td>
+        <button className={clsx('commute-btn', worklog && 'working')} onClick={handleAttendance}>
+          {worklog ? '출근취소' : '출근처리'}
+        </button>
+      </td>
     </EmployeeListItemStyled>
   );
 };

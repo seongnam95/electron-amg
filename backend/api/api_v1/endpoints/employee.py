@@ -58,7 +58,7 @@ def read_all_employee_with_contract(
     # user: User = Depends(deps.get_current_user),
     db: Session = Depends(deps.get_db),
 ):
-    employees = crud.employee.get_all_employee_with_contracts(db)
+    employees = crud.employee.get_all_employee(db)
 
     return ListResponse(
         success=True, msg="정상 처리되었습니다.", count=len(employees), result=employees

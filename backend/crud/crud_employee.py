@@ -1,7 +1,8 @@
 from typing import List, Optional
+from datetime import date
 
 from crud.base import CRUDBase
-from models import Employee, Contract
+from models import Employee, Contract, WorkLog
 from schemas import (
     EmployeeCreate,
     EmployeeUpdate,
@@ -78,12 +79,14 @@ class CRUDEmployee(CRUDBase[Employee, EmployeeCreate, EmployeeUpdate]):
         return None
 
     #
-    def get_all_employee_with_contracts(self, db: Session):
+    def get_all_employee(self, db: Session):
         employees = db.query(Employee).all()
 
         new_employees = []
         for employee in employees:
             contracts: List[Contract] = employee.contracts
+            worklogs: List[WorkLog] = employee.worklogs
+
             contract = next(
                 (contract for contract in contracts if contract.valid), None
             )
@@ -100,6 +103,12 @@ class CRUDEmployee(CRUDBase[Employee, EmployeeCreate, EmployeeUpdate]):
                     create_date=contract.create_date,
                 )
 
+            today = date.today().strftime("%Y-%m-%d")
+            worklog = next(
+                (worklog for worklog in worklogs if worklog.working_date == today),
+                None,
+            )
+
             new_employees.append(
                 EmployeeWithContract(
                     id=employee.id,
@@ -109,6 +118,7 @@ class CRUDEmployee(CRUDBase[Employee, EmployeeCreate, EmployeeUpdate]):
                     gender_code=employee.gender_code,
                     create_date=employee.create_date,
                     contract=contract_obj,
+                    worklog=worklog,
                 )
             )
 

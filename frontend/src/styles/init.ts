@@ -314,7 +314,7 @@ export const InitGlobalStyled = memo(createGlobalStyle`
 
   /* ant 체크박스 */
   .ant-checkbox .ant-checkbox-inner {
-    background-color: transparent;
+    background-color: white;
   }
 
   .ant-checkbox-checked .ant-checkbox-inner {
