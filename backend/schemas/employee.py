@@ -1,5 +1,6 @@
-from typing import Optional
+from typing import List, Optional
 from pydantic import BaseModel, model_validator, field_validator, validator
+from schemas.contract import ContractResponse
 from schemas.common import check_update_fields
 from util.crypto import encrypt, decrypt
 from util.image_converter import base64_to_image
@@ -61,6 +62,16 @@ class EmployeeBaseResponse(BaseModel):
     name: str
     phone: str
     residence: str
+
+
+class EmployeeWithContract(BaseModel):
+    id: int
+    name: str
+    phone: str
+    residence: str
+    gender_code: int
+    create_date: datetime
+    contract: ContractResponse
 
 
 class CoveringEmployeeResponse(EmployeeBaseResponse):

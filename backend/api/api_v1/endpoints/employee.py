@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.encoders import jsonable_encoder
 from sqlalchemy.orm import Session
+from schemas.employee import EmployeeWithContract
 from response_model import BaseResponse, ListResponse, DataResponse
 from ... import deps
 
@@ -17,39 +18,6 @@ from util.image_converter import image_to_base64
 
 
 router = APIRouter()
-
-
-def _decrypt_employee(employee: models.Employee):
-    return Employee(
-        id=employee.id,
-        name=employee.name,
-        phone=employee.phone,
-        ssn=decrypt(employee.ssn_enc),
-        gender_code=employee.gender_code,
-        bank=employee.bank,
-        bank_num=decrypt(employee.bank_num_enc),
-        residence=employee.residence,
-        bank_book=image_to_base64(employee.bank_book_file_nm),
-        id_card=image_to_base64(employee.id_card_file_nm),
-        create_date=employee.create_date,
-    )
-
-
-def _covering_employee(employee: models.Employee):
-    bank_num_dec = decrypt(employee.bank_num_enc)
-    bank_num_cover = (
-        bank_num_dec[:4] + "*" * (len(bank_num_dec) - 7) + bank_num_dec[-3:]
-    )
-    return CoveringEmployeeResponse(
-        id=employee.id,
-        name=employee.name,
-        phone=employee.phone,
-        bank=employee.bank,
-        bank_num_cover=bank_num_cover,
-        residence=employee.residence,
-        bank_book=image_to_base64(employee.bank_book_file_nm),
-        id_card=image_to_base64(employee.id_card_file_nm),
-    )
 
 
 # 근로자 생성
@@ -85,7 +53,20 @@ def read_employee(
 
 
 # 전체 근로자 불러오기
-@router.get("/", response_model=ListResponse[Employee])
+@router.get("/", response_model=ListResponse[EmployeeWithContract])
+def read_all_employee_with_contract(
+    # user: User = Depends(deps.get_current_user),
+    db: Session = Depends(deps.get_db),
+):
+    employees = crud.employee.get_all_employee_with_contracts(db)
+
+    return ListResponse(
+        success=True, msg="정상 처리되었습니다.", count=len(employees), result=employees
+    )
+
+
+# 전체 근로자 불러오기
+@router.get("/only/", response_model=ListResponse[Employee])
 def read_all_employee(
     # user: User = Depends(deps.get_current_user),
     db: Session = Depends(deps.get_db),
@@ -123,3 +104,38 @@ def delete_employee(
 ):
     crud.employee.remove_employee(db=db, id=employee.id)
     return BaseResponse(success=True, msg="정상 처리되었습니다.")
+
+
+# 암호화
+def _decrypt_employee(employee: models.Employee):
+    return Employee(
+        id=employee.id,
+        name=employee.name,
+        phone=employee.phone,
+        ssn=decrypt(employee.ssn_enc),
+        gender_code=employee.gender_code,
+        bank=employee.bank,
+        bank_num=decrypt(employee.bank_num_enc),
+        residence=employee.residence,
+        bank_book=image_to_base64(employee.bank_book_file_nm),
+        id_card=image_to_base64(employee.id_card_file_nm),
+        create_date=employee.create_date,
+    )
+
+
+# 복호화 및 커버링
+def _covering_employee(employee: models.Employee):
+    bank_num_dec = decrypt(employee.bank_num_enc)
+    bank_num_cover = (
+        bank_num_dec[:4] + "*" * (len(bank_num_dec) - 7) + bank_num_dec[-3:]
+    )
+    return CoveringEmployeeResponse(
+        id=employee.id,
+        name=employee.name,
+        phone=employee.phone,
+        bank=employee.bank,
+        bank_num_cover=bank_num_cover,
+        residence=employee.residence,
+        bank_book=image_to_base64(employee.bank_book_file_nm),
+        id_card=image_to_base64(employee.id_card_file_nm),
+    )

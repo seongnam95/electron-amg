@@ -9,7 +9,7 @@ export interface InputProps extends InputStyledProps, InputHTMLAttributes<HTMLIn
   inputRef?: RefObject<HTMLInputElement>;
 }
 
-const Input = ({ className, icon, inputRef, ...rest }: InputProps) => {
+const Input = ({ className, icon, width, inputRef, ...rest }: InputProps) => {
   const { fullWidth, variations = 'fill' } = rest;
   const styled = { fullWidth, variations };
 

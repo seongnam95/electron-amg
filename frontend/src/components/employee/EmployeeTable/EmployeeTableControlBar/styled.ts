@@ -5,14 +5,18 @@ export const StyledEmployeeTableControlBar = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  height: 5.4rem;
-  padding: 0 1.4rem;
+  height: 6rem;
+  padding: 0 2rem;
   border-bottom: 1px solid ${p => p.theme.colors.borderColor};
 
-  > .section {
-    position: absolute;
-    right: 1.4rem;
+  > .control-wrap {
     display: flex;
-    gap: 0.4rem;
+    align-items: center;
+    gap: 2.4rem;
+
+    > .tool-wrap {
+      display: flex;
+      gap: 0.4rem;
+    }
   }
 `;

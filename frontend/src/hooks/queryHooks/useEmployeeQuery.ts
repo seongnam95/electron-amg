@@ -1,66 +1,33 @@
-import { useMutation, useQuery, useQueryClient } from 'react-query';
+import { useMutation, useQuery } from 'react-query';
 
 import { baseFetch } from '~/api/base';
 import { employeeMoveGroupRequest } from '~/api/group';
 import { EmployeeCreateBody, EmployeeData, EmployeeUpdateBody } from '~/types/employee';
 
-import {
-  BaseMultiDataParams,
-  BaseQueryOptions,
-  QueryDefaultOptions,
-  baseMutation,
-} from './useBaseQuery';
-
-export interface EmployeeQueryParams extends BaseMultiDataParams {
-  groupId?: string;
-}
+import { BaseQueryOptions, baseMutation } from './useBaseQuery';
 
 export interface EmployeeQueryOptions extends BaseQueryOptions {
   employeeId?: string;
-  groupId?: string;
-  params?: EmployeeQueryParams;
 }
 
 export const employeeKeys = {
   all: ['employee'],
   byId: (employeeId: string) => [...employeeKeys.all, employeeId],
-  byGroup: (groupId: string) => [...employeeKeys.all, 'group', groupId],
 };
 
-export const useEmployeeQuery = ({
-  employeeId,
-  groupId,
-  params,
-  onSuccess,
-  onError,
-}: EmployeeQueryOptions = {}) => {
-  const isUnaffiliated = groupId === 'etc';
-  const baseEndpoint = import.meta.env.VITE_EMPLOYEE_API_URL;
-  const endpoint = isUnaffiliated ? `${baseEndpoint}unaffiliated/` : baseEndpoint;
+export const useEmployeeQuery = ({ employeeId, onSuccess, onError }: EmployeeQueryOptions = {}) => {
+  const endpoint = import.meta.env.VITE_EMPLOYEE_API_URL;
 
-  const queryKey = employeeId
-    ? employeeKeys.byId(employeeId)
-    : groupId
-    ? employeeKeys.byGroup(groupId)
-    : employeeKeys.all;
-
-  const newParams: EmployeeQueryParams = {
-    ...params,
-    groupId: !isUnaffiliated ? groupId : undefined,
-  };
+  const queryKey = employeeId ? employeeKeys.byId(employeeId) : employeeKeys.all;
 
   const {
     data: response,
     isLoading: isEmployeeLoading,
     isError: isEmployeeError,
-  } = useQuery(
-    queryKey,
-    baseFetch<EmployeeData, EmployeeQueryParams>(endpoint, employeeId, newParams),
-    {
-      onSuccess: onSuccess,
-      onError: onError,
-    },
-  );
+  } = useQuery(queryKey, baseFetch<EmployeeData>(endpoint, employeeId), {
+    onSuccess: onSuccess,
+    onError: onError,
+  });
 
   const employees = response ? response.result : [];
   return { response, employees, isEmployeeLoading, isEmployeeError };

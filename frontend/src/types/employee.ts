@@ -1,42 +1,30 @@
-export const POSITION_CODE = {
-  1: '팀장',
-  2: '부팀장',
-  3: '알바',
-  4: '기사',
-  5: '홍보단',
-  6: '기타',
-} as const;
+import { ContractData } from './contract';
 
 export const GENDER_CODE = {
   1: '남자',
   2: '여자',
 } as const;
 
-export type PositionType = keyof typeof POSITION_CODE;
 export type GenderType = keyof typeof GENDER_CODE;
 
-/** 워커 데이터 인터페이스 */
+/** 근로자 데이터 인터페이스 */
 export interface EmployeeData {
   id: string;
   name: string;
   phone: string;
   residence: string;
   genderCode: GenderType;
-  positionCode: PositionType;
   createDate: string;
-  groupId?: string;
+  contract: ContractData;
 }
 
-/** 워커 생성 API 바디 */
-export type EmployeeCreateBody = Pick<
-  EmployeeData,
-  'name' | 'genderCode' | 'phone' | 'residence' | 'positionCode' | 'groupId'
->;
+/** 근로자 생성 API 바디 */
+export type EmployeeCreateBody = Pick<EmployeeData, 'name' | 'genderCode' | 'phone' | 'residence'>;
 
-/** 워커 업데이트 API 바디 */
+/** 근로자 업데이트 API 바디 */
 export type EmployeeUpdateBody = Partial<Omit<EmployeeCreateBody, 'genderCode'>>;
 
-/** 워커 그룹 이동 API 바디 */
+/** 근로자 그룹 이동 API 바디 */
 export type EmployeeMoveGroupBody = {
   groupId?: string;
   employeeIds: string[];

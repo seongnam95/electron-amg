@@ -41,6 +41,16 @@ class Contract(ContractBase):
         from_attributes = True
 
 
+class ContractResponse(BaseModel):
+    salary: str
+    position_code: int
+    group_name: str
+    default_wage: int
+    start_period: date
+    end_period: date
+    create_date: datetime
+
+
 class EmployeeContractModel(BaseModel):
     valid_contract: Contract
     prev_contract_count: int

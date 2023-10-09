@@ -71,71 +71,6 @@ export const InitGlobalStyled = memo(createGlobalStyle`
     background-color: ${props => props.theme.colors.contentBG};
     color: ${props => props.theme.colors.textColor1};
 
-    .ant-switch {
-      height: 28px;
-      width: 56px;
-
-      .ant-switch-handle {
-        width: 24px;
-        height: 24px;
-
-        &::before {
-          border-radius: 50%;
-        }
-      }
-
-      .ant-switch-inner {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-
-        .ant-switch-inner-checked,
-        .ant-switch-inner-unchecked {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-        }
-
-        .ant-switch-inner-unchecked {
-          margin-top: 0;
-        }
-      }
-
-      &.ant-switch-checked {
-        background-color: ${props => props.theme.colors.primary};
-      }
-  
-      &.ant-switch-checked .ant-switch-handle {
-        inset-inline-start: calc(100% - 24px - 2px);
-      }
-    }
-
-    .rightButtons {
-      display: flex;
-      justify-content: flex-end;
-      margin-top: 1rem;
-    }
-
-    /**
-     * antd-table 스타일 커스텀
-     */
-    .ant-table-wrapper .ant-table {
-      background-color: ${props => darken(0.02, props.theme.colors.contentBG)};
-    }
-
-    .ant-table-wrapper .ant-table-tbody > tr> td {
-      border-radius: 8px;
-    }
-
-    .ant-table-wrapper .ant-table-tbody > tr:last-child > td {
-      border-bottom: none;
-    }
-
-    .ant-table-wrapper .ant-table-thead >tr>th {
-      color: ${props => props.theme.colors.textColor2};
-    }
-
-
     /**
      * antd-radio 스타일 커스텀
      */
@@ -377,6 +312,15 @@ export const InitGlobalStyled = memo(createGlobalStyle`
     }
   }
 
+  /* ant 체크박스 */
+  .ant-checkbox .ant-checkbox-inner {
+    background-color: transparent;
+  }
+
+  .ant-checkbox-checked .ant-checkbox-inner {
+    background-color: ${p => p.theme.colors.primary};
+  }
+
   /** 
     * ant-form-item 스타일 커스텀
     */
@@ -420,7 +364,7 @@ export const InitGlobalStyled = memo(createGlobalStyle`
     .ant-form-item-control-input ~ div:last-child > div:nth-child(2) {
       display: none;
     }
-    
+
     .ant-form-item-control-input-content {
       display: flex;
       justify-content: flex-end;

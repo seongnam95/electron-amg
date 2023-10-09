@@ -1,7 +1,7 @@
 from models.employee import Employee
 from crud.base import CRUDBase
 from models import Contract
-from schemas import ContractCreate, ContractUpdate
+from schemas import ContractCreate, ContractUpdate, EmployeeContractModel
 from sqlalchemy.orm import Session
 from typing import List, Any, Optional
 
@@ -14,6 +14,25 @@ class CRUDContract(CRUDBase[Contract, ContractCreate, ContractUpdate]):
             print(c)
 
         return db.query(Contract).offset(skip).limit(limit).all()
+
+    def get_employee_contract(
+        self, db: Session, *, employee_id: str
+    ) -> EmployeeContractModel:
+        contracts = db.query(Contract).filter(Contract.employee_id == employee_id).all()
+
+        valid_contract = None
+        prev_contracts = []
+        for contract in contracts:
+            if contract.valid:
+                valid_contract = contract
+            else:
+                prev_contracts.append(contract)
+
+        return EmployeeContractModel(
+            valid_contract=valid_contract,
+            prev_contract_count=len(prev_contracts),
+            prev_contracts=prev_contracts,
+        )
 
     # 계약서 생성
     def create_contract(

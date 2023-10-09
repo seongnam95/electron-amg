@@ -4,11 +4,13 @@ from .employee import (
     EmployeeUpdate,
     EmployeeBaseResponse,
     CoveringEmployeeResponse,
+    EmployeeWithContract,
 )
 from .contract import (
     Contract,
     ContractCreate,
     ContractUpdate,
+    ContractResponse,
     EmployeeContractModel,
 )
 from .worklog import WorkLog, WorkLogCreate, WorkLogUpdate

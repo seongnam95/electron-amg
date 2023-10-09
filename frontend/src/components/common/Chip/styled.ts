@@ -32,4 +32,5 @@ export const ChipStyled = styled.span<ChipStyledProps>`
 
   color: ${p => (p.$color ? p.$color : p.theme.colors.textColor2)};
   font-size: var(--fontSize);
+  white-space: nowrap;
 `;

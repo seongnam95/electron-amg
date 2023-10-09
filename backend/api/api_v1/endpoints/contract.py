@@ -52,22 +52,6 @@ def read_all_contract_for_employee(
     employee: schemas.Employee = Depends(deps.get_employee),
     db: Session = Depends(deps.get_db),
 ):
-    contracts = crud.contract.get_multi_for_employee(db=db, employee_id=employee.id)
-    if not contracts:
-        raise HTTPException(status_code=404, detail="작성 된 계약서가 없습니다.")
+    contracts = crud.contract.get_employee_contract(db=db, employee_id=employee.id)
 
-    valid_contract = None
-    prev_contracts = []
-    for contract in contracts:
-        if contract.valid:
-            valid_contract = contract
-        else:
-            prev_contracts.append(contract)
-
-    response = schemas.EmployeeContractModel(
-        valid_contract=valid_contract,
-        prev_contract_count=len(prev_contracts),
-        prev_contracts=prev_contracts,
-    )
-
-    return DataResponse(success=True, msg="정상 처리되었습니다.", result=response)
+    return DataResponse(success=True, msg="정상 처리되었습니다.", result=contracts)

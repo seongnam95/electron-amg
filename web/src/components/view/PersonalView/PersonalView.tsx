@@ -32,6 +32,7 @@ function PersonalView({ viewRef, ...props }: PersonalViewProps) {
 
   useEffect(() => nameRef.current?.focus(), []);
 
+  // 이름, 주민등록번호 입력 시 기존 근로자 호출
   useEffect(() => {
     const validateFormCheck = async () => {
       const { name, idFront, idBack } = await validateForm();
@@ -39,7 +40,14 @@ function PersonalView({ viewRef, ...props }: PersonalViewProps) {
     };
 
     validateFormCheck();
-  }, [values, errors]);
+  }, [
+    values.name,
+    errors.name,
+    values.idFront,
+    errors.idFront,
+    values.idBack,
+    errors.idBack,
+  ]);
 
   // 기존 근로자 API 호출
   const getEmployeeList = async () => {

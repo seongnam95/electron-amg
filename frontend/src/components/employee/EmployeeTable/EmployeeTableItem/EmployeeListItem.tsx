@@ -8,7 +8,8 @@ import { CSSProperties } from 'styled-components';
 
 import Button from '~/components/common/Button';
 import Chip from '~/components/common/Chip';
-import { EmployeeData, POSITION_CODE } from '~/types/employee';
+import { POSITION_CODE, POSITION_COLORS } from '~/types/contract';
+import { EmployeeData } from '~/types/employee';
 import { formatPhoneNumber } from '~/utils/formatData';
 
 import { EmployeeListItemStyled } from './styled';
@@ -21,6 +22,7 @@ export interface EmployeeListItemProps {
 }
 
 const EmployeeListItem = ({ className, employee, checked, onChecked }: EmployeeListItemProps) => {
+  const { contract } = employee;
   const menuItemStyle: CSSProperties = {
     display: 'flex',
     alignItems: 'center',
@@ -66,9 +68,20 @@ const EmployeeListItem = ({ className, employee, checked, onChecked }: EmployeeL
   return (
     <EmployeeListItemStyled className={clsx('EmployeeListItem', className)}>
       <Checkbox id={employee.id} onChange={onChecked} checked={checked} />
-      <span className="item name">{employee.name}</span>
-      <span className="item position">{POSITION_CODE[employee.positionCode]}</span>
+      <span className="item name">
+        <Chip
+          $color="white"
+          $borderColor="transparent"
+          $bgColor={POSITION_COLORS[contract.positionCode]}
+        >
+          {POSITION_CODE[contract.positionCode]}
+        </Chip>
+        {employee.name}
+      </span>
       <span className="item phone">{formatPhoneNumber(employee.phone)}</span>
+      <span className="item group-name">{contract.groupName}</span>
+      <span className="item wage">{contract.defaultWage.toLocaleString()}원</span>
+
       <Chip $palette="warning">계약 종료</Chip>
       <Dropdown menu={{ items }} trigger={['click']} placement="bottomLeft">
         <Button $variations="icon" $btnSize="small">

@@ -1,8 +1,13 @@
-from typing import Optional
+from typing import List, Optional
 
 from crud.base import CRUDBase
-from models import Employee
-from schemas import EmployeeCreate, EmployeeUpdate
+from models import Employee, Contract
+from schemas import (
+    EmployeeCreate,
+    EmployeeUpdate,
+    ContractResponse,
+    EmployeeWithContract,
+)
 from sqlalchemy.orm import Session
 from util.crypto import encrypt, verify
 from util.image_converter import base64_to_image, remove_image
@@ -71,6 +76,43 @@ class CRUDEmployee(CRUDBase[Employee, EmployeeCreate, EmployeeUpdate]):
                 return employee
 
         return None
+
+    #
+    def get_all_employee_with_contracts(self, db: Session):
+        employees = db.query(Employee).all()
+
+        new_employees = []
+        for employee in employees:
+            contracts: List[Contract] = employee.contracts
+            contract = next(
+                (contract for contract in contracts if contract.valid), None
+            )
+
+            contract_obj = None
+            if contract:
+                contract_obj = ContractResponse(
+                    salary=contract.salary,
+                    position_code=contract.position_code,
+                    group_name=contract.group_name,
+                    default_wage=contract.default_wage,
+                    start_period=contract.start_period,
+                    end_period=contract.end_period,
+                    create_date=contract.create_date,
+                )
+
+            new_employees.append(
+                EmployeeWithContract(
+                    id=employee.id,
+                    name=employee.name,
+                    phone=employee.phone,
+                    residence=employee.residence,
+                    gender_code=employee.gender_code,
+                    create_date=employee.create_date,
+                    contract=contract_obj,
+                )
+            )
+
+        return new_employees
 
 
 employee = CRUDEmployee(Employee)

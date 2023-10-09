@@ -7,28 +7,22 @@ import clsx from 'clsx';
 import { useEmployeeQuery } from '~/hooks/queryHooks/useEmployeeQuery';
 import { EmployeeData } from '~/types/employee';
 
-import EmployeeGroupMoveModal from '../EmployeeGroupMoveModal';
 import EmployeeTableControlBar, { Sort } from './EmployeeTableControlBar';
 import EmployeeListItem from './EmployeeTableItem';
 import { EmployeeTableStyled } from './styled';
 
 export interface EmployeeTableProps {
-  groupId: string;
   className?: string;
   onClick?: (employee: EmployeeData) => void;
 }
 
-const EmployeeTable = ({ groupId, className, onClick }: EmployeeTableProps) => {
-  const [isOpenGroupMoveModal, setIsOpenGroupMoveModal] = useState<boolean>(false);
+const EmployeeTable = ({ className, onClick }: EmployeeTableProps) => {
   const [allSelected, setAllSelected] = useState<boolean>(false);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [sort, setSort] = useState<Sort>(Sort.NORMAL);
   const [searchTerm, setSearchTerm] = useState<string>('');
 
-  const { employees, isEmployeeLoading } = useEmployeeQuery({
-    groupId: groupId !== 'all' ? groupId : undefined,
-  });
-
+  const { employees, isEmployeeLoading } = useEmployeeQuery();
   const isEmptyEmployee = employees.length === 0;
 
   // Employee 키워드 검색
@@ -80,7 +74,7 @@ const EmployeeTable = ({ groupId, className, onClick }: EmployeeTableProps) => {
   return (
     <EmployeeTableStyled className={clsx('EmployeeTable', className)}>
       <EmployeeTableControlBar
-        onMoveGroup={() => setIsOpenGroupMoveModal(true)}
+        onMoveGroup={() => {}}
         onSearch={e => setSearchTerm(e.target.value)}
         onChangeSort={sort => setSort(sort)}
         checked={!!selectedIds.length}
@@ -107,12 +101,6 @@ const EmployeeTable = ({ groupId, className, onClick }: EmployeeTableProps) => {
       ) : (
         <Skeleton active style={{ padding: '2rem' }} />
       )}
-
-      <EmployeeGroupMoveModal
-        selectedEmployeeIds={selectedIds}
-        open={isOpenGroupMoveModal}
-        onClose={() => setIsOpenGroupMoveModal(false)}
-      />
     </EmployeeTableStyled>
   );
 };

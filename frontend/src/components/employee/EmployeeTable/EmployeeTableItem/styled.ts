@@ -10,6 +10,9 @@ export const EmployeeListItemStyled = styled.li`
   color: ${p => p.theme.colors.textColor1};
   font-size: ${p => p.theme.sizes.textMedium};
 
+  transition: all 200ms;
+  cursor: pointer;
+
   > .item {
     display: flex;
     justify-content: center;
@@ -17,6 +20,8 @@ export const EmployeeListItemStyled = styled.li`
     white-space: nowrap;
 
     &.name {
+      display: flex;
+      gap: 1.4rem;
       width: 12rem;
     }
 
@@ -24,12 +29,16 @@ export const EmployeeListItemStyled = styled.li`
       width: 5rem;
     }
 
-    &.phone {
+    &.group-name {
+      width: 13rem;
+    }
+
+    &.wage {
       width: 12rem;
     }
   }
 
   :hover {
-    background-color: ${p => p.theme.colors.innerBg};
+    background-color: rgb(247, 247, 247);
   }
 `;
