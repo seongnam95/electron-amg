@@ -1,7 +1,8 @@
 import { useMutation, useQuery } from 'react-query';
 
-import { baseFetch } from '~/api/base';
+import { baseFetch, createRequest } from '~/api/base';
 import { employeeMoveGroupRequest } from '~/api/group';
+import { createWorkLog } from '~/api/worklog';
 import { EmployeeCreateBody, EmployeeData, EmployeeUpdateBody } from '~/types/employee';
 
 import { BaseQueryOptions, baseMutation } from './useBaseQuery';
@@ -17,7 +18,6 @@ export const employeeKeys = {
 
 export const useEmployeeQuery = ({ employeeId, onSuccess, onError }: EmployeeQueryOptions = {}) => {
   const endpoint = import.meta.env.VITE_EMPLOYEE_API_URL;
-
   const queryKey = employeeId ? employeeKeys.byId(employeeId) : employeeKeys.all;
 
   const {
@@ -34,22 +34,35 @@ export const useEmployeeQuery = ({ employeeId, onSuccess, onError }: EmployeeQue
 };
 
 export const useEmployeeMutation = (queryKey: string[], options?: BaseQueryOptions) => {
-  const endpoint = import.meta.env.VITE_EMPLOYEE_API_URL;
+  const employeeEndpoint = import.meta.env.VITE_EMPLOYEE_API_URL;
+  const worklogEndpoint = import.meta.env.VITE_WORKLOG_API_URL;
 
+  // BASE CRU
   const {
-    initOptions,
     createMutate,
-    updateMutate,
     removeMutate,
+    updateMutate,
     isLoading: baseLoading,
-  } = baseMutation<EmployeeCreateBody, EmployeeUpdateBody>(queryKey, endpoint, options);
+    initOptions,
+  } = baseMutation<EmployeeCreateBody, EmployeeUpdateBody>(queryKey, employeeEndpoint, options);
 
-  const isLoading = baseLoading;
+  // 근무로그
+  const { mutate: createWorkLogMutate, isLoading: createWorkLogLoading } = useMutation(
+    createWorkLog(employeeEndpoint, worklogEndpoint),
+    initOptions,
+  );
 
+  const { mutate: removeWorkLogMutate, isLoading: removeWorkLogLoading } = useMutation(
+    createWorkLog(employeeEndpoint, worklogEndpoint),
+    initOptions,
+  );
+
+  const isLoading = baseLoading || createWorkLogLoading;
   return {
     isLoading,
     createEmployeeMutate: createMutate,
     updateEmployeeMutate: updateMutate,
     removeEmployeeMutate: removeMutate,
+    createWorkLogMutate,
   };
 };

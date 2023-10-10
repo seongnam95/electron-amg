@@ -31,30 +31,26 @@ const Titlebar = ({ className }: TitlebarProps) => {
       </div>
       <div className="control-wrap">
         <div className="controls">
-          <div onClick={() => appControl('devtools')}>
-            <i className="bx bx-code-alt" style={{ fontSize: '2rem' }} />
-          </div>
-
           <div onClick={logout}>
-            <i className="bx bx-log-out" style={{ fontSize: '2rem' }} />
+            <i className="bx bx-log-out" style={{ fontSize: '1.8rem', paddingTop: '0.1rem' }} />
           </div>
 
           <div>
-            <i className="bx bx-cog" style={{ fontSize: '2rem' }} />
+            <i className="bx bx-cog" style={{ fontSize: '1.8rem' }} />
           </div>
         </div>
 
         <div className="controls">
           <div onClick={() => appControl('minimize')}>
-            <i className="bx bx-minus" style={{ fontSize: '2rem', marginTop: '0.8rem' }} />
+            <i className="bx bx-minus" style={{ fontSize: '1.8rem', marginTop: '0.8rem' }} />
           </div>
 
           <div onClick={() => appControl('maximize')}>
-            <i className="bx bx-square" />
+            <i className="bx bx-square" style={{ fontSize: '1.6rem' }} />
           </div>
 
           <div className="close" onClick={() => appControl('close')}>
-            <i className="bx bx-x" style={{ fontSize: '2.4rem' }} />
+            <i className="bx bx-x" style={{ fontSize: '2.2rem' }} />
           </div>
         </div>
       </div>

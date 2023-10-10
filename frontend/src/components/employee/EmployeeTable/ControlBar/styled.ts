@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-export const StyledEmployeeTableControlBar = styled.div`
+export const ControlBarStyled = styled.div`
   position: relative;
   display: flex;
   align-items: center;

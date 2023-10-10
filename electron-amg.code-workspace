@@ -12,7 +12,8 @@
       "initlize",
       "Nanum",
       "passlib",
-      "starlette"
+      "starlette",
+      "WORKLOG"
     ]
   }
 }

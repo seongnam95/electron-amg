@@ -7,8 +7,8 @@ export interface WorkLogData {
   workingDate: string;
 }
 
-export type WorklogCreateBody = {
+export type WorkLogCreateBody = {
   workingDate?: string;
 } & Omit<WorkLogData, 'id' | 'workingDate'>;
 
-export type WorklogUpdateBody = Pick<WorkLogData, 'id' | 'wage'>;
+export type WorkLogUpdateBody = Pick<WorkLogData, 'id' | 'wage'>;

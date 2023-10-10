@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-export const EmployeeListItemStyled = styled.tr`
+export const RowStyled = styled.tr`
   color: ${p => p.theme.colors.textColor2};
   font-size: ${p => p.theme.sizes.textMedium};
   transition: all 200ms;
