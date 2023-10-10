@@ -9,7 +9,7 @@ from schemas import (
     ContractResponse,
     EmployeeWithContract,
 )
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload, selectinload
 from util.crypto import encrypt, verify
 from util.image_converter import base64_to_image, remove_image
 
@@ -78,49 +78,35 @@ class CRUDEmployee(CRUDBase[Employee, EmployeeCreate, EmployeeUpdate]):
 
         return None
 
-    #
-    def get_all_employee(self, db: Session):
-        employees = db.query(Employee).all()
+    def get_employee_count(self, db: Session):
+        return db.query(Employee).count()
+
+    def get_all_employee(self, db: Session, *, offset: int, limit: int):
+        today = date.today().strftime("%Y-%m-%d")
+        employees = (
+            db.query(Employee)
+            .options(selectinload(Employee.contracts.and_(Contract.valid == True)))
+            .options(
+                selectinload(Employee.worklogs.and_(WorkLog.working_date == today))
+            )
+            .offset(offset)
+            .limit(limit)
+            .all()
+        )
 
         new_employees = []
         for employee in employees:
-            contracts: List[Contract] = employee.contracts
-            worklogs: List[WorkLog] = employee.worklogs
-
-            contract = next(
-                (contract for contract in contracts if contract.valid), None
+            employee_obj = EmployeeWithContract(
+                id=employee.id,
+                name=employee.name,
+                phone=employee.phone,
+                gender_code=employee.gender_code,
+                residence=employee.residence,
+                create_date=employee.create_date,
+                contract=employee.contracts[0] if employee.contracts else None,
+                worklog=employee.worklogs[0] if employee.worklogs else None,
             )
-
-            contract_obj = None
-            if contract:
-                contract_obj = ContractResponse(
-                    salary=contract.salary,
-                    position_code=contract.position_code,
-                    group_name=contract.group_name,
-                    default_wage=contract.default_wage,
-                    start_period=contract.start_period,
-                    end_period=contract.end_period,
-                    create_date=contract.create_date,
-                )
-
-            today = date.today().strftime("%Y-%m-%d")
-            worklog = next(
-                (worklog for worklog in worklogs if worklog.working_date == today),
-                None,
-            )
-
-            new_employees.append(
-                EmployeeWithContract(
-                    id=employee.id,
-                    name=employee.name,
-                    phone=employee.phone,
-                    residence=employee.residence,
-                    gender_code=employee.gender_code,
-                    create_date=employee.create_date,
-                    contract=contract_obj,
-                    worklog=worklog,
-                )
-            )
+            new_employees.append(employee_obj)
 
         return new_employees
 

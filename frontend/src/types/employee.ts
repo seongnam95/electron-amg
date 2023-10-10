@@ -16,7 +16,7 @@ export interface EmployeeData {
   residence: string;
   genderCode: GenderType;
   createDate: string;
-  contract: ContractData;
+  contract?: ContractData;
   worklog?: WorkLogData;
 }
 

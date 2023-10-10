@@ -50,6 +50,9 @@ class ContractResponse(BaseModel):
     end_period: date
     create_date: datetime
 
+    class Config:
+        from_attributes = True
+
 
 class EmployeeContractModel(BaseModel):
     valid_contract: Contract

@@ -24,7 +24,7 @@ def delete_contract(
     contract: schemas.Contract = Depends(get_contract),
 ):
     crud.contract.remove(db=db, id=contract.id)
-    return BaseResponse(success=True, msg="정상 처리되었습니다.")
+    return BaseResponse(msg="정상 처리되었습니다.")
 
 
 # 해당 근로자 계약서 생성
@@ -40,7 +40,7 @@ def create_contract(
         employee_id=employee.id,
         contract_obj=contract_in,
     )
-    return BaseResponse(success=True, msg="정상 처리되었습니다.")
+    return BaseResponse(msg="정상 처리되었습니다.")
 
 
 # 해당 근로자 전체 계약서 불러오기
@@ -54,4 +54,4 @@ def read_all_contract_for_employee(
 ):
     contracts = crud.contract.get_employee_contract(db=db, employee_id=employee.id)
 
-    return DataResponse(success=True, msg="정상 처리되었습니다.", result=contracts)
+    return DataResponse(msg="정상 처리되었습니다.", result=contracts)

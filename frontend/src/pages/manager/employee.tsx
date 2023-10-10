@@ -1,28 +1,43 @@
-import { useMemo, useState, ChangeEvent } from 'react';
+import { useState } from 'react';
 
 import { Empty, Skeleton } from 'antd';
-import { motion } from 'framer-motion';
 
 import { EmployeeSidebar, EmployeeTable } from '@components/employee';
 
 import ControlBar from '~/components/employee/EmployeeTable/ControlBar';
-import {
-  employeeKeys,
-  useEmployeeMutation,
-  useEmployeeQuery,
-} from '~/hooks/queryHooks/useEmployeeQuery';
+import { useEmployeeQuery } from '~/hooks/queryHooks/useEmployeeQuery';
 import { EmployeePageStyled } from '~/styles/pageStyled/employeePageStyled';
-import { EmployeeData } from '~/types/employee';
-import { searchEmployee, sortedEmployees } from '~/utils/employeeUtils';
+import { sortedEmployees } from '~/utils/employeeUtils';
+
+interface PaginationData {
+  page: number;
+  hasMore: boolean;
+  nextPage: number;
+}
 
 const EmployeePage = () => {
+  const initPagination: PaginationData = {
+    page: 1,
+    nextPage: 1,
+    hasMore: false,
+  };
+  const [pagination, setPagination] = useState<PaginationData>(initPagination);
   const [sort, setSort] = useState<number>(0);
   const [searchTerm, setSearchTerm] = useState<string>('');
 
-  const { employees, isEmployeeLoading } = useEmployeeQuery();
+  const handleQuerySuccess = () => {
+    if (response) {
+      const { total, offset, list, ...rest } = response;
+      setPagination(rest);
+    }
+  };
+
+  const { employees, response, isEmployeeLoading } = useEmployeeQuery({
+    page: pagination.page,
+    onSuccess: handleQuerySuccess,
+  });
 
   const isEmptyEmployee = employees.length === 0;
-
   const filteredEmployees = sortedEmployees(employees, searchTerm, sort);
 
   return (
@@ -37,7 +52,11 @@ const EmployeePage = () => {
         ) : isEmptyEmployee ? (
           <Empty description="데이터 없음" style={{ marginTop: '8rem' }} />
         ) : (
-          <EmployeeTable employees={filteredEmployees} />
+          <EmployeeTable>
+            {filteredEmployees.map(employee => {
+              return <EmployeeTable.Row key={employee.id} id={employee.id} employee={employee} />;
+            })}
+          </EmployeeTable>
         )}
       </div>
       <EmployeeSidebar />

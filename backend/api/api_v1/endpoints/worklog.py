@@ -33,15 +33,13 @@ def read_all_worklog(
     else:
         worklogs = crud.worklog.get_multi(db, skip=skip, limit=limit)
 
-    return ListResponse(
-        success=True, count=len(worklogs), msg="정상 처리되었습니다.", result=worklogs
-    )
+    return ListResponse(count=len(worklogs), msg="정상 처리되었습니다.", result=worklogs)
 
 
 # 근무로그 조회
 @router.get("/worklog/{worklog_id}", response_model=DataResponse[schemas.WorkLog])
 def read_worklog(worklog: schemas.WorkLog = Depends(get_worklog)):
-    return DataResponse(success=True, result=worklog)
+    return DataResponse(result=worklog)
 
 
 # 근무로그 생성 (날짜 중복 불가)
@@ -52,8 +50,9 @@ def create_worklog(
     db: Session = Depends(deps.get_db),
     worklog_in: schemas.WorkLogCreate,
 ):
+    print(worklog_in)
     crud.worklog.create_worklog(db=db, worklog_in=worklog_in, employee_id=employee.id)
-    return BaseResponse(success=True, msg="정상 처리되었습니다.")
+    return BaseResponse(msg="정상 처리되었습니다.")
 
 
 # 근무로그 업데이트
@@ -65,7 +64,7 @@ def update_worklog(
     worklog_in: schemas.WorkLogUpdate,
 ):
     worklog = crud.worklog.update(db=db, db_obj=worklog, obj_in=worklog_in)
-    return BaseResponse(success=True, msg="정상 처리되었습니다.")
+    return BaseResponse(msg="정상 처리되었습니다.")
 
 
 # 로그 삭제
@@ -76,4 +75,4 @@ def delete_worklog(
     db: Session = Depends(deps.get_db),
 ):
     crud.worklog.remove(db=db, id=worklog.id)
-    return BaseResponse(success=True, msg="정상 처리되었습니다.")
+    return BaseResponse(msg="정상 처리되었습니다.")

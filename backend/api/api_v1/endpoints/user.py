@@ -30,7 +30,7 @@ def read_all_user(
     if not users:
         raise HTTPException(status_code=404, detail="생성된 계정이 없습니다.")
 
-    return ListResponse(success=True, msg="정상 처리되었습니다.", count=len(users), result=users)
+    return ListResponse(msg="정상 처리되었습니다.", count=len(users), result=users)
 
 
 # 유저 불러오기
@@ -38,14 +38,14 @@ def read_all_user(
 def read_user(
     user: schemas.User = Depends(get_user),
 ):
-    return DataResponse(success=True, msg="정상 처리되었습니다.", result=user)
+    return DataResponse(msg="정상 처리되었습니다.", result=user)
 
 
 # 유저 생성
 @router.post("/", response_model=BaseResponse)
 def create_user(db: Session = Depends(deps.get_db), *, user_in: schemas.UserCreate):
     crud.user.create_user(db=db, obj_in=user_in)
-    return BaseResponse(success=True, msg="정상 처리되었습니다.")
+    return BaseResponse(msg="정상 처리되었습니다.")
 
 
 # 유저 업데이트
@@ -57,7 +57,7 @@ def update_user(
     user_in: schemas.UserUpdate,
 ):
     crud.user.update(db=db, db_obj=user, obj_in=user_in)
-    return BaseResponse(success=True, msg="정상 처리되었습니다.")
+    return BaseResponse(msg="정상 처리되었습니다.")
 
 
 # 유저 삭제
@@ -68,4 +68,4 @@ def delete_user(
     user: schemas.User = Depends(get_user),
 ):
     crud.user.remove(db=db, id=user.id)
-    return BaseResponse(success=True, msg="정상 처리되었습니다.")
+    return BaseResponse(msg="정상 처리되었습니다.")

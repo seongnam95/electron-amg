@@ -15,9 +15,7 @@ router = APIRouter()
 @router.get("/", response_model=ListResponse[Draft])
 def get_draft_all(db: Session = Depends(deps.get_db)):
     drafts = db.query(models.Draft).all()
-    return ListResponse(
-        success=True, msg="정상 처리되었습니다.", count=len(drafts), result=drafts
-    )
+    return ListResponse(msg="정상 처리되었습니다.", count=len(drafts), result=drafts)
 
 
 @router.get("/{id}", response_model=DataResponse[Draft])
@@ -29,7 +27,7 @@ def get_draft(
     if not draft:
         raise HTTPException(status_code=404, detail="유효하지 않습니다.")
 
-    return DataResponse(success=True, msg="정상 처리되었습니다.", result=draft)
+    return DataResponse(msg="정상 처리되었습니다.", result=draft)
 
 
 # 폼 생성
@@ -59,4 +57,4 @@ def create_draft(
     db.commit()
     db.refresh(db_obj)
 
-    return DataResponse(success=True, msg="정상 처리되었습니다.", result=db_obj)
+    return DataResponse(msg="정상 처리되었습니다.", result=db_obj)

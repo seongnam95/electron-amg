@@ -1,4 +1,7 @@
+import { AxiosResponse } from 'axios';
+
 import { BaseMultiDataParams } from '~/hooks/queryHooks/useBaseQuery';
+import { EmployeeData } from '~/types/employee';
 import { BaseResponse, FetchResponse, FetchListResponse } from '~/types/response';
 
 import axiosPrivate from './axios';
@@ -23,16 +26,16 @@ export const fetchAllRequest =
  * @param id 가져올 데이터의 ID
  */
 export const baseFetch =
-  <TData, TParams = BaseMultiDataParams, R = FetchListResponse<TData>>(
+  <TParams = BaseMultiDataParams, R = FetchListResponse<EmployeeData>>(
     url: string,
     id?: string,
     params?: TParams,
   ) =>
-  async (): Promise<R> => {
+  async (): Promise<Array<EmployeeData>> => {
     const endpoint = id ? `${url}${id}` : url;
-    const { data } = await axiosPrivate.get<R>(endpoint, { params });
-
-    return data;
+    const response = await axiosPrivate.get<FetchListResponse<EmployeeData>>(endpoint, { params });
+    console.log(response);
+    return response.data.result;
   };
 
 /**

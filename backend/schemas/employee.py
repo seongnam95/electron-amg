@@ -72,8 +72,11 @@ class EmployeeWithContract(BaseModel):
     residence: str
     gender_code: int
     create_date: datetime
-    contract: Optional[ContractResponse]
-    worklog: Optional[WorkLog]
+    contract: Optional[ContractResponse] = None
+    worklog: Optional[WorkLog] = None
+
+    class Config:
+        from_attributes = True
 
 
 class CoveringEmployeeResponse(EmployeeBaseResponse):

@@ -11,56 +11,62 @@ import { RowStyled } from './styled';
 
 export interface RowProps {
   employee: EmployeeData;
+  id: string;
   className?: string;
   checked?: boolean;
-  onAttendance?: (employeeId: string) => void;
-  onAttendanceCancel?: (employeeId: string) => void;
   onChecked?: (e: CheckboxChangeEvent) => void;
 }
 
-const Row = ({
-  className,
-  employee,
-  checked,
-  onAttendance,
-  onAttendanceCancel,
-  onChecked,
-}: RowProps) => {
+const Row = ({ id, className, employee, checked, onChecked }: RowProps) => {
   const { contract, worklog } = employee;
   const isWorking = !!worklog;
 
-  const { removeEmployeeMutate } = useEmployeeMutation(employeeKeys.byId(employee.id));
+  const { createWorkLogMutate, removeWorkLogMutate } = useEmployeeMutation([]);
 
   // 출근 처리
-  const handleAttendance = () => {};
+  const handleAttendance = () => {
+    if (contract)
+      createWorkLogMutate({
+        employeeId: employee.id,
+        body: {
+          positionCode: contract.positionCode,
+          wage: contract.defaultWage,
+        },
+      });
+  };
 
   // 퇴근 처리
   const handleAttendanceCancel = () => {
-    removeEmployeeMutate(worklog?.id);
+    if (worklog) removeWorkLogMutate(worklog?.id);
   };
 
   return (
     <RowStyled className={clsx('Row', className)}>
       <td>
-        <Checkbox id={employee.id} onChange={onChecked} checked={checked} />
+        <Checkbox id={id} onChange={onChecked} checked={checked} />
       </td>
       <td>
         <div className="employee-name">
-          <Chip
-            $color="white"
-            $borderColor="transparent"
-            $bgColor={POSITION_COLORS[contract.positionCode]}
-          >
-            {POSITION_CODE[contract.positionCode]}
-          </Chip>
+          {contract ? (
+            <Chip
+              $color="white"
+              $borderColor="transparent"
+              $bgColor={POSITION_COLORS[contract.positionCode]}
+            >
+              {POSITION_CODE[contract.positionCode]}
+            </Chip>
+          ) : (
+            <Chip>기타</Chip>
+          )}
+
           <span>{employee.name}</span>
         </div>
       </td>
       <td>{formatPhoneNumber(employee.phone)}</td>
       <td>{employee.residence}</td>
-      <td className="text-accent">{contract.groupName}</td>
+      <td className="text-accent">{contract ? contract.groupName : '소속 없음'}</td>
       <td>
-        {isWorking ? (
+        {!isWorking ? (
           <button className="commute-btn" onClick={handleAttendance}>
             출근
           </button>

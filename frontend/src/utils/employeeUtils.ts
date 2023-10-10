@@ -10,7 +10,7 @@ export const searchEmployee = (
       employee.name.includes(searchTerm) ||
       employee.residence.includes(searchTerm) ||
       employee.phone.includes(searchTerm) ||
-      employee.contract.groupName.includes(searchTerm),
+      employee.contract?.groupName.includes(searchTerm),
   );
 };
 
@@ -25,7 +25,7 @@ export const sortedEmployees = (
       employee.name.includes(searchTerm) ||
       employee.residence.includes(searchTerm) ||
       employee.phone.includes(searchTerm) ||
-      employee.contract.groupName.includes(searchTerm),
+      employee.contract?.groupName.includes(searchTerm),
   );
 
   switch (sort) {

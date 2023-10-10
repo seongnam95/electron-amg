@@ -12,7 +12,7 @@ export const createWorkLog =
   (employeeUrl: string, url: string) =>
   async ({ employeeId, body }: CreateWorkLogInterface): Promise<BaseResponse> => {
     const { data } = await axiosPrivate.post<BaseResponse>(
-      `${employeeUrl}/${employeeId}${url}`,
+      `${employeeUrl}${employeeId}/${url}`,
       body,
     );
     return data;
@@ -20,7 +20,7 @@ export const createWorkLog =
 
 export const removeWorkLog =
   (url: string) =>
-  async ({ employeeId, body }: CreateWorkLogInterface): Promise<BaseResponse> => {
-    const { data } = await axiosPrivate.post<BaseResponse>(`${employeeId}${url}`, body);
+  async (id: string): Promise<BaseResponse> => {
+    const { data } = await axiosPrivate.delete<BaseResponse>(`${url}${id}`);
     return data;
   };

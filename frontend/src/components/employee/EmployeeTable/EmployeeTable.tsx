@@ -1,23 +1,25 @@
-import { ReactNode, useEffect, useState } from 'react';
+import { ReactNode, useEffect, useMemo, useState } from 'react';
 import React from 'react';
 
-import { Skeleton } from 'antd';
 import Checkbox, { CheckboxChangeEvent } from 'antd/es/checkbox';
-import clsx from 'clsx';
 
-import { EmployeeData } from '~/types/employee';
-
-import Row from './Row';
+import Row, { RowProps } from './Row';
 import { EmployeeTableStyled } from './styled';
 
 export interface EmployeeTableProps {
-  employees: Array<EmployeeData>;
-  className?: string;
+  children: ReactNode;
 }
 
-const EmployeeTable = ({ employees, className }: EmployeeTableProps) => {
+const EmployeeTable = ({ children }: EmployeeTableProps) => {
   const [allSelected, setAllSelected] = useState<boolean>(false);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
+
+  const childIdList = useMemo(() => {
+    return React.Children.toArray(children).flatMap(child => {
+      if (React.isValidElement<RowProps>(child) && child.type === Row) return child.props.id;
+      return [];
+    });
+  }, [children]);
 
   // 단일 체크박스 기준 전체 체크박스 활성화/비활성화
   useEffect(() => {
@@ -27,7 +29,7 @@ const EmployeeTable = ({ employees, className }: EmployeeTableProps) => {
   // 전체 체크박스 클릭 핸들러
   const handleOnChangeAllChecked = (e: CheckboxChangeEvent) => {
     const isChecked = e.target.checked;
-    setSelectedIds(isChecked ? employees.map(employee => employee.id) : []);
+    setSelectedIds(isChecked ? childIdList : []);
   };
 
   // 체크박스 클릭 핸들러
@@ -43,7 +45,7 @@ const EmployeeTable = ({ employees, className }: EmployeeTableProps) => {
   };
 
   return (
-    <EmployeeTableStyled className={clsx('EmployeeTable', className)}>
+    <EmployeeTableStyled className="EmployeeTable">
       <div className="table-wrap">
         <table className="employee-table">
           <thead>
@@ -59,15 +61,17 @@ const EmployeeTable = ({ employees, className }: EmployeeTableProps) => {
             </tr>
           </thead>
           <tbody>
-            {employees.map(employee => {
-              return (
-                <Row
-                  key={employee.id}
-                  employee={employee}
-                  checked={selectedIds.includes(employee.id)}
-                  onChecked={handleOnChangeChecked}
-                />
-              );
+            {React.Children.map(children, child => {
+              if (
+                React.isValidElement<RowProps>(child) &&
+                child.type === Row // 여기서 Row는 당신의 `Row` 컴포넌트를 가리킵니다.
+              ) {
+                return React.cloneElement(child, {
+                  checked: selectedIds.includes(child.props.id),
+                  onChecked: handleOnChangeChecked,
+                });
+              }
+              return child;
             })}
           </tbody>
         </table>

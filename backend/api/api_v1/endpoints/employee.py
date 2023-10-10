@@ -1,8 +1,7 @@
-from fastapi import APIRouter, Depends, HTTPException
-from fastapi.encoders import jsonable_encoder
+from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 from schemas.employee import EmployeeWithContract
-from response_model import BaseResponse, ListResponse, DataResponse
+from response_model import BaseResponse, DataResponse, ListResponse
 from ... import deps
 
 from schemas import (
@@ -21,10 +20,10 @@ router = APIRouter()
 
 
 # 근로자 생성
-@router.post("/", response_model=DataResponse[EmployeeBaseResponse])
+@router.post("/", response_model=BaseResponse)
 def create_employee(employee_in: EmployeeCreate, db: Session = Depends(deps.get_db)):
-    employee = crud.employee.create_employee(db=db, employee_in=employee_in)
-    return DataResponse(success=True, msg="정상 처리되었습니다.", result=employee)
+    crud.employee.create_employee(db=db, employee_in=employee_in)
+    return BaseResponse(msg="정상 처리되었습니다.")
 
 
 # 개인정보로 근로자 불러오기
@@ -32,9 +31,10 @@ def create_employee(employee_in: EmployeeCreate, db: Session = Depends(deps.get_
 def search_employee(name: str, ssn: str, db: Session = Depends(deps.get_db)):
     employee = crud.employee.get_employee_search(db=db, name=name, ssn=ssn)
     if not employee:
-        raise HTTPException(status_code=404, detail="해당하는 근로자를 찾을 수 없습니다.")
+        return DataResponse(msg="해당하는 근로자를 찾을 수 없습니다.", result=None)
+
     response = _covering_employee(employee)
-    return DataResponse(success=True, msg="정상 처리되었습니다.", result=response)
+    return DataResponse(msg="정상 처리되었습니다.", result=response)
 
 
 # -----------------------------------------------------------------------------------------
@@ -49,7 +49,7 @@ def read_employee(
     employee: models.Employee = Depends(deps.get_employee),
 ):
     employee_dec = _decrypt_employee(employee)
-    return DataResponse(success=True, msg="정상 처리되었습니다.", result=employee_dec)
+    return DataResponse(msg="정상 처리되었습니다.", result=employee_dec)
 
 
 # 전체 근로자 불러오기
@@ -57,16 +57,22 @@ def read_employee(
 def read_all_employee_with_contract(
     # user: User = Depends(deps.get_current_user),
     db: Session = Depends(deps.get_db),
+    page: int = 1,
+    limit: int = 20,
 ):
-    employees = crud.employee.get_all_employee(db)
+    offset = (page - 1) * limit
+    total = crud.employee.get_employee_count(db)
+    employees = crud.employee.get_all_employee(db, offset=offset, limit=limit)
 
-    return ListResponse(
-        success=True, msg="정상 처리되었습니다.", count=len(employees), result=employees
+    response = deps.create_list_response(
+        data=employees, total=total, limit=limit, page=page
     )
+    return ListResponse(msg="정상 처리되었습니다.", result=response)
 
 
-# 전체 근로자 불러오기
-@router.get("/only/", response_model=ListResponse[Employee])
+# TODO 현재 불필요
+# 전체 근로자 데이터만 불러오기
+@router.get("/only/", response_model=DataResponse[Employee])
 def read_all_employee(
     # user: User = Depends(deps.get_current_user),
     db: Session = Depends(deps.get_db),
@@ -76,9 +82,7 @@ def read_all_employee(
     employees = crud.employee.get_multi(db, skip=skip, limit=limit)
     employees_dec = [_decrypt_employee(employee) for employee in employees]
 
-    return ListResponse(
-        success=True, msg="정상 처리되었습니다.", count=len(employees), result=employees_dec
-    )
+    return DataResponse(msg="정상 처리되었습니다.", count=len(employees), result=employees_dec)
 
 
 # 근로자 업데이트
@@ -92,7 +96,7 @@ def update_employee(
     employee = crud.employee.update_employee(
         db=db, employee_obj=employee, employee_in=employee_in
     )
-    return DataResponse(success=True, msg="정상 처리되었습니다.", result=employee)
+    return DataResponse(msg="정상 처리되었습니다.", result=employee)
 
 
 # 근로자 삭제
@@ -103,7 +107,7 @@ def delete_employee(
     employee: models.Employee = Depends(deps.get_employee),
 ):
     crud.employee.remove_employee(db=db, id=employee.id)
-    return BaseResponse(success=True, msg="정상 처리되었습니다.")
+    return BaseResponse(msg="정상 처리되었습니다.")
 
 
 # 암호화

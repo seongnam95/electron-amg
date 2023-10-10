@@ -40,7 +40,7 @@ const ControlBar = ({ onChangeSort, onSearch }: ControlBarProps) => {
           </Button>
           <Button $variations="link" $btnSize="small" onClick={handleOnChangeSort}>
             <i className="bx bx-sort" style={{ fontSize: '14px' }} />
-            {sort === 0 ? '기본순' : '이름순'}
+            {sort === 0 ? '등록순' : '이름순'}
           </Button>
         </motion.div>
       </div>
