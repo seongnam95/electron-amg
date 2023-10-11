@@ -5,8 +5,10 @@ import { Empty, Skeleton } from 'antd';
 import { EmployeeSidebar, EmployeeTable } from '@components/employee';
 
 import ControlBar from '~/components/employee/EmployeeTable/ControlBar';
+import { useAttendanceMutation } from '~/hooks/queryHooks/useAttendanceQuery';
 import { useEmployeeQuery } from '~/hooks/queryHooks/useEmployeeQuery';
 import { EmployeePageStyled } from '~/styles/pageStyled/employeePageStyled';
+import { EmployeeData } from '~/types/employee';
 import { sortedEmployees } from '~/utils/employeeUtils';
 
 interface PaginationData {
@@ -40,6 +42,30 @@ const EmployeePage = () => {
   const isEmptyEmployee = employees.length === 0;
   const filteredEmployees = sortedEmployees(employees, searchTerm, sort);
 
+  const { createAttendanceMutate, removeAttendanceMutate } = useAttendanceMutation([
+    pagination.page.toString(),
+  ]);
+
+  // 출근 처리
+  const handleAttendance = (employee: EmployeeData) => {
+    const { contract } = employee;
+
+    if (contract)
+      createAttendanceMutate({
+        employeeId: employee.id,
+        body: {
+          positionCode: contract.positionCode,
+          wage: contract.defaultWage,
+        },
+      });
+  };
+
+  // 퇴근 처리
+  const handleAttendanceCancel = (employee: EmployeeData) => {
+    const { attendance } = employee;
+    if (attendance) removeAttendanceMutate(attendance.id);
+  };
+
   return (
     <EmployeePageStyled className="EmployeePage">
       <div className="employee-content">
@@ -54,7 +80,15 @@ const EmployeePage = () => {
         ) : (
           <EmployeeTable>
             {filteredEmployees.map(employee => {
-              return <EmployeeTable.Row key={employee.id} id={employee.id} employee={employee} />;
+              return (
+                <EmployeeTable.Row
+                  key={employee.id}
+                  id={employee.id}
+                  employee={employee}
+                  onAttendance={handleAttendance}
+                  onAttendanceCancel={handleAttendanceCancel}
+                />
+              );
             })}
           </EmployeeTable>
         )}

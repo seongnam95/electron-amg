@@ -4,7 +4,7 @@ from .employee import (
     EmployeeUpdate,
     EmployeeBaseResponse,
     CoveringEmployeeResponse,
-    EmployeeWithContract,
+    EmployeeResponse,
 )
 from .contract import (
     Contract,
@@ -13,6 +13,6 @@ from .contract import (
     ContractResponse,
     EmployeeContractModel,
 )
-from .worklog import WorkLog, WorkLogCreate, WorkLogUpdate
+from .attendance import Attendance, AttendanceCreate, AttendanceUpdate
 from .user import User, UserCreate, UserUpdate, UserResponse, UserLogin
 from .draft import Draft, DraftCreate

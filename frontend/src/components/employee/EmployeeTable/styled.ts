@@ -10,7 +10,7 @@ export const EmployeeTableStyled = styled.div`
     padding: 1.4rem 1rem;
     width: 100%;
     height: calc(100% - 7rem);
-    overflow: auto;
+    overflow: overlay;
 
     > table {
       width: 100%;

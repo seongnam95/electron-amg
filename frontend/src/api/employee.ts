@@ -11,5 +11,6 @@ export const fetchEmployeeList =
         page: page,
       },
     });
+
     return data;
   };

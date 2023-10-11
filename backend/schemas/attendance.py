@@ -4,17 +4,17 @@ from datetime import datetime
 from schemas.common import check_update_fields
 
 
-class WorkLogBase(BaseModel):
+class AttendanceBase(BaseModel):
     position_code: int
     wage: int
 
 
-class WorkLogCreate(WorkLogBase):
+class AttendanceCreate(AttendanceBase):
     working_date: Optional[str] = None
     pass
 
 
-class WorkLogUpdate(WorkLogBase):
+class AttendanceUpdate(AttendanceBase):
     wage: Optional[int] = None
 
     @model_validator(mode="before")
@@ -22,7 +22,7 @@ class WorkLogUpdate(WorkLogBase):
         return check_update_fields(cls, values)
 
 
-class WorkLog(WorkLogBase):
+class Attendance(AttendanceBase):
     id: int
     working_date: str
     employee_id: int

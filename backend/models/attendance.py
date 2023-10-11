@@ -5,8 +5,8 @@ from datetime import datetime
 
 
 # 근무 일지
-class WorkLog(Base):
-    __tablename__ = "worklog"
+class Attendance(Base):
+    __tablename__ = "attendance"
 
     id = Column(Integer, primary_key=True, index=True)  # PK
 
@@ -15,4 +15,4 @@ class WorkLog(Base):
     working_date = Column(String, nullable=False)
 
     employee_id = Column(Integer, ForeignKey("employee.id"), nullable=False)
-    employee = relationship("Employee", back_populates="worklogs")
+    employee = relationship("Employee", back_populates="attendances")

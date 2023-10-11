@@ -14,7 +14,7 @@ const EmployeeSidebar = ({}: EmployeeSidebarProps) => {
   // 출근률 계산
   const getAttendanceRate = () => {
     const employeeCount = employees?.length;
-    const attendanceEmployeeCount = employees?.filter(employee => !!employee.worklog).length;
+    const attendanceEmployeeCount = employees?.filter(employee => !!employee.attendance).length;
     const rate = Math.round((attendanceEmployeeCount / employeeCount) * 100);
     return {
       total: employeeCount,

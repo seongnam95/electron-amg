@@ -22,6 +22,6 @@ class Employee(Base):
     create_date = Column(DateTime(timezone=True), nullable=False, default=datetime.now)
 
     contracts = relationship("Contract", back_populates="employee")
-    worklogs = relationship(
-        "WorkLog", back_populates="employee", cascade="all, delete-orphan"
+    attendances = relationship(
+        "Attendance", back_populates="employee", cascade="all, delete-orphan"
     )

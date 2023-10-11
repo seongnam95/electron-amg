@@ -1,8 +1,8 @@
-"""empty message
+"""worklog renaming
 
-Revision ID: 5e6de6d13535
-Revises: 4d301ab49cbc
-Create Date: 2023-10-09 19:56:24.347435
+Revision ID: d7dd4af18e25
+Revises: e07defc8f25b
+Create Date: 2023-10-11 13:53:09.469270
 
 """
 from alembic import op
@@ -10,8 +10,8 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '5e6de6d13535'
-down_revision = '4d301ab49cbc'
+revision = 'd7dd4af18e25'
+down_revision = 'e07defc8f25b'
 branch_labels = None
 depends_on = None
 
@@ -22,7 +22,7 @@ def upgrade() -> None:
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('position_code', sa.Integer(), nullable=False),
     sa.Column('wage', sa.Integer(), nullable=False),
-    sa.Column('create_date', sa.DateTime(timezone=True), nullable=False),
+    sa.Column('working_date', sa.String(), nullable=False),
     sa.Column('employee_id', sa.Integer(), nullable=False),
     sa.ForeignKeyConstraint(['employee_id'], ['employee.id'], ),
     sa.PrimaryKeyConstraint('id')

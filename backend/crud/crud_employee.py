@@ -2,12 +2,12 @@ from typing import List, Optional
 from datetime import date
 
 from crud.base import CRUDBase
-from models import Employee, Contract, WorkLog
+from models import Employee, Contract, Attendance
 from schemas import (
     EmployeeCreate,
     EmployeeUpdate,
     ContractResponse,
-    EmployeeWithContract,
+    EmployeeResponse,
 )
 from sqlalchemy.orm import Session, joinedload, selectinload
 from util.crypto import encrypt, verify
@@ -87,7 +87,9 @@ class CRUDEmployee(CRUDBase[Employee, EmployeeCreate, EmployeeUpdate]):
             db.query(Employee)
             .options(selectinload(Employee.contracts.and_(Contract.valid == True)))
             .options(
-                selectinload(Employee.worklogs.and_(WorkLog.working_date == today))
+                selectinload(
+                    Employee.attendances.and_(Attendance.working_date == today)
+                )
             )
             .offset(offset)
             .limit(limit)
@@ -96,15 +98,17 @@ class CRUDEmployee(CRUDBase[Employee, EmployeeCreate, EmployeeUpdate]):
 
         new_employees = []
         for employee in employees:
-            employee_obj = EmployeeWithContract(
+            employee_obj = EmployeeResponse(
                 id=employee.id,
                 name=employee.name,
                 phone=employee.phone,
                 gender_code=employee.gender_code,
                 residence=employee.residence,
                 create_date=employee.create_date,
+                has_contract=True if employee.contracts else False,
+                is_attendance=True if employee.attendances else False,
                 contract=employee.contracts[0] if employee.contracts else None,
-                worklog=employee.worklogs[0] if employee.worklogs else None,
+                attendance=employee.attendances[0] if employee.attendances else None,
             )
             new_employees.append(employee_obj)
 

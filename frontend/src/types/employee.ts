@@ -1,5 +1,5 @@
+import { AttendanceData } from './attendance';
 import { ContractData } from './contract';
-import { WorkLogData } from './worklog';
 
 export const GENDER_CODE = {
   1: '남자',
@@ -16,8 +16,10 @@ export interface EmployeeData {
   residence: string;
   genderCode: GenderType;
   createDate: string;
+  isAttendance: boolean;
+  hasContract: boolean;
   contract?: ContractData;
-  worklog?: WorkLogData;
+  attendance?: AttendanceData;
 }
 
 /** 근로자 생성 API 바디 */

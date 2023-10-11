@@ -30,6 +30,7 @@ export const baseMutation = <TCreate, TUpdate>(
   options?: BaseQueryOptions,
 ) => {
   const queryClient = useQueryClient();
+
   const initOptions: BaseQueryOptions = {
     ...options,
     onSuccess: () => {

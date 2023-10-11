@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
-from schemas.employee import EmployeeWithContract
+from schemas.employee import EmployeeResponse
 from response_model import BaseResponse, DataResponse, ListResponse
 from ... import deps
 
@@ -10,6 +10,7 @@ from schemas import (
     EmployeeUpdate,
     CoveringEmployeeResponse,
     EmployeeBaseResponse,
+    AttendanceCreate,
 )
 import crud, models
 from util.crypto import decrypt
@@ -53,7 +54,7 @@ def read_employee(
 
 
 # 전체 근로자 불러오기
-@router.get("/", response_model=ListResponse[EmployeeWithContract])
+@router.get("/", response_model=ListResponse[EmployeeResponse])
 def read_all_employee_with_contract(
     # user: User = Depends(deps.get_current_user),
     db: Session = Depends(deps.get_db),
@@ -107,6 +108,20 @@ def delete_employee(
     employee: models.Employee = Depends(deps.get_employee),
 ):
     crud.employee.remove_employee(db=db, id=employee.id)
+    return BaseResponse(msg="정상 처리되었습니다.")
+
+
+# 근무로그 생성 (날짜 중복 불가)
+@router.post("/{employee_id}/attendance", response_model=BaseResponse)
+def create_attendance(
+    *,
+    employee: Employee = Depends(deps.get_employee),
+    db: Session = Depends(deps.get_db),
+    attendance_in: AttendanceCreate,
+):
+    crud.attendance.create_attendance(
+        db=db, attendance_in=attendance_in, employee_id=employee.id
+    )
     return BaseResponse(msg="정상 처리되었습니다.")
 
 

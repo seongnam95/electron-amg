@@ -2,7 +2,6 @@ import Checkbox, { CheckboxChangeEvent } from 'antd/es/checkbox';
 import clsx from 'clsx';
 
 import Chip from '~/components/common/Chip';
-import { employeeKeys, useEmployeeMutation } from '~/hooks/queryHooks/useEmployeeQuery';
 import { POSITION_CODE, POSITION_COLORS } from '~/types/contract';
 import { EmployeeData } from '~/types/employee';
 import { formatPhoneNumber } from '~/utils/formatData';
@@ -15,30 +14,20 @@ export interface RowProps {
   className?: string;
   checked?: boolean;
   onChecked?: (e: CheckboxChangeEvent) => void;
+  onAttendance?: (employee: EmployeeData) => void;
+  onAttendanceCancel?: (employee: EmployeeData) => void;
 }
 
-const Row = ({ id, className, employee, checked, onChecked }: RowProps) => {
-  const { contract, worklog } = employee;
-  const isWorking = !!worklog;
-
-  const { createWorkLogMutate, removeWorkLogMutate } = useEmployeeMutation([]);
-
-  // 출근 처리
-  const handleAttendance = () => {
-    if (contract)
-      createWorkLogMutate({
-        employeeId: employee.id,
-        body: {
-          positionCode: contract.positionCode,
-          wage: contract.defaultWage,
-        },
-      });
-  };
-
-  // 퇴근 처리
-  const handleAttendanceCancel = () => {
-    if (worklog) removeWorkLogMutate(worklog?.id);
-  };
+const Row = ({
+  id,
+  className,
+  employee,
+  checked,
+  onChecked,
+  onAttendance,
+  onAttendanceCancel,
+}: RowProps) => {
+  const { contract } = employee;
 
   return (
     <RowStyled className={clsx('Row', className)}>
@@ -66,12 +55,12 @@ const Row = ({ id, className, employee, checked, onChecked }: RowProps) => {
       <td>{employee.residence}</td>
       <td className="text-accent">{contract ? contract.groupName : '소속 없음'}</td>
       <td>
-        {!isWorking ? (
-          <button className="commute-btn" onClick={handleAttendance}>
+        {!employee.isAttendance ? (
+          <button className="commute-btn" onClick={() => onAttendance?.(employee)}>
             출근
           </button>
         ) : (
-          <button className="commute-btn" onClick={handleAttendanceCancel}>
+          <button className="commute-btn" onClick={() => onAttendanceCancel?.(employee)}>
             취소
           </button>
         )}
