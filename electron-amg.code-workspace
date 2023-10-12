@@ -7,13 +7,14 @@
   "settings": {
     "cSpell.words": [
       "antd",
+      "ATTENDANCE",
       "boxicons",
       "Flatform",
       "initlize",
       "Nanum",
       "passlib",
       "starlette",
-      "ATTENDANCE"
+      "venv"
     ]
   }
 }
