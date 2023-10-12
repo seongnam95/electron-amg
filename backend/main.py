@@ -5,7 +5,6 @@ from api.api_v1.api import api_router
 from exception_handlers import http_exception_handler
 
 from scheduled import sched
-import uvicorn
 
 middleware = [
     Middleware(

@@ -8,11 +8,16 @@
     "cSpell.words": [
       "antd",
       "ATTENDANCE",
+      "autoload",
       "boxicons",
+      "Cryptodome",
+      "fastapi",
       "Flatform",
       "initlize",
       "Nanum",
       "passlib",
+      "sessionmaker",
+      "sqlalchemy",
       "starlette",
       "venv"
     ]

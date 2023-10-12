@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import { Progress, Skeleton } from 'antd';
 
@@ -10,6 +10,7 @@ export interface EmployeeSidebarProps {}
 
 const EmployeeSidebar = ({}: EmployeeSidebarProps) => {
   const { employees, isEmployeeLoading } = useEmployeeQuery();
+  const [tempRate, setTempRate] = useState<number>(0);
 
   // 출근률 계산
   const getAttendanceRate = () => {
@@ -25,10 +26,12 @@ const EmployeeSidebar = ({}: EmployeeSidebarProps) => {
   const { total, attendance, rate } = getAttendanceRate();
   return (
     <EmployeeSidebarStyled className="EmployeeSidebar">
+      <button onClick={() => setTempRate(prev => prev + 5)}>증가</button>
+      <button onClick={() => setTempRate(prev => prev - 5)}>축소</button>
       <div className="card-wrap">
         {!isEmployeeLoading ? (
           <>
-            <Progress type="circle" strokeWidth={14} percent={40} size={100} />
+            <Progress type="circle" strokeWidth={14} percent={tempRate} size={100} />
             <p>
               <span className="value-text">
                 출근 <b>{attendance}명</b> / 총 {total}명
