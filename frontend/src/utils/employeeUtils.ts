@@ -18,7 +18,7 @@ export const searchEmployee = (
 export const sortedEmployees = (
   employees: Array<EmployeeData>,
   searchTerm: string,
-  sort: number,
+  sort: string,
 ) => {
   const filteredEmployees = employees.filter(
     employee =>
@@ -29,9 +29,9 @@ export const sortedEmployees = (
   );
 
   switch (sort) {
-    case 0:
+    case 'name':
       return [...filteredEmployees].sort((a, b) => a.name.localeCompare(b.name));
-    case 1:
+    case 'default':
     default:
       return filteredEmployees;
   }

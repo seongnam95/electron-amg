@@ -1,6 +1,8 @@
 import { ReactNode, useEffect, useMemo, useState } from 'react';
 import React from 'react';
+import { FaQuestionCircle } from 'react-icons/fa';
 
+import { Tooltip } from 'antd';
 import Checkbox, { CheckboxChangeEvent } from 'antd/es/checkbox';
 
 import Row, { RowProps } from './Row';
@@ -8,9 +10,10 @@ import { EmployeeTableStyled } from './styled';
 
 export interface EmployeeTableProps {
   children: ReactNode;
+  onSelected?: (id: Array<string>) => void;
 }
 
-const EmployeeTable = ({ children }: EmployeeTableProps) => {
+const EmployeeTable = ({ children, onSelected }: EmployeeTableProps) => {
   const [allSelected, setAllSelected] = useState<boolean>(false);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
 
@@ -24,16 +27,17 @@ const EmployeeTable = ({ children }: EmployeeTableProps) => {
   // 단일 체크박스 기준 전체 체크박스 활성화/비활성화
   useEffect(() => {
     setAllSelected(selectedIds.length > 0);
+    onSelected?.(selectedIds);
   }, [selectedIds]);
 
   // 전체 체크박스 클릭 핸들러
-  const handleOnChangeAllChecked = (e: CheckboxChangeEvent) => {
-    const isChecked = e.target.checked;
-    setSelectedIds(isChecked ? childIdList : []);
+  const handleOnChangeAllSelected = (e: CheckboxChangeEvent) => {
+    const isSelected = e.target.checked;
+    setSelectedIds(isSelected ? childIdList : []);
   };
 
   // 체크박스 클릭 핸들러
-  const handleOnChangeChecked = (e: CheckboxChangeEvent) => {
+  const handleOnChangeSelected = (e: CheckboxChangeEvent) => {
     const targetId = e.target.id;
     if (targetId) {
       setSelectedIds(
@@ -51,24 +55,29 @@ const EmployeeTable = ({ children }: EmployeeTableProps) => {
           <thead>
             <tr>
               <th>
-                <Checkbox checked={allSelected} onChange={handleOnChangeAllChecked} />
+                <Checkbox checked={allSelected} onChange={handleOnChangeAllSelected} />
               </th>
               <th>이름</th>
-              <th>연락처</th>
-              <th>거주지</th>
-              <th>그룹</th>
-              <th></th>
+              <th className="cell-center">연락처</th>
+              <th>소속</th>
+              <th>
+                <div className="wage-th-wrap">
+                  기본 급여
+                  <Tooltip title="출근 시 기본 입력 될 급여액" placement="bottom">
+                    <FaQuestionCircle />
+                  </Tooltip>
+                </div>
+              </th>
+              <th className="cell-center">근무일</th>
+              <th className="cell-center">상태</th>
             </tr>
           </thead>
           <tbody>
             {React.Children.map(children, child => {
-              if (
-                React.isValidElement<RowProps>(child) &&
-                child.type === Row // 여기서 Row는 당신의 `Row` 컴포넌트를 가리킵니다.
-              ) {
+              if (React.isValidElement<RowProps>(child) && child.type === Row) {
                 return React.cloneElement(child, {
                   checked: selectedIds.includes(child.props.id),
-                  onChecked: handleOnChangeChecked,
+                  onSelected: handleOnChangeSelected,
                 });
               }
               return child;

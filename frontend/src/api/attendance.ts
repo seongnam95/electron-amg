@@ -12,7 +12,7 @@ export interface CreateAttendanceProps {
   body: AttendanceCreateBody;
 }
 
-export const createAttendance =
+export const createAttendanceRequest =
   (parentEndpoint: string, endpoint: string) =>
   async ({ employeeId, body }: CreateAttendanceProps): Promise<BaseResponse> => {
     const { data } = await axiosPrivate.post<BaseResponse>(
@@ -22,7 +22,7 @@ export const createAttendance =
     return data;
   };
 
-export const removeAttendance =
+export const removeAttendanceRequest =
   (endpoint: string) =>
   async (id: string): Promise<BaseResponse> => {
     const { data } = await axiosPrivate.delete<BaseResponse>(`${endpoint}/${id}`);

@@ -23,6 +23,7 @@ const EmployeeSidebar = ({}: EmployeeSidebarProps) => {
       rate: rate,
     };
   };
+
   const { total, attendance, rate } = getAttendanceRate();
   return (
     <EmployeeSidebarStyled className="EmployeeSidebar">
@@ -31,7 +32,7 @@ const EmployeeSidebar = ({}: EmployeeSidebarProps) => {
       <div className="card-wrap">
         {!isEmployeeLoading ? (
           <>
-            <Progress type="circle" strokeWidth={14} percent={tempRate} size={100} />
+            <Progress type="circle" strokeWidth={14} percent={rate} size={100} />
             <p>
               <span className="value-text">
                 출근 <b>{attendance}명</b> / 총 {total}명

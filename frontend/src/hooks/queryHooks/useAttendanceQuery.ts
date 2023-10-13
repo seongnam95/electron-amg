@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from 'react-query';
 
-import { createAttendance, removeAttendance } from '~/api/attendance';
+import { createAttendanceRequest, removeAttendanceRequest } from '~/api/attendance';
 
 import { BaseQueryOptions } from './useBaseQuery';
 
@@ -12,16 +12,16 @@ export const useAttendanceMutation = (queryKey?: string[], options?: BaseQueryOp
 
   const onSettled = () => queryClient.invalidateQueries(employeeQueryKey);
 
-  const { mutate: createAttendanceMutate, isLoading: createAttendanceLoading } = useMutation(
-    createAttendance(employeeEndpoint, attendanceEndpoint),
+  const { mutate: createAttendance, isLoading: createAttendanceLoading } = useMutation(
+    createAttendanceRequest(employeeEndpoint, attendanceEndpoint),
     { ...options, onSettled },
   );
 
-  const { mutate: removeAttendanceMutate, isLoading: removeAttendanceLoading } = useMutation(
-    removeAttendance(attendanceEndpoint),
+  const { mutate: removeAttendance, isLoading: removeAttendanceLoading } = useMutation(
+    removeAttendanceRequest(attendanceEndpoint),
     { ...options, onSettled },
   );
 
   const isLoading = createAttendanceLoading || removeAttendanceLoading;
-  return { createAttendanceMutate, removeAttendanceMutate, isLoading };
+  return { createAttendance, removeAttendance, isLoading };
 };

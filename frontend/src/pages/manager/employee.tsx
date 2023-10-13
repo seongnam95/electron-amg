@@ -2,7 +2,7 @@ import { useState } from 'react';
 
 import { Empty, Skeleton } from 'antd';
 
-import { EmployeeSidebar, EmployeeTable } from '@components/employee';
+import { EmployeeTable } from '@components/employee';
 
 import ControlBar from '~/components/employee/EmployeeTable/ControlBar';
 import { useAttendanceMutation } from '~/hooks/queryHooks/useAttendanceQuery';
@@ -24,46 +24,24 @@ const EmployeePage = () => {
     hasMore: false,
   };
   const [pagination, setPagination] = useState<PaginationData>(initPagination);
-  const [sort, setSort] = useState<number>(0);
+  const [sort, setSort] = useState<string>('default');
   const [searchTerm, setSearchTerm] = useState<string>('');
-
-  const handleQuerySuccess = () => {
-    if (response) {
-      const { total, offset, list, ...rest } = response;
-      setPagination(rest);
-    }
-  };
-
+  const [selectedIds, setSelectedIds] = useState<Array<string>>([]);
   const { employees, response, isEmployeeLoading } = useEmployeeQuery({
     page: pagination.page,
-    onSuccess: handleQuerySuccess,
+    onSuccess: () => {
+      if (response) {
+        const { total, offset, list, ...rest } = response;
+        setPagination(rest);
+      }
+    },
   });
 
   const isEmptyEmployee = employees.length === 0;
   const filteredEmployees = sortedEmployees(employees, searchTerm, sort);
 
-  const { createAttendanceMutate, removeAttendanceMutate } = useAttendanceMutation([
-    pagination.page.toString(),
-  ]);
-
-  // 출근 처리
-  const handleAttendance = (employee: EmployeeData) => {
-    const { contract } = employee;
-
-    if (contract)
-      createAttendanceMutate({
-        employeeId: employee.id,
-        body: {
-          positionCode: contract.positionCode,
-          wage: contract.defaultWage,
-        },
-      });
-  };
-
-  // 퇴근 처리
-  const handleAttendanceCancel = (employee: EmployeeData) => {
-    const { attendance } = employee;
-    if (attendance) removeAttendanceMutate(attendance.id);
+  const handleSelectedEmployee = (ids: Array<string>) => {
+    setSelectedIds(ids);
   };
 
   return (
@@ -78,22 +56,13 @@ const EmployeePage = () => {
         ) : isEmptyEmployee ? (
           <Empty description="데이터 없음" style={{ marginTop: '8rem' }} />
         ) : (
-          <EmployeeTable>
+          <EmployeeTable onSelected={handleSelectedEmployee}>
             {filteredEmployees.map(employee => {
-              return (
-                <EmployeeTable.Row
-                  key={employee.id}
-                  id={employee.id}
-                  employee={employee}
-                  onAttendance={handleAttendance}
-                  onAttendanceCancel={handleAttendanceCancel}
-                />
-              );
+              return <EmployeeTable.Row key={employee.id} id={employee.id} employee={employee} />;
             })}
           </EmployeeTable>
         )}
       </div>
-      <EmployeeSidebar />
     </EmployeePageStyled>
   );
 };

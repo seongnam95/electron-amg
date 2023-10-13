@@ -13,26 +13,24 @@ export interface RowProps {
   id: string;
   className?: string;
   checked?: boolean;
-  onChecked?: (e: CheckboxChangeEvent) => void;
-  onAttendance?: (employee: EmployeeData) => void;
-  onAttendanceCancel?: (employee: EmployeeData) => void;
+  onSelected?: (e: CheckboxChangeEvent) => void;
 }
 
-const Row = ({
-  id,
-  className,
-  employee,
-  checked,
-  onChecked,
-  onAttendance,
-  onAttendanceCancel,
-}: RowProps) => {
-  const { contract } = employee;
+const Row = ({ id, className, employee, checked, onSelected }: RowProps) => {
+  const { contract, isAttendance, hasContract } = employee;
+  const stateText = !hasContract ? '계약만료' : '정상';
+  const salaryText = contract
+    ? contract.salary === 'daily'
+      ? '일급'
+      : contract.salary === 'weekly'
+      ? '주급'
+      : '월급'
+    : '없음';
 
   return (
     <RowStyled className={clsx('Row', className)}>
       <td>
-        <Checkbox id={id} onChange={onChecked} checked={checked} />
+        <Checkbox id={id} onChange={onSelected} checked={checked} />
       </td>
       <td>
         <div className="employee-name">
@@ -51,19 +49,19 @@ const Row = ({
           <span>{employee.name}</span>
         </div>
       </td>
-      <td>{formatPhoneNumber(employee.phone)}</td>
-      <td>{employee.residence}</td>
+      <td className="cell-center">{formatPhoneNumber(employee.phone)}</td>
       <td className="text-accent">{contract ? contract.groupName : '소속 없음'}</td>
       <td>
-        {!employee.isAttendance ? (
-          <button className="commute-btn" onClick={() => onAttendance?.(employee)}>
-            출근
-          </button>
-        ) : (
-          <button className="commute-btn" onClick={() => onAttendanceCancel?.(employee)}>
-            취소
-          </button>
-        )}
+        <div className="wage-wrap">
+          <Chip>{salaryText}</Chip>
+          <span>{contract ? `${Number(contract?.defaultWage).toLocaleString()}원` : '-'}</span>
+        </div>
+      </td>
+      <td className="cell-center">3일</td>
+      <td className="cell-center">
+        <div className="center-wrap">
+          <Chip style={{ width: '7rem' }}>{stateText}</Chip>
+        </div>
       </td>
     </RowStyled>
   );

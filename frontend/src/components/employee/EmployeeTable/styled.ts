@@ -5,6 +5,7 @@ export const EmployeeTableStyled = styled.div`
   position: relative;
   height: 100%;
   overflow: hidden;
+  white-space: nowrap;
 
   .table-wrap {
     padding: 1.4rem 1rem;
@@ -16,10 +17,41 @@ export const EmployeeTableStyled = styled.div`
       width: 100%;
 
       th {
+        text-align: start;
         font-weight: normal;
         color: ${p => p.theme.colors.textColor3};
         font-size: ${p => p.theme.sizes.textSmall};
-        padding: 0.6rem 0;
+        height: 4rem;
+
+        .wage-th-wrap {
+          display: flex;
+          align-items: center;
+          gap: 0.8rem;
+
+          > svg {
+            font-size: 1rem;
+          }
+        }
+
+        :first-child {
+          padding-left: 1.2rem;
+        }
+
+        &:not(:first-child) {
+          padding-left: 1.8rem;
+        }
+      }
+
+      .cell-center {
+        padding-left: 0.6rem !important;
+        padding-right: 0.6rem !important;
+        text-align: center;
+
+        .center-wrap {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+        }
       }
     }
   }

@@ -8,15 +8,15 @@ import Input from '~/components/common/Input';
 import { ControlBarStyled } from './styled';
 
 interface ControlBarProps {
-  onChangeSort?: (sort: number) => void;
+  onChangeSort?: (sort: string) => void;
   onSearch?: (e: ChangeEvent<HTMLInputElement>) => void;
 }
 
 const ControlBar = ({ onChangeSort, onSearch }: ControlBarProps) => {
-  const [sort, setSort] = useState<number>(0);
+  const [sort, setSort] = useState<string>('default');
 
   const handleOnChangeSort = () => {
-    const newSort = sort === 0 ? 1 : 0;
+    const newSort = sort === 'default' ? 'name' : 'default';
     setSort(newSort);
     onChangeSort?.(newSort);
   };
@@ -40,7 +40,7 @@ const ControlBar = ({ onChangeSort, onSearch }: ControlBarProps) => {
           </Button>
           <Button $variations="link" $btnSize="small" onClick={handleOnChangeSort}>
             <i className="bx bx-sort" style={{ fontSize: '14px' }} />
-            {sort === 0 ? '등록순' : '이름순'}
+            {sort === 'default' ? '등록순' : '이름순'}
           </Button>
         </motion.div>
       </div>
