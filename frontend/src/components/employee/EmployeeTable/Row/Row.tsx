@@ -17,7 +17,7 @@ export interface RowProps {
 }
 
 const Row = ({ id, className, employee, checked, onSelected }: RowProps) => {
-  const { contract, isAttendance, hasContract } = employee;
+  const { contract, attendances, isAttendance, hasContract } = employee;
   const stateText = !hasContract ? '계약만료' : '정상';
   const salaryText = contract
     ? contract.salary === 'daily'
@@ -57,7 +57,7 @@ const Row = ({ id, className, employee, checked, onSelected }: RowProps) => {
           <span>{contract ? `${Number(contract?.defaultWage).toLocaleString()}원` : '-'}</span>
         </div>
       </td>
-      <td className="cell-center">3일</td>
+      <td className="cell-center">{contract ? attendances?.length : '-'}</td>
       <td className="cell-center">
         <div className="center-wrap">
           <Chip style={{ width: '7rem' }}>{stateText}</Chip>

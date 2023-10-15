@@ -77,7 +77,7 @@ class EmployeeResponse(BaseModel):
     is_attendance: bool
 
     contract: Optional[ContractResponse] = None
-    attendance: Optional[Attendance] = None
+    attendances: Optional[List[Attendance]] = None
 
     class Config:
         from_attributes = True

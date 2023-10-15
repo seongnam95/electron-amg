@@ -81,14 +81,15 @@ class CRUDEmployee(CRUDBase[Employee, EmployeeCreate, EmployeeUpdate]):
     def get_employee_count(self, db: Session):
         return db.query(Employee).count()
 
-    def get_all_employee(self, db: Session, *, offset: int, limit: int):
-        today = date.today().strftime("%Y-%m-%d")
+    def get_multi_employee(self, db: Session, *, offset: int, limit: int):
+        today = date.today().strftime("%Y-%m")
+        print(today)
         employees = (
             db.query(Employee)
             .options(selectinload(Employee.contracts.and_(Contract.valid == True)))
             .options(
                 selectinload(
-                    Employee.attendances.and_(Attendance.working_date == today)
+                    Employee.attendances.and_(Attendance.working_date.like(f"{today}%"))
                 )
             )
             .offset(offset)
@@ -98,6 +99,7 @@ class CRUDEmployee(CRUDBase[Employee, EmployeeCreate, EmployeeUpdate]):
 
         new_employees = []
         for employee in employees:
+            print(employee.attendances)
             employee_obj = EmployeeResponse(
                 id=employee.id,
                 name=employee.name,
@@ -108,7 +110,7 @@ class CRUDEmployee(CRUDBase[Employee, EmployeeCreate, EmployeeUpdate]):
                 has_contract=True if employee.contracts else False,
                 is_attendance=True if employee.attendances else False,
                 contract=employee.contracts[0] if employee.contracts else None,
-                attendance=employee.attendances[0] if employee.attendances else None,
+                attendances=employee.attendances,
             )
             new_employees.append(employee_obj)
 

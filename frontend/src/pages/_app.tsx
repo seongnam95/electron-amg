@@ -2,6 +2,7 @@ import { useEffect, useMemo } from 'react';
 import { Outlet } from 'react-router-dom';
 
 import { ConfigProvider, theme } from 'antd';
+import locale from 'antd/lib/locale/ko_KR';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { ThemeProvider } from 'styled-components';
 
@@ -26,7 +27,7 @@ declare module 'styled-components' {
 
 const App = () => {
   return (
-    <ConfigProvider theme={antdTheme}>
+    <ConfigProvider theme={antdTheme} locale={locale}>
       <AppInner />
     </ConfigProvider>
   );

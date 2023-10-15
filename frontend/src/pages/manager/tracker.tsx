@@ -1,35 +1,33 @@
 import { useState } from 'react';
 
-import { DatePicker, Radio } from 'antd';
+import { Radio } from 'antd';
 import dayjs, { Dayjs } from 'dayjs';
 
+import DatePicker from '~/components/common/DatePicker';
+import AntDatePicker from '~/components/common/DatePicker';
 import LayoutConfig from '~/components/layouts/LayoutConfig/LayoutConfig';
 import DayTable from '~/components/tracker/DayTable';
 import MonthTable from '~/components/tracker/MonthTable';
+import { useEmployeeQuery } from '~/hooks/queryHooks/useEmployeeQuery';
 import { useDragScroll } from '~/hooks/useDragScroll';
 import { EmployeeTrackerPageStyled } from '~/styles/pageStyled/employeeTrackerPageStyled';
+import { EmployeeData } from '~/types/employee';
+import { generateWeekColorDays } from '~/utils/commuteRange';
 
 const EmployeeTracker = () => {
   const dragRef = useDragScroll();
-
-  const [selectedDay, setSelectedDay] = useState<Dayjs>(dayjs());
   const [viewType, setViewType] = useState<'month' | 'day'>('month');
+  const [selectedDay, setSelectedDay] = useState<Dayjs>(dayjs());
 
-  const handleOnChangeDate = (day: Dayjs | null) => {
-    if (day) setSelectedDay(day);
+  const { employees, isEmployeeLoading } = useEmployeeQuery();
+  const days = generateWeekColorDays(selectedDay);
+
+  const handleOnChangeDate = (date: Dayjs | null) => {
+    if (date) setSelectedDay(date);
   };
-
-  const monthCellRender = (value: any) => {
-    return <div className="ant-picker-cell-inner">{value.month() + 1}월</div>;
-  };
-
-  function disabledDate(current: any) {
-    return current && current.valueOf() > Date.now();
-  }
 
   return (
     <EmployeeTrackerPageStyled>
-      <LayoutConfig breadcrumbs={['매니저', '근태']} />
       <div className="tracker-header">
         <Radio.Group
           defaultValue="day"
@@ -41,29 +39,28 @@ const EmployeeTracker = () => {
           <Radio.Button value="day">일간</Radio.Button>
         </Radio.Group>
 
-        <DatePicker
+        <AntDatePicker
           picker={viewType === 'month' ? 'month' : 'date'}
-          inputReadOnly
           defaultValue={selectedDay}
-          allowClear={false}
-          monthCellRender={monthCellRender}
-          disabledDate={disabledDate}
+          onChange={handleOnChangeDate}
         />
       </div>
 
-      <div className="color-hint-wrap">
-        <span>
-          직원
-          <span className="color-bar" style={{ backgroundColor: '#29B6F6' }} />
-        </span>
-        <span>
-          알바
-          <span className="color-bar" style={{ backgroundColor: '#FFA726' }} />
-        </span>
-      </div>
-
       <div className="table-wrap" ref={dragRef}>
-        {viewType === 'month' ? <MonthTable selectedDay={selectedDay} /> : <DayTable />}
+        {viewType === 'month' ? (
+          <MonthTable days={days}>
+            {employees?.map((employee: EmployeeData) => (
+              <MonthTable.Row
+                key={'row' + employee.id}
+                name={employee.name}
+                days={days}
+                attendances={employee.attendances}
+              />
+            ))}
+          </MonthTable>
+        ) : (
+          <DayTable />
+        )}
       </div>
     </EmployeeTrackerPageStyled>
   );

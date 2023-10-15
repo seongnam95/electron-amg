@@ -1,79 +1,32 @@
-import { Tooltip } from 'antd';
+import { ReactNode } from 'react';
+
 import dayjs, { Dayjs } from 'dayjs';
-import { useRecoilValue } from 'recoil';
 import styled, { css } from 'styled-components';
 
-import { commuteMonthlySelector } from '~/stores/commute';
 import { EmployeeData } from '~/types/employee';
-import { findWorkingRanges, groupDataByEmployee } from '~/utils/commuteRange';
+import { WeekColorData, generateWeekColorDays } from '~/utils/commuteRange';
 
 import { MonthTableStyled } from './styled';
 
 export interface MonthTableProps {
-  selectedDay: Dayjs;
+  days: Array<WeekColorData>;
+  children: ReactNode;
 }
 
-const MonthTable = ({ selectedDay }: MonthTableProps) => {
-  const commutes = useRecoilValue(commuteMonthlySelector(selectedDay.format('YYYYMM')));
-
-  const employees = [];
-
-  const dayCount = selectedDay.daysInMonth();
-  const daysOfMonth = Array.from({ length: dayCount }, (_, i) => dayjs(selectedDay).date(i + 1));
-  const dataByEmployee = groupDataByEmployee(commutes);
-  const rangesByEmployee = findWorkingRanges(dataByEmployee);
-
+const MonthTable = ({ days, children }: MonthTableProps) => {
   return (
     <MonthTableStyled className="MonthTable">
       <thead>
         <tr>
           <th className="name-column" />
-          {daysOfMonth.map((day: Dayjs) => (
-            <th key={day.date()} className={dayjs().isSame(day, 'day') ? 'today' : ''}>
-              {day.date()}
+          {days.map(day => (
+            <th key={day.day} style={{ color: day.color }}>
+              {day.day}
             </th>
           ))}
         </tr>
       </thead>
-
-      <tbody>
-        {/* Employee Row */}
-        {employees?.map((employee: EmployeeData) => (
-          <tr key={'row' + employee.id}>
-            <td className="name-column">{employee.name}</td>
-
-            {/* Working Day Column */}
-            {daysOfMonth.map((day: Dayjs) => {
-              const dayFormatted = day.format('YYYYMMDD');
-              const range = rangesByEmployee[employee.id]?.find(range =>
-                range.some(item => item.workingDay === dayFormatted),
-              );
-
-              const isWorking = range != null;
-              const isRangeStart = isWorking && range[0].workingDay === dayFormatted;
-              const isRangeEnd = isWorking && range[range.length - 1].workingDay === dayFormatted;
-
-              return (
-                <td
-                  className={dayjs().isSame(day, 'day') ? 'today' : ''}
-                  key={employee.id + '-' + dayFormatted}
-                >
-                  {isWorking && (
-                    <Tooltip placement="top" title={'text'}>
-                      <ColorBar
-                        color={employee.positionCode === 1 ? '#29B6F6' : '#FFA726'}
-                        hoverColor={employee.positionCode === 1 ? '#4FC3F7' : '#FFB74D'}
-                        isRangeStart={isRangeStart}
-                        isRangeEnd={isRangeEnd}
-                      />
-                    </Tooltip>
-                  )}
-                </td>
-              );
-            })}
-          </tr>
-        ))}
-      </tbody>
+      <tbody>{children}</tbody>
     </MonthTableStyled>
   );
 };

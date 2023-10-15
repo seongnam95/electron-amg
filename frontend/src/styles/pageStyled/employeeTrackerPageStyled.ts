@@ -44,10 +44,7 @@ export const EmployeeTrackerPageStyled = styled.div`
   }
 
   .table-wrap {
-    max-width: 100%;
-    height: calc(100% - 7rem);
-
+    height: calc(100% - 6.4rem);
     overflow: auto;
-    margin: 0.4rem 1.4rem;
   }
 `;

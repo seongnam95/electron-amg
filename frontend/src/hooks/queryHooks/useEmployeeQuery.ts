@@ -5,19 +5,18 @@ import { fetchEmployeeList } from '~/api/employee';
 import { BaseQueryOptions } from './useBaseQuery';
 
 export interface EmployeeQueryOptions extends BaseQueryOptions {
-  page?: number;
   employeeId?: string;
 }
 
-export const useEmployeeQuery = ({ page = 1, onSuccess, onError }: EmployeeQueryOptions = {}) => {
+export const useEmployeeQuery = ({ onSuccess, onError }: EmployeeQueryOptions = {}) => {
   const endpoint = import.meta.env.VITE_EMPLOYEE_ENDPOINT;
-  const queryKey = [import.meta.env.VITE_EMPLOYEE_QUERY_KEY, page.toString()];
+  const queryKey = import.meta.env.VITE_EMPLOYEE_QUERY_KEY;
 
   const {
     data,
     isLoading: isEmployeeLoading,
     isError: isEmployeeError,
-  } = useQuery(queryKey, fetchEmployeeList(endpoint, page), {
+  } = useQuery(queryKey, fetchEmployeeList(endpoint), {
     onSuccess: onSuccess,
     onError: onError,
   });

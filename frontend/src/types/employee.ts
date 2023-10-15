@@ -19,7 +19,7 @@ export interface EmployeeData {
   isAttendance: boolean;
   hasContract: boolean;
   contract?: ContractData;
-  attendance?: AttendanceData;
+  attendances?: Array<AttendanceData>;
 }
 
 /** 근로자 생성 API 바디 */

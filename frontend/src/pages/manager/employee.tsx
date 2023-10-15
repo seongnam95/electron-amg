@@ -5,37 +5,15 @@ import { Empty, Skeleton } from 'antd';
 import { EmployeeTable } from '@components/employee';
 
 import ControlBar from '~/components/employee/EmployeeTable/ControlBar';
-import { useAttendanceMutation } from '~/hooks/queryHooks/useAttendanceQuery';
 import { useEmployeeQuery } from '~/hooks/queryHooks/useEmployeeQuery';
 import { EmployeePageStyled } from '~/styles/pageStyled/employeePageStyled';
-import { EmployeeData } from '~/types/employee';
 import { sortedEmployees } from '~/utils/employeeUtils';
 
-interface PaginationData {
-  page: number;
-  hasMore: boolean;
-  nextPage: number;
-}
-
 const EmployeePage = () => {
-  const initPagination: PaginationData = {
-    page: 1,
-    nextPage: 1,
-    hasMore: false,
-  };
-  const [pagination, setPagination] = useState<PaginationData>(initPagination);
   const [sort, setSort] = useState<string>('default');
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [selectedIds, setSelectedIds] = useState<Array<string>>([]);
-  const { employees, response, isEmployeeLoading } = useEmployeeQuery({
-    page: pagination.page,
-    onSuccess: () => {
-      if (response) {
-        const { total, offset, list, ...rest } = response;
-        setPagination(rest);
-      }
-    },
-  });
+  const { employees, isEmployeeLoading } = useEmployeeQuery();
 
   const isEmptyEmployee = employees.length === 0;
   const filteredEmployees = sortedEmployees(employees, searchTerm, sort);

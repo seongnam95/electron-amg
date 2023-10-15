@@ -55,7 +55,7 @@ def read_employee(
 
 # 전체 근로자 불러오기
 @router.get("/", response_model=ListResponse[EmployeeResponse])
-def read_all_employee_with_contract(
+def read_multi_employee(
     # user: User = Depends(deps.get_current_user),
     db: Session = Depends(deps.get_db),
     page: int = 1,
@@ -63,27 +63,12 @@ def read_all_employee_with_contract(
 ):
     offset = (page - 1) * limit
     total = crud.employee.get_employee_count(db)
-    employees = crud.employee.get_all_employee(db, offset=offset, limit=limit)
+    employees = crud.employee.get_multi_employee(db, offset=offset, limit=limit)
 
     response = deps.create_list_response(
         data=employees, total=total, limit=limit, page=page
     )
     return ListResponse(msg="정상 처리되었습니다.", result=response)
-
-
-# TODO 현재 불필요
-# 전체 근로자 데이터만 불러오기
-@router.get("/only/", response_model=DataResponse[Employee])
-def read_all_employee(
-    # user: User = Depends(deps.get_current_user),
-    db: Session = Depends(deps.get_db),
-    skip: int = 0,
-    limit: int = 100,
-):
-    employees = crud.employee.get_multi(db, skip=skip, limit=limit)
-    employees_dec = [_decrypt_employee(employee) for employee in employees]
-
-    return DataResponse(msg="정상 처리되었습니다.", count=len(employees), result=employees_dec)
 
 
 # 근로자 업데이트

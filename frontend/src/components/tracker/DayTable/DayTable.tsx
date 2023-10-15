@@ -1,12 +1,3 @@
-import { useEffect, useState } from 'react';
-
-import dayjs, { Dayjs } from 'dayjs';
-import { useRecoilState, useRecoilValue } from 'recoil';
-
-import { commuteStore, workingDayStore } from '~/stores/commute';
-import { employeeSelector } from '~/stores/employee';
-import { CommuteData } from '~/types/employee';
-
 import { DayTableStyled } from './styled';
 
 export interface DayTableProps {}

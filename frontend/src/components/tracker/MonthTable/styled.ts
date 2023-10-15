@@ -1,16 +1,21 @@
 import styled from 'styled-components';
 
-export const MonthTableStyled = styled.div`
-  --titleBg: #757575;
-
+export const MonthTableStyled = styled.table`
   font-size: ${p => p.theme.sizes.textSmall};
   white-space: nowrap;
   color: ${p => p.theme.colors.textColor1};
 
-  overflow: auto;
+  thead {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    font-weight: bold;
+    background-color: rgba(255, 255, 255, 0.6);
+    backdrop-filter: blur(8px);
+  }
 
   tr {
-    height: 3.6rem;
+    height: 4rem;
     border-bottom: 1px solid ${p => p.theme.colors.borderColor};
 
     th,
@@ -18,36 +23,16 @@ export const MonthTableStyled = styled.div`
       font-weight: normal;
       text-align: center;
       min-width: 3.6rem;
-    }
-  }
 
-  tbody {
-    tr:hover {
-      background-color: ${p => p.theme.colors.innerBg};
-    }
-
-    td {
-      cursor: pointer;
       :first-child {
+        position: sticky;
+        left: 0;
         font-weight: bold;
+        background-color: white;
+        padding: 0 2rem;
+        border-right: 1px solid ${p => p.theme.colors.borderColor};
       }
     }
-  }
-
-  thead {
-    position: sticky;
-    top: 0;
-    z-index: 2;
-    font-weight: bold;
-  }
-
-  .name-column {
-    position: sticky;
-    left: 0;
-    background-color: white;
-    z-index: 1;
-    padding: 0 1.4rem;
-    border-right: 1px solid ${p => p.theme.colors.borderColor};
   }
 
   /* .today {

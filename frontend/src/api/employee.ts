@@ -4,13 +4,8 @@ import { FetchListResponse } from '~/types/response';
 import axiosPrivate from './axios';
 
 export const fetchEmployeeList =
-  (url: string, page: number) =>
+  (url: string) =>
   async <T extends FetchListResponse<EmployeeData>>(): Promise<T> => {
-    const { data } = await axiosPrivate.get<T>(`${url}`, {
-      params: {
-        page: page,
-      },
-    });
-
+    const { data } = await axiosPrivate.get<T>(`${url}`);
     return data;
   };
