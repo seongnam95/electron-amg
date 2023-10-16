@@ -6,14 +6,17 @@ import styled, { css } from 'styled-components';
 import { EmployeeData } from '~/types/employee';
 import { WeekColorData, generateWeekColorDays } from '~/utils/commuteRange';
 
+import Row from './Row';
 import { MonthTableStyled } from './styled';
 
 export interface MonthTableProps {
-  days: Array<WeekColorData>;
-  children: ReactNode;
+  selectedDay: Dayjs;
+  employees: Array<EmployeeData>;
 }
 
-const MonthTable = ({ days, children }: MonthTableProps) => {
+const MonthTable = ({ selectedDay, employees }: MonthTableProps) => {
+  const days = generateWeekColorDays(selectedDay);
+
   return (
     <MonthTableStyled className="MonthTable">
       <thead>
@@ -26,7 +29,16 @@ const MonthTable = ({ days, children }: MonthTableProps) => {
           ))}
         </tr>
       </thead>
-      <tbody>{children}</tbody>
+      <tbody>
+        {employees?.map((employee: EmployeeData) => (
+          <Row
+            key={'row' + employee.id}
+            days={days}
+            name={employee.name}
+            attendances={employee.attendances}
+          />
+        ))}
+      </tbody>
     </MonthTableStyled>
   );
 };

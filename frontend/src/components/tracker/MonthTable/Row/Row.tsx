@@ -13,8 +13,11 @@ export interface RowProps {
 }
 
 const Row = ({ days, name, attendances }: RowProps) => {
-  const dayArray = Array.from({ length: days.length }, (_, index) => index + 1);
-  console.log(dayArray);
+  const dayArray = Array.from({ length: days.length }, (_, index) => {
+    console.log(_);
+    index + 1;
+  });
+
   const findWorkingRanges = (
     dataByEmployee: Record<string, AttendanceData[]>,
   ): Record<string, AttendanceData[][]> => {

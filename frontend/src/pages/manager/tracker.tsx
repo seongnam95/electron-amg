@@ -20,7 +20,6 @@ const EmployeeTracker = () => {
   const [selectedDay, setSelectedDay] = useState<Dayjs>(dayjs());
 
   const { employees, isEmployeeLoading } = useEmployeeQuery();
-  const days = generateWeekColorDays(selectedDay);
 
   const handleOnChangeDate = (date: Dayjs | null) => {
     if (date) setSelectedDay(date);
@@ -48,16 +47,7 @@ const EmployeeTracker = () => {
 
       <div className="table-wrap" ref={dragRef}>
         {viewType === 'month' ? (
-          <MonthTable days={days}>
-            {employees?.map((employee: EmployeeData) => (
-              <MonthTable.Row
-                key={'row' + employee.id}
-                name={employee.name}
-                days={days}
-                attendances={employee.attendances}
-              />
-            ))}
-          </MonthTable>
+          <MonthTable selectedDay={selectedDay} employees={employees} />
         ) : (
           <DayTable />
         )}
