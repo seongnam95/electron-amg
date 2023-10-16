@@ -22,7 +22,7 @@ const ControlBar = ({ onChangeSort, onSearch }: ControlBarProps) => {
   };
 
   return (
-    <ControlBarStyled>
+    <ControlBarStyled className="ControlBar">
       <label style={{ fontSize: '20px', fontWeight: 'bold', whiteSpace: 'nowrap' }}>전체</label>
       <div className="control-wrap">
         <Input icon="bx-search" variations="fill" onChange={onSearch} />

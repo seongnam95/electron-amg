@@ -71,11 +71,14 @@ export const antdTheme: ThemeConfig = {
     colorIcon: colors.textColor1,
   },
   components: {
+    Tag: {
+      colorText: colors.textColor2,
+    },
     Table: {
-      colorBgContainer: colors.sidebarBG,
+      colorBgContainer: colors.contentBG,
     },
     Popover: {
-      colorBgElevated: colors.sidebarBG,
+      colorBgElevated: colors.innerBg,
     },
   },
 };

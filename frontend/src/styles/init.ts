@@ -82,7 +82,6 @@ export const InitGlobalStyled = memo(createGlobalStyle`
       border-color: ${props => props.theme.colors.borderColor};
     }
 
-
     /**
      * antd-select 스타일 커스텀
      */

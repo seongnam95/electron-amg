@@ -4,6 +4,7 @@ import { Empty, Skeleton } from 'antd';
 
 import { EmployeeTable } from '@components/employee';
 
+import AntTable from '~/components/employee/AntTable';
 import ControlBar from '~/components/employee/EmployeeTable/ControlBar';
 import { useEmployeeQuery } from '~/hooks/queryHooks/useEmployeeQuery';
 import { EmployeePageStyled } from '~/styles/pageStyled/employeePageStyled';
@@ -24,23 +25,22 @@ const EmployeePage = () => {
 
   return (
     <EmployeePageStyled className="EmployeePage">
-      <div className="employee-content">
-        <ControlBar
-          onSearch={e => setSearchTerm(e.target.value)}
-          onChangeSort={sort => setSort(sort)}
-        />
-        {isEmployeeLoading ? (
-          <Skeleton active style={{ padding: '2rem' }} />
-        ) : isEmptyEmployee ? (
-          <Empty description="데이터 없음" style={{ marginTop: '8rem' }} />
-        ) : (
-          <EmployeeTable onSelected={handleSelectedEmployee}>
-            {filteredEmployees.map(employee => {
-              return <EmployeeTable.Row key={employee.id} id={employee.id} employee={employee} />;
-            })}
-          </EmployeeTable>
-        )}
-      </div>
+      <ControlBar
+        onSearch={e => setSearchTerm(e.target.value)}
+        onChangeSort={sort => setSort(sort)}
+      />
+      {isEmployeeLoading ? (
+        <Skeleton active style={{ padding: '2rem' }} />
+      ) : isEmptyEmployee ? (
+        <Empty description="데이터 없음" style={{ marginTop: '8rem' }} />
+      ) : (
+        <AntTable employees={employees} />
+        // <EmployeeTable onSelected={handleSelectedEmployee}>
+        //   {filteredEmployees.map(employee => {
+        //     return <EmployeeTable.Row key={employee.id} id={employee.id} employee={employee} />;
+        //   })}
+        // </EmployeeTable>
+      )}
     </EmployeePageStyled>
   );
 };

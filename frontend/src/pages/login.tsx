@@ -1,7 +1,7 @@
 import { ChangeEvent, FormEvent, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { notification } from 'antd';
+import { notification, message } from 'antd';
 import axios from 'axios';
 import { useSetRecoilState } from 'recoil';
 
@@ -24,11 +24,11 @@ const Login = () => {
   const setUser = useSetRecoilState(userState);
   const navigate = useNavigate();
 
-  const [api, contextHolder] = notification.useNotification({ top: 120 });
-  const openNotificationWithIcon = (msg: string) => {
-    api.error({
-      message: msg,
-      duration: 2,
+  const [messageApi, contextHolder] = message.useMessage({ top: 46, maxCount: 1 });
+  const error = () => {
+    messageApi.open({
+      type: 'error',
+      content: '아이디 또는 패스워드가 일치하지 않습니다.',
     });
   };
 
@@ -82,11 +82,10 @@ const Login = () => {
           };
 
           setUser(user);
-          navigate('/manager/employee');
         })
-        .catch(err => {
+        .catch(() => {
           passwordInputRef.current?.focus();
-          openNotificationWithIcon(err.response.data.msg);
+          error();
         });
     }
   };
