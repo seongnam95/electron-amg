@@ -5,6 +5,7 @@ from .employee import (
     EmployeeBaseResponse,
     CoveringEmployeeResponse,
     EmployeeResponse,
+    EmployeeMultiDeleteBody,
 )
 from .contract import (
     Contract,

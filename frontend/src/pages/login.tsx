@@ -83,10 +83,11 @@ const Login = () => {
 
           setUser(user);
         })
-        .catch(() => {
+        .catch(err => {
+          console.log(err);
           passwordInputRef.current?.focus();
           error();
-          navigate('/manager/employee')
+          navigate('/manager/employee');
         });
     }
   };

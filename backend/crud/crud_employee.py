@@ -66,6 +66,17 @@ class CRUDEmployee(CRUDBase[Employee, EmployeeCreate, EmployeeUpdate]):
         db.delete(employee_obj)
         db.commit()
 
+    # 근로자 다중 삭제
+    def remove_multi_employee(self, db: Session, *, ids: List[int]):
+        for id in ids:
+            employee_obj: Employee = db.query(Employee).get(id)
+
+            remove_image(employee_obj.bank_book_file_nm)
+            remove_image(employee_obj.id_card_file_nm)
+
+        db.delete(employee_obj)
+        db.commit()
+
     # 근로자 검색
     def get_employee_search(
         self, db: Session, name: str, ssn: str

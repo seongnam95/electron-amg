@@ -7,17 +7,5 @@ export const EmployeePageStyled = styled.div`
     display: flex;
     flex-direction: column;
     gap: 1.4rem;
-
-    > div {
-      flex: 1;
-
-      > div {
-        height: 100%;
-
-        > div {
-          height: 100%;
-        }
-      }
-    }
   }
 `;

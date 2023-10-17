@@ -8,25 +8,14 @@ import Input from '~/components/common/Input';
 import { ControlBarStyled } from './styled';
 
 interface ControlBarProps {
-  onChangeSort?: (sort: string) => void;
   onSearch?: (e: ChangeEvent<HTMLInputElement>) => void;
 }
 
-const ControlBar = ({ onChangeSort, onSearch }: ControlBarProps) => {
-  const [sort, setSort] = useState<string>('default');
-
-  const handleOnChangeSort = () => {
-    const newSort = sort === 'default' ? 'name' : 'default';
-    setSort(newSort);
-    onChangeSort?.(newSort);
-  };
-
+const ControlBar = ({ onSearch }: ControlBarProps) => {
   return (
     <ControlBarStyled className="ControlBar">
       <label style={{ fontSize: '20px', fontWeight: 'bold', whiteSpace: 'nowrap' }}>전체</label>
       <div className="control-wrap">
-        <Input icon="bx-search" variations="fill" onChange={onSearch} />
-
         <motion.div
           key="search-btn-wrap"
           className="tool-wrap"
@@ -38,11 +27,8 @@ const ControlBar = ({ onChangeSort, onSearch }: ControlBarProps) => {
             <i className="bx bx-filter" />
             필터
           </Button>
-          <Button $variations="link" $btnSize="small" onClick={handleOnChangeSort}>
-            <i className="bx bx-sort" style={{ fontSize: '14px' }} />
-            {sort === 'default' ? '등록순' : '이름순'}
-          </Button>
         </motion.div>
+        <Input icon="bx-search" variations="fill" onChange={onSearch} />
       </div>
     </ControlBarStyled>
   );

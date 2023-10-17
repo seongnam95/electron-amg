@@ -1,21 +1,24 @@
-import { useRef, useState } from 'react';
+import { ForwardedRef, useRef, useState } from 'react';
 
-import { Table, FloatButton, Tag } from 'antd';
+import { Table, Tag } from 'antd';
 import { ColumnsType, Key } from 'antd/es/table/interface';
-import { random } from 'lodash';
 
+import { POSITION_CODE, POSITION_COLORS, SALARY_CODE } from '~/types/contract';
 import { EmployeeData } from '~/types/employee';
 import { formatPhoneNumber } from '~/utils/formatData';
 
+import Dock from './Dock';
 import { EmployeeTableWrapStyled } from './styled';
 
 interface AntTableProps {
+  tableWrapRef?: ForwardedRef<HTMLDivElement>;
+  isLoading?: boolean;
   employees: Array<EmployeeData>;
 }
 
 interface EmployeeTableData {
   key: number;
-  name: string;
+  profile: { name: string; position: string; tagColor: string };
   phone: string;
   groupName: string;
   wage: {
@@ -23,38 +26,54 @@ interface EmployeeTableData {
     wage: string;
   };
   attendance: string;
-  state: boolean;
 }
 
-const AntTable = ({ employees }: AntTableProps) => {
+const AntTable = ({ tableWrapRef, isLoading, employees }: AntTableProps) => {
   const [showToolModal, setShowToolModal] = useState<boolean>(false);
+  const tableRef = useRef<HTMLDivElement>(null);
 
   const columns: ColumnsType<EmployeeTableData> = [
     {
-      key: 'name',
-      dataIndex: 'name',
+      key: 'profile',
+      dataIndex: 'profile',
       title: '이름',
-      render: (name: string, employee: EmployeeTableData) => (
-        <a onClick={() => handleNameClick(employee)}>{name}</a>
+      width: 150,
+      ellipsis: true,
+      onCell: v => {
+        return { onClick: () => handleNameClick(v.key) };
+      },
+      sorter: (a, b) => a.profile.name.localeCompare(b.profile.name),
+      render: (profile: { name: string; position: string; tagColor: string }) => (
+        <>
+          <Tag style={{ marginRight: '1.2rem' }} color={profile.tagColor}>
+            {profile.position}
+          </Tag>
+          {profile.name}
+        </>
       ),
     },
     {
       key: 'phone',
       dataIndex: 'phone',
       title: '연락처',
+      width: 140,
       align: 'center',
-      render: (phone: string) => <p>{formatPhoneNumber(phone)}</p>,
+      render: (phone: string) => <>{formatPhoneNumber(phone)}</>,
     },
     {
       key: 'groupName',
       dataIndex: 'groupName',
       title: '소속',
-      render: (text: string) => <p>{text}</p>,
+      width: 160,
+      ellipsis: true,
+      sorter: (a, b) => a.groupName.localeCompare(b.groupName),
+      render: (text: string) => <>{text}</>,
     },
     {
       key: 'wage',
       dataIndex: 'wage',
       title: '기본 급여',
+      width: 150,
       render: (wage: { wage: number; salary: string }) => (
         <>
           <Tag style={{ marginRight: '0.6rem' }}>{wage.salary}</Tag>
@@ -65,58 +84,58 @@ const AntTable = ({ employees }: AntTableProps) => {
     {
       key: 'attendance',
       dataIndex: 'attendance',
+      width: 70,
       title: '근무일',
       align: 'center',
-      render: (text: string) => <p>{text}</p>,
+      render: (text: string) => <>{text}</>,
     },
     {
-      title: '상태',
-      dataIndex: 'state',
-      key: 'state',
+      key: 'period',
+      dataIndex: 'period',
+      width: 110,
+      title: '계약 만료일',
       align: 'center',
-      render: (hasContract: boolean) => {
-        const text = hasContract ? '정상' : '계약만료';
-        const color = hasContract ? '' : 'red';
-        return (
-          <Tag color={color} style={{ width: '100%', maxWidth: '8rem', textAlign: 'center' }}>
-            {text}
-          </Tag>
-        );
-      },
+      render: (period: string) => (
+        <Tag
+          style={{ width: '7.2rem', textAlign: 'center' }}
+          color={period === '계약 만료' ? 'red' : ''}
+        >
+          {period}
+        </Tag>
+      ),
     },
   ];
 
+  // 테이블 데이터 맵핑
   const dataSource: Array<EmployeeTableData> = employees.map((employee, i) => {
     const { contract, attendances, hasContract } = employee;
 
     const groupName = contract ? contract.groupName : '소속 없음';
     const wage = contract ? `${contract.defaultWage.toLocaleString()}원` : '-';
-    const attendance = contract && attendances ? attendances.length.toString() : '-';
-    const salaryText = contract
-      ? contract.salary === 'daily'
-        ? '일급'
-        : contract.salary === 'weekly'
-        ? '주급'
-        : '월급'
-      : '없음';
+    const attendance = contract && attendances ? `${attendances.length.toString()}일` : '-';
+    const salaryText = contract ? SALARY_CODE[contract.salary] : '없음';
+
+    const endPeriod = contract?.endPeriod.replace(/^(\d{4})-(\d{2})-(\d{2})$/, '$2월 $3일');
+    const period = contract ? endPeriod : '계약 만료';
 
     return {
       key: i,
-      name: employee.name,
+      profile: {
+        name: employee.name,
+        position: contract ? POSITION_CODE[contract.positionCode] : '없음',
+        tagColor: contract ? POSITION_COLORS[contract.positionCode] : '',
+      },
       phone: employee.phone,
       groupName: groupName,
-      wage: {
-        salary: salaryText,
-        wage: wage,
-      },
+      wage: { salary: salaryText, wage: wage },
       attendance: attendance,
-      state: hasContract,
+      period: period,
     };
   });
 
   // 근무자 클릭 이벤트
-  const handleNameClick = (employee: EmployeeTableData) => {
-    console.log(employee);
+  const handleNameClick = (employeeId: number) => {
+    console.log(employeeId);
   };
 
   // 근무자 선택 이벤트
@@ -124,18 +143,26 @@ const AntTable = ({ employees }: AntTableProps) => {
     setShowToolModal(selectedIds.length > 0 ? true : false);
   };
 
+  const handleDelete = () => {
+    console.log('삭제');
+  };
+
   return (
-    <EmployeeTableWrapStyled className="EmployeeTable">
+    <EmployeeTableWrapStyled ref={tableWrapRef} className="EmployeeTable">
       <Table
+        ref={tableRef}
+        loading={isLoading}
         prefixCls="employee-table"
         pagination={false}
         columns={columns}
-        dataSource={[...dataSource, ...dataSource]}
+        tableLayout="fixed"
+        dataSource={dataSource}
         rowSelection={{
           type: 'checkbox',
           onChange: handleSelectedChange,
         }}
       />
+      <Dock open={showToolModal} parentElement={tableRef.current} onDelete={handleDelete} />
     </EmployeeTableWrapStyled>
   );
 };

@@ -2,45 +2,58 @@ import { useRef, useEffect } from 'react';
 
 export function useDragScroll() {
   const ref = useRef<HTMLDivElement>(null);
-  let isDown = false;
-  let startX: number;
-  let scrollLeft: number;
+  let isDragging = false;
+  let startMouseX: number;
+  let startMouseY: number;
+  let startScrollX: number;
+  let startScrollY: number;
 
-  const startDragging = (e: MouseEvent) => {
-    isDown = true;
-    startX = e.pageX - (ref.current?.offsetLeft || 0);
-    scrollLeft = ref.current?.scrollLeft || 0;
+  const handleMouseDown = (e: MouseEvent) => {
+    isDragging = true;
+    startMouseX = e.pageX - (ref.current?.offsetLeft || 0);
+    startMouseY = e.pageY - (ref.current?.offsetTop || 0);
+    startScrollX = ref.current?.scrollLeft || 0;
+    startScrollY = ref.current?.scrollTop || 0;
   };
 
-  const stopDragging = () => {
-    isDown = false;
+  const handleMouseLeave = () => {
+    isDragging = false;
   };
 
-  const dragging = (e: MouseEvent) => {
-    if (!isDown) return;
+  const handleMouseUp = () => {
+    isDragging = false;
+  };
+
+  const handleMouseMove = (e: MouseEvent) => {
+    if (!isDragging) return;
     e.preventDefault();
-    const x = e.pageX - (ref.current?.offsetLeft || 0);
-    const walk = x - startX; //scroll-fast
+
+    const mouseX = e.pageX - (ref.current?.offsetLeft || 0);
+    const mouseY = e.pageY - (ref.current?.offsetTop || 0);
+
+    const deltaX = mouseX - startMouseX;
+    const deltaY = mouseY - startMouseY;
+
     if (ref.current) {
-      ref.current.scrollLeft = scrollLeft - walk;
+      ref.current.scrollLeft = startScrollX - deltaX;
+      ref.current.scrollTop = startScrollY - deltaY;
     }
   };
 
   useEffect(() => {
     const elem = ref.current;
-    if (elem) {
-      elem.addEventListener('mousedown', startDragging);
-      elem.addEventListener('mouseleave', stopDragging);
-      elem.addEventListener('mouseup', stopDragging);
-      elem.addEventListener('mousemove', dragging);
-    }
+    if (!elem) return;
+
+    elem.addEventListener('mousedown', handleMouseDown);
+    elem.addEventListener('mouseleave', handleMouseLeave);
+    elem.addEventListener('mouseup', handleMouseUp);
+    elem.addEventListener('mousemove', handleMouseMove);
+
     return () => {
-      if (elem) {
-        elem.removeEventListener('mousedown', startDragging);
-        elem.removeEventListener('mouseleave', stopDragging);
-        elem.removeEventListener('mouseup', stopDragging);
-        elem.removeEventListener('mousemove', dragging);
-      }
+      elem.removeEventListener('mousedown', handleMouseDown);
+      elem.removeEventListener('mouseleave', handleMouseLeave);
+      elem.removeEventListener('mouseup', handleMouseUp);
+      elem.removeEventListener('mousemove', handleMouseMove);
     };
   }, []);
 

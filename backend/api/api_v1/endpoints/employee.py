@@ -1,3 +1,4 @@
+from typing import Any, List
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 from schemas.employee import EmployeeResponse
@@ -11,6 +12,7 @@ from schemas import (
     CoveringEmployeeResponse,
     EmployeeBaseResponse,
     AttendanceCreate,
+    EmployeeMultiDeleteBody,
 )
 import crud, models
 from util.crypto import decrypt
@@ -86,13 +88,24 @@ def update_employee(
 
 
 # 근로자 삭제
-@router.delete("/{employee_id}", response_model=BaseResponse)
+# @router.delete("/{employee_id}", response_model=BaseResponse)
+# def delete_employee(
+#     # user: User = Depends(deps.get_current_user),
+#     db: Session = Depends(deps.get_db),
+#     employee: models.Employee = Depends(deps.get_employee),
+# ):
+#     crud.employee.remove_employee(db=db, id=employee.id)
+#     return BaseResponse(msg="정상 처리되었습니다.")
+
+
+# 근로자 다중 삭제
+@router.delete("/", response_model=BaseResponse)
 def delete_employee(
     # user: User = Depends(deps.get_current_user),
+    employee_ids: EmployeeMultiDeleteBody,
     db: Session = Depends(deps.get_db),
-    employee: models.Employee = Depends(deps.get_employee),
 ):
-    crud.employee.remove_employee(db=db, id=employee.id)
+    crud.employee.remove_multi_employee(db=db, ids=employee_ids)
     return BaseResponse(msg="정상 처리되었습니다.")
 
 

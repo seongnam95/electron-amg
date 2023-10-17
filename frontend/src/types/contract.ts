@@ -1,3 +1,10 @@
+export const SALARY_CODE = {
+  daily: '일급',
+  weekly: '주급',
+  monthly: '월급',
+} as const;
+export type SalaryType = keyof typeof SALARY_CODE;
+
 export const POSITION_CODE = {
   1: '팀장',
   2: '부팀장',
@@ -6,6 +13,7 @@ export const POSITION_CODE = {
   5: '홍보단',
   6: '기타',
 } as const;
+export type PositionType = keyof typeof POSITION_CODE;
 
 export const POSITION_COLORS = {
   1: '#5665ED',
@@ -15,13 +23,12 @@ export const POSITION_COLORS = {
   5: '#60C77D',
   6: '#C8C8C8',
 } as const;
-export type PositionType = keyof typeof POSITION_CODE;
 
 export interface ContractData {
   id: string;
   groupName: string;
   positionCode: PositionType;
-  salary: string;
+  salary: SalaryType;
   defaultWage: number;
   startPeriod: string;
   endPeriod: string;

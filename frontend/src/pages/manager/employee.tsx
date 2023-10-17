@@ -1,46 +1,29 @@
 import { useState } from 'react';
 
-import { Empty, Skeleton } from 'antd';
-
-import { EmployeeTable } from '@components/employee';
-
 import AntTable from '~/components/employee/AntTable';
-import ControlBar from '~/components/employee/EmployeeTable/ControlBar';
+import ControlBar from '~/components/employee/AntTable/ControlBar';
 import { useEmployeeQuery } from '~/hooks/queryHooks/useEmployeeQuery';
+import { useDragScroll } from '~/hooks/useDragScroll';
 import { EmployeePageStyled } from '~/styles/pageStyled/employeePageStyled';
-import { sortedEmployees } from '~/utils/employeeUtils';
+import { searchEmployee } from '~/utils/employeeUtils';
 
 const EmployeePage = () => {
-  const [sort, setSort] = useState<string>('default');
+  const scrollRef = useDragScroll();
   const [searchTerm, setSearchTerm] = useState<string>('');
-  const [selectedIds, setSelectedIds] = useState<Array<string>>([]);
+
   const { employees, isEmployeeLoading } = useEmployeeQuery();
+  const filteredEmployees = searchEmployee(employees, searchTerm);
 
-  const isEmptyEmployee = employees.length === 0;
-  const filteredEmployees = sortedEmployees(employees, searchTerm, sort);
-
-  const handleSelectedEmployee = (ids: Array<string>) => {
-    setSelectedIds(ids);
-  };
+  const handleDeleteEmployee = () => {};
 
   return (
     <EmployeePageStyled className="EmployeePage">
-      <ControlBar
-        onSearch={e => setSearchTerm(e.target.value)}
-        onChangeSort={sort => setSort(sort)}
+      <ControlBar onSearch={e => setSearchTerm(e.target.value)} />
+      <AntTable
+        tableWrapRef={scrollRef}
+        isLoading={isEmployeeLoading}
+        employees={[...filteredEmployees, ...filteredEmployees, ...filteredEmployees]}
       />
-      {isEmployeeLoading ? (
-        <Skeleton active style={{ padding: '2rem' }} />
-      ) : isEmptyEmployee ? (
-        <Empty description="데이터 없음" style={{ marginTop: '8rem' }} />
-      ) : (
-        // <AntTable employees={employees} />
-        <EmployeeTable onSelected={handleSelectedEmployee}>
-          {filteredEmployees.map(employee => {
-            return <EmployeeTable.Row key={employee.id} id={employee.id} employee={employee} />;
-          })}
-        </EmployeeTable>
-      )}
     </EmployeePageStyled>
   );
 };
