@@ -34,12 +34,12 @@ const EmployeePage = () => {
       ) : isEmptyEmployee ? (
         <Empty description="데이터 없음" style={{ marginTop: '8rem' }} />
       ) : (
-        <AntTable employees={employees} />
-        // <EmployeeTable onSelected={handleSelectedEmployee}>
-        //   {filteredEmployees.map(employee => {
-        //     return <EmployeeTable.Row key={employee.id} id={employee.id} employee={employee} />;
-        //   })}
-        // </EmployeeTable>
+        // <AntTable employees={employees} />
+        <EmployeeTable onSelected={handleSelectedEmployee}>
+          {filteredEmployees.map(employee => {
+            return <EmployeeTable.Row key={employee.id} id={employee.id} employee={employee} />;
+          })}
+        </EmployeeTable>
       )}
     </EmployeePageStyled>
   );

@@ -1,5 +1,8 @@
-import { Table, Pagination, Tag } from 'antd';
-import { TableRowSelection, ColumnsType } from 'antd/es/table/interface';
+import { useRef, useState } from 'react';
+
+import { Table, FloatButton, Tag } from 'antd';
+import { ColumnsType, Key } from 'antd/es/table/interface';
+import { random } from 'lodash';
 
 import { EmployeeData } from '~/types/employee';
 import { formatPhoneNumber } from '~/utils/formatData';
@@ -11,6 +14,7 @@ interface AntTableProps {
 }
 
 interface EmployeeTableData {
+  key: number;
   name: string;
   phone: string;
   groupName: string;
@@ -23,12 +27,16 @@ interface EmployeeTableData {
 }
 
 const AntTable = ({ employees }: AntTableProps) => {
+  const [showToolModal, setShowToolModal] = useState<boolean>(false);
+
   const columns: ColumnsType<EmployeeTableData> = [
     {
       key: 'name',
       dataIndex: 'name',
       title: '이름',
-      render: (name: string) => <a>{name}</a>,
+      render: (name: string, employee: EmployeeTableData) => (
+        <a onClick={() => handleNameClick(employee)}>{name}</a>
+      ),
     },
     {
       key: 'phone',
@@ -70,7 +78,7 @@ const AntTable = ({ employees }: AntTableProps) => {
         const text = hasContract ? '정상' : '계약만료';
         const color = hasContract ? '' : 'red';
         return (
-          <Tag color={color} style={{ width: '100%', textAlign: 'center' }}>
+          <Tag color={color} style={{ width: '100%', maxWidth: '8rem', textAlign: 'center' }}>
             {text}
           </Tag>
         );
@@ -78,9 +86,12 @@ const AntTable = ({ employees }: AntTableProps) => {
     },
   ];
 
-  const data: Array<EmployeeTableData> = employees.map((employee, i) => {
+  const dataSource: Array<EmployeeTableData> = employees.map((employee, i) => {
     const { contract, attendances, hasContract } = employee;
+
+    const groupName = contract ? contract.groupName : '소속 없음';
     const wage = contract ? `${contract.defaultWage.toLocaleString()}원` : '-';
+    const attendance = contract && attendances ? attendances.length.toString() : '-';
     const salaryText = contract
       ? contract.salary === 'daily'
         ? '일급'
@@ -93,19 +104,24 @@ const AntTable = ({ employees }: AntTableProps) => {
       key: i,
       name: employee.name,
       phone: employee.phone,
-      groupName: contract ? contract.groupName : '소속 없음',
+      groupName: groupName,
       wage: {
         salary: salaryText,
         wage: wage,
       },
-      attendance: contract && attendances ? attendances.length.toString() : '-',
+      attendance: attendance,
       state: hasContract,
     };
   });
 
-  const rowSelection: TableRowSelection<EmployeeTableData> = {
-    type: 'checkbox',
-    onChange: v => console.log(v),
+  // 근무자 클릭 이벤트
+  const handleNameClick = (employee: EmployeeTableData) => {
+    console.log(employee);
+  };
+
+  // 근무자 선택 이벤트
+  const handleSelectedChange = (selectedIds: Key[]) => {
+    setShowToolModal(selectedIds.length > 0 ? true : false);
   };
 
   return (
@@ -114,10 +130,12 @@ const AntTable = ({ employees }: AntTableProps) => {
         prefixCls="employee-table"
         pagination={false}
         columns={columns}
-        dataSource={data}
-        rowSelection={rowSelection}
+        dataSource={[...dataSource, ...dataSource]}
+        rowSelection={{
+          type: 'checkbox',
+          onChange: handleSelectedChange,
+        }}
       />
-      <Pagination />
     </EmployeeTableWrapStyled>
   );
 };

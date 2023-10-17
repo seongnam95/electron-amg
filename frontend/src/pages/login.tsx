@@ -86,6 +86,7 @@ const Login = () => {
         .catch(() => {
           passwordInputRef.current?.focus();
           error();
+          navigate('/manager/employee')
         });
     }
   };
