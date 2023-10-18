@@ -13,8 +13,8 @@ export const DockStyled = styled.div`
     width: 6.4rem;
     height: 6.4rem;
 
-    background-color: rgba(245, 245, 245, 0.6);
-    backdrop-filter: blur(8px);
+    background-color: rgba(200, 200, 200, 0.4);
+    backdrop-filter: blur(6px);
     box-shadow: rgba(66, 66, 66, 0.2) 0 8px 36px;
 
     border: 1px solid ${p => p.theme.colors.borderColor};

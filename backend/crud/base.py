@@ -19,21 +19,11 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
     def get(self, db: Session, *, id: Any) -> Optional[ModelType]:
         return db.query(self.model).filter(self.model.id == id).first()
 
-    def get_multi(
-        self, db: Session, *, skip: int = 0, limit: int = 100
-    ) -> List[ModelType]:
-        return db.query(self.model).offset(skip).limit(limit).all()
+    def get_multi(self, db: Session, *, offset: int, limit: int) -> List[ModelType]:
+        return db.query(self.model).offset(offset).limit(limit).all()
 
-    def get_multi_by_user(
-        self, db: Session, *, user_id: int, skip: int = 0, limit: int = 100
-    ) -> List[ModelType]:
-        return (
-            db.query(self.model)
-            .filter(self.model.user_id == user_id)
-            .offset(skip)
-            .limit(limit)
-            .all()
-        )
+    def get_count(self, db: Session):
+        return db.query(self.model).count()
 
     def create(self, db: Session, *, obj_in: CreateSchemaType) -> ModelType:
         obj_in_data = jsonable_encoder(obj_in)
@@ -72,38 +62,3 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         db.delete(obj)
         db.commit()
         return obj
-
-    # For Employee
-
-    def get_for_employee(
-        self,
-        db: Session,
-        *,
-        employee_id: Any,
-    ) -> Optional[ModelType]:
-        return (
-            db.query(self.model).filter(self.model.employee_id == employee_id).first()
-        )
-
-    def get_multi_for_employee(
-        self, db: Session, *, employee_id: Any, skip: int = 0, limit: int = 100
-    ) -> List[ModelType]:
-        return (
-            db.query(self.model)
-            .filter(self.model.employee_id == employee_id)
-            .offset(skip)
-            .limit(limit)
-            .all()
-        )
-
-    def create_for_employee(
-        self, db: Session, *, obj_in: CreateSchemaType, employee_id: int
-    ) -> ModelType:
-        obj_in_data = obj_in.model_dump()
-        obj_in_data["employee_id"] = employee_id
-        db_obj = self.model(**obj_in_data)
-
-        db.add(db_obj)
-        db.commit()
-        db.refresh(db_obj)
-        return db_obj

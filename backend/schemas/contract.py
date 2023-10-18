@@ -42,6 +42,7 @@ class Contract(ContractBase):
 
 
 class ContractResponse(BaseModel):
+    id: int
     salary: str
     position_code: int
     group_name: str

@@ -12,19 +12,19 @@ export const InitGlobalStyled = memo(createGlobalStyle`
   }
 
   *::-webkit-scrollbar {
-    width: 5px;
-    height: 6px;
+    width: 9px;
+    height: 10px;
   }
 
 
   *::-webkit-scrollbar-track {
     background: transparent;
-    border-radius: 8px;
+    border-radius: 4px;
   }
 
   *::-webkit-scrollbar-thumb {
-    background-color: rgba(235,235,235,0.8);
-    border-radius: 8px;
+    background-color: rgba(220,220,220,0.6);
+    border-radius: 2px;
   }
 
   *::selection {

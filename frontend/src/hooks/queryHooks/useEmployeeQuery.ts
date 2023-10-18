@@ -22,6 +22,6 @@ export const useEmployeeQuery = ({ onSuccess, onError }: EmployeeQueryOptions = 
   });
 
   const response = data?.result;
-  const employees = data ? data.result.list : [];
+  const employees = data ? data.result.list.toReversed() : [];
   return { response, employees, isEmployeeLoading, isEmployeeError };
 };

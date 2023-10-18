@@ -19,6 +19,8 @@ class CRUDContract(CRUDBase[Contract, ContractCreate, ContractUpdate]):
         self, db: Session, *, employee_id: str
     ) -> EmployeeContractModel:
         contracts = db.query(Contract).filter(Contract.employee_id == employee_id).all()
+        if not contracts:
+            return []
 
         valid_contract = None
         prev_contracts = []

@@ -16,7 +16,9 @@ class CRUDAttendance(CRUDBase[Attendance, AttendanceCreate, AttendanceUpdate]):
         self, db: Session, *, employee_id: int, attendance_in: AttendanceCreate
     ):
         today = date.today().strftime("%Y-%m-%d")  # 현재 날짜 가져오기
-        working_date = attendance_in.working_date if attendance_in.working_date else today
+        working_date = (
+            attendance_in.working_date if attendance_in.working_date else today
+        )
 
         attendance = (
             db.query(Attendance)
@@ -44,7 +46,9 @@ class CRUDAttendance(CRUDBase[Attendance, AttendanceCreate, AttendanceUpdate]):
         db: Session,
     ) -> List[Attendance]:
         return (
-            db.query(self.model).filter(Attendance.create_date.like(f"{date_str}%")).all()
+            db.query(self.model)
+            .filter(Attendance.create_date.like(f"{date_str}%"))
+            .all()
         )
 
 

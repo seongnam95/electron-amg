@@ -8,6 +8,7 @@ from schemas import (
     EmployeeUpdate,
     ContractResponse,
     EmployeeResponse,
+    EmployeeMultiDeleteBody,
 )
 from sqlalchemy.orm import Session, joinedload, selectinload
 from util.crypto import encrypt, verify
@@ -67,14 +68,17 @@ class CRUDEmployee(CRUDBase[Employee, EmployeeCreate, EmployeeUpdate]):
         db.commit()
 
     # 근로자 다중 삭제
-    def remove_multi_employee(self, db: Session, *, ids: List[int]):
-        for id in ids:
-            employee_obj: Employee = db.query(Employee).get(id)
+    def remove_multi_employee(self, db: Session, *, ids_in: EmployeeMultiDeleteBody):
+        employees = (
+            db.query(Employee).filter(Employee.id.in_(ids_in.employee_ids)).all()
+        )
 
-            remove_image(employee_obj.bank_book_file_nm)
-            remove_image(employee_obj.id_card_file_nm)
+        for employee in employees:
+            remove_image(employee.bank_book_file_nm)
+            remove_image(employee.id_card_file_nm)
 
-        db.delete(employee_obj)
+            db.delete(employee)
+
         db.commit()
 
     # 근로자 검색
@@ -92,17 +96,21 @@ class CRUDEmployee(CRUDBase[Employee, EmployeeCreate, EmployeeUpdate]):
     def get_employee_count(self, db: Session):
         return db.query(Employee).count()
 
-    def get_multi_employee(self, db: Session, *, offset: int, limit: int):
+        # .options(selectinload(Employee.contracts.and_(Contract.valid == True)))
+
+    def get_multi_employee(self, db: Session, *, valid: bool, offset: int, limit: int):
         today = date.today().strftime("%Y-%m")
-        print(today)
         employees = (
             db.query(Employee)
+            .join(Employee.contracts)
+            .filter(Contract.valid == valid)
             .options(selectinload(Employee.contracts.and_(Contract.valid == True)))
             .options(
                 selectinload(
                     Employee.attendances.and_(Attendance.working_date.like(f"{today}%"))
                 )
             )
+            .distinct(Employee.id)
             .offset(offset)
             .limit(limit)
             .all()
@@ -110,7 +118,6 @@ class CRUDEmployee(CRUDBase[Employee, EmployeeCreate, EmployeeUpdate]):
 
         new_employees = []
         for employee in employees:
-            print(employee.attendances)
             employee_obj = EmployeeResponse(
                 id=employee.id,
                 name=employee.name,

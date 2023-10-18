@@ -1,9 +1,11 @@
 import { ForwardedRef, useRef, useState } from 'react';
+import { FaFileContract, FaImages } from 'react-icons/fa';
 
 import { Table, Tag } from 'antd';
 import { ColumnsType, Key } from 'antd/es/table/interface';
 
-import { POSITION_CODE, POSITION_COLORS, SALARY_CODE } from '~/types/contract';
+import { Button } from '~/components/common';
+import { POSITION_CODE, POSITION_COLORS, PositionType, SALARY_CODE } from '~/types/contract';
 import { EmployeeData } from '~/types/employee';
 import { formatPhoneNumber } from '~/utils/formatData';
 
@@ -18,14 +20,13 @@ interface AntTableProps {
 
 interface EmployeeTableData {
   key: number;
-  profile: { name: string; position: string; tagColor: string };
+  name: string;
   phone: string;
+  position: PositionType;
   groupName: string;
-  wage: {
-    salary: string;
-    wage: string;
-  };
+  wage: { salary: string; wage: string };
   attendance: string;
+  tool: string | null;
 }
 
 const AntTable = ({ tableWrapRef, isLoading, employees }: AntTableProps) => {
@@ -34,23 +35,17 @@ const AntTable = ({ tableWrapRef, isLoading, employees }: AntTableProps) => {
 
   const columns: ColumnsType<EmployeeTableData> = [
     {
-      key: 'profile',
-      dataIndex: 'profile',
+      key: 'name',
+      dataIndex: 'name',
       title: '이름',
-      width: 150,
+      width: 110,
       ellipsis: true,
+
       onCell: v => {
         return { onClick: () => handleNameClick(v.key) };
       },
-      sorter: (a, b) => a.profile.name.localeCompare(b.profile.name),
-      render: (profile: { name: string; position: string; tagColor: string }) => (
-        <>
-          <Tag style={{ marginRight: '1.2rem' }} color={profile.tagColor}>
-            {profile.position}
-          </Tag>
-          {profile.name}
-        </>
-      ),
+      sorter: (a, b) => a.name.localeCompare(b.name),
+      render: (name: string) => <b>{name}</b>,
     },
     {
       key: 'phone',
@@ -61,13 +56,31 @@ const AntTable = ({ tableWrapRef, isLoading, employees }: AntTableProps) => {
       render: (phone: string) => <>{formatPhoneNumber(phone)}</>,
     },
     {
+      key: 'position',
+      dataIndex: 'position',
+      title: '직위',
+      width: 90,
+      align: 'center',
+      sorter: (a, b) => a.position.toString().localeCompare(b.position.toString()),
+      render: (positionCode: PositionType) => {
+        const label = positionCode ? POSITION_CODE[positionCode] : '기타';
+        const color = positionCode ? POSITION_COLORS[positionCode] : '';
+
+        return (
+          <Tag style={{ width: '5rem', textAlign: 'center', marginRight: '1.2rem' }} color={color}>
+            {label}
+          </Tag>
+        );
+      },
+    },
+    {
       key: 'groupName',
       dataIndex: 'groupName',
       title: '소속',
-      width: 160,
+      width: 170,
       ellipsis: true,
       sorter: (a, b) => a.groupName.localeCompare(b.groupName),
-      render: (text: string) => <>{text}</>,
+      render: (groupName: string) => <>{groupName}</>,
     },
     {
       key: 'wage',
@@ -87,7 +100,7 @@ const AntTable = ({ tableWrapRef, isLoading, employees }: AntTableProps) => {
       width: 70,
       title: '근무일',
       align: 'center',
-      render: (text: string) => <>{text}</>,
+      render: (attendance: string) => <>{attendance}</>,
     },
     {
       key: 'period',
@@ -97,12 +110,32 @@ const AntTable = ({ tableWrapRef, isLoading, employees }: AntTableProps) => {
       align: 'center',
       render: (period: string) => (
         <Tag
-          style={{ width: '7.2rem', textAlign: 'center' }}
+          style={{ width: '8rem', textAlign: 'center' }}
           color={period === '계약 만료' ? 'red' : ''}
         >
           {period}
         </Tag>
       ),
+    },
+    {
+      key: 'tool',
+      dataIndex: 'tool',
+      width: 100,
+      title: '문서',
+      align: 'center',
+      render: (id: string) => {
+        if (!id) return <></>;
+        return (
+          <div style={{ display: 'flex', gap: '0.4rem', justifyContent: 'center' }}>
+            <Button $btnSize="small">
+              <FaImages />
+            </Button>
+            <Button $btnSize="small">
+              <FaFileContract />
+            </Button>
+          </div>
+        );
+      },
     },
   ];
 
@@ -115,21 +148,18 @@ const AntTable = ({ tableWrapRef, isLoading, employees }: AntTableProps) => {
     const attendance = contract && attendances ? `${attendances.length.toString()}일` : '-';
     const salaryText = contract ? SALARY_CODE[contract.salary] : '없음';
 
-    const endPeriod = contract?.endPeriod.replace(/^(\d{4})-(\d{2})-(\d{2})$/, '$2월 $3일');
-    const period = contract ? endPeriod : '계약 만료';
+    const period = contract ? contract.endPeriod : '계약 만료';
 
     return {
       key: i,
-      profile: {
-        name: employee.name,
-        position: contract ? POSITION_CODE[contract.positionCode] : '없음',
-        tagColor: contract ? POSITION_COLORS[contract.positionCode] : '',
-      },
+      name: employee.name,
       phone: employee.phone,
+      position: contract ? contract.positionCode : 6,
       groupName: groupName,
       wage: { salary: salaryText, wage: wage },
       attendance: attendance,
       period: period,
+      tool: contract ? contract.id : null,
     };
   });
 

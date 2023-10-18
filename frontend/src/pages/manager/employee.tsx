@@ -22,7 +22,7 @@ const EmployeePage = () => {
       <AntTable
         tableWrapRef={scrollRef}
         isLoading={isEmployeeLoading}
-        employees={[...filteredEmployees, ...filteredEmployees, ...filteredEmployees]}
+        employees={filteredEmployees}
       />
     </EmployeePageStyled>
   );

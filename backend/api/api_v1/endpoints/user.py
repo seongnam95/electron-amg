@@ -26,7 +26,7 @@ def read_all_user(
     skip: int = 0,
     limit: int = 100,
 ):
-    users = crud.user.get_multi(db, skip=skip, limit=limit)
+    users = crud.user.get_multi(db, offset=skip, limit=limit)
     if not users:
         raise HTTPException(status_code=404, detail="생성된 계정이 없습니다.")
 

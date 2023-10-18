@@ -47,5 +47,8 @@ def image_to_base64(file_name: str):
 
 # 이미지 파일 삭제
 def remove_image(file_name: str):
-    file_path = os.path.join(UPLOAD_DIR, file_name)
-    os.remove(file_path)
+    try:
+        file_path = os.path.join(UPLOAD_DIR, file_name)
+        os.remove(file_path)
+    except:
+        pass

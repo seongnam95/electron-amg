@@ -84,7 +84,7 @@ class EmployeeResponse(BaseModel):
 
 
 class EmployeeMultiDeleteBody(BaseModel):
-    employeeIds: List[int]
+    employee_ids: List[int]
 
 
 class CoveringEmployeeResponse(EmployeeBaseResponse):

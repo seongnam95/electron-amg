@@ -7,6 +7,7 @@
   "settings": {
     "cSpell.words": [
       "antd",
+      "anticon",
       "ATTENDANCE",
       "autoload",
       "boxicons",
@@ -14,8 +15,10 @@
       "fastapi",
       "Flatform",
       "initlize",
+      "jsonable",
       "Nanum",
       "passlib",
+      "selectinload",
       "sessionmaker",
       "sqlalchemy",
       "starlette",

@@ -10,6 +10,8 @@ export const EmployeeTableWrapStyled = styled.div`
     position: sticky;
     top: 0;
     z-index: 3;
+    background-color: rgb(255, 255, 255, 0.7);
+    backdrop-filter: blur(10px);
 
     .anticon {
       font-size: 8px;
@@ -20,8 +22,8 @@ export const EmployeeTableWrapStyled = styled.div`
       font-weight: normal;
       font-size: ${p => [p.theme.sizes.textSmall]};
       color: ${p => p.theme.colors.textColor2};
-      background-color: ${p => p.theme.colors.contentBG};
       padding: 1rem 1.8rem;
+      background-color: transparent;
 
       ::before {
         content: '';

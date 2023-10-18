@@ -31,7 +31,7 @@ def read_all_attendance(
             db, skip=skip, limit=limit, date_str=date
         )
     else:
-        attendances = crud.attendance.get_multi(db, skip=skip, limit=limit)
+        attendances = crud.attendance.get_multi(db, offset=skip, limit=limit)
 
     return ListResponse(count=len(attendances), msg="정상 처리되었습니다.", result=attendances)
 
