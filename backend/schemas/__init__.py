@@ -5,7 +5,7 @@ from .employee import (
     EmployeeBaseResponse,
     CoveringEmployeeResponse,
     EmployeeResponse,
-    EmployeeMultiDeleteBody,
+    MultipleIdBody,
 )
 from .contract import (
     Contract,
@@ -17,3 +17,4 @@ from .contract import (
 from .attendance import Attendance, AttendanceCreate, AttendanceUpdate
 from .user import User, UserCreate, UserUpdate, UserResponse, UserLogin
 from .draft import Draft, DraftCreate
+from .team import TeamCreate, TeamUpdate, TeamResponse

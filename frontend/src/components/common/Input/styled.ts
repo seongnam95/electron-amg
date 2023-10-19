@@ -1,6 +1,8 @@
+import { InputHTMLAttributes } from 'react';
+
 import styled from 'styled-components';
 
-export interface InputStyledProps {
+export interface InputStyledProps extends InputHTMLAttributes<HTMLInputElement> {
   fullWidth?: boolean;
   variations?: 'fill' | 'outline';
 }
@@ -10,7 +12,7 @@ export const InputStyled = styled.label<InputStyledProps>`
   align-items: center;
   gap: 1rem;
 
-  width: ${p => (p.fullWidth ? '100%' : 'auto')};
+  width: ${p => (p.fullWidth ? '100%' : p.width ? p.width : 'auto')};
   height: 3.4rem;
 
   padding: 0.1rem 1.6rem 0 1.2rem;
@@ -33,12 +35,12 @@ export const InputStyled = styled.label<InputStyledProps>`
   :focus-within {
     border-color: ${p => p.theme.colors.primary};
 
-    > i {
+    > svg {
       color: ${p => p.theme.colors.primary};
     }
   }
 
-  > i {
+  > svg {
     font-size: 1.6rem;
     color: ${p => p.theme.colors.textColor3};
     transition: all 200ms;

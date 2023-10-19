@@ -58,7 +58,7 @@ def read_multi_employee(
     limit: int = 20,
 ):
     offset = (page - 1) * limit
-    total = crud.employee.get_employee_count(db)
+    total = crud.employee.get_count(db)
     employees = crud.employee.get_multi_employee(
         db, valid=valid, offset=offset, limit=limit
     )
@@ -87,7 +87,7 @@ def update_employee(
 @router.delete("/", response_model=BaseResponse)
 def delete_employee(
     # user: User = Depends(deps.get_current_user),
-    employee_ids: schemas.EmployeeMultiDeleteBody,
+    employee_ids: schemas.MultipleIdBody,
     db: Session = Depends(deps.get_db),
 ):
     crud.employee.remove_multi_employee(db=db, ids_in=employee_ids)
@@ -104,7 +104,6 @@ def delete_employee(
 def create_contract(
     employee_id: int,
     contract_in: schemas.ContractCreate,
-    employee: schemas.Employee = Depends(deps.get_employee),
     db: Session = Depends(deps.get_db),
 ):
     employee = crud.employee.get(db=db, id=employee_id)
@@ -112,9 +111,7 @@ def create_contract(
         raise HTTPException(status_code=404, detail="해당 직원을 찾을 수 없습니다.")
 
     crud.contract.create_contract(
-        db=db,
-        employee_id=employee.id,
-        contract_obj=contract_in,
+        db=db, employee_obj=employee, contract_obj=contract_in
     )
 
     return BaseResponse(msg="정상 처리되었습니다.")

@@ -9,6 +9,7 @@ class ListData(BaseModel, Generic[T]):
     offset: int
     page: int
     next_page: int
+    count: int
     has_more: bool
     list: List[T]
 

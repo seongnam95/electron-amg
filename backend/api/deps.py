@@ -67,6 +67,7 @@ def create_list_response(data: List[Any], total: int, page: int, limit: int):
         page=page,
         next_page=next_page,
         has_more=has_more,
+        count=len(data),
         offset=offset,
         list=data,
     )

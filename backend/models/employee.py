@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Text, Integer, String, DateTime
+from sqlalchemy import Column, ForeignKey, Text, Integer, String, DateTime
 from db.base_class import Base
 from datetime import datetime
 from sqlalchemy.orm import relationship
@@ -21,7 +21,7 @@ class Employee(Base):
     id_card_file_nm = Column(String, nullable=False)  # 신분증
     create_date = Column(DateTime(timezone=True), nullable=False, default=datetime.now)
 
-    contracts = relationship("Contract", back_populates="employee")
+    contract = relationship("Contract", uselist=False, back_populates="employee")
     attendances = relationship(
         "Attendance", back_populates="employee", cascade="all, delete-orphan"
     )

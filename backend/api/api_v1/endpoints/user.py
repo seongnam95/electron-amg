@@ -41,6 +41,18 @@ def read_user(
     return DataResponse(msg="정상 처리되었습니다.", result=user)
 
 
+# 팀 생성
+@router.post("/{user_id}/team", response_model=BaseResponse)
+def create_user(
+    db: Session = Depends(deps.get_db),
+    *,
+    user: schemas.User = Depends(get_user),
+    obj_in: schemas.TeamCreate,
+):
+    crud.team.create_team(db=db, user_id=user.id, obj_in=obj_in)
+    return BaseResponse(msg="정상 처리되었습니다.")
+
+
 # 유저 생성
 @router.post("/", response_model=BaseResponse)
 def create_user(db: Session = Depends(deps.get_db), *, user_in: schemas.UserCreate):

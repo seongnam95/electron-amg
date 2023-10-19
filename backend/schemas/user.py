@@ -3,14 +3,12 @@ from typing import Optional
 from datetime import datetime
 
 from schemas.common import check_update_fields
+from schemas.team import TeamResponse
 
 
-class UserBase(BaseModel):
+class UserCreate(BaseModel):
     name: str
     username: str
-
-
-class UserCreate(UserBase):
     password: str
     is_admin: Optional[bool] = None
     is_approved: Optional[bool] = None
@@ -26,22 +24,26 @@ class UserUpdate(BaseModel):
         return check_update_fields(cls, values)
 
 
-class User(UserBase):
+class User(BaseModel):
     id: int
+    name: str
+    username: str
     hashed_password: str
     is_admin: bool
     is_approved: bool
+    affiliation_id: int
     create_date: datetime
 
     class Config:
         from_attributes = True
 
 
-class UserResponse(UserBase):
+class UserResponse(BaseModel):
     id: int
     username: str
     is_admin: bool
     is_approved: bool
+    team: Optional[TeamResponse]
 
     class Config:
         from_attributes = True

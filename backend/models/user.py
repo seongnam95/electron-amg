@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Boolean, Integer, String, DateTime
+from sqlalchemy import Column, Boolean, ForeignKey, Integer, String, DateTime, Table
 from db.base_class import Base
 from datetime import datetime
 from sqlalchemy.orm import relationship
@@ -17,3 +17,5 @@ class User(Base):
     is_approved = Column(Boolean, default=False, nullable=False)  # 계정 승인
 
     create_date = Column(DateTime(timezone=True), nullable=False, default=datetime.now)
+
+    team = relationship("Team", uselist=False, back_populates="user")

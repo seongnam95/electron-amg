@@ -38,23 +38,11 @@ class CRUDContract(CRUDBase[Contract, ContractCreate, ContractUpdate]):
 
     # 계약서 생성
     def create_contract(
-        self, db: Session, *, employee_id: int, contract_obj: ContractCreate
+        self, db: Session, *, employee_obj: Employee, contract_obj: ContractCreate
     ) -> Contract:
-        # 해당 Employee에 유효한 Contract가 있는지 확인
-        existing_valid_contracts = (
-            db.query(Contract)
-            .filter(Contract.employee_id == employee_id, Contract.valid == True)
-            .all()
-        )
-
-        # 있다면 기존 Contract를 무효로 설정
-        for contract in existing_valid_contracts:
-            contract.valid = False
-            db.commit()
-
         contract_dict = contract_obj.model_dump()
-        contract_dict["employee_id"] = employee_id
-        contract_obj = Contract(**contract_dict)
+        contract_obj: Contract = Contract(**contract_dict)
+        contract_obj.employee = employee_obj
 
         db.add(contract_obj)
         db.commit()

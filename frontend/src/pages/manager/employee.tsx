@@ -10,8 +10,9 @@ import { searchEmployee } from '~/utils/employeeUtils';
 const EmployeePage = () => {
   const scrollRef = useDragScroll();
   const [searchTerm, setSearchTerm] = useState<string>('');
+  const [valid, setValid] = useState<boolean>(true);
 
-  const { employees, isEmployeeLoading } = useEmployeeQuery();
+  const { employees, isLoading } = useEmployeeQuery({ params: { valid: valid } });
   const filteredEmployees = searchEmployee(employees, searchTerm);
 
   const handleDeleteEmployee = () => {};
@@ -19,11 +20,7 @@ const EmployeePage = () => {
   return (
     <EmployeePageStyled className="EmployeePage">
       <ControlBar onSearch={e => setSearchTerm(e.target.value)} />
-      <AntTable
-        tableWrapRef={scrollRef}
-        isLoading={isEmployeeLoading}
-        employees={filteredEmployees}
-      />
+      <AntTable tableWrapRef={scrollRef} isLoading={isLoading} employees={filteredEmployees} />
     </EmployeePageStyled>
   );
 };

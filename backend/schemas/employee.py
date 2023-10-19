@@ -83,8 +83,8 @@ class EmployeeResponse(BaseModel):
         from_attributes = True
 
 
-class EmployeeMultiDeleteBody(BaseModel):
-    employee_ids: List[int]
+class MultipleIdBody(BaseModel):
+    ids: List[int]
 
 
 class CoveringEmployeeResponse(EmployeeBaseResponse):

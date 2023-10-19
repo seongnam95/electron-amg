@@ -17,11 +17,13 @@
       "initlize",
       "jsonable",
       "Nanum",
+      "outerjoin",
       "passlib",
       "selectinload",
       "sessionmaker",
       "sqlalchemy",
       "starlette",
+      "uselist",
       "venv"
     ]
   }

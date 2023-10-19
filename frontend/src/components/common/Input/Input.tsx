@@ -1,21 +1,21 @@
-import { InputHTMLAttributes, RefObject } from 'react';
+import { InputHTMLAttributes, ReactNode, RefObject } from 'react';
 
 import clsx from 'clsx';
 
 import { InputStyled, InputStyledProps } from './styled';
 
-export interface InputProps extends InputStyledProps, InputHTMLAttributes<HTMLInputElement> {
-  icon?: string;
+export interface InputProps extends InputStyledProps {
+  icon?: ReactNode;
   inputRef?: RefObject<HTMLInputElement>;
 }
 
-const Input = ({ className, icon, width, inputRef, ...rest }: InputProps) => {
-  const { fullWidth, variations = 'fill' } = rest;
-  const styled = { fullWidth, variations };
+const Input = ({ className, icon, inputRef, ...rest }: InputProps) => {
+  const { width, fullWidth, variations = 'fill' } = rest;
+  const styled = { width, fullWidth, variations };
 
   return (
     <InputStyled className={clsx('Input', className)} {...styled}>
-      {icon && <i className={clsx('bx', icon)} />}
+      {icon && icon}
       <input ref={inputRef} {...rest} />
     </InputStyled>
   );

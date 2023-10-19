@@ -1,3 +1,4 @@
+from operator import and_
 from typing import List, Optional
 from datetime import date
 
@@ -8,7 +9,7 @@ from schemas import (
     EmployeeUpdate,
     ContractResponse,
     EmployeeResponse,
-    EmployeeMultiDeleteBody,
+    MultipleIdBody,
 )
 from sqlalchemy.orm import Session, joinedload, selectinload
 from util.crypto import encrypt, verify
@@ -68,10 +69,8 @@ class CRUDEmployee(CRUDBase[Employee, EmployeeCreate, EmployeeUpdate]):
         db.commit()
 
     # 근로자 다중 삭제
-    def remove_multi_employee(self, db: Session, *, ids_in: EmployeeMultiDeleteBody):
-        employees = (
-            db.query(Employee).filter(Employee.id.in_(ids_in.employee_ids)).all()
-        )
+    def remove_multi_employee(self, db: Session, *, ids_in: MultipleIdBody):
+        employees = db.query(Employee).filter(Employee.id.in_(ids_in.ids)).all()
 
         for employee in employees:
             remove_image(employee.bank_book_file_nm)
@@ -93,18 +92,25 @@ class CRUDEmployee(CRUDBase[Employee, EmployeeCreate, EmployeeUpdate]):
 
         return None
 
-    def get_employee_count(self, db: Session):
-        return db.query(Employee).count()
-
-        # .options(selectinload(Employee.contracts.and_(Contract.valid == True)))
-
     def get_multi_employee(self, db: Session, *, valid: bool, offset: int, limit: int):
         today = date.today().strftime("%Y-%m")
+        base_query = db.query(Employee)
+
+        if valid:
+            base_query = base_query.join(
+                Contract,
+                and_(Employee.id == Contract.employee_id, Contract.valid == True),
+            )
+        else:
+            base_query = base_query.outerjoin(
+                Contract,
+                and_(Employee.id == Contract.employee_id, Contract.valid == True),
+            ).filter(Contract.id == None)
+
         employees = (
-            db.query(Employee)
-            .join(Employee.contracts)
-            .filter(Contract.valid == valid)
-            .options(selectinload(Employee.contracts.and_(Contract.valid == True)))
+            base_query.options(
+                selectinload(Employee.contracts.and_(Contract.valid == True))
+            )
             .options(
                 selectinload(
                     Employee.attendances.and_(Attendance.working_date.like(f"{today}%"))
