@@ -12,12 +12,14 @@ from ... import deps
 router = APIRouter()
 
 
+# 폼 불러오기
 @router.get("/", response_model=ListResponse[Draft])
 def get_draft_all(db: Session = Depends(deps.get_db)):
     drafts = db.query(models.Draft).all()
     return ListResponse(msg="정상 처리되었습니다.", count=len(drafts), result=drafts)
 
 
+# 전체 폼 불러오기
 @router.get("/{id}", response_model=DataResponse[Draft])
 def get_draft(
     id: str,

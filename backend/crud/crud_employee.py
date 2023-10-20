@@ -1,17 +1,11 @@
 from operator import and_
-from typing import List, Optional
+from typing import Optional
 from datetime import date
 
 from crud.base import CRUDBase
-from models import Employee, Contract, Attendance
-from schemas import (
-    EmployeeCreate,
-    EmployeeUpdate,
-    ContractResponse,
-    EmployeeResponse,
-    MultipleIdBody,
-)
-from sqlalchemy.orm import Session, joinedload, selectinload
+from models import Employee, Attendance
+from schemas import EmployeeCreate, EmployeeUpdate, EmployeeResponse, MultipleIdBody
+from sqlalchemy.orm import Session, selectinload
 from util.crypto import encrypt, verify
 from util.image_converter import base64_to_image, remove_image
 
@@ -92,53 +86,53 @@ class CRUDEmployee(CRUDBase[Employee, EmployeeCreate, EmployeeUpdate]):
 
         return None
 
-    def get_multi_employee(self, db: Session, *, valid: bool, offset: int, limit: int):
-        today = date.today().strftime("%Y-%m")
-        base_query = db.query(Employee)
+    # def get_multi_employee(self, db: Session, *, valid: bool, offset: int, limit: int):
+    #     today = date.today().strftime("%Y-%m")
+    #     base_query = db.query(Employee)
 
-        if valid:
-            base_query = base_query.join(
-                Contract,
-                and_(Employee.id == Contract.employee_id, Contract.valid == True),
-            )
-        else:
-            base_query = base_query.outerjoin(
-                Contract,
-                and_(Employee.id == Contract.employee_id, Contract.valid == True),
-            ).filter(Contract.id == None)
+    #     if valid:
+    #         base_query = base_query.join(
+    #             Contract,
+    #             and_(Employee.id == Contract.employee_id, Contract.valid == True),
+    #         )
+    #     else:
+    #         base_query = base_query.outerjoin(
+    #             Contract,
+    #             and_(Employee.id == Contract.employee_id, Contract.valid == True),
+    #         ).filter(Contract.id == None)
 
-        employees = (
-            base_query.options(
-                selectinload(Employee.contracts.and_(Contract.valid == True))
-            )
-            .options(
-                selectinload(
-                    Employee.attendances.and_(Attendance.working_date.like(f"{today}%"))
-                )
-            )
-            .distinct(Employee.id)
-            .offset(offset)
-            .limit(limit)
-            .all()
-        )
+    #     employees = (
+    #         base_query.options(
+    #             selectinload(Employee.contracts.and_(Contract.valid == True))
+    #         )
+    #         .options(
+    #             selectinload(
+    #                 Employee.attendances.and_(Attendance.working_date.like(f"{today}%"))
+    #             )
+    #         )
+    #         .distinct(Employee.id)
+    #         .offset(offset)
+    #         .limit(limit)
+    #         .all()
+    #     )
 
-        new_employees = []
-        for employee in employees:
-            employee_obj = EmployeeResponse(
-                id=employee.id,
-                name=employee.name,
-                phone=employee.phone,
-                gender_code=employee.gender_code,
-                residence=employee.residence,
-                create_date=employee.create_date,
-                has_contract=True if employee.contracts else False,
-                is_attendance=True if employee.attendances else False,
-                contract=employee.contracts[0] if employee.contracts else None,
-                attendances=employee.attendances,
-            )
-            new_employees.append(employee_obj)
+    #     new_employees = []
+    #     for employee in employees:
+    #         employee_obj = EmployeeResponse(
+    #             id=employee.id,
+    #             name=employee.name,
+    #             phone=employee.phone,
+    #             gender_code=employee.gender_code,
+    #             residence=employee.residence,
+    #             create_date=employee.create_date,
+    #             has_contract=True if employee.contracts else False,
+    #             is_attendance=True if employee.attendances else False,
+    #             contract=employee.contracts[0] if employee.contracts else None,
+    #             attendances=employee.attendances,
+    #         )
+    #         new_employees.append(employee_obj)
 
-        return new_employees
+    #     return new_employees
 
 
 employee = CRUDEmployee(Employee)

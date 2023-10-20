@@ -1,17 +1,21 @@
-from sqlalchemy import Column, Integer, String, Date, DateTime
+from sqlalchemy import Column, ForeignKey, Integer, String, Date, DateTime
 from db.base_class import Base
 from datetime import datetime
+from sqlalchemy.orm import relationship
 
 
 class Draft(Base):
     __tablename__ = "draft"
 
     id = Column(String, primary_key=True, index=True, unique=True)
-    position_code = Column(Integer, nullable=False)  # 직위 코드
-    group_name = Column(String, nullable=False)  # 협력 업체명
-    salary = Column(String, nullable=False)  # 계약 급여 종류 (일급, 주급, 월급)
-    default_wage = Column(Integer, nullable=False)  # 계약 급여
+
     start_period = Column(Date, nullable=False)  # 계약 시작일
     end_period = Column(Date, nullable=False)  # 계약 종료일
 
     create_date = Column(DateTime(timezone=True), nullable=False, default=datetime.now)
+
+    team = relationship("Team", uselist=False, back_populates="drafts")
+    team_id = Column(Integer, ForeignKey("team.id"), nullable=False)
+
+    position = relationship("Position", uselist=False, back_populates="draft")
+    position_id = Column(Integer, ForeignKey("position.id"), nullable=False)

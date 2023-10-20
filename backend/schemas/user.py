@@ -3,7 +3,7 @@ from typing import Optional
 from datetime import datetime
 
 from schemas.common import check_update_fields
-from schemas.team import TeamResponse
+from schemas.team import Team
 
 
 class UserCreate(BaseModel):
@@ -31,8 +31,8 @@ class User(BaseModel):
     hashed_password: str
     is_admin: bool
     is_approved: bool
-    affiliation_id: int
     create_date: datetime
+    team: Optional[Team] = None
 
     class Config:
         from_attributes = True
@@ -43,7 +43,7 @@ class UserResponse(BaseModel):
     username: str
     is_admin: bool
     is_approved: bool
-    team: Optional[TeamResponse]
+    team: Optional[Team]
 
     class Config:
         from_attributes = True

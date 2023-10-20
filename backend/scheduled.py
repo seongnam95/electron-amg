@@ -1,22 +1,22 @@
 import sched
 from apscheduler.schedulers.background import BackgroundScheduler
 from db.session import SessionLocal
-from models import Contract, Draft
+from models import Employee, Draft
 from datetime import datetime, timedelta
 from sqlalchemy.orm import Session
 
 
-# 180일 경과 된 계약서 삭제
-def delete_old_contracts():
+# 180일 경과 된 직원 삭제
+def delete_old_employees():
     db = SessionLocal()
 
     six_months_ago = datetime.now() - timedelta(days=180)
-    old_contracts = (
-        db.query(Contract).filter(Contract.create_date <= six_months_ago).all()
+    old_employees = (
+        db.query(Employee).filter(Employee.create_date <= six_months_ago).all()
     )
 
-    for contract in old_contracts:
-        db.delete(contract)
+    for employee in old_employees:
+        db.delete(employee)
 
     db.commit()
 
@@ -34,5 +34,5 @@ def delete_expired_draft():
 
 
 sched = BackgroundScheduler(timezone="Asia/Seoul")
-sched.add_job(delete_old_contracts, "interval", days=1)
+sched.add_job(delete_old_employees, "interval", days=1)
 sched.add_job(delete_expired_draft, "interval", days=1)

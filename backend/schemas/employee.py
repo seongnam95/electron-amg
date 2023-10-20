@@ -1,34 +1,23 @@
 from typing import List, Optional
-from pydantic import BaseModel, model_validator, field_validator, validator
-from schemas.contract import ContractResponse
+from pydantic import BaseModel, model_validator
 from schemas.attendance import Attendance
+from schemas.position import Position
 from schemas.common import check_update_fields
-from util.crypto import encrypt, decrypt
-from util.image_converter import base64_to_image
-
-from exceptions import InvalidCodeError
 from datetime import datetime
-
-# 성별 코드 [1: 남자, 2: 여자]
-GENDER_CODES = [1, 2]
 
 
 class EmployeeBase(BaseModel):
     name: str
-    gender_code: int
     phone: str
-    residence: str
+    address: str
     bank: str
     bank_num: str
     ssn: str
     bank_book: str
     id_card: str
-
-    @field_validator("gender_code")
-    def validate_gender_code(cls, value):
-        if value not in GENDER_CODES:
-            raise InvalidCodeError("gender")
-        return value
+    sign: str
+    start_period: datetime
+    end_period: datetime
 
 
 class EmployeeCreate(EmployeeBase):
@@ -44,6 +33,9 @@ class EmployeeUpdate(BaseModel):
     ssn: Optional[str] = None
     bank_book: Optional[str] = None
     id_card: Optional[str] = None
+    sign: Optional[str] = None
+    start_period: Optional[datetime] = None
+    end_period: Optional[datetime] = None
 
     @model_validator(mode="before")
     def check_fields(cls, values: dict):
@@ -58,37 +50,37 @@ class Employee(EmployeeBase):
         from_attributes = True
 
 
-class EmployeeBaseResponse(BaseModel):
+###############################################################
+# Response
+###############################################################
+
+
+# 기본 (계약서 작성 시 보이게 될 최소 정보)
+class EmployeeCoveringResponse(BaseModel):
     id: int
     name: str
     phone: str
-    residence: str
-
-
-class EmployeeResponse(BaseModel):
-    id: int
-    name: str
-    phone: str
-    residence: str
-    gender_code: int
-    create_date: datetime
-
-    has_contract: bool
-    is_attendance: bool
-
-    contract: Optional[ContractResponse] = None
-    attendances: Optional[List[Attendance]] = None
+    address: str
+    bank: str
+    bank_num_cover: str
 
     class Config:
         from_attributes = True
 
 
-class MultipleIdBody(BaseModel):
-    ids: List[int]
+# 관리자의 리스트에 표기될 데이터
+class EmployeeResponse(BaseModel):
+    id: int
+    name: str
+    phone: str
+    address: str
 
+    start_period: datetime
+    end_period: datetime
+    create_date: datetime
 
-class CoveringEmployeeResponse(EmployeeBaseResponse):
-    bank: str
-    bank_num_cover: str
-    bank_book: str
-    id_card: str
+    position: Optional[Position] = None
+    attendances: Optional[List[Attendance]] = None
+
+    class Config:
+        from_attributes = True

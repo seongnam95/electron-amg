@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from schemas.employee import EmployeeResponse
+from schemas.employee import EmployeeCoveringResponse, EmployeeResponse
 from response_model import BaseResponse, DataResponse, ListResponse
 from ... import deps
 
@@ -23,7 +23,7 @@ def create_employee(
 
 
 # 개인정보로 근로자 불러오기
-@router.get("/search/", response_model=DataResponse[schemas.CoveringEmployeeResponse])
+@router.get("/search/", response_model=DataResponse[schemas.EmployeeCoveringResponse])
 def search_employee(name: str, ssn: str, db: Session = Depends(deps.get_db)):
     employee = crud.employee.get_employee_search(db=db, name=name, ssn=ssn)
     if not employee:
@@ -40,10 +40,11 @@ def search_employee(name: str, ssn: str, db: Session = Depends(deps.get_db)):
 
 # ID로 근로자 불러오기
 @router.get("/{employee_id}", response_model=DataResponse[schemas.Employee])
-def read_employee(
-    # user: User = Depends(deps.get_current_user),
-    employee: models.Employee = Depends(deps.get_employee),
-):
+def read_employee(employee_id: int, db: Session = Depends(deps.get_db)):
+    employee = crud.employee.get(db=db, id=employee_id)
+    if not employee:
+        raise HTTPException(status_code=404, detail="해당 직원을 찾을 수 없습니다.")
+
     employee_dec = _decrypt_employee(employee)
     return DataResponse(msg="정상 처리되었습니다.", result=employee_dec)
 
@@ -70,13 +71,16 @@ def read_multi_employee(
 
 
 # 근로자 업데이트
-@router.put("/{employee_id}", response_model=DataResponse[schemas.EmployeeBaseResponse])
+@router.put("/{employee_id}", response_model=DataResponse[schemas.EmployeeResponse])
 def update_employee(
-    # user: User = Depends(deps.get_current_user),
+    employee_id: int,
     employee_in: schemas.EmployeeUpdate,
     db: Session = Depends(deps.get_db),
-    employee: models.Employee = Depends(deps.get_employee),
 ):
+    employee = crud.employee.get(db=db, id=employee_id)
+    if not employee:
+        raise HTTPException(status_code=404, detail="해당 직원을 찾을 수 없습니다.")
+
     employee = crud.employee.update_employee(
         db=db, employee_obj=employee, employee_in=employee_in
     )
@@ -97,24 +101,6 @@ def delete_employee(
 # -----------------------------------------------------------------------------------------
 #  의존성 데이터 엔드포인트
 # -----------------------------------------------------------------------------------------
-
-
-# 계약서 생성
-@router.post("/{employee_id}/contract", response_model=BaseResponse)
-def create_contract(
-    employee_id: int,
-    contract_in: schemas.ContractCreate,
-    db: Session = Depends(deps.get_db),
-):
-    employee = crud.employee.get(db=db, id=employee_id)
-    if not employee:
-        raise HTTPException(status_code=404, detail="해당 직원을 찾을 수 없습니다.")
-
-    crud.contract.create_contract(
-        db=db, employee_obj=employee, contract_obj=contract_in
-    )
-
-    return BaseResponse(msg="정상 처리되었습니다.")
 
 
 # 근무로그 생성 (날짜 중복 불가)
@@ -147,10 +133,9 @@ def _decrypt_employee(employee: models.Employee):
         name=employee.name,
         phone=employee.phone,
         ssn=decrypt(employee.ssn_enc),
-        gender_code=employee.gender_code,
         bank=employee.bank,
         bank_num=decrypt(employee.bank_num_enc),
-        residence=employee.residence,
+        address=employee.address,
         bank_book=image_to_base64(employee.bank_book_file_nm),
         id_card=image_to_base64(employee.id_card_file_nm),
         create_date=employee.create_date,
@@ -163,13 +148,13 @@ def _covering_employee(employee: models.Employee):
     bank_num_cover = (
         bank_num_dec[:4] + "*" * (len(bank_num_dec) - 7) + bank_num_dec[-3:]
     )
-    return schemas.CoveringEmployeeResponse(
+    return schemas.EmployeeCoveringResponse(
         id=employee.id,
         name=employee.name,
         phone=employee.phone,
         bank=employee.bank,
         bank_num_cover=bank_num_cover,
-        residence=employee.residence,
+        address=employee.address,
         bank_book=image_to_base64(employee.bank_book_file_nm),
         id_card=image_to_base64(employee.id_card_file_nm),
     )
