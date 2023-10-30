@@ -9,7 +9,7 @@ import { EmployeeSidebarStyled } from './styled';
 export interface EmployeeSidebarProps {}
 
 const EmployeeSidebar = ({}: EmployeeSidebarProps) => {
-  const { employees, isEmployeeLoading } = useEmployeeQuery();
+  const { employees } = useEmployeeQuery();
   const [tempRate, setTempRate] = useState<number>(0);
 
   // 출근률 계산

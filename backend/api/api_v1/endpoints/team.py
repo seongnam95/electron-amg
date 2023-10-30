@@ -13,8 +13,8 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/login")
 
 
 # 팀 불러오기
-@router.get("/{team_id}", response_model=DataResponse[schemas.Team])
-def delete_team(
+@router.get("/{team_id}", response_model=DataResponse[schemas.TeamWithEmployee])
+def read_team(
     team_id: int,
     db: Session = Depends(deps.get_db),
 ):
@@ -45,14 +45,9 @@ def read_all_team(
     return ListResponse(msg="정상 처리되었습니다.", result=response)
 
 
-# 팀 생성
+# 팀 생성 (개별)
 @router.post("/", response_model=BaseResponse)
 def create_team(team_in: schemas.TeamCreate, db: Session = Depends(deps.get_db)):
-    if team_in.user_id:
-        user = crud.user.get(db, id=team_in.user_id)
-        if not user:
-            raise HTTPException(status_code=404, detail="존재하지 않는 계정입니다.")
-
     crud.team.create(db=db, obj_in=team_in)
     return BaseResponse(msg="정상 처리되었습니다.")
 
@@ -73,7 +68,7 @@ def update_team(
         if not user:
             raise HTTPException(status_code=404, detail="존재하지 않는 계정입니다.")
 
-    crud.team.update(db=db, db_obj=team, obj_in=team_in)
+    crud.team.update_team(db=db, team=team, team_in=team_in)
     return BaseResponse(msg="정상 처리되었습니다.")
 
 

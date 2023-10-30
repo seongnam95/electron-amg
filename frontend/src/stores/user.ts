@@ -11,6 +11,7 @@ export const initUser: CurrentUser = {
     username: '',
     isAdmin: false,
     isApproved: false,
+    teams: [],
   },
 };
 

@@ -4,3 +4,4 @@ from .employee import Employee
 from .position import Position
 from .team import Team
 from .user import User
+from .associations import user_team

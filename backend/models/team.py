@@ -2,6 +2,7 @@ from sqlalchemy import Column, ForeignKey, Integer, String, DateTime
 from db.base_class import Base
 from datetime import datetime
 from sqlalchemy.orm import relationship
+from .associations import user_team
 
 
 # 소속
@@ -16,9 +17,7 @@ class Team(Base):
 
     create_date = Column(DateTime(timezone=True), nullable=False, default=datetime.now)
 
-    user_id = Column(Integer, ForeignKey("user.id"), nullable=True)
-    user = relationship("User", back_populates="team", uselist=False)
-
+    users = relationship("User", secondary=user_team, back_populates="teams")
     drafts = relationship("Draft", back_populates="team")
     employees = relationship("Employee", back_populates="team")
     positions = relationship(

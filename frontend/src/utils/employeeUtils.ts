@@ -9,7 +9,6 @@ export const searchEmployee = (
     employee =>
       employee.name.includes(searchTerm) ||
       employee.address.includes(searchTerm) ||
-      employee.phone.includes(searchTerm) ||
-      employee.contract?.groupName.includes(searchTerm),
+      employee.phone.includes(searchTerm),
   );
 };

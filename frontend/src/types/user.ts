@@ -1,9 +1,12 @@
+import { TeamData } from './team';
+
 export interface UserData {
   id: string;
   name: string;
   username: string;
   isAdmin: boolean;
   isApproved: boolean;
+  teams: Array<TeamData>;
 }
 
 export interface CurrentUser {

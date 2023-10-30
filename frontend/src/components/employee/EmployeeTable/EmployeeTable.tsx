@@ -1,91 +1,199 @@
-import { ReactNode, useEffect, useMemo, useState } from 'react';
-import React from 'react';
-import { FaQuestionCircle } from 'react-icons/fa';
+import { ForwardedRef, useRef, useState } from 'react';
+import { FaFileContract, FaImages } from 'react-icons/fa';
 
-import { Tooltip } from 'antd';
-import Checkbox, { CheckboxChangeEvent } from 'antd/es/checkbox';
+import { Table, Tag } from 'antd';
+import { ColumnsType, Key } from 'antd/es/table/interface';
 
-import Row, { RowProps } from './Row';
-import { EmployeeTableStyled } from './styled';
+import { Button } from '~/components/common';
+import { EmployeeData } from '~/types/employee';
+import { POSITION_CODE, POSITION_COLORS, PositionType } from '~/types/position';
+import { formatPhoneNumber } from '~/utils/formatData';
 
-export interface EmployeeTableProps {
-  children: ReactNode;
-  onSelected?: (id: Array<string>) => void;
+import Dock from './Dock';
+import { EmployeeTableWrapStyled } from './styled';
+
+interface EmployeeTableProps {
+  tableWrapRef?: ForwardedRef<HTMLDivElement>;
+  isLoading?: boolean;
+  employees: Array<EmployeeData>;
 }
 
-const EmployeeTable = ({ children, onSelected }: EmployeeTableProps) => {
-  const [allSelected, setAllSelected] = useState<boolean>(false);
-  const [selectedIds, setSelectedIds] = useState<string[]>([]);
+interface EmployeeTableData {
+  key: number;
+  name: string;
+  phone: string;
+  position: PositionType;
+  groupName: string;
+  wage: { salary: string; wage: string };
+  attendance: string;
+  tool: string | null;
+}
 
-  const childIdList = useMemo(() => {
-    return React.Children.toArray(children).flatMap(child => {
-      if (React.isValidElement<RowProps>(child) && child.type === Row) return child.props.id;
-      return [];
-    });
-  }, [children]);
+const EmployeeTable = ({ tableWrapRef, isLoading, employees }: EmployeeTableProps) => {
+  const [showToolModal, setShowToolModal] = useState<boolean>(false);
+  const tableRef = useRef<HTMLDivElement>(null);
 
-  // 단일 체크박스 기준 전체 체크박스 활성화/비활성화
-  useEffect(() => {
-    setAllSelected(selectedIds.length > 0);
-    onSelected?.(selectedIds);
-  }, [selectedIds]);
+  const columns: ColumnsType<EmployeeTableData> = [
+    {
+      key: 'name',
+      dataIndex: 'name',
+      title: '이름',
+      width: 110,
+      ellipsis: true,
 
-  // 전체 체크박스 클릭 핸들러
-  const handleOnChangeAllSelected = (e: CheckboxChangeEvent) => {
-    const isSelected = e.target.checked;
-    setSelectedIds(isSelected ? childIdList : []);
+      onCell: v => {
+        return { onClick: () => handleNameClick(v.key) };
+      },
+      sorter: (a, b) => a.name.localeCompare(b.name),
+      render: (name: string) => <b>{name}</b>,
+    },
+    {
+      key: 'phone',
+      dataIndex: 'phone',
+      title: '연락처',
+      width: 140,
+      align: 'center',
+      render: (phone: string) => <>{formatPhoneNumber(phone)}</>,
+    },
+    {
+      key: 'position',
+      dataIndex: 'position',
+      title: '직위',
+      width: 90,
+      align: 'center',
+      sorter: (a, b) => a.position.toString().localeCompare(b.position.toString()),
+      render: (positionCode: PositionType) => {
+        const label = positionCode ? POSITION_CODE[positionCode] : '기타';
+        const color = positionCode ? POSITION_COLORS[positionCode] : '';
+
+        return (
+          <Tag style={{ width: '5rem', textAlign: 'center', marginRight: '1.2rem' }} color={color}>
+            {label}
+          </Tag>
+        );
+      },
+    },
+    {
+      key: 'groupName',
+      dataIndex: 'groupName',
+      title: '소속',
+      width: 170,
+      ellipsis: true,
+      sorter: (a, b) => a.groupName.localeCompare(b.groupName),
+      render: (groupName: string) => <>{groupName}</>,
+    },
+    {
+      key: 'wage',
+      dataIndex: 'wage',
+      title: '기본 급여',
+      width: 150,
+      render: (wage: { wage: number; salary: string }) => (
+        <>
+          <Tag style={{ marginRight: '0.6rem' }}>{wage.salary}</Tag>
+          {wage.wage}
+        </>
+      ),
+    },
+    {
+      key: 'attendance',
+      dataIndex: 'attendance',
+      width: 70,
+      title: '근무일',
+      align: 'center',
+      render: (attendance: string) => <>{attendance}</>,
+    },
+    {
+      key: 'period',
+      dataIndex: 'period',
+      width: 110,
+      title: '계약 만료일',
+      align: 'center',
+      render: (period: string) => (
+        <Tag
+          style={{ width: '8rem', textAlign: 'center' }}
+          color={period === '계약 만료' ? 'red' : ''}
+        >
+          {period}
+        </Tag>
+      ),
+    },
+    {
+      key: 'tool',
+      dataIndex: 'tool',
+      width: 100,
+      title: '문서',
+      align: 'center',
+      render: (id: string) => {
+        if (!id) return <></>;
+        return (
+          <div style={{ display: 'flex', gap: '0.4rem', justifyContent: 'center' }}>
+            <Button $btnSize="small">
+              <FaImages />
+            </Button>
+            <Button $btnSize="small">
+              <FaFileContract />
+            </Button>
+          </div>
+        );
+      },
+    },
+  ];
+
+  // 테이블 데이터 맵핑
+  const dataSource: Array<EmployeeTableData> = employees.map((employee, i) => {
+    const { attendances } = employee;
+
+    const groupName = contract ? contract.groupName : '소속 없음';
+    const wage = contract ? `${contract.defaultWage.toLocaleString()}원` : '-';
+    const attendance = contract && attendances ? `${attendances.length.toString()}일` : '-';
+    const salaryText = '없음';
+
+    const period = contract ? contract.endPeriod : '계약 만료';
+
+    return {
+      key: i,
+      name: employee.name,
+      phone: employee.phone,
+      position: contract ? contract.positionCode : 6,
+      groupName: groupName,
+      wage: { salary: salaryText, wage: wage },
+      attendance: attendance,
+      period: period,
+      tool: contract ? contract.id : null,
+    };
+  });
+
+  // 근무자 클릭 이벤트
+  const handleNameClick = (employeeId: number) => {
+    console.log(employeeId);
   };
 
-  // 체크박스 클릭 핸들러
-  const handleOnChangeSelected = (e: CheckboxChangeEvent) => {
-    const targetId = e.target.id;
-    if (targetId) {
-      setSelectedIds(
-        selectedIds.includes(targetId)
-          ? selectedIds.filter(item => item !== targetId)
-          : [...selectedIds, targetId],
-      );
-    }
+  // 근무자 선택 이벤트
+  const handleSelectedChange = (selectedIds: Key[]) => {
+    setShowToolModal(selectedIds.length > 0 ? true : false);
+  };
+
+  const handleDelete = () => {
+    console.log('삭제');
   };
 
   return (
-    <EmployeeTableStyled className="EmployeeTable">
-      <div className="table-wrap">
-        <table className="employee-table">
-          <thead>
-            <tr>
-              <th>
-                <Checkbox checked={allSelected} onChange={handleOnChangeAllSelected} />
-              </th>
-              <th>이름</th>
-              <th className="cell-center">연락처</th>
-              <th>소속</th>
-              <th>
-                <div className="wage-th-wrap">
-                  기본 급여
-                  <Tooltip title="출근 시 기본 입력 될 급여액" placement="bottom">
-                    <FaQuestionCircle />
-                  </Tooltip>
-                </div>
-              </th>
-              <th className="cell-center">근무일</th>
-              <th className="cell-center">상태</th>
-            </tr>
-          </thead>
-          <tbody>
-            {React.Children.map(children, child => {
-              if (React.isValidElement<RowProps>(child) && child.type === Row) {
-                return React.cloneElement(child, {
-                  checked: selectedIds.includes(child.props.id),
-                  onSelected: handleOnChangeSelected,
-                });
-              }
-              return child;
-            })}
-          </tbody>
-        </table>
-      </div>
-    </EmployeeTableStyled>
+    <EmployeeTableWrapStyled ref={tableWrapRef} className="EmployeeTable">
+      <Table
+        ref={tableRef}
+        loading={isLoading}
+        prefixCls="employee-table"
+        pagination={false}
+        columns={columns}
+        tableLayout="fixed"
+        dataSource={dataSource}
+        rowSelection={{
+          type: 'checkbox',
+          onChange: handleSelectedChange,
+        }}
+      />
+      <Dock open={showToolModal} parentElement={tableRef.current} onDelete={handleDelete} />
+    </EmployeeTableWrapStyled>
   );
 };
 

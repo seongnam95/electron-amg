@@ -31,6 +31,8 @@ class LoginForm(BaseModel):
 def login(form_data: LoginForm, db: Session = Depends(deps.get_db)):
     user = crud.user.get_user(db=db, username=form_data.username)
 
+    print(user.teams)
+
     if not user or not pwd_context.verify(form_data.password, user.hashed_password):
         raise HTTPException(
             status_code=401,

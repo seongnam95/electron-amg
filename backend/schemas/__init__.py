@@ -8,6 +8,6 @@ from .employee import (
 from .attendance import Attendance, AttendanceCreate, AttendanceUpdate
 from .user import User, UserCreate, UserUpdate, UserResponse, UserLogin
 from .draft import Draft, DraftCreate, DraftUpdate
-from .team import TeamCreate, TeamUpdate, Team
+from .team import TeamCreate, TeamUpdate, Team, TeamWithEmployee
 from .common import MultipleIdBody
 from .position import Position, PositionCreate, PositionUpdate

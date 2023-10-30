@@ -1,7 +1,8 @@
-from sqlalchemy import Column, Boolean, Integer, String, DateTime
+from sqlalchemy import Column, Boolean, ForeignKey, Integer, String, DateTime, Table
 from db.base_class import Base
 from datetime import datetime
 from sqlalchemy.orm import relationship
+from .associations import user_team
 
 
 class User(Base):
@@ -18,4 +19,4 @@ class User(Base):
 
     create_date = Column(DateTime(timezone=True), nullable=False, default=datetime.now)
 
-    team = relationship("Team", back_populates="user", uselist=False)
+    teams = relationship("Team", secondary=user_team, back_populates="users")

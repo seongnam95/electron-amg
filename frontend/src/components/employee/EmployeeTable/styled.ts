@@ -1,66 +1,59 @@
 import styled from 'styled-components';
 
-export const EmployeeTableStyled = styled.div`
-  flex: 1;
-  position: relative;
-  height: 100%;
-  overflow: hidden;
+export const EmployeeTableWrapStyled = styled.div`
+  height: calc(100% - 7rem);
   white-space: nowrap;
+  overflow: auto;
 
-  .table-wrap {
-    padding: 1.4rem 1rem;
-    width: 100%;
-    height: calc(100% - 7rem);
-    overflow: overlay;
+  /* table header */
+  .employee-table-thead {
+    position: sticky;
+    top: 0;
+    z-index: 3;
+    background-color: rgb(255, 255, 255, 0.7);
+    backdrop-filter: blur(10px);
 
-    > table {
-      width: 100%;
+    .anticon {
+      font-size: 8px;
+    }
 
-      th {
-        text-align: start;
-        font-weight: normal;
-        color: ${p => p.theme.colors.textColor3};
-        font-size: ${p => p.theme.sizes.textSmall};
-        height: 4rem;
+    > tr > th {
+      background-color: ${p => p.theme.colors.contentBG};
+      font-weight: normal;
+      font-size: ${p => [p.theme.sizes.textSmall]};
+      color: ${p => p.theme.colors.textColor2};
+      padding: 1rem 1.8rem;
+      background-color: transparent;
 
-        .wage-th-wrap {
-          display: flex;
-          align-items: center;
-          gap: 0.8rem;
-
-          > svg {
-            font-size: 1rem;
-          }
-        }
-
-        :first-child {
-          padding-left: 1.2rem;
-        }
-
-        &:not(:first-child) {
-          padding-left: 1.8rem;
-        }
-      }
-
-      .cell-center {
-        padding-left: 0.6rem !important;
-        padding-right: 0.6rem !important;
-        text-align: center;
-
-        .center-wrap {
-          display: flex;
-          justify-content: center;
-          align-items: center;
-        }
+      ::before {
+        content: '';
+        display: none;
       }
     }
   }
 
-  .empty-wrap {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: calc(100% - 5.4rem);
-    padding-bottom: 14rem;
+  /* table body */
+  .employee-table-tbody > tr > td {
+    border: none;
+    padding: 1.2rem 1.8rem;
+  }
+
+  .employee-table-cell {
+    :nth-of-type(1),
+    :nth-of-type(2) {
+      position: sticky;
+      z-index: 2;
+      background-color: rgb(255, 255, 255, 0.7);
+      backdrop-filter: blur(10px);
+    }
+
+    :nth-of-type(1) {
+      left: 0;
+    }
+
+    :nth-of-type(2) {
+      left: 32px;
+      border-right: 1px solid rgb(245, 245, 245);
+    }
   }
 `;

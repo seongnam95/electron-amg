@@ -1,4 +1,5 @@
 import { EmployeeData } from './employee';
+import { PositionData } from './position';
 
 /** 그룹 데이터 인터페이스 */
 export interface TeamData {
@@ -7,6 +8,10 @@ export interface TeamData {
   color: string;
   mealCost: number;
   createDate: string;
+  positions: Array<PositionData>;
+}
+
+export interface TeamWithEmployee extends TeamData {
   employees: Array<EmployeeData>;
 }
 

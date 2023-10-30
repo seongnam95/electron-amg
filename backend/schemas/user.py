@@ -1,5 +1,5 @@
 from pydantic import BaseModel, model_validator
-from typing import Optional
+from typing import List, Optional
 from datetime import datetime
 
 from schemas.common import check_update_fields
@@ -42,6 +42,7 @@ class UserResponse(BaseModel):
     username: str
     is_admin: bool
     is_approved: bool
+    teams: List[Team]
 
     class Config:
         from_attributes = True

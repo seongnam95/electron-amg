@@ -6,7 +6,6 @@ export const POSITION_CODE = {
   5: '홍보단',
   6: '기타',
 } as const;
-export type PositionType = keyof typeof POSITION_CODE;
 
 export const POSITION_COLORS = {
   1: '#5665ED',
@@ -23,6 +22,8 @@ export interface PositionData {
   positionCode: PositionType;
   unitPay: number;
 }
+
+export type PositionType = keyof typeof POSITION_CODE;
 
 /** 근로자 생성 API 바디 */
 export type PositionCreateBody = Omit<PositionData, 'id'>;

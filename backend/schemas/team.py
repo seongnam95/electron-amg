@@ -11,7 +11,6 @@ class TeamBase(BaseModel):
     name: str
     color: str
     meal_cost: int
-    user_id: Optional[int] = None
 
 
 class TeamCreate(TeamBase):
@@ -33,6 +32,12 @@ class Team(TeamBase):
     id: int
     create_date: datetime
     positions: List[Position]
+
+    class Config:
+        from_attributes = True
+
+
+class TeamWithEmployee(Team):
     employees: List[EmployeeResponse]
 
     class Config:

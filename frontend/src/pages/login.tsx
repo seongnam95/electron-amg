@@ -52,7 +52,6 @@ const Login = () => {
         })
         .catch(() => alert('IP를 조회할 수 없습니다.'));
     };
-
     fetchGeoData();
   }, []);
 
