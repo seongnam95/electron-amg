@@ -10,14 +10,14 @@ class EmployeeBase(BaseModel):
     name: str
     phone: str
     address: str
+    start_period: datetime
+    end_period: datetime
     bank: str
     bank_num: str
     ssn: str
     bank_book: str
     id_card: str
     sign: str
-    start_period: datetime
-    end_period: datetime
 
 
 class EmployeeCreate(EmployeeBase):

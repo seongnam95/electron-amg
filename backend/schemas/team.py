@@ -1,8 +1,10 @@
-from typing import Optional
+from typing import List, Optional
 from pydantic import BaseModel, model_validator
 from datetime import datetime
 
 from schemas.common import check_update_fields
+from schemas.position import Position
+from schemas.employee import EmployeeResponse
 
 
 class TeamBase(BaseModel):
@@ -30,6 +32,8 @@ class TeamUpdate(BaseModel):
 class Team(TeamBase):
     id: int
     create_date: datetime
+    positions: List[Position]
+    employees: List[EmployeeResponse]
 
     class Config:
         from_attributes = True

@@ -5,8 +5,8 @@ import { Table, Tag } from 'antd';
 import { ColumnsType, Key } from 'antd/es/table/interface';
 
 import { Button } from '~/components/common';
-import { POSITION_CODE, POSITION_COLORS, PositionType, SALARY_CODE } from '~/types/contract';
 import { EmployeeData } from '~/types/employee';
+import { POSITION_CODE, POSITION_COLORS, PositionType } from '~/types/position';
 import { formatPhoneNumber } from '~/utils/formatData';
 
 import Dock from './Dock';
@@ -141,12 +141,12 @@ const AntTable = ({ tableWrapRef, isLoading, employees }: AntTableProps) => {
 
   // 테이블 데이터 맵핑
   const dataSource: Array<EmployeeTableData> = employees.map((employee, i) => {
-    const { contract, attendances, hasContract } = employee;
+    const { attendances } = employee;
 
     const groupName = contract ? contract.groupName : '소속 없음';
     const wage = contract ? `${contract.defaultWage.toLocaleString()}원` : '-';
     const attendance = contract && attendances ? `${attendances.length.toString()}일` : '-';
-    const salaryText = contract ? SALARY_CODE[contract.salary] : '없음';
+    const salaryText = '없음';
 
     const period = contract ? contract.endPeriod : '계약 만료';
 

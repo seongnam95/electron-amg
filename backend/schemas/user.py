@@ -32,7 +32,6 @@ class User(BaseModel):
     is_admin: bool
     is_approved: bool
     create_date: datetime
-    team: Optional[Team] = None
 
     class Config:
         from_attributes = True
@@ -43,7 +42,6 @@ class UserResponse(BaseModel):
     username: str
     is_admin: bool
     is_approved: bool
-    team: Optional[Team]
 
     class Config:
         from_attributes = True

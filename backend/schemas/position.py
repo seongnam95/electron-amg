@@ -25,7 +25,6 @@ class PositionUpdate(PositionBase):
 
 class Position(PositionBase):
     id: int
-    team_id: int
 
     class Config:
         from_attributes = True

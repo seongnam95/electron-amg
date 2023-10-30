@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 from ... import deps
 
 import crud, schemas
-from response_model import ListResponse, BaseResponse
+from response_model import DataResponse, ListResponse, BaseResponse
 
 
 router = APIRouter()
@@ -60,3 +60,20 @@ def delete_user(
 
     crud.user.remove(db=db, id=user.id)
     return BaseResponse(msg="정상 처리되었습니다.")
+
+
+# 팀 불러오기
+@router.get("/{user_id}/team", response_model=DataResponse[schemas.Team])
+def read_team_by_user(
+    user_id: int,
+    db: Session = Depends(deps.get_db),
+):
+    user = crud.user.get(db, id=user_id)
+    if not user:
+        raise HTTPException(status_code=404, detail="존재하지 않는 계정입니다.")
+
+    team = user.team
+    if not team:
+        raise HTTPException(status_code=404, detail="생성된 팀이 없습니다.")
+
+    return DataResponse(msg="정상 처리되었습니다.", result=team)

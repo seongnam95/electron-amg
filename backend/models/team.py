@@ -12,11 +12,10 @@ class Team(Base):
 
     name = Column(String, nullable=False)  # 이름
     color = Column(String, nullable=False)  # 색상
-    meal_cost = Column(Integer, nullable=False, default=7000)  # 식대 금액
+    meal_cost = Column(Integer, nullable=False)  # 식대 금액
 
     create_date = Column(DateTime(timezone=True), nullable=False, default=datetime.now)
 
-    # 담당자
     user_id = Column(Integer, ForeignKey("user.id"), nullable=True)
     user = relationship("User", back_populates="team", uselist=False)
 

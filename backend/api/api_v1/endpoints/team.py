@@ -48,7 +48,12 @@ def read_all_team(
 # 팀 생성
 @router.post("/", response_model=BaseResponse)
 def create_team(team_in: schemas.TeamCreate, db: Session = Depends(deps.get_db)):
-    crud.team.create_team(db=db, obj_in=team_in)
+    if team_in.user_id:
+        user = crud.user.get(db, id=team_in.user_id)
+        if not user:
+            raise HTTPException(status_code=404, detail="존재하지 않는 계정입니다.")
+
+    crud.team.create(db=db, obj_in=team_in)
     return BaseResponse(msg="정상 처리되었습니다.")
 
 
@@ -62,6 +67,11 @@ def update_team(
     team = crud.team.get(db=db, id=team_id)
     if not team:
         raise HTTPException(status_code=404, detail="존재하지 팀 입니다.")
+
+    if team_in.user_id:
+        user = crud.user.get(db, id=team_in.user_id)
+        if not user:
+            raise HTTPException(status_code=404, detail="존재하지 않는 계정입니다.")
 
     crud.team.update(db=db, db_obj=team, obj_in=team_in)
     return BaseResponse(msg="정상 처리되었습니다.")
@@ -78,4 +88,19 @@ def delete_team(
         raise HTTPException(status_code=404, detail="존재하지 팀 입니다.")
 
     crud.team.remove(db=db, id=team.id)
+    return BaseResponse(msg="정상 처리되었습니다.")
+
+
+# 직위 생성
+@router.post("/{team_id}/position", response_model=BaseResponse)
+def create_position(
+    team_id: int,
+    position_in: schemas.PositionCreate,
+    db: Session = Depends(deps.get_db),
+):
+    team = crud.team.get(db, id=team_id)
+    if not team:
+        raise HTTPException(status_code=404, detail="존재하지 않는 팀입니다.")
+
+    crud.position.create_position(db=db, obj_in=position_in, team_id=team_id)
     return BaseResponse(msg="정상 처리되었습니다.")

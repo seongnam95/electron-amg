@@ -14,6 +14,12 @@ export interface ListResponseData<T> {
   hasMore: boolean;
   list: Array<T>;
 }
+
 export interface FetchListResponse<T> extends BaseResponse {
   result: ListResponseData<T>;
+}
+
+export interface FetchListParams {
+  page?: number;
+  limit?: number;
 }

@@ -1,15 +1,18 @@
+import { EmployeeData } from './employee';
+
 /** 그룹 데이터 인터페이스 */
 export interface TeamData {
   id: string;
   name: string;
   color: string;
+  mealCost: number;
   createDate: string;
-  userId?: number;
+  employees: Array<EmployeeData>;
 }
 
 /** 그룹 생성 API 바디 */
 export type TeamCreateBody = {
-  userId?: string;
+  mealCost?: number;
 } & Pick<TeamData, 'name' | 'color'>;
 
 /** 그룹 업데이트 API 바디 */
