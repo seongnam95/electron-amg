@@ -7,14 +7,14 @@ export interface ChipStyledProps extends HTMLAttributes<HTMLSpanElement> {
   $bgColor?: string;
   $borderColor?: string;
   $fullWidth?: boolean;
-  $size?: 'small' | 'medium' | 'lazy';
+  $size?: 'small' | 'medium' | 'large';
 }
 
 export const ChipStyled = styled.span<ChipStyledProps>`
   --padding: ${p =>
     p.$size === 'small'
       ? '0.3rem 0.7rem 0.1rem'
-      : p.$size === 'lazy'
+      : p.$size === 'large'
       ? '0.9rem 1.6rem 0.7rem'
       : '0.5rem 1rem 0.3rem'};
   --fontSize: ${p => (p.$size === 'small' ? '1.2rem' : p.theme.sizes.textSmall)};

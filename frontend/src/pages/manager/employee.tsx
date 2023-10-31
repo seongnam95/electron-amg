@@ -1,5 +1,6 @@
-import { ChangeEvent, useState } from 'react';
+import { ChangeEvent, useEffect, useState } from 'react';
 
+import { Skeleton } from 'antd';
 import { useRecoilValue } from 'recoil';
 
 import EmployeeTable from '~/components/employee/EmployeeTable';
@@ -12,26 +13,30 @@ import { searchEmployee } from '~/utils/employeeUtils';
 
 const EmployeePage = () => {
   const scrollRef = useDragScroll();
-  const { teams } = useRecoilValue(userState).user;
+
+  const { user } = useRecoilValue(userState);
+  const { teams, isLoading } = useTeamQuery({ userId: user.id });
+
+  const [selectedTeamId, setSelectedTeamId] = useState<string>();
   const [searchTerm, setSearchTerm] = useState<string>('');
-  const [selectedTeamID, setSelectedTeamID] = useState<string>(teams[0].id);
-  const { team } = useTeamQuery({ teamID: selectedTeamID });
 
-  const employees = team ? team.employees : [];
-  const filteredEmployees = searchEmployee(employees, searchTerm);
+  useEffect(() => {
+    if (teams.length > 0) setSelectedTeamId(teams[0].id);
+  }, [teams]);
 
-  const handleChangeTeam = (id: string) => setSelectedTeamID(id);
+  const handleChangeTeam = (id: string) => setSelectedTeamId(id);
   const handleChangeSearch = (e: ChangeEvent<HTMLInputElement>) => setSearchTerm(e.target.value);
 
+  if (isLoading) return <Skeleton active />;
   return (
     <EmployeePageStyled className="EmployeePage">
       <ControlBar
-        selectedTeamID={selectedTeamID}
+        selectedTeamId={selectedTeamId}
         teams={teams}
         onChangeTeam={handleChangeTeam}
         onSearch={handleChangeSearch}
       />
-      <EmployeeTable tableWrapRef={scrollRef} isLoading={false} employees={filteredEmployees} />
+      <EmployeeTable tableWrapRef={scrollRef} isLoading={false} />
     </EmployeePageStyled>
   );
 };

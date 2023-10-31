@@ -104,7 +104,7 @@ const Login = () => {
           icon={<BsLockFill />}
           type="password"
         />
-        <Button type="submit" disabled={!isValid} $primary $btnSize="lazy">
+        <Button type="submit" disabled={!isValid} $primary $btnSize="large">
           로그인
         </Button>
       </form>

@@ -24,7 +24,7 @@ export const ButtonStyled = styled.button<{
   background-color: ${(p) => p.theme.colors.primary};
   border-radius: 0.6rem;
 
-  font-size: ${(p) => p.theme.sizes.textLazy};
+  font-size: ${(p) => p.theme.sizes.textLarge};
   color: white;
 
   transition: all 0.1s ease-in-out;

@@ -5,8 +5,8 @@ export const sizes = {
   textXSmall: "15px",
   textSmall: "16px",
   textMedium: "17px",
-  textLazy: "18px",
-  textXLazy: "24px",
+  textLarge: "18px",
+  textXLarge: "24px",
 };
 
 const _colors = {

@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 from ... import deps
 
 import crud, schemas
-from response_model import BaseResponse
+from response_model import BaseResponse, ListResponse
 
 
 router = APIRouter()
@@ -46,6 +46,26 @@ def delete_user(
 
     crud.user.remove(db=db, id=user.id)
     return BaseResponse(msg="정상 처리되었습니다.")
+
+
+# 팀
+@router.get("/{user_id}/team", response_model=ListResponse[schemas.Team])
+def read_all_team(
+    user_id: int,
+    db: Session = Depends(deps.get_db),
+    page: int = 1,
+    limit: int = 100,
+):
+    total = crud.employee.get_count(db)
+
+    teams = crud.team.get_team_for_user(db, user_id=user_id)
+    if not teams:
+        raise HTTPException(status_code=404, detail="생성된 팀이 없습니다.")
+
+    response = deps.create_list_response(
+        data=teams, total=total, limit=limit, page=page
+    )
+    return ListResponse(msg="정상 처리되었습니다.", result=response)
 
 
 # 팀 생성 (유저)

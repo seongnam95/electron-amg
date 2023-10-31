@@ -33,7 +33,7 @@ export const ContractClauseStyled = styled.div`
       gap: 0.4rem;
 
       .text-title {
-        font-size: ${(p) => p.theme.sizes.textLazy};
+        font-size: ${(p) => p.theme.sizes.textLarge};
         font-weight: bold;
         margin-bottom: 0.4rem;
       }

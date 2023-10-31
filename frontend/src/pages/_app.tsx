@@ -3,6 +3,7 @@ import { Outlet } from 'react-router-dom';
 
 import { ConfigProvider, theme } from 'antd';
 import locale from 'antd/lib/locale/ko_KR';
+import 'dayjs/locale/ko';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { ThemeProvider } from 'styled-components';
 

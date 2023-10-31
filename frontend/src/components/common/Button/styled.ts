@@ -16,7 +16,7 @@ export interface ButtonStyledProps extends ButtonHTMLAttributes<HTMLButtonElemen
   $width?: string;
   $fullWidth?: boolean;
   $variations?: 'fill' | 'outline' | 'link' | 'icon';
-  $btnSize?: 'small' | 'medium' | 'lazy';
+  $btnSize?: 'small' | 'medium' | 'large';
   $animate?: boolean;
 }
 
@@ -72,11 +72,11 @@ export const ButtonStyled = styled.button<ButtonStyledProps>`
         fontSize: theme.sizes.textMedium,
         iconSize: theme.sizes.iconMedium,
       },
-      lazy: {
+      large: {
         size: '4.2rem',
         padding: '1rem 2rem',
-        fontSize: theme.sizes.textLazy,
-        iconSize: theme.sizes.iconLazy,
+        fontSize: theme.sizes.textLarge,
+        iconSize: theme.sizes.iconLarge,
       },
     }[$btnSize || 'medium'];
 

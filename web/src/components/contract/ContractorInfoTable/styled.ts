@@ -38,7 +38,7 @@ export const ContractorInfoTableStyled = styled.div`
       align-items: center;
       font-weight: bold;
       padding: 1rem 1.2rem;
-      font-size: ${(p) => p.theme.sizes.textLazy};
+      font-size: ${(p) => p.theme.sizes.textLarge};
     }
 
     .field-list {

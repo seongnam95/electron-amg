@@ -11,7 +11,7 @@ export const PersonalConsentStyled = styled.div`
   }
 
   h1 {
-    font-size: ${(p) => p.theme.sizes.textLazy};
+    font-size: ${(p) => p.theme.sizes.textLarge};
     font-weight: bold;
     margin-bottom: 2rem;
     line-height: 120%;

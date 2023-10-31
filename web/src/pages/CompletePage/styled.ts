@@ -35,7 +35,7 @@ export const CompletePageStyled = styled.div`
 
       .card-title {
         flex: 1;
-        font-size: ${(p) => p.theme.sizes.textLazy};
+        font-size: ${(p) => p.theme.sizes.textLarge};
         font-weight: bold;
         color: ${(p) => p.theme.colors.textColor1};
       }
@@ -86,7 +86,7 @@ export const CompletePageStyled = styled.div`
     border: none;
     outline: none;
 
-    font-size: ${(p) => p.theme.sizes.textLazy};
+    font-size: ${(p) => p.theme.sizes.textLarge};
     color: white;
 
     width: 100%;

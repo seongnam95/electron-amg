@@ -1,8 +1,7 @@
 import { useQuery } from 'react-query';
 
 import { EmployeeFetchParams, fetchEmployeeList } from '~/api/employee';
-
-import { BaseQueryOptions } from './useBaseQuery';
+import { BaseQueryOptions } from '~/types/query';
 
 export const useEmployeeQuery = ({
   params,

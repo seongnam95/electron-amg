@@ -31,7 +31,7 @@ export const EmployeeSidebarStyled = styled.div`
       font-size: ${p => p.theme.sizes.textSmall};
 
       b {
-        font-size: ${p => p.theme.sizes.textLazy};
+        font-size: ${p => p.theme.sizes.textLarge};
       }
     }
   }

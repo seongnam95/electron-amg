@@ -4,11 +4,11 @@ import { darken, lighten, rgba } from 'polished';
 export const sizes = {
   textSmall: '13px',
   textMedium: '14px',
-  textLazy: '15px',
+  textLarge: '15px',
 
   iconSmall: '18px',
   iconMedium: '20px',
-  iconLazy: '22px',
+  iconLarge: '22px',
 
   titleBarHeight: '4rem',
   navBarWidth: '8rem',

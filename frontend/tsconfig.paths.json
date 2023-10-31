@@ -2,11 +2,7 @@
   "compilerOptions": {
     "paths": {
       "@app/*": ["./app/*"],
-      "~/*": ["./src/*"],
-      "@components/employee": ["./src/components/employee/index"],
-      "@components/common": ["./src/components/common/index"],
-      "@components/layouts": ["./src/components/layouts/index"],
-      "@components/tracker": ["./src/components/tracker/index"]
+      "~/*": ["./src/*"]
     }
   }
 }

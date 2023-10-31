@@ -73,7 +73,7 @@ const ListItem = styled.li<{ active?: boolean }>`
   display: flex;
   align-items: center;
   color: ${(p) => p.theme.colors.textColor1};
-  font-size: ${(p) => p.theme.sizes.textLazy};
+  font-size: ${(p) => p.theme.sizes.textLarge};
   height: 5rem;
   padding: 0 1.2rem;
   border-radius: 0.4rem;

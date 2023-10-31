@@ -1,6 +1,7 @@
-from typing import Optional
+from typing import List, Optional
 
 from fastapi.encoders import jsonable_encoder
+from sqlalchemy import select
 from crud.base import CRUDBase
 from models import Team
 from schemas import TeamCreate, TeamUpdate
@@ -9,6 +10,14 @@ from models.associations import user_team
 
 
 class CRUDTeam(CRUDBase[Team, TeamCreate, TeamUpdate]):
+    def get_team_for_user(self, db: Session, *, user_id: int) -> List[Team]:
+        return (
+            db.query(Team)
+            .join(user_team, Team.id == user_team.c.team_id)
+            .filter(user_team.c.user_id == user_id)
+            .all()
+        )
+
     def create_team_for_user(
         self, db: Session, *, user_id: int, obj_in: TeamCreate
     ) -> Team:

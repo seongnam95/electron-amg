@@ -3,10 +3,9 @@ from datetime import date, datetime
 
 
 class DraftBase(BaseModel):
+    position_id: int
     start_period: date
     end_period: date
-    team_id: int
-    position_id: int
 
 
 class DraftCreate(DraftBase):
@@ -19,4 +18,5 @@ class DraftUpdate(BaseModel):
 
 class Draft(DraftBase):
     id: str
+    team_id: int
     create_date: datetime

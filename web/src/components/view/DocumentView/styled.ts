@@ -31,7 +31,7 @@ export const DocumentViewStyled = styled.div`
     border: 1px solid ${(p) => p.theme.colors.textColor1};
 
     .contract-title {
-      font-size: ${(p) => p.theme.sizes.textLazy};
+      font-size: ${(p) => p.theme.sizes.textLarge};
       font-weight: bold;
       text-align: center;
       padding: 0.7rem 0 0.5rem 0;

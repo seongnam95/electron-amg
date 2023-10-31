@@ -9,17 +9,16 @@ import { TeamSelectorStyled } from './styled';
 
 export interface TeamSelectorProps {
   teams: Array<TeamData>;
-  selectedTeamID?: string;
+  selectedTeamId?: string;
   onChange?: (id: string) => void;
 }
 
-const TeamSelector = ({ selectedTeamID, teams, onChange }: TeamSelectorProps) => {
-  const selectedTeam = teams.find(team => team.id == selectedTeamID);
-
+const TeamSelector = ({ selectedTeamId, teams, onChange }: TeamSelectorProps) => {
+  const selectedTeam = teams.find(team => team.id == selectedTeamId);
   const handleChangeTeam = ({ key }: MenuItemType) => onChange?.(key.toLocaleString());
 
   const items: Array<ItemType> = teams.map(team => {
-    const isSelected = team.id == selectedTeamID;
+    const isSelected = team.id == selectedTeamId;
 
     return {
       key: team.id,
@@ -52,7 +51,7 @@ const TeamSelector = ({ selectedTeamID, teams, onChange }: TeamSelectorProps) =>
     <TeamSelectorStyled className="TeamSelector">
       {teams.length > 1 ? (
         <Dropdown menu={{ items }} trigger={['click']}>
-          <label className="team-label">
+          <label className="team-label selector">
             <span className="color-bar" style={{ backgroundColor: selectedTeam?.color }} />
             {selectedTeam?.name}
             <FiChevronDown style={{ marginLeft: '8px' }} />

@@ -4,14 +4,17 @@ import { QueryClient, QueryClientProvider } from 'react-query';
 
 import { ElectronRendererContext } from '@app/types/preload';
 
-import { ConfigProvider } from 'antd';
 import 'antd/dist/reset.css';
 import dayjs from 'dayjs';
 import 'dayjs/locale/ko';
 import relativeTime from 'dayjs/plugin/relativeTime';
+import moment from 'moment';
+import 'moment/locale/ko';
 import { RecoilRoot } from 'recoil';
 
 import FileSystemRoutes from '~/components/common/FileSystemRoutes';
+
+moment.locale('ko');
 
 dayjs.extend(relativeTime);
 dayjs.locale('ko');

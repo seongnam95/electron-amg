@@ -4,7 +4,6 @@ from datetime import datetime
 
 from schemas.common import check_update_fields
 from schemas.position import Position
-from schemas.employee import EmployeeResponse
 
 
 class TeamBase(BaseModel):
@@ -32,13 +31,6 @@ class Team(TeamBase):
     id: int
     create_date: datetime
     positions: List[Position]
-
-    class Config:
-        from_attributes = True
-
-
-class TeamWithEmployee(Team):
-    employees: List[EmployeeResponse]
 
     class Config:
         from_attributes = True

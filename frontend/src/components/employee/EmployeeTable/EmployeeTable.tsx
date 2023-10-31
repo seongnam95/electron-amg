@@ -4,7 +4,7 @@ import { FaFileContract, FaImages } from 'react-icons/fa';
 import { Table, Tag } from 'antd';
 import { ColumnsType, Key } from 'antd/es/table/interface';
 
-import { Button } from '~/components/common';
+import Button from '~/components/common/Button';
 import { EmployeeData } from '~/types/employee';
 import { POSITION_CODE, POSITION_COLORS, PositionType } from '~/types/position';
 import { formatPhoneNumber } from '~/utils/formatData';
@@ -15,7 +15,7 @@ import { EmployeeTableWrapStyled } from './styled';
 interface EmployeeTableProps {
   tableWrapRef?: ForwardedRef<HTMLDivElement>;
   isLoading?: boolean;
-  employees: Array<EmployeeData>;
+  employees?: Array<EmployeeData>;
 }
 
 interface EmployeeTableData {

@@ -6,7 +6,6 @@ export interface UserData {
   username: string;
   isAdmin: boolean;
   isApproved: boolean;
-  teams: Array<TeamData>;
 }
 
 export interface CurrentUser {

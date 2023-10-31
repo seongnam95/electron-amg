@@ -1,8 +1,7 @@
 import { useMutation, useQueryClient } from 'react-query';
 
 import { createAttendanceRequest, removeAttendanceRequest } from '~/api/attendance';
-
-import { BaseQueryOptions } from './useBaseQuery';
+import { BaseQueryOptions } from '~/types/query';
 
 export const useAttendanceMutation = (queryKey?: string[], options?: BaseQueryOptions) => {
   const queryClient = useQueryClient();

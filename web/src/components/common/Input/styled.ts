@@ -12,7 +12,7 @@ export const InputStyled = styled.label<{ doseExist: boolean }>`
       width: 100%;
 
       color: ${(p) => p.theme.colors.textColor1};
-      font-size: ${(p) => p.theme.sizes.textLazy};
+      font-size: ${(p) => p.theme.sizes.textLarge};
 
       outline: none;
       border: none;
@@ -53,7 +53,7 @@ export const InputStyled = styled.label<{ doseExist: boolean }>`
       color: ${(p) =>
         p.doseExist ? p.theme.colors.textColor2 : p.theme.colors.textColor3};
       font-size: ${(p) =>
-        p.doseExist ? p.theme.sizes.textSmall : p.theme.sizes.textLazy};
+        p.doseExist ? p.theme.sizes.textSmall : p.theme.sizes.textLarge};
       transition: all 0.2s;
     }
   }

@@ -32,7 +32,7 @@ export const DraftHistoryViewStyled = styled.div`
 
     .group-name-text {
       font-weight: bold;
-      font-size: ${(p) => p.theme.sizes.textLazy};
+      font-size: ${(p) => p.theme.sizes.textLarge};
     }
 
     .id-chip {

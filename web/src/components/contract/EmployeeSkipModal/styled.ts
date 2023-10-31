@@ -24,7 +24,7 @@ export const EmployeeSkipModalStyled = styled.div`
     font-size: ${(p) => p.theme.sizes.textMedium};
 
     .modal-header-text {
-      font-size: ${(p) => p.theme.sizes.textLazy};
+      font-size: ${(p) => p.theme.sizes.textLarge};
       font-weight: bold;
       margin-bottom: 0.7rem;
     }
@@ -99,7 +99,7 @@ export const EmployeeSkipModalStyled = styled.div`
       .btn-label {
         color: white;
         font-weight: bold;
-        font-size: ${(p) => p.theme.sizes.textLazy};
+        font-size: ${(p) => p.theme.sizes.textLarge};
       }
 
       &.link {

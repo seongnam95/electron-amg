@@ -1,12 +1,14 @@
-import { TeamWithEmployee } from '~/types/team';
+import { TeamData } from '~/types/team';
 
 import axiosPrivate from './axios';
-import { FetchResponse } from './response';
+import { FetchListResponse } from './response';
 
-export const fetchTeam =
-  (teamId?: string) =>
-  async <T extends FetchResponse<TeamWithEmployee>>(): Promise<T> => {
-    const endpoint = import.meta.env.VITE_TEAM_ENDPOINT;
-    const { data } = await axiosPrivate.get<T>(`${endpoint}/${teamId}`);
+export const fetchTeamsByUser =
+  (userId?: string) =>
+  async <T extends FetchListResponse<TeamData>>(): Promise<T> => {
+    const userEndpoint = import.meta.env.VITE_USER_ENDPOINT;
+    const teamEndpoint = import.meta.env.VITE_TEAM_ENDPOINT;
+
+    const { data } = await axiosPrivate.get<T>(`${userEndpoint}/${userId}/${teamEndpoint}`);
     return data;
   };
