@@ -1,7 +1,8 @@
 import { ChangeEvent, FormEvent, useEffect, useRef, useState } from 'react';
+import { BsFillPersonFill, BsLockFill } from 'react-icons/bs';
 import { useNavigate } from 'react-router-dom';
 
-import { notification, message } from 'antd';
+import { message } from 'antd';
 import axios from 'axios';
 import { useSetRecoilState } from 'recoil';
 
@@ -95,12 +96,12 @@ const Login = () => {
     <LoginPageStyled>
       <p className="title">LOGIN</p>
       <form className="login-form" onSubmit={handleOnSubmit}>
-        <Input onChange={handleOnChange} id="username" icon="bx-user" />
+        <Input onChange={handleOnChange} id="username" icon={<BsFillPersonFill />} />
         <Input
           inputRef={passwordInputRef}
           onChange={handleOnChange}
           id="password"
-          icon="bx-lock"
+          icon={<BsLockFill />}
           type="password"
         />
         <Button type="submit" disabled={!isValid} $primary $btnSize="lazy">

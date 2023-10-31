@@ -140,28 +140,28 @@ const EmployeeTable = ({ tableWrapRef, isLoading, employees }: EmployeeTableProp
   ];
 
   // 테이블 데이터 맵핑
-  const dataSource: Array<EmployeeTableData> = employees.map((employee, i) => {
-    const { attendances } = employee;
+  // const dataSource: Array<EmployeeTableData> = employees.map((employee, i) => {
+  //   const { attendances } = employee;
 
-    const groupName = contract ? contract.groupName : '소속 없음';
-    const wage = contract ? `${contract.defaultWage.toLocaleString()}원` : '-';
-    const attendance = contract && attendances ? `${attendances.length.toString()}일` : '-';
-    const salaryText = '없음';
+  //   const groupName = contract ? contract.groupName : '소속 없음';
+  //   const wage = contract ? `${contract.defaultWage.toLocaleString()}원` : '-';
+  //   const attendance = contract && attendances ? `${attendances.length.toString()}일` : '-';
+  //   const salaryText = '없음';
 
-    const period = contract ? contract.endPeriod : '계약 만료';
+  //   const period = contract ? contract.endPeriod : '계약 만료';
 
-    return {
-      key: i,
-      name: employee.name,
-      phone: employee.phone,
-      position: contract ? contract.positionCode : 6,
-      groupName: groupName,
-      wage: { salary: salaryText, wage: wage },
-      attendance: attendance,
-      period: period,
-      tool: contract ? contract.id : null,
-    };
-  });
+  //   return {
+  //     key: i,
+  //     name: employee.name,
+  //     phone: employee.phone,
+  //     position: contract ? contract.positionCode : 6,
+  //     groupName: groupName,
+  //     wage: { salary: salaryText, wage: wage },
+  //     attendance: attendance,
+  //     period: period,
+  //     tool: contract ? contract.id : null,
+  //   };
+  // });
 
   // 근무자 클릭 이벤트
   const handleNameClick = (employeeId: number) => {
@@ -186,7 +186,7 @@ const EmployeeTable = ({ tableWrapRef, isLoading, employees }: EmployeeTableProp
         pagination={false}
         columns={columns}
         tableLayout="fixed"
-        dataSource={dataSource}
+        // dataSource={dataSource}
         rowSelection={{
           type: 'checkbox',
           onChange: handleSelectedChange,

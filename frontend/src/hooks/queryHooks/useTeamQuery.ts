@@ -4,10 +4,10 @@ import { fetchTeam } from '~/api/team';
 import { BaseQueryOptions } from '~/types/query';
 
 interface TeamQueryOptions extends BaseQueryOptions {
-  teamId: string;
+  teamID: string;
 }
 
-export const useTeamQuery = ({ teamId, onSuccess, onError }: TeamQueryOptions) => {
+export const useTeamQuery = ({ teamID: teamId, onSuccess, onError }: TeamQueryOptions) => {
   const queryKey: Array<string> = [import.meta.env.VITE_TEAM_QUERY_KEY, teamId];
 
   const { data, isLoading, isError } = useQuery(queryKey, fetchTeam(teamId), {

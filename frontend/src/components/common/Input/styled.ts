@@ -4,7 +4,7 @@ import styled from 'styled-components';
 
 export interface InputStyledProps extends InputHTMLAttributes<HTMLInputElement> {
   fullWidth?: boolean;
-  variations?: 'fill' | 'outline';
+  variations?: 'fill' | 'outline' | 'line';
 }
 
 export const InputStyled = styled.label<InputStyledProps>`
