@@ -18,7 +18,7 @@
   },
   "dependencies": {
     "@types/react-virtualized": "^9.21.21",
-    "antd": "^5.8.3",
+    "antd": "^5.10.3",
     "axios": "^1.2.3",
     "clsx": "^1.2.1",
     "concurrently": "^8.2.1",

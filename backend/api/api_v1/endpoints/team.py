@@ -130,10 +130,7 @@ def read_all_draft_by_team(
     if not team:
         raise HTTPException(status_code=404, detail="존재하지 않는 팀입니다.")
 
-    drafts = team.drafts
-    if not drafts:
-        raise HTTPException(status_code=404, detail="생성된 초안이 없습니다.")
-
+    drafts = crud.draft.get_multi_draft_by_team(db=db, team_id=team_id)
     response = deps.create_list_response(
         data=drafts, total=len(drafts), limit=limit, page=page
     )

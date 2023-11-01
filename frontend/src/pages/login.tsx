@@ -84,7 +84,6 @@ const Login = () => {
           setUser(user);
         })
         .catch(err => {
-          console.log(err);
           passwordInputRef.current?.focus();
           error();
           navigate('/manager/employee');

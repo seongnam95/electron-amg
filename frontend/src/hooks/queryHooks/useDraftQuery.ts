@@ -1,7 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 
 import { createDraftByTeam, fetchDraftsByTeam } from '~/api/draft';
-import { DraftCreateBody } from '~/types/draft';
 import { BaseQueryOptions } from '~/types/query';
 
 interface DraftQueryOptions extends BaseQueryOptions {
@@ -9,7 +8,7 @@ interface DraftQueryOptions extends BaseQueryOptions {
 }
 
 export const useDraftQuery = ({ teamId, onSuccess, onError }: DraftQueryOptions) => {
-  const queryKey: Array<string> = [import.meta.env.VITE_DRAFT_QUERY_KEY];
+  const queryKey: Array<string> = [import.meta.env.VITE_DRAFT_QUERY_KEY, teamId];
 
   const { data, isLoading, isError } = useQuery(queryKey, fetchDraftsByTeam(teamId), {
     onSuccess: onSuccess,
@@ -24,11 +23,15 @@ export const useDraftMutation = ({ teamId, onSuccess, onError }: DraftQueryOptio
   const queryKey: Array<string> = [import.meta.env.VITE_DRAFT_QUERY_KEY];
   const queryClient = useQueryClient();
 
-  const { mutate, isLoading } = useMutation(queryKey, createDraftByTeam(teamId), {
-    onSuccess: onSuccess,
-    onError: onError,
-    onSettled: () => queryClient.invalidateQueries(queryKey),
-  });
+  const { mutate: createDraftMutate, isLoading: isDraftCreateLoading } = useMutation(
+    queryKey,
+    createDraftByTeam(teamId),
+    {
+      onSuccess: onSuccess,
+      onError: onError,
+      onSettled: () => queryClient.invalidateQueries(queryKey),
+    },
+  );
 
-  return { mutate, isLoading };
+  return { createDraftMutate, isDraftCreateLoading };
 };

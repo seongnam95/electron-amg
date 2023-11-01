@@ -1,16 +1,21 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { AiOutlinePaperClip } from 'react-icons/ai';
 import { BsClockHistory } from 'react-icons/bs';
 
-import { Drawer, DrawerProps, Form, Button, Select, Input, Space, InputRef, message } from 'antd';
+import { Flex, DrawerProps, Form, Button, Select, message, Alert } from 'antd';
 import dayjs, { Dayjs } from 'dayjs';
+import { AnimatePresence, motion } from 'framer-motion';
 
 import AntDateRangePicker from '~/components/common/DateRangePicker';
 import TeamSelector from '~/components/employee/TeamSelector';
-import { useDraftMutation, useDraftQuery } from '~/hooks/queryHooks/useDraftQuery';
-import { DraftCreateBody, DraftData } from '~/types/draft';
+import {
+  useDraftMutation as useDraftCreateMutation,
+  useDraftQuery,
+} from '~/hooks/queryHooks/useDraftQuery';
+import { DraftCreateBody } from '~/types/draft';
 import { TeamData } from '~/types/team';
 
+import HistoryDrawer from './HistoryDrawer';
 import { DraftCreateDrawerStyled } from './styled';
 
 export interface DraftCreateDrawerProps extends DrawerProps {
@@ -30,26 +35,33 @@ const DraftCreateDrawer = ({
   ...props
 }: DraftCreateDrawerProps) => {
   const [form] = Form.useForm();
-  const linkInputRef = useRef<InputRef>(null);
-
   const [messageApi, contextHolder] = message.useMessage({ top: 46, maxCount: 1 });
+
+  const linkInputRef = useRef<HTMLInputElement>(null);
   const [openHistoryDrawer, setOpenHistoryDrawer] = useState<boolean>(false);
-  const [draft, setDraft] = useState<DraftData>();
+  const [draftId, setDraftId] = useState<string>();
+  const [teamId, setTeamId] = useState<string>(selectedTeamId);
+
+  useEffect(() => setTeamId(selectedTeamId), [selectedTeamId]);
 
   const currentDate = dayjs();
   const lastDate = currentDate.endOf('month');
   const defaultPickerValue: [Dayjs, Dayjs] = [currentDate, lastDate];
+  const selectedTeam = teams.find(team => team.id == teamId);
 
-  const selectedTeam = teams.find(team => team.id == selectedTeamId);
-  const { mutate } = useDraftMutation({ teamId: selectedTeamId });
+  // 쿼리
+  const { drafts } = useDraftQuery({ teamId: teamId });
+  const { createDraftMutate } = useDraftCreateMutation({ teamId: teamId });
 
   // 기타 핸들러
   const handleShowDraftDrawer = () => setOpenHistoryDrawer(true);
   const handleCloseDraftDrawer = () => setOpenHistoryDrawer(false);
   const resetForm = () => {
     form.resetFields();
-    setDraft(undefined);
+    setDraftId(undefined);
   };
+
+  const handleChangeTeam = (id: string) => setTeamId(id);
 
   // 직위 변경 핸들러
   const handleChangePosition = (positionId: string) => {
@@ -65,15 +77,30 @@ const DraftCreateDrawer = ({
       endPeriod: values.period[1].format('YYYY-MM-DD'),
     };
 
-    mutate(createBody, {
+    createDraftMutate(createBody, {
       onSuccess: v => {
-        setDraft(v.result);
+        setDraftId(v.result.id);
         form.resetFields();
       },
     });
   };
 
+  const handleHistoryCopyClick = (id: string) => {
+    if (linkInputRef.current) {
+      linkInputRef.current.value = `http://amgcom.site/${id}`;
+      copyInputLink();
+    }
+  };
+
+  // 링크 복사 버튼 클릭 핸들러
   const handleCopyClick = () => {
+    if (linkInputRef.current) {
+      linkInputRef.current.value = `http://amgcom.site/${draftId}`;
+      copyInputLink();
+    }
+  };
+
+  const copyInputLink = () => {
     try {
       const el = linkInputRef.current;
       el?.select();
@@ -101,18 +128,6 @@ const DraftCreateDrawer = ({
     </>
   );
 
-  const RenderFooter = (
-    <Space.Compact style={{ width: '100%', padding: '1.4rem 0' }}>
-      <Input ref={linkInputRef} readOnly value={`http://amgcom.site/${draft?.id}`} size="large" />
-      <Button
-        icon={<AiOutlinePaperClip size="2rem" style={{ paddingTop: '0.2rem' }} />}
-        type="primary"
-        size="large"
-        onClick={handleCopyClick}
-      />
-    </Space.Compact>
-  );
-
   const { Option } = Select;
   return (
     <DraftCreateDrawerStyled
@@ -123,57 +138,90 @@ const DraftCreateDrawer = ({
         onClose?.(e);
       }}
       extra={RenderExtra}
-      footer={!!draft && RenderFooter}
       {...props}
     >
-      <TeamSelector teams={teams} selectedTeamId={selectedTeamId} />
+      <TeamSelector teams={teams} selectedTeamId={teamId} onChange={handleChangeTeam} />
 
-      <Form
-        form={form}
-        layout="vertical"
-        name="trigger"
-        autoComplete="off"
-        style={{ marginTop: '2.4rem' }}
-        onFinish={handleFinish}
-        initialValues={{
-          period: defaultPickerValue,
-        }}
-      >
-        <Form.Item
-          label="직위 구분"
-          name="position"
-          rules={[{ required: true, message: '직위를 선택해주세요.' }]}
+      <Flex vertical justify="space-between" gap="2.4rem">
+        <Form
+          form={form}
+          layout="vertical"
+          name="trigger"
+          autoComplete="off"
+          style={{ marginTop: '2.4rem' }}
+          onFinish={handleFinish}
+          initialValues={{
+            period: defaultPickerValue,
+          }}
         >
-          <Select placeholder="( 직위 선택 )" onChange={handleChangePosition}>
-            {selectedTeam?.positions.map(pos => {
-              return (
-                <Option key={pos.id} value={pos.id}>
-                  {pos.name}
-                </Option>
-              );
-            })}
-          </Select>
-        </Form.Item>
+          <Form.Item
+            label="직위 구분"
+            name="position"
+            rules={[{ required: true, message: '직위를 선택해주세요.' }]}
+          >
+            <Select placeholder="( 직위 선택 )" onChange={handleChangePosition}>
+              {selectedTeam?.positions.map(pos => {
+                return (
+                  <Option key={pos.id} value={pos.id}>
+                    {pos.name}
+                  </Option>
+                );
+              })}
+            </Select>
+          </Form.Item>
 
-        <Form.Item
-          label="계약일"
-          name="period"
-          rules={[{ required: true, message: '계약일을 선택해주세요.' }]}
-        >
-          <AntDateRangePicker />
-        </Form.Item>
+          <Form.Item
+            label="계약일"
+            name="period"
+            rules={[{ required: true, message: '계약일을 선택해주세요.' }]}
+          >
+            <AntDateRangePicker />
+          </Form.Item>
 
-        <Button style={{ marginTop: '2rem' }} size="large" type="primary" htmlType="submit">
-          생성하기
-        </Button>
-      </Form>
+          <Button style={{ marginTop: '2rem' }} size="large" type="primary" htmlType="submit">
+            생성하기
+          </Button>
+        </Form>
+
+        <AnimatePresence>
+          {!!draftId ? (
+            <motion.div
+              initial={{ opacity: 0, x: -10 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: 10 }}
+              transition={{ duration: 0.2, ease: 'easeOut' }}
+            >
+              <Alert
+                message="생성 완료!"
+                type="success"
+                showIcon
+                closable
+                onClose={resetForm}
+                action={
+                  <Button size="small" type="link" onClick={handleCopyClick}>
+                    <Flex align="center" gap="0.5rem" style={{ paddingTop: '3px' }}>
+                      <AiOutlinePaperClip size="1.6rem" />
+                      링크복사
+                    </Flex>
+                  </Button>
+                }
+              />
+            </motion.div>
+          ) : null}
+        </AnimatePresence>
+      </Flex>
 
       {/* 히스토리 Drawer */}
-      <Drawer closable={false} open={openHistoryDrawer} onClose={handleCloseDraftDrawer}>
-        두번째
-      </Drawer>
+      <HistoryDrawer
+        title={selectedTeam?.name}
+        open={openHistoryDrawer}
+        drafts={drafts}
+        onClose={handleCloseDraftDrawer}
+        onClickCopy={handleHistoryCopyClick}
+      />
 
       {contextHolder}
+      <input ref={linkInputRef} style={{ position: 'absolute', top: '100%' }} />
     </DraftCreateDrawerStyled>
   );
 };

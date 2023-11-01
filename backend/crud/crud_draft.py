@@ -1,6 +1,7 @@
 from datetime import datetime
 import random
 import string
+from typing import List
 from crud.base import CRUDBase
 from models import Draft
 from schemas import DraftCreate, DraftUpdate
@@ -8,6 +9,9 @@ from sqlalchemy.orm import Session
 
 
 class CRUDDraft(CRUDBase[Draft, DraftCreate, DraftUpdate]):
+    def get_multi_draft_by_team(self, *, db: Session, team_id: int) -> List[Draft]:
+        return db.query(Draft).filter(Draft.team_id == team_id).all()
+
     def create_draft(
         self, *, db: Session, team_id: int, draft_in: DraftCreate
     ) -> Draft:

@@ -9,7 +9,6 @@ import { useTeamQuery } from '~/hooks/queryHooks/useTeamQuery';
 import { useDragScroll } from '~/hooks/useDragScroll';
 import { userState } from '~/stores/user';
 import { EmployeePageStyled } from '~/styles/pageStyled/employeePageStyled';
-import { searchEmployee } from '~/utils/employeeUtils';
 
 const EmployeePage = () => {
   const scrollRef = useDragScroll();
@@ -27,7 +26,7 @@ const EmployeePage = () => {
   const handleChangeTeam = (id: string) => setSelectedTeamId(id);
   const handleChangeSearch = (e: ChangeEvent<HTMLInputElement>) => setSearchTerm(e.target.value);
 
-  if (isLoading) return <Skeleton active />;
+  if (isLoading || !selectedTeamId) return <Skeleton active style={{ padding: '2rem' }} />;
   return (
     <EmployeePageStyled className="EmployeePage">
       <ControlBar
