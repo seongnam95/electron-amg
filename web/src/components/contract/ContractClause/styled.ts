@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
-export const ContractClauseStyled = styled.div`
+export const ContractClauseView = styled.div`
   display: flex;
   flex-direction: column;
   gap: 3.4rem;
@@ -62,7 +62,7 @@ export const ContractClauseStyled = styled.div`
   }
 `;
 
-export const ContractClausePrintStyled = styled.div`
+export const ContractClausePrintView = styled.div`
   display: flex;
   flex-direction: column;
   gap: 2.6rem;

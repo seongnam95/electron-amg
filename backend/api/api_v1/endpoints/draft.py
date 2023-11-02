@@ -1,9 +1,8 @@
 from datetime import datetime
 from fastapi import APIRouter, HTTPException, Depends
-from fastapi.encoders import jsonable_encoder
 from sqlalchemy.orm import Session
-from response_model import DataResponse, ListResponse
-from schemas import Draft, DraftCreate
+from response_model import BaseResponse, DataResponse, ListResponse
+from schemas import Draft, DraftCreate, DraftForContract
 from ... import deps
 
 import models
@@ -46,6 +45,27 @@ def get_draft(
     return DataResponse(msg="정상 처리되었습니다.", result=draft)
 
 
+# 폼 불러오기 (계약서 작성 시)
+@router.get("/{id}/contract", response_model=DataResponse[DraftForContract])
+def get_draft(
+    id: str,
+    db: Session = Depends(deps.get_db),
+):
+    draft = db.query(models.Draft).filter(models.Draft.id == id).first()
+    if not draft:
+        raise HTTPException(status_code=404, detail="유효하지 않습니다.")
+
+    response = DraftForContract(
+        id=draft.id,
+        start_period=draft.start_period,
+        end_period=draft.end_period,
+        position=draft.position,
+        team_name=draft.team.name,
+    )
+
+    return DataResponse(msg="정상 처리되었습니다.", result=response)
+
+
 # 폼 생성
 @router.post("/", response_model=DataResponse[Draft])
 def create_draft(
@@ -74,3 +94,17 @@ def create_draft(
     db.refresh(db_obj)
 
     return DataResponse(msg="정상 처리되었습니다.", result=db_obj)
+
+
+# 폼 삭제
+@router.delete("/{draft_id}", response_model=BaseResponse)
+def delete_draft(
+    draft_id: str,
+    db: Session = Depends(deps.get_db),
+):
+    draft = crud.draft.get(db=db, id=draft_id)
+    if not draft:
+        raise HTTPException(status_code=404, detail="존재하지 않는 폼 입니다.")
+
+    crud.draft.remove(db=db, id=draft.id)
+    return BaseResponse(msg="정상 처리되었습니다.")

@@ -1,6 +1,7 @@
 from pydantic import BaseModel
 from datetime import date, datetime
 from schemas.position import Position
+from schemas.team import Team
 
 
 class DraftBase(BaseModel):
@@ -20,4 +21,10 @@ class Draft(DraftBase):
     id: str
     team_id: int
     create_date: datetime
+    position: Position
+
+
+class DraftForContract(DraftBase):
+    id: str
+    team_name: str
     position: Position

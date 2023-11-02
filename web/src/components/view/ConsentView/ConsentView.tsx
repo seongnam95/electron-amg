@@ -9,14 +9,16 @@ import {
   Signature,
 } from "@com/contract";
 import { BottomSheetModal } from "@com/common";
+import { FormValueType } from "~/pages/ContractPage/contractSteps";
 
 interface ConsentViewProps extends HTMLAttributes<HTMLDivElement> {
   viewRef?: React.RefObject<HTMLDivElement>;
 }
 
 function ConsentView({ viewRef, ...props }: ConsentViewProps) {
-  const { setFieldValue } = useFormikContext();
+  const { setFieldValue, values } = useFormikContext<FormValueType>();
   const [showSignModal, setShowSignModal] = useState<boolean>(false);
+  const { name, address, phone, signBase64 } = values;
 
   const handleSignatureComplete = (data: string) => {
     setFieldValue("signBase64", data);
@@ -44,7 +46,13 @@ function ConsentView({ viewRef, ...props }: ConsentViewProps) {
       </div>
 
       {/* 계약자 */}
-      <ContractorInfoTable onClickSign={() => setShowSignModal(true)} />
+      <ContractorInfoTable
+        name={name}
+        address={address}
+        phone={phone}
+        signBase64={signBase64}
+        onClickSign={() => setShowSignModal(true)}
+      />
 
       <BottomSheetModal
         title="서명"

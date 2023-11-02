@@ -1,33 +1,27 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useFormik, FormikProvider } from "formik";
 import { useRecoilState } from "recoil";
 
-import { FormValueType } from "@type/contract";
-import {
-  ContractState,
-  ContractorState,
-  initContractor,
-  stepState,
-} from "@stores/contract";
-import { fetchContractDraft } from "@apis/draft";
-import { createEmployee, updateEmployee } from "@apis/employee";
-import { createContract } from "@apis/contract";
+import { CreateEmployeeBody, createEmployee } from "@apis/employee";
 
-import { STEPS } from "./contractSteps";
+import { FormValueType, STEPS, StepHeaders } from "./contractSteps";
 import { Header } from "@com/layout";
 import { ContractPageStyled } from "./styled";
 import { NextButton } from "~/components/contract";
 import { Empty } from "antd";
+import { draftState } from "~/stores/draft";
+import { stepState } from "~/stores/step";
+import { fetchDraft } from "~/apis/draft";
 
 const ContractPage = () => {
-  const divRef = useRef<HTMLDivElement>(null);
-  const [contract, setContract] = useRecoilState(ContractState);
-  const [Contractor, setContractor] = useRecoilState(ContractorState);
   const navigate = useNavigate();
 
+  const divRef = useRef<HTMLDivElement>(null);
+  const [draft, setDraft] = useRecoilState(draftState);
   const [step, setStep] = useRecoilState(stepState);
+
   const currentStep = STEPS[step];
   const lastStep = STEPS.length - 1;
 
@@ -45,24 +39,19 @@ const ContractPage = () => {
       />
     );
 
-  useEffect(() => window.scrollTo({ top: 0 }), [step]);
-
+  // 폼 조회 후, Recoil State에 저장
   const { id } = useParams();
   useEffect(() => {
     if (!id) return;
     let isMounted = true;
 
-    setContractor(initContractor);
-    fetchContractDraft(id)
-      .then((data) => {
-        const contract = data.result;
-        setContract(contract);
-      })
+    fetchDraft(id)
+      .then((data) => setDraft(data.result))
       .catch(() => {
         if (!isMounted) return;
 
-        // navigate("/");
-        // alert("유효하지 않은 폼입니다.");
+        navigate("/");
+        alert("유효하지 않은 폼입니다.");
       });
 
     return () => {
@@ -70,79 +59,33 @@ const ContractPage = () => {
     };
   }, [id]);
 
-  const StepHeaders = useMemo(
-    () => [
-      {
-        title: "AMG 계약서 작성",
-        subTitle: (
-          <>
-            계약자(수급인) 정보를 정확히 입력해주세요. <br />
-            올바르지 않은 정보 입력은 <br />
-            계약 진행에 불이익을 초래할 수 있습니다.
-          </>
-        ),
-      },
-      {
-        title: "AMG 계약서 작성",
-        subTitle: (
-          <>
-            계약자(수급인) 정보를 정확히 입력해주세요. <br />
-            올바르지 않은 정보 입력은 <br />
-            계약 진행에 불이익을 초래할 수 있습니다.
-          </>
-        ),
-      },
-      {
-        title: "신분증 및 통장사본 첨부",
-        subTitle: (
-          <>
-            계약자(수급인)의 신분증과 통장 사본을 첨부해주세요.
-            <br />
-            본인 명의의 통장 또는 계좌번호가 아닐 경우
-            <br />
-            관리자에게 문의해주세요.
-          </>
-        ),
-      },
-      {
-        title: "계약 조항",
-        subTitle: (
-          <>
-            모든 계약 조항을 꼼꼼히 읽은 후,
-            <br />
-            계약에 동의한다면 아래 서명란에 서명해 주세요.
-          </>
-        ),
-      },
-    ],
-    []
-  );
+  // 스탭 변경 때 마다 스크롤 맨 위로
+  useEffect(() => window.scrollTo({ top: 0 }), [step]);
 
+  // 서브밋
   const handleSubmit = (values: FormValueType) => {
-    const { contractConsent, personalConsent, signBase64, ...rest } = values;
-    // TODO : 테스트 후 completeDraw(); 삭제
-    // completeDraw();
+    const ssn = `${values.idFront}${values.idBack}`;
+    const body: CreateEmployeeBody = {
+      name: values.name,
+      phone: values.phone,
+      address: values.address,
+      startPeriod: draft.startPeriod,
+      endPeriod: draft.endPeriod,
+      bank: values.bank,
+      bankNum: values.bankNum,
+      ssn: ssn,
+      bankBook: values.bankBook,
+      idCard: values.idCard,
+      sign: values.signBase64,
+    };
 
-    //  기존 계약정보가 존재할 경우
-    if (Contractor.id) {
-      updateEmployee(Contractor.id, rest).then((res) => {
-        const id = res.data.result.id;
-        createContract(id, contract).then((res) => {
-          if (res.data.success) completeDraw();
-        });
-      });
-    } else {
-      createEmployee(rest).then((res) => {
-        const id = res.data.result.id;
-        createContract(id, contract).then((res) => {
-          if (res.data.success) completeDraw();
-        });
-      });
-    }
+    createEmployee(body).then(() => {
+      resetDraft();
+      navigate("/complete");
+    });
   };
 
-  const completeDraw = () => {
-    navigate("/complete");
+  const resetDraft = () => {
     formik.resetForm();
     setStep(0);
   };

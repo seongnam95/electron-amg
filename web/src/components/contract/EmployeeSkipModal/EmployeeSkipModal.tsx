@@ -53,7 +53,7 @@ function EmployeeSkipModal({
               </li>
               <li>
                 <span>주소</span>
-                <span>{employee.residence}</span>
+                <span>{employee.address}</span>
               </li>
               <li>
                 <span>계좌번호</span>

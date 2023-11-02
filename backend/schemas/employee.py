@@ -3,21 +3,22 @@ from pydantic import BaseModel, model_validator
 from schemas.attendance import Attendance
 from schemas.position import Position
 from schemas.common import check_update_fields
-from datetime import datetime
+from datetime import datetime, date
 
 
 class EmployeeBase(BaseModel):
     name: str
     phone: str
     address: str
-    start_period: datetime
-    end_period: datetime
+    start_period: date
+    end_period: date
     bank: str
     bank_num: str
     ssn: str
     bank_book: str
     id_card: str
-    sign: str
+    sign_base64: str
+    position_id: int
 
 
 class EmployeeCreate(EmployeeBase):
@@ -33,9 +34,9 @@ class EmployeeUpdate(BaseModel):
     ssn: Optional[str] = None
     bank_book: Optional[str] = None
     id_card: Optional[str] = None
-    sign: Optional[str] = None
-    start_period: Optional[datetime] = None
-    end_period: Optional[datetime] = None
+    sign_base64: Optional[str] = None
+    start_period: Optional[date] = None
+    end_period: Optional[date] = None
 
     @model_validator(mode="before")
     def check_fields(cls, values: dict):
@@ -75,8 +76,8 @@ class EmployeeResponse(BaseModel):
     phone: str
     address: str
 
-    start_period: datetime
-    end_period: datetime
+    start_period: date
+    end_period: date
     create_date: datetime
 
     position: Optional[Position] = None

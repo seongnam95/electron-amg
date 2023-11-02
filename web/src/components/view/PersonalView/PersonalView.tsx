@@ -1,13 +1,15 @@
 import { Field, useFormikContext } from "formik";
 import { useEffect, useRef, useState } from "react";
 import { useSetRecoilState } from "recoil";
-import { ContractorState, stepState } from "@stores/contract";
-import { getEmployee } from "@apis/employee";
+
+import { fetchEmployee } from "@apis/employee";
 import { PersonalViewStyled } from "./styled";
-import { ContractorType, FormValueType, EmployeeType } from "@type/contract";
+import { EmployeeType } from "@type/contract";
 import { Input } from "@com/common";
 import { AddressInput, EmployeeSkipModal } from "@com/contract";
 import { HTMLAttributes } from "react";
+import { stepState } from "~/stores/step";
+import { FormValueType } from "~/pages/ContractPage/contractSteps";
 
 /**
  * [ STEP 1 ] 개인정보 입력 폼
@@ -17,12 +19,12 @@ interface PersonalViewProps extends HTMLAttributes<HTMLDivElement> {
 }
 
 function PersonalView({ viewRef, ...props }: PersonalViewProps) {
-  const { values, errors, validateForm } = useFormikContext<FormValueType>();
+  const { values, errors, validateForm, setFieldValue } =
+    useFormikContext<FormValueType>();
   const setStep = useSetRecoilState(stepState);
-  const setContractor = useSetRecoilState(ContractorState);
 
-  const [employee, setEmployee] = useState<EmployeeType | undefined>();
   const [showModal, setShowModal] = useState<boolean>(false);
+  const [employee, setEmployee] = useState<EmployeeType | undefined>();
 
   const nameRef = useRef<HTMLInputElement>(null);
   const frontRef = useRef<HTMLInputElement>(null);
@@ -32,7 +34,7 @@ function PersonalView({ viewRef, ...props }: PersonalViewProps) {
 
   useEffect(() => nameRef.current?.focus(), []);
 
-  // 이름, 주민등록번호 입력 시 기존 근로자 호출
+  // 이름, 주민등록번호 입력 시
   useEffect(() => {
     const validateFormCheck = async () => {
       const { name, idFront, idBack } = await validateForm();
@@ -50,25 +52,29 @@ function PersonalView({ viewRef, ...props }: PersonalViewProps) {
   ]);
 
   // 기존 근로자 API 호출
-  const getEmployeeList = async () => {
+  const getEmployeeList = () => {
     if (nameRef.current && frontRef.current && backRef.current) {
       const name = nameRef.current.value;
       const ssn = frontRef.current.value + backRef.current.value;
 
-      await getEmployee(name, ssn)
-        .then((res) => {
-          const data = res.data.result;
-          setEmployee(data);
-          setContractor((prev) => {
-            return {
-              ...prev,
-              id: data.id,
-            };
-          });
+      fetchEmployee(name, ssn)
+        .then((employee) => {
+          setEmployee(employee);
           setShowModal(true);
         })
         .catch(() => {});
     }
+  };
+
+  // 스킵 버튼 클릭 시
+  const handleSkipInput = () => {
+    if (!employee) return;
+
+    setFieldValue("name", employee.name);
+    setFieldValue("phone", employee.phone);
+    setFieldValue("address", employee.address);
+
+    setStep(3);
   };
 
   return (
@@ -123,7 +129,7 @@ function PersonalView({ viewRef, ...props }: PersonalViewProps) {
       <Field
         as={AddressInput}
         inputRef={addressRef}
-        name="residence"
+        name="address"
         placeholder="주소"
       />
 
@@ -132,7 +138,7 @@ function PersonalView({ viewRef, ...props }: PersonalViewProps) {
           employee={employee}
           open={showModal}
           onClose={() => setShowModal(false)}
-          onSkip={() => setStep(3)}
+          onSkip={handleSkipInput}
         />
       )}
     </PersonalViewStyled>

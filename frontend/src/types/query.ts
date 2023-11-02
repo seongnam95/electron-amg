@@ -1,5 +1,5 @@
 export interface BaseMultiDataParams {
-  skip?: number;
+  page?: number;
   limit?: number;
 }
 

@@ -1,5 +1,8 @@
-import { DrawerProps, List, Space, Tag } from 'antd';
+import { AiOutlineLink, AiTwotoneDelete } from 'react-icons/ai';
 
+import { Button, DrawerProps, Flex, List, Space, Tag } from 'antd';
+
+import { useDraftRemove } from '~/hooks/queryHooks/useDraftQuery';
 import { DraftData } from '~/types/draft';
 import { POSITION_CODE, POSITION_COLORS } from '~/types/position';
 
@@ -11,10 +14,10 @@ interface HistoryDrawerProps extends DrawerProps {
 }
 
 const HistoryDrawer = ({ drafts, onClickCopy, ...props }: HistoryDrawerProps) => {
-  // rowSelection={{
-  //   type: 'checkbox',
-  //   onChange: handleSelectedChange,
-  // }}
+  const { removeDraftMutate } = useDraftRemove();
+
+  const handleRemoveClick = (id: string) => removeDraftMutate(id);
+
   return (
     <HistoryDrawerStyled closable={false} {...props}>
       <List itemLayout="vertical">
@@ -23,7 +26,7 @@ const HistoryDrawer = ({ drafts, onClickCopy, ...props }: HistoryDrawerProps) =>
 
           return (
             <List.Item key={draft.id}>
-              <Space direction="vertical">
+              <Flex justify="space-between">
                 <Space>
                   <Tag
                     style={{ width: '6rem', textAlign: 'center' }}
@@ -31,16 +34,25 @@ const HistoryDrawer = ({ drafts, onClickCopy, ...props }: HistoryDrawerProps) =>
                   >
                     {POSITION_CODE[position.positionCode]}
                   </Tag>
-                  <span>
-                    단가 <i>{position.unitPay.toLocaleString()}원</i>
-                  </span>
-
-                  <Tag onClick={() => onClickCopy?.(draft.id)}>
-                    <a>{draft.id}</a>
+                  <Tag>
+                    {draft.startPeriod} - {draft.endPeriod}
                   </Tag>
                 </Space>
-                <Space>asd</Space>
-              </Space>
+                {/* Buttons Wrap */}
+                <Flex>
+                  <Button
+                    icon={<AiOutlineLink size="2rem" />}
+                    type="link"
+                    onClick={() => onClickCopy?.(draft.id)}
+                  ></Button>
+                  <Button
+                    icon={<AiTwotoneDelete size="2rem" />}
+                    type="text"
+                    danger
+                    onClick={() => handleRemoveClick(draft.id)}
+                  ></Button>
+                </Flex>
+              </Flex>
             </List.Item>
           );
         })}

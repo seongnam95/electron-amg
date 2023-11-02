@@ -1,33 +1,22 @@
 import Lottie from "lottie-react";
 import completeLottie from "@lotties/complete.json";
 import { useRecoilValue } from "recoil";
-import { ContractState, ContractorState } from "@stores/contract";
 import { formatDate } from "@utils/formatDate";
-import { useEffect, useRef } from "react";
+import { useRef } from "react";
 import html2canvas from "html2canvas";
-import { useNavigate } from "react-router-dom";
 import { DocumentView } from "@com/view";
 import { CompletePageStyled } from "./styled";
+import { draftState } from "~/stores/draft";
 
-function CompletePage() {
-  const navigate = useNavigate();
+interface CompleteProps {
+  contractorName: string;
+}
+
+function CompletePage({ contractorName }: CompleteProps) {
   const contractRef = useRef<HTMLDivElement>(null);
-  const contract = useRecoilValue(ContractState);
-  const contractor = useRecoilValue(ContractorState);
+  const draft = useRecoilValue(draftState);
 
-  const salaryText =
-    contract.salary === "daily"
-      ? "일당"
-      : contract.salary === "weekly"
-      ? "주급"
-      : "월급";
-
-  useEffect(() => {
-    if (!contractor.name) {
-      navigate(-1);
-    }
-  }, []);
-
+  // 계약서 저장 핸들러
   const handleSaveDocument = async () => {
     if (contractRef.current) {
       const doc = await html2canvas(contractRef.current, { useCORS: true });
@@ -36,7 +25,7 @@ function CompletePage() {
 
       link.href = base64doc;
       link.download = `amg_contract_${formatDate(
-        contract.startPeriod,
+        draft.startPeriod,
         false,
         true
       )}.jpeg`;
@@ -68,16 +57,16 @@ function CompletePage() {
           <div className="info-label">
             <p>계약자</p>
             <p>계약기간</p>
-            <p>수수료 ({salaryText})</p>
+            <p>수수료</p>
           </div>
 
           <div className="info-text">
-            <p>{contractor.name}</p>
+            <p>{contractorName}</p>
             <p>
-              {formatDate(contract.startPeriod, true)} ~{" "}
-              {formatDate(contract.endPeriod, true)}
+              {formatDate(draft.startPeriod, true)} ~{" "}
+              {formatDate(draft.endPeriod, true)}
             </p>
-            <p>{contract.defaultWage.toLocaleString()}원</p>
+            <p>{draft.position.unitPay.toLocaleString()}원</p>
           </div>
         </div>
 

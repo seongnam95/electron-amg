@@ -7,8 +7,8 @@ import styled, { ThemeProvider } from "styled-components";
 import { InitGlobalStyled } from "@styles/init";
 import { antdTheme, colors, sizes } from "@styles/themes";
 import ContractPage from "./ContractPage";
-import CompletePage from "./CompletePage";
-import DraftPage from "./DraftPage";
+// import CompletePage from "./CompletePage";
+// import DraftPage from "./DraftPage";
 import NotFoundPage from "./NotFoundPage";
 
 type Sizes = typeof sizes;
@@ -60,9 +60,9 @@ const App = () => {
 const PageRouter = () => {
   return (
     <Routes>
-      <Route path="/draft" element={<DraftPage />} />
+      {/* <Route path="/draft" element={<DraftPage />} /> */}
       <Route path="/contract/:id" element={<ContractPage />} />
-      <Route path="/complete" element={<CompletePage />} />
+      {/* <Route path="/complete" element={<CompletePage />} /> */}
       <Route path="*" element={<NotFoundPage />} />
     </Routes>
   );

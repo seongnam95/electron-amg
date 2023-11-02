@@ -1,41 +1,43 @@
-import { ContractorType } from "@type/contract";
-import { removeEmptyValueObj } from "@utils/objectUtil";
 import axios from "axios";
+import { EmployeeType } from "~/types/contract";
+import { DataResponse } from "~/types/response";
 
-const getGenderCode: { [key: string]: string } = {
-  1: "1",
-  2: "2",
-  3: "1",
-  4: "2",
-};
-
-type CreateEmployeeBody = {
+export interface CreateEmployeeBody {
+  name: string;
+  phone: string;
+  address: string;
+  startPeriod: string;
+  endPeriod: string;
+  bank: string;
+  bankNum: string;
   ssn: string;
-  genderCode: string;
-} & Omit<ContractorType, "idBack" | "idFront">;
+  bankBook: string;
+  idCard: string;
+  sign: string;
+}
 
-export function createEmployee(contractor: ContractorType) {
-  const { idFront, idBack, ...rest } = contractor;
-
-  const body: CreateEmployeeBody = {
-    ...rest,
-    ssn: `${idFront}${idBack}`,
-    genderCode: getGenderCode[contractor.idBack.slice(0, 1)],
-  };
-
+export function createEmployee(body: CreateEmployeeBody) {
   return axios.post("/employee/", body);
 }
 
-export function updateEmployee(id: string, contractor: ContractorType) {
-  const { idFront, idBack, ...rest } = contractor;
-  const body: Partial<CreateEmployeeBody> = {
-    ...rest,
-    ssn: `${idFront}${idBack}`,
-  };
-  return axios.put(`/employee/${id}`, removeEmptyValueObj(body));
-}
+// export function updateEmployee(id: string, contractor: ContractorType) {
+//   const { idFront, idBack, ...rest } = contractor;
+//   const body: Partial<CreateEmployeeBody> = {
+//     ...rest,
+//     ssn: `${idFront}${idBack}`,
+//   };
+//   return axios.put(`/employee/${id}`, removeEmptyValueObj(body));
+// }
 
-export function getEmployee(name: string, ssn: string) {
+export const fetchEmployee = async (
+  name: string,
+  ssn: string
+): Promise<EmployeeType> => {
   const params = { name: name, ssn: ssn };
-  return axios.get("/employee/search/", { params });
-}
+  const endpoint = "/employee/search/";
+
+  const { data } = await axios.get<DataResponse<EmployeeType>>(endpoint, {
+    params,
+  });
+  return data.result;
+};

@@ -1,25 +1,23 @@
-import { ContractState, ContractorState } from "@stores/contract";
 import { formatDate } from "@utils/formatDate";
 import { useRecoilValue } from "recoil";
-import { ContractClausePrintStyled, ContractClauseStyled } from "./styled";
+import { ContractClausePrintView, ContractClauseView } from "./styled";
+import { draftState } from "~/stores/draft";
 
 interface ContractClauseProps {
+  contractorName?: string;
   printView?: boolean;
 }
 
-function ContractClause({ printView }: ContractClauseProps) {
-  const { name } = useRecoilValue(ContractorState);
-  const { salary, defaultWage, startPeriod, endPeriod, groupName } =
-    useRecoilValue(ContractState);
-  const salaryText =
-    salary === "daily" ? "일당" : salary === "weekly" ? "주급" : "월급";
+function ContractClause({ contractorName, printView }: ContractClauseProps) {
+  const { startPeriod, endPeriod, position } = useRecoilValue(draftState);
 
   const ArticleContent = (
     <>
       <p>
         도급인 AMG(이하 “甲”이라 한다)와 수급인
-        <span className="text-accent"> {name}</span> (이하 “乙”이라 한다)은(는)
-        다음과 같이 용역 계약을 체결하고 상호 성실히 준수할 것을 약정한다.
+        <span className="text-accent"> {contractorName}</span> (이하 “乙”이라
+        한다)은(는) 다음과 같이 용역 계약을 체결하고 상호 성실히 준수할 것을
+        약정한다.
       </p>
       <div className="article-content">
         <div className="text-block">
@@ -102,9 +100,9 @@ function ContractClause({ printView }: ContractClauseProps) {
             <div className="list-item">
               <span className="list-number">①</span>
               <p>
-                용역 수수료는 {salaryText}{" "}
+                용역 수수료는{" "}
                 <span className="text-accent">
-                  {Number(defaultWage).toLocaleString()}원
+                  {Number(position.unitPay).toLocaleString()}원
                 </span>
                 으로 하며, 甲은 당월 1일부터 말일까지 乙의 용역 수행에 따라
                 계산된 금액을 익월 15일에 乙 의 금융계좌에 입금한다. 단, 하루의
@@ -200,13 +198,10 @@ function ContractClause({ printView }: ContractClauseProps) {
       <p className="contract-date">{formatDate(startPeriod)}</p>
     </>
   );
-  if (printView) {
-    return (
-      <ContractClausePrintStyled>{ArticleContent}</ContractClausePrintStyled>
-    );
-  } else {
-    return <ContractClauseStyled>{ArticleContent}</ContractClauseStyled>;
-  }
+
+  if (!printView)
+    return <ContractClauseView>{ArticleContent}</ContractClauseView>;
+  return <ContractClausePrintView>{ArticleContent}</ContractClausePrintView>;
 }
 
 export default ContractClause;

@@ -1,27 +1,10 @@
-import { ContractType, DataResponse } from "@type/contract";
+import { DraftData } from "@type/draft";
 import axios from "axios";
+import { DataResponse } from "~/types/response";
 
-export type ContractResponse = {
-  id: string;
-} & Omit<ContractType, "signBase64">;
-
-export const createContractDraft =
-  <T = ContractResponse>() =>
-  async (body: ContractType): Promise<DataResponse<T>> => {
-    const { data } = await axios.post<DataResponse<T>>("/draft/", body);
-    return data;
-  };
-
-export const fetchContractDraft = async <T = ContractResponse>(
+export const fetchDraft = async <T extends DataResponse<DraftData>>(
   id: string
-): Promise<DataResponse<T>> => {
-  const { data } = await axios.get<DataResponse<T>>(`/draft/${id}`);
+): Promise<T> => {
+  const { data } = await axios.get<T>(`/draft/${id}`);
   return data;
 };
-
-export const fetchAllContractDraft =
-  () =>
-  async <T = Array<ContractResponse>>(): Promise<T> => {
-    const response = await axios.get<DataResponse<T>>("/draft/");
-    return response.data.result;
-  };

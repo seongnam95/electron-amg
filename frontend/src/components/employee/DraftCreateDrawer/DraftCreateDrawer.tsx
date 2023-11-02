@@ -9,7 +9,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import AntDateRangePicker from '~/components/common/DateRangePicker';
 import TeamSelector from '~/components/employee/TeamSelector';
 import {
-  useDraftMutation as useDraftCreateMutation,
+  useDraftCreate as useDraftCreateMutation,
   useDraftQuery,
 } from '~/hooks/queryHooks/useDraftQuery';
 import { DraftCreateBody } from '~/types/draft';
@@ -85,22 +85,10 @@ const DraftCreateDrawer = ({
     });
   };
 
-  const handleHistoryCopyClick = (id: string) => {
-    if (linkInputRef.current) {
-      linkInputRef.current.value = `http://amgcom.site/${id}`;
-      copyInputLink();
-    }
-  };
+  const copyInputLink = (id: string) => {
+    if (!linkInputRef.current) return;
+    linkInputRef.current.value = `http://amgcom.site/${id}`;
 
-  // 링크 복사 버튼 클릭 핸들러
-  const handleCopyClick = () => {
-    if (linkInputRef.current) {
-      linkInputRef.current.value = `http://amgcom.site/${draftId}`;
-      copyInputLink();
-    }
-  };
-
-  const copyInputLink = () => {
     try {
       const el = linkInputRef.current;
       el?.select();
@@ -198,7 +186,7 @@ const DraftCreateDrawer = ({
                 closable
                 onClose={resetForm}
                 action={
-                  <Button size="small" type="link" onClick={handleCopyClick}>
+                  <Button size="small" type="link" onClick={() => copyInputLink(draftId)}>
                     <Flex align="center" gap="0.5rem" style={{ paddingTop: '3px' }}>
                       <AiOutlinePaperClip size="1.6rem" />
                       링크복사
@@ -217,7 +205,7 @@ const DraftCreateDrawer = ({
         open={openHistoryDrawer}
         drafts={drafts}
         onClose={handleCloseDraftDrawer}
-        onClickCopy={handleHistoryCopyClick}
+        onClickCopy={copyInputLink}
       />
 
       {contextHolder}

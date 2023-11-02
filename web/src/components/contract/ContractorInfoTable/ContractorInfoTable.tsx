@@ -1,22 +1,25 @@
-import { ContractState, ContractorState } from "@stores/contract";
-import { useRecoilValue } from "recoil";
 import {
   ContractorInfoTablePrintStyled,
   ContractorInfoTableStyled,
 } from "./styled";
 
 interface ContractorInfoTableProps {
+  name: string;
+  phone: string;
+  address: string;
+  signBase64: string;
   printView?: boolean;
   onClickSign?: () => void;
 }
 
 function ContractorInfoTable({
+  name,
+  phone,
+  address,
+  signBase64,
   printView,
   onClickSign,
 }: ContractorInfoTableProps) {
-  const { name, phone, residence } = useRecoilValue(ContractorState);
-  const { signBase64 } = useRecoilValue(ContractState);
-
   const ContractorContent = (
     <>
       <div className="contractor-wrap">
@@ -70,7 +73,7 @@ function ContractorInfoTable({
           </li>
           <li className="field-list-row">
             <span>주 소</span>
-            <p className="address-text">{residence}</p>
+            <p className="address-text">{address}</p>
           </li>
           <li className="field-list-row">
             <span>성 명</span>

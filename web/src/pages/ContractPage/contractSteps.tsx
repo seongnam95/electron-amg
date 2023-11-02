@@ -1,7 +1,66 @@
 import * as Yup from "yup";
 
 import { BankView, ConsentView, PersonalView, UploadView } from "@com/view";
-import { FormValueType } from "@type/contract";
+
+export interface FormValueType {
+  name: string;
+  phone: string;
+  idFront: string;
+  idBack: string;
+  address: string;
+  bank: string;
+  bankNum: string;
+  idCard: string;
+  bankBook: string;
+  contractConsent: boolean;
+  personalConsent: boolean;
+  signBase64: string;
+}
+
+export const StepHeaders = [
+  {
+    title: "AMG 계약서 작성",
+    subTitle: (
+      <>
+        계약자(수급인) 정보를 정확히 입력해주세요. <br />
+        올바르지 않은 정보 입력은 <br />
+        계약 진행에 불이익을 초래할 수 있습니다.
+      </>
+    ),
+  },
+  {
+    title: "AMG 계약서 작성",
+    subTitle: (
+      <>
+        계약자(수급인) 정보를 정확히 입력해주세요. <br />
+        올바르지 않은 정보 입력은 <br />
+        계약 진행에 불이익을 초래할 수 있습니다.
+      </>
+    ),
+  },
+  {
+    title: "신분증 및 통장사본 첨부",
+    subTitle: (
+      <>
+        계약자(수급인)의 신분증과 통장 사본을 첨부해주세요.
+        <br />
+        본인 명의의 통장 또는 계좌번호가 아닐 경우
+        <br />
+        관리자에게 문의해주세요.
+      </>
+    ),
+  },
+  {
+    title: "계약 조항",
+    subTitle: (
+      <>
+        모든 계약 조항을 꼼꼼히 읽은 후,
+        <br />
+        계약에 동의한다면 아래 서명란에 서명해 주세요.
+      </>
+    ),
+  },
+];
 
 const validationSchemas = {
   // 이름, 연락처, 주민등록번호
@@ -22,7 +81,7 @@ const validationSchemas = {
         "핸드폰 번호가 올바르게 입력되지 않았습니다."
       )
       .required("핸드폰 번호 입력은 필수입니다."),
-    residence: Yup.string().required("주소 입력은 필수입니다."),
+    address: Yup.string().required("주소 입력은 필수입니다."),
   }),
 
   // 주소, 은행명, 계좌번호
@@ -54,7 +113,7 @@ export const STEPS = [
       idFront: "",
       idBack: "",
       phone: "",
-      residence: "",
+      address: "",
     } as FormValueType,
   },
   {
@@ -65,7 +124,7 @@ export const STEPS = [
   {
     viewComponent: UploadView,
     validationSchema: validationSchemas.attachment,
-    initialValues: { identification: "", bankbook: "" } as FormValueType,
+    initialValues: { idCard: "", bankBook: "" } as FormValueType,
   },
   {
     viewComponent: ConsentView,

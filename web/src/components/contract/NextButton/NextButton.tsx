@@ -1,12 +1,12 @@
 import { AnimatePresence, motion } from "framer-motion";
 import useValidFormCheck from "@hooks/useValidFormCheck";
-import { ButtonHTMLAttributes, useEffect } from "react";
+import { ButtonHTMLAttributes } from "react";
 import { NextButtonStyled } from "./styled";
-import { useRecoilState, useSetRecoilState } from "recoil";
-import { ContractState, ContractorState, stepState } from "~/stores/contract";
+import { useRecoilState } from "recoil";
 import { MouseEvent } from "react";
 import { useFormikContext } from "formik";
-import { FormValueType } from "@type/contract";
+import { FormValueType } from "~/pages/ContractPage/contractSteps";
+import { stepState } from "~/stores/step";
 
 interface NexButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   lastStep: number;
@@ -15,30 +15,8 @@ interface NexButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 function NextButton({ lastStep, onClick, ...props }: NexButtonProps) {
   const isValidForm = useValidFormCheck();
 
-  const { handleSubmit, values } = useFormikContext<FormValueType>();
+  const { handleSubmit } = useFormikContext<FormValueType>();
   const [step, setStep] = useRecoilState(stepState);
-  const setContract = useSetRecoilState(ContractState);
-  const setContractor = useSetRecoilState(ContractorState);
-
-  useEffect(() => {
-    if (step === 3) {
-      setContract((prev) => {
-        return {
-          ...prev,
-          signBase64: values.signBase64,
-        };
-      });
-    } else if (step === 1) {
-      setContractor((prev) => {
-        return {
-          ...prev,
-          name: values.name,
-          phone: values.phone,
-          residence: values.residence,
-        };
-      });
-    }
-  }, [values]);
 
   const handleNext = (e: MouseEvent<HTMLButtonElement>) => {
     if (step < lastStep) {

@@ -18,12 +18,13 @@ router = APIRouter()
 def create_employee(
     employee_in: schemas.EmployeeCreate, db: Session = Depends(deps.get_db)
 ):
+    print(employee_in)
     crud.employee.create_employee(db=db, employee_in=employee_in)
     return BaseResponse(msg="정상 처리되었습니다.")
 
 
 # 개인정보로 근로자 불러오기
-@router.get("/search/", response_model=DataResponse[schemas.EmployeeCoveringResponse])
+@router.get("/search/", response_model=DataResponse[EmployeeCoveringResponse])
 def search_employee(name: str, ssn: str, db: Session = Depends(deps.get_db)):
     employee = crud.employee.get_employee_search(db=db, name=name, ssn=ssn)
     if not employee:
@@ -139,6 +140,9 @@ def _decrypt_employee(employee: models.Employee):
         bank_book=image_to_base64(employee.bank_book_file_nm),
         id_card=image_to_base64(employee.id_card_file_nm),
         create_date=employee.create_date,
+        sign_base64=employee.sign_base64,
+        start_period=employee.start_period,
+        end_period=employee.end_period,
     )
 
 
