@@ -15,7 +15,7 @@ export const useDraftQuery = ({ teamId, onSuccess, onError }: DraftQueryOptions)
     onError: onError,
   });
 
-  const drafts = data ? data.result.list : [];
+  const drafts = data ? data.result.list.toReversed() : [];
   return { drafts, isLoading, isError };
 };
 

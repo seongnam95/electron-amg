@@ -37,14 +37,15 @@ const ControlBar = ({ selectedTeamId, teams, onChangeTeam, onSearch }: ControlBa
           <FiPlus size="1.8rem" />폼 생성
         </Button>
       </div>
-
-      <DraftCreateDrawer
-        title="계약서 폼 생성"
-        open={openDraftDrawer}
-        teams={teams}
-        selectedTeamId={selectedTeamId}
-        onClose={handleCloseDraftDrawer}
-      />
+      {openDraftDrawer ? (
+        <DraftCreateDrawer
+          title="계약서 폼 생성"
+          open={openDraftDrawer}
+          teams={teams}
+          selectedTeamId={selectedTeamId}
+          onClose={handleCloseDraftDrawer}
+        />
+      ) : null}
     </ControlBarStyled>
   );
 };

@@ -1,4 +1,5 @@
 import { AttendanceData } from './attendance';
+import { PositionData } from './position';
 
 /** 근로자 데이터 인터페이스 */
 export interface EmployeeData {
@@ -9,6 +10,7 @@ export interface EmployeeData {
   startPeriod: string;
   endPeriod: string;
   createDate: string;
+  position: PositionData;
   attendances?: Array<AttendanceData>;
 }
 

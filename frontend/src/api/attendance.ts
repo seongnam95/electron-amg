@@ -1,7 +1,7 @@
 import { AttendanceData } from '~/types/attendance';
-import { BaseResponse } from '~/types/response';
 
 import axiosPrivate from './axios';
+import { BaseResponse } from './response';
 
 export type AttendanceCreateBody = Omit<AttendanceData, 'id' | 'workingDate'> & {
   workingDate?: string;

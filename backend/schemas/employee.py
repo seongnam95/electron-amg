@@ -80,8 +80,8 @@ class EmployeeResponse(BaseModel):
     end_period: date
     create_date: datetime
 
-    position: Optional[Position] = None
-    attendances: Optional[List[Attendance]] = None
+    position: Position
+    attendances: List[Attendance]
 
     class Config:
         from_attributes = True
