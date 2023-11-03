@@ -51,7 +51,7 @@ def get_draft(
     id: str,
     db: Session = Depends(deps.get_db),
 ):
-    draft = db.query(models.Draft).filter(models.Draft.id == id).first()
+    draft: models.Draft = db.query(models.Draft).get(id)
     if not draft:
         raise HTTPException(status_code=404, detail="유효하지 않습니다.")
 
@@ -59,8 +59,10 @@ def get_draft(
         id=draft.id,
         start_period=draft.start_period,
         end_period=draft.end_period,
-        position=draft.position,
+        team_id=draft.team_id,
         team_name=draft.team.name,
+        position_id=draft.position_id,
+        unit_pay=draft.position.unit_pay,
     )
 
     return DataResponse(msg="정상 처리되었습니다.", result=response)

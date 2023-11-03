@@ -1,21 +1,7 @@
 import * as Yup from "yup";
 
 import { BankView, ConsentView, PersonalView, UploadView } from "@com/view";
-
-export interface FormValueType {
-  name: string;
-  phone: string;
-  idFront: string;
-  idBack: string;
-  address: string;
-  bank: string;
-  bankNum: string;
-  idCard: string;
-  bankBook: string;
-  contractConsent: boolean;
-  personalConsent: boolean;
-  signBase64: string;
-}
+import { FormValueType } from "~/types/types";
 
 export const StepHeaders = [
   {

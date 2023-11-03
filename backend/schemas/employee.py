@@ -28,7 +28,7 @@ class EmployeeCreate(EmployeeBase):
 class EmployeeUpdate(BaseModel):
     name: Optional[str] = None
     phone: Optional[str] = None
-    residence: Optional[str] = None
+    address: Optional[str] = None
     bank: Optional[str] = None
     bank_num: Optional[str] = None
     ssn: Optional[str] = None

@@ -5,8 +5,8 @@ import { NextButtonStyled } from "./styled";
 import { useRecoilState } from "recoil";
 import { MouseEvent } from "react";
 import { useFormikContext } from "formik";
-import { FormValueType } from "~/pages/ContractPage/contractSteps";
-import { stepState } from "~/stores/step";
+import { FormValueType } from "~/types/types";
+import { stepState } from "~/stores/stores";
 
 interface NexButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   lastStep: number;

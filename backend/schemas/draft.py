@@ -26,5 +26,7 @@ class Draft(DraftBase):
 
 class DraftForContract(DraftBase):
     id: str
+    team_id: int
     team_name: str
-    position: Position
+    position_id: int
+    unit_pay: int

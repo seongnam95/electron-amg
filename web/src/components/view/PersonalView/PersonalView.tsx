@@ -4,12 +4,11 @@ import { useSetRecoilState } from "recoil";
 
 import { fetchEmployee } from "@apis/employee";
 import { PersonalViewStyled } from "./styled";
-import { EmployeeType } from "@type/contract";
 import { Input } from "@com/common";
 import { AddressInput, EmployeeSkipModal } from "@com/contract";
 import { HTMLAttributes } from "react";
-import { stepState } from "~/stores/step";
-import { FormValueType } from "~/pages/ContractPage/contractSteps";
+import { EmployeeType, FormValueType } from "~/types/types";
+import { stepState } from "~/stores/stores";
 
 /**
  * [ STEP 1 ] 개인정보 입력 폼

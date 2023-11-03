@@ -5,6 +5,6 @@ import { DataResponse } from "~/types/response";
 export const fetchDraft = async <T extends DataResponse<DraftData>>(
   id: string
 ): Promise<T> => {
-  const { data } = await axios.get<T>(`/draft/${id}`);
+  const { data } = await axios.get<T>(`/draft/${id}/contract`);
   return data;
 };

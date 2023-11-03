@@ -6,7 +6,7 @@ import { useRef } from "react";
 import html2canvas from "html2canvas";
 import { DocumentView } from "@com/view";
 import { CompletePageStyled } from "./styled";
-import { draftState } from "~/stores/draft";
+import { draftState } from "~/stores/stores";
 
 interface CompleteProps {
   contractorName: string;
@@ -66,7 +66,7 @@ function CompletePage({ contractorName }: CompleteProps) {
               {formatDate(draft.startPeriod, true)} ~{" "}
               {formatDate(draft.endPeriod, true)}
             </p>
-            <p>{draft.position.unitPay.toLocaleString()}원</p>
+            <p>{draft.unitPay.toLocaleString()}원</p>
           </div>
         </div>
 

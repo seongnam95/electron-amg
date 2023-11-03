@@ -1,7 +1,7 @@
 import { formatDate } from "@utils/formatDate";
 import { useRecoilValue } from "recoil";
 import { ContractClausePrintView, ContractClauseView } from "./styled";
-import { draftState } from "~/stores/draft";
+import { draftState } from "~/stores/stores";
 
 interface ContractClauseProps {
   contractorName?: string;
@@ -9,7 +9,7 @@ interface ContractClauseProps {
 }
 
 function ContractClause({ contractorName, printView }: ContractClauseProps) {
-  const { startPeriod, endPeriod, position } = useRecoilValue(draftState);
+  const { startPeriod, endPeriod, unitPay } = useRecoilValue(draftState);
 
   const ArticleContent = (
     <>
@@ -102,7 +102,7 @@ function ContractClause({ contractorName, printView }: ContractClauseProps) {
               <p>
                 용역 수수료는{" "}
                 <span className="text-accent">
-                  {Number(position.unitPay).toLocaleString()}원
+                  {Number(unitPay).toLocaleString()}원
                 </span>
                 으로 하며, 甲은 당월 1일부터 말일까지 乙의 용역 수행에 따라
                 계산된 금액을 익월 15일에 乙 의 금융계좌에 입금한다. 단, 하루의

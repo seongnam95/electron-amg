@@ -13,16 +13,6 @@ from util.image_converter import image_to_base64
 router = APIRouter()
 
 
-# 근로자 생성
-@router.post("/", response_model=BaseResponse)
-def create_employee(
-    employee_in: schemas.EmployeeCreate, db: Session = Depends(deps.get_db)
-):
-    print(employee_in)
-    crud.employee.create_employee(db=db, employee_in=employee_in)
-    return BaseResponse(msg="정상 처리되었습니다.")
-
-
 # 개인정보로 근로자 불러오기
 @router.get("/search/", response_model=DataResponse[EmployeeCoveringResponse])
 def search_employee(name: str, ssn: str, db: Session = Depends(deps.get_db)):

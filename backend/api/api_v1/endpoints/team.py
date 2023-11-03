@@ -1,3 +1,4 @@
+from typing import List
 from fastapi import APIRouter, HTTPException, Depends
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.orm import Session
@@ -88,7 +89,10 @@ def delete_team(
     return BaseResponse(msg="정상 처리되었습니다.")
 
 
-# 직위 생성
+# ------------------------------------------------------------------------------------------------
+
+
+# [ Position ] 직위 생성
 @router.post("/{team_id}/position", response_model=BaseResponse)
 def create_position_by_team(
     team_id: int,
@@ -103,7 +107,7 @@ def create_position_by_team(
     return BaseResponse(msg="정상 처리되었습니다.")
 
 
-# 계약 초안 생성
+# [ Draft ]계약 초안 생성
 @router.post("/{team_id}/draft", response_model=DataResponse[schemas.Draft])
 def create_draft_by_team(
     team_id: int,
@@ -118,7 +122,7 @@ def create_draft_by_team(
     return DataResponse(msg="정상 처리되었습니다.", result=draft)
 
 
-# 모든 계약 초안 불러오기
+# [ Draft ] 모든 계약 초안 불러오기
 @router.get("/{team_id}/draft", response_model=ListResponse[schemas.Draft])
 def read_all_draft_by_team(
     team_id: int,
@@ -135,3 +139,26 @@ def read_all_draft_by_team(
         data=drafts, total=len(drafts), limit=limit, page=page
     )
     return ListResponse(msg="정상 처리되었습니다.", result=response)
+
+
+# [ Employee ] 근로자 생성
+@router.post("/{team_id}/employee", response_model=BaseResponse)
+def create_employee_by_team(
+    team_id: int,
+    employee_in: schemas.EmployeeCreate,
+    db: Session = Depends(deps.get_db),
+):
+    team = crud.team.get(db, id=team_id)
+    if not team:
+        raise HTTPException(status_code=404, detail="존재하지 않는 팀입니다.")
+
+    position_id = employee_in.position_id
+    position = next((pos for pos in team.positions if pos.id == position_id), None)
+    if not position:
+        raise HTTPException(status_code=404, detail="존재하지 않는 직위입니다.")
+
+    crud.employee.create_employee(
+        db=db, employee_in=employee_in, team_id=team_id, position_id=position_id
+    )
+
+    return BaseResponse(msg="정상 처리되었습니다.")

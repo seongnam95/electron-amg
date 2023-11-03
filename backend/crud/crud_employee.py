@@ -27,8 +27,12 @@ class CRUDEmployee(CRUDBase[Employee, EmployeeCreate, EmployeeUpdate]):
         return employee_dict
 
     # 근로자 생성
-    def create_employee(self, db: Session, employee_in: EmployeeCreate) -> Employee:
+    def create_employee(
+        self, db: Session, team_id: int, position_id: int, employee_in: EmployeeCreate
+    ) -> Employee:
         employee_enc_dict = self._encrypt_employee(employee_in)
+        employee_enc_dict["team_id"] = team_id
+        employee_enc_dict["position_id"] = position_id
         employee_obj = Employee(**employee_enc_dict)
 
         db.add(employee_obj)

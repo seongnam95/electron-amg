@@ -2,18 +2,18 @@ import { useEffect, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useFormik, FormikProvider } from "formik";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 
 import { CreateEmployeeBody, createEmployee } from "@apis/employee";
 
-import { FormValueType, STEPS, StepHeaders } from "./contractSteps";
-import { Header } from "@com/layout";
+import { STEPS, StepHeaders } from "./contractSteps";
 import { ContractPageStyled } from "./styled";
 import { NextButton } from "~/components/contract";
 import { Empty } from "antd";
-import { draftState } from "~/stores/draft";
-import { stepState } from "~/stores/step";
 import { fetchDraft } from "~/apis/draft";
+import { contractorState, draftState, stepState } from "~/stores/stores";
+import { FormValueType } from "~/types/types";
+import { Header } from "~/components/common";
 
 const ContractPage = () => {
   const navigate = useNavigate();
@@ -21,6 +21,7 @@ const ContractPage = () => {
   const divRef = useRef<HTMLDivElement>(null);
   const [draft, setDraft] = useRecoilState(draftState);
   const [step, setStep] = useRecoilState(stepState);
+  const setContractor = useSetRecoilState(contractorState);
 
   const currentStep = STEPS[step];
   const lastStep = STEPS.length - 1;
@@ -76,10 +77,17 @@ const ContractPage = () => {
       ssn: ssn,
       bankBook: values.bankBook,
       idCard: values.idCard,
-      sign: values.signBase64,
+      signBase64: values.signBase64,
+      positionId: draft.positionId,
     };
 
-    createEmployee(body).then(() => {
+    createEmployee({ teamId: draft.teamId, body: body }).then(() => {
+      setContractor({
+        name: values.name,
+        address: values.address,
+        phone: values.phone,
+        signBase64: values.signBase64,
+      });
       resetDraft();
       navigate("/complete");
     });

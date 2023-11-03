@@ -4,30 +4,27 @@ import { DataResponse } from "~/types/response";
 
 export interface CreateEmployeeBody {
   name: string;
+  ssn: string;
   phone: string;
   address: string;
-  startPeriod: string;
-  endPeriod: string;
   bank: string;
   bankNum: string;
-  ssn: string;
   bankBook: string;
   idCard: string;
-  sign: string;
+  signBase64: string;
+  startPeriod: string;
+  endPeriod: string;
+  positionId: string;
 }
 
-export function createEmployee(body: CreateEmployeeBody) {
-  return axios.post("/employee/", body);
+interface CreateEmployeeProps {
+  teamId: string;
+  body: CreateEmployeeBody;
 }
 
-// export function updateEmployee(id: string, contractor: ContractorType) {
-//   const { idFront, idBack, ...rest } = contractor;
-//   const body: Partial<CreateEmployeeBody> = {
-//     ...rest,
-//     ssn: `${idFront}${idBack}`,
-//   };
-//   return axios.put(`/employee/${id}`, removeEmptyValueObj(body));
-// }
+export const createEmployee = ({ teamId, body }: CreateEmployeeProps) => {
+  return axios.post(`/team/${teamId}/employee`, body);
+};
 
 export const fetchEmployee = async (
   name: string,

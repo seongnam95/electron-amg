@@ -1,25 +1,21 @@
+import { useRecoilValue } from "recoil";
 import {
   ContractorInfoTablePrintStyled,
   ContractorInfoTableStyled,
 } from "./styled";
+import { contractorState } from "~/stores/stores";
 
 interface ContractorInfoTableProps {
-  name: string;
-  phone: string;
-  address: string;
-  signBase64: string;
   printView?: boolean;
   onClickSign?: () => void;
 }
 
 function ContractorInfoTable({
-  name,
-  phone,
-  address,
-  signBase64,
   printView,
   onClickSign,
 }: ContractorInfoTableProps) {
+  const { name, phone, address, signBase64 } = useRecoilValue(contractorState);
+
   const ContractorContent = (
     <>
       <div className="contractor-wrap">
