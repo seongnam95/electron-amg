@@ -34,7 +34,7 @@ interface EmployeeTableData {
 const EmployeeTable = ({ selectedTeamId, tableWrapRef, onClickEmployee }: EmployeeTableProps) => {
   const [showToolModal, setShowToolModal] = useState<boolean>(false);
   const { employees, isLoading } = useEmployeeQuery({ teamId: selectedTeamId });
-  const [employee, setEmployee] = useState<EmployeeData>();
+  const [selectedEmployeeId, setSelectedEmployeeId] = useState<string>();
   const [openEmployeeInfoDrawer, setOpenEmployeeInfoDrawer] = useState<boolean>(false);
 
   const columns: ColumnsType<EmployeeTableData> = [
@@ -149,7 +149,7 @@ const EmployeeTable = ({ selectedTeamId, tableWrapRef, onClickEmployee }: Employ
   // 근무자 클릭 이벤트
   const handleNameClick = (employeeId: string) => {
     const employee = employees.find(employee => employee.id === employeeId);
-    setEmployee(employee);
+    setSelectedEmployeeId(employeeId);
     setOpenEmployeeInfoDrawer(true);
   };
 
@@ -177,11 +177,11 @@ const EmployeeTable = ({ selectedTeamId, tableWrapRef, onClickEmployee }: Employ
         }}
       />
       <Dock open={showToolModal} onDelete={handleDelete} />
-      {employee ? (
+      {selectedEmployeeId ? (
         <EmployeeInfoDrawer
           open={openEmployeeInfoDrawer}
           onClose={() => setOpenEmployeeInfoDrawer(false)}
-          employee={employee}
+          employeeId={selectedEmployeeId}
         />
       ) : null}
     </EmployeeTableWrapStyled>

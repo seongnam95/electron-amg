@@ -1,7 +1,16 @@
-import { EmployeeData } from '~/types/employee';
+import { EmployeeData, EmployeeDetailData } from '~/types/employee';
 
 import axiosPrivate from './axios';
-import { FetchListResponse } from './response';
+import { FetchListResponse, FetchResponse } from './response';
+
+export const fetchEmployeeDetail =
+  (employeeId: string) =>
+  async <T extends FetchResponse<EmployeeDetailData>>(): Promise<T> => {
+    const endpoint = import.meta.env.VITE_EMPLOYEE_ENDPOINT;
+
+    const { data } = await axiosPrivate.get<T>(`${endpoint}/${employeeId}`);
+    return data;
+  };
 
 export const fetchEmployees =
   (teamId: string) =>

@@ -109,7 +109,7 @@ const DraftCreateDrawer = ({
   const RenderExtra = (
     <Button
       type="text"
-      icon={<BsClockHistory size="1.8rem" />}
+      icon={<BsClockHistory size="1.8rem" style={{ marginTop: 2 }} />}
       onClick={handleShowDraftDrawer}
     ></Button>
   );

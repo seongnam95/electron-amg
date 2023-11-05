@@ -30,7 +30,10 @@ def search_employee(name: str, ssn: str, db: Session = Depends(deps.get_db)):
 
 
 # ID로 근로자 불러오기
-@router.get("/employee/{employee_id}", response_model=DataResponse[schemas.Employee])
+@router.get(
+    "/employee/{employee_id}",
+    response_model=DataResponse[schemas.EmployeeDetailResponse],
+)
 def read_employee(employee_id: int, db: Session = Depends(deps.get_db)):
     employee = crud.employee.get(db=db, id=employee_id)
     if not employee:
@@ -117,7 +120,7 @@ def create_attendance(
 
 # 암호화
 def _decrypt_employee(employee: models.Employee):
-    return schemas.Employee(
+    return schemas.EmployeeDetailResponse(
         id=employee.id,
         name=employee.name,
         phone=employee.phone,
@@ -131,6 +134,9 @@ def _decrypt_employee(employee: models.Employee):
         sign_base64=employee.sign_base64,
         start_period=employee.start_period,
         end_period=employee.end_period,
+        position_id=employee.position_id,
+        position=employee.position,
+        team=employee.team,
     )
 
 

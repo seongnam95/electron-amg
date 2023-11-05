@@ -5,3 +5,11 @@ export function formatPhoneNumber(phoneNumber: string) {
   }
   return phoneNumber;
 }
+
+export function formatSSN(ssn: string) {
+  const match = ssn.match(/^(\d{6})(\d{7})$/);
+  if (match) {
+    return `${match[1]}-${match[2]}`;
+  }
+  return ssn;
+}
