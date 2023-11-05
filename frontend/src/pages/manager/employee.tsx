@@ -17,7 +17,6 @@ const EmployeePage = () => {
   const { teams, isLoading } = useTeamQuery({ userId: user.id });
 
   const [selectedTeamId, setSelectedTeamId] = useState<string>();
-
   const [searchTerm, setSearchTerm] = useState<string>('');
 
   useEffect(() => {
@@ -26,6 +25,7 @@ const EmployeePage = () => {
 
   const handleChangeTeam = (id: string) => setSelectedTeamId(id);
   const handleChangeSearch = (e: ChangeEvent<HTMLInputElement>) => setSearchTerm(e.target.value);
+  const handleEmployeeClick = (id: string) => {};
 
   if (isLoading || !selectedTeamId) return <Skeleton active style={{ padding: '2rem' }} />;
   return (
@@ -36,7 +36,12 @@ const EmployeePage = () => {
         onChangeTeam={handleChangeTeam}
         onSearch={handleChangeSearch}
       />
-      <EmployeeTable tableWrapRef={scrollRef} selectedTeamId={selectedTeamId} />
+      <EmployeeTable
+        tableWrapRef={scrollRef}
+        searchTerm={searchTerm}
+        selectedTeamId={selectedTeamId}
+        onClickEmployee={handleEmployeeClick}
+      />
     </EmployeePageStyled>
   );
 };

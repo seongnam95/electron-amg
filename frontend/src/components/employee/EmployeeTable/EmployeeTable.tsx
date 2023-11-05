@@ -5,6 +5,7 @@ import { Table, Tag } from 'antd';
 import { ColumnsType, Key } from 'antd/es/table/interface';
 
 import Button from '~/components/common/Button';
+import EmployeeInfoDrawer from '~/components/employee/EmployeeInfoDrawer';
 import { useEmployeeQuery } from '~/hooks/queryHooks/useEmployeeQuery';
 import { EmployeeData } from '~/types/employee';
 import { POSITION_CODE, POSITION_COLORS, PositionType } from '~/types/position';
@@ -15,11 +16,13 @@ import { EmployeeTableWrapStyled } from './styled';
 
 interface EmployeeTableProps {
   selectedTeamId: string;
+  searchTerm: string;
   tableWrapRef?: ForwardedRef<HTMLDivElement>;
+  onClickEmployee?: (id: string) => void;
 }
 
 interface EmployeeTableData {
-  key: number;
+  key: string;
   name: string;
   phone: string;
   position: PositionType;
@@ -28,9 +31,11 @@ interface EmployeeTableData {
   tool: string | null;
 }
 
-const EmployeeTable = ({ selectedTeamId, tableWrapRef }: EmployeeTableProps) => {
+const EmployeeTable = ({ selectedTeamId, tableWrapRef, onClickEmployee }: EmployeeTableProps) => {
   const [showToolModal, setShowToolModal] = useState<boolean>(false);
   const { employees, isLoading } = useEmployeeQuery({ teamId: selectedTeamId });
+  const [employee, setEmployee] = useState<EmployeeData>();
+  const [openEmployeeInfoDrawer, setOpenEmployeeInfoDrawer] = useState<boolean>(false);
 
   const columns: ColumnsType<EmployeeTableData> = [
     {
@@ -130,7 +135,7 @@ const EmployeeTable = ({ selectedTeamId, tableWrapRef }: EmployeeTableProps) => 
     const period = employee ? employee.endPeriod : '계약 만료';
 
     return {
-      key: i,
+      key: employee.id,
       name: employee.name,
       phone: employee.phone,
       position: position.positionCode,
@@ -142,8 +147,10 @@ const EmployeeTable = ({ selectedTeamId, tableWrapRef }: EmployeeTableProps) => 
   });
 
   // 근무자 클릭 이벤트
-  const handleNameClick = (employeeId: number) => {
-    console.log(employeeId);
+  const handleNameClick = (employeeId: string) => {
+    const employee = employees.find(employee => employee.id === employeeId);
+    setEmployee(employee);
+    setOpenEmployeeInfoDrawer(true);
   };
 
   // 근무자 선택 이벤트
@@ -170,6 +177,13 @@ const EmployeeTable = ({ selectedTeamId, tableWrapRef }: EmployeeTableProps) => 
         }}
       />
       <Dock open={showToolModal} onDelete={handleDelete} />
+      {employee ? (
+        <EmployeeInfoDrawer
+          open={openEmployeeInfoDrawer}
+          onClose={() => setOpenEmployeeInfoDrawer(false)}
+          employee={employee}
+        />
+      ) : null}
     </EmployeeTableWrapStyled>
   );
 };

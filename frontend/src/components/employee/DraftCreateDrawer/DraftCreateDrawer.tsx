@@ -107,13 +107,11 @@ const DraftCreateDrawer = ({
   };
 
   const RenderExtra = (
-    <>
-      <Button
-        type="text"
-        icon={<BsClockHistory size="1.8rem" />}
-        onClick={handleShowDraftDrawer}
-      ></Button>
-    </>
+    <Button
+      type="text"
+      icon={<BsClockHistory size="1.8rem" />}
+      onClick={handleShowDraftDrawer}
+    ></Button>
   );
 
   const { Option } = Select;
