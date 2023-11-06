@@ -19,8 +19,6 @@ const EmployeeTracker = () => {
   const [viewType, setViewType] = useState<'month' | 'day'>('month');
   const [selectedDay, setSelectedDay] = useState<Dayjs>(dayjs());
 
-  const { employees, isEmployeeLoading } = useEmployeeQuery();
-
   const handleOnChangeDate = (date: Dayjs | null) => {
     if (date) setSelectedDay(date);
   };
@@ -45,13 +43,13 @@ const EmployeeTracker = () => {
         />
       </div>
 
-      <div className="table-wrap" ref={dragRef}>
+      {/* <div className="table-wrap" ref={dragRef}>
         {viewType === 'month' ? (
           <MonthTable selectedDay={selectedDay} employees={employees} />
         ) : (
           <DayTable />
         )}
-      </div>
+      </div> */}
     </EmployeeTrackerPageStyled>
   );
 };

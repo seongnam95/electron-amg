@@ -14,7 +14,7 @@ router = APIRouter()
 
 
 # 개인정보로 근로자 불러오기
-@router.get("/search/", response_model=DataResponse[EmployeeCoveringResponse])
+@router.get("/employee/search/", response_model=DataResponse[EmployeeCoveringResponse])
 def search_employee(name: str, ssn: str, db: Session = Depends(deps.get_db)):
     employee = crud.employee.get_employee_search(db=db, name=name, ssn=ssn)
     if not employee:
@@ -30,7 +30,10 @@ def search_employee(name: str, ssn: str, db: Session = Depends(deps.get_db)):
 
 
 # ID로 근로자 불러오기
-@router.get("/{employee_id}", response_model=DataResponse[schemas.Employee])
+@router.get(
+    "/employee/{employee_id}",
+    response_model=DataResponse[schemas.EmployeeDetailResponse],
+)
 def read_employee(employee_id: int, db: Session = Depends(deps.get_db)):
     employee = crud.employee.get(db=db, id=employee_id)
     if not employee:
@@ -40,23 +43,21 @@ def read_employee(employee_id: int, db: Session = Depends(deps.get_db)):
     return DataResponse(msg="정상 처리되었습니다.", result=employee_dec)
 
 
-# 전체 근로자 불러오기
-@router.get("/", response_model=ListResponse[EmployeeResponse])
+# 팀 소속 전체 근로자 불러오기
+@router.get("/team/{team_id}/employee", response_model=ListResponse[EmployeeResponse])
 def read_multi_employee(
     # user: User = Depends(deps.get_current_user),
+    team_id: int,
     db: Session = Depends(deps.get_db),
-    valid: bool = True,
     page: int = 1,
-    limit: int = 20,
+    limit: int = 100,
 ):
-    offset = (page - 1) * limit
-    total = crud.employee.get_count(db)
-    employees = crud.employee.get_multi_employee(
-        db, valid=valid, offset=offset, limit=limit
-    )
+    team = crud.team.get(db=db, id=team_id)
+    if not team:
+        raise HTTPException(status_code=404, detail="해당 팀을 찾을 수 없습니다.")
 
     response = deps.create_list_response(
-        data=employees, total=total, limit=limit, page=page
+        data=team.employees, total=len(team.employees), limit=limit, page=page
     )
     return ListResponse(msg="정상 처리되었습니다.", result=response)
 
@@ -119,7 +120,7 @@ def create_attendance(
 
 # 암호화
 def _decrypt_employee(employee: models.Employee):
-    return schemas.Employee(
+    return schemas.EmployeeDetailResponse(
         id=employee.id,
         name=employee.name,
         phone=employee.phone,
@@ -133,6 +134,9 @@ def _decrypt_employee(employee: models.Employee):
         sign_base64=employee.sign_base64,
         start_period=employee.start_period,
         end_period=employee.end_period,
+        position_id=employee.position_id,
+        position=employee.position,
+        team=employee.team,
     )
 
 

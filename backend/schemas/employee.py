@@ -2,6 +2,7 @@ from typing import List, Optional
 from pydantic import BaseModel, model_validator
 from schemas.attendance import Attendance
 from schemas.position import Position
+from schemas.team import Team
 from schemas.common import check_update_fields
 from datetime import datetime, date
 
@@ -80,8 +81,13 @@ class EmployeeResponse(BaseModel):
     end_period: date
     create_date: datetime
 
-    position: Optional[Position] = None
-    attendances: Optional[List[Attendance]] = None
+    position: Position
+    attendances: List[Attendance]
 
     class Config:
         from_attributes = True
+
+
+class EmployeeDetailResponse(EmployeeBase):
+    position: Position
+    team: Team

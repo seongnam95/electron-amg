@@ -1,4 +1,6 @@
 import { AttendanceData } from './attendance';
+import { PositionData } from './position';
+import { TeamData } from './team';
 
 /** 근로자 데이터 인터페이스 */
 export interface EmployeeData {
@@ -9,6 +11,7 @@ export interface EmployeeData {
   startPeriod: string;
   endPeriod: string;
   createDate: string;
+  position: PositionData;
   attendances?: Array<AttendanceData>;
 }
 
@@ -19,6 +22,7 @@ export interface EmployeeDetailData extends EmployeeData {
   bankBook: string;
   idCard: string;
   sign: string;
+  team: TeamData;
 }
 
 /** 근로자 생성 API 바디 */

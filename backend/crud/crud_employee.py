@@ -41,7 +41,7 @@ class CRUDEmployee(CRUDBase[Employee, EmployeeCreate, EmployeeUpdate]):
 
         return employee_obj
 
-    # 근로자 업데이트
+    # ? 근로자 업데이트
     def update_employee(
         self, db: Session, employee_obj: Employee, employee_in: EmployeeUpdate
     ) -> Employee:
@@ -78,7 +78,7 @@ class CRUDEmployee(CRUDBase[Employee, EmployeeCreate, EmployeeUpdate]):
 
         db.commit()
 
-    # 근로자 검색
+    # 근로자 검색 [이름, 주민등록번호]
     def get_employee_search(
         self, db: Session, name: str, ssn: str
     ) -> Optional[Employee]:
@@ -90,53 +90,21 @@ class CRUDEmployee(CRUDBase[Employee, EmployeeCreate, EmployeeUpdate]):
 
         return None
 
-    # def get_multi_employee(self, db: Session, *, valid: bool, offset: int, limit: int):
-    #     today = date.today().strftime("%Y-%m")
-    #     base_query = db.query(Employee)
-
-    #     if valid:
-    #         base_query = base_query.join(
-    #             Contract,
-    #             and_(Employee.id == Contract.employee_id, Contract.valid == True),
-    #         )
-    #     else:
-    #         base_query = base_query.outerjoin(
-    #             Contract,
-    #             and_(Employee.id == Contract.employee_id, Contract.valid == True),
-    #         ).filter(Contract.id == None)
-
-    #     employees = (
-    #         base_query.options(
-    #             selectinload(Employee.contracts.and_(Contract.valid == True))
-    #         )
-    #         .options(
-    #             selectinload(
-    #                 Employee.attendances.and_(Attendance.working_date.like(f"{today}%"))
-    #             )
-    #         )
-    #         .distinct(Employee.id)
-    #         .offset(offset)
-    #         .limit(limit)
-    #         .all()
-    #     )
-
-    #     new_employees = []
-    #     for employee in employees:
-    #         employee_obj = EmployeeResponse(
-    #             id=employee.id,
-    #             name=employee.name,
-    #             phone=employee.phone,
-    #             gender_code=employee.gender_code,
-    #             residence=employee.residence,
-    #             create_date=employee.create_date,
-    #             has_contract=True if employee.contracts else False,
-    #             is_attendance=True if employee.attendances else False,
-    #             contract=employee.contracts[0] if employee.contracts else None,
-    #             attendances=employee.attendances,
-    #         )
-    #         new_employees.append(employee_obj)
-
-    #     return new_employees
+    def get_multi_employee(self, db: Session, *, offset: int, limit: int):
+        today = date.today().strftime("%Y-%m")
+        employees = (
+            db.query(Employee)
+            .options(
+                selectinload(
+                    Employee.attendances.and_(Attendance.working_date.like(f"{today}%"))
+                )
+            )
+            .distinct(Employee.id)
+            .offset(offset)
+            .limit(limit)
+            .all()
+        )
+        return employees
 
 
 employee = CRUDEmployee(Employee)
