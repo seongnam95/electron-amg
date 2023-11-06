@@ -1,7 +1,7 @@
 import { FiChevronDown } from 'react-icons/fi';
 
 import { Dropdown } from 'antd';
-import { ItemType, MenuItemType } from 'antd/es/menu/hooks/useItems';
+import { ItemType } from 'antd/es/menu/hooks/useItems';
 
 import { TeamData } from '~/types/team';
 
@@ -10,15 +10,15 @@ import { TeamSelectorStyled } from './styled';
 export interface TeamSelectorProps {
   teams: Array<TeamData>;
   selectedTeamId?: string;
-  onChange?: (id: string) => void;
+  onSelect?: (id: string) => void;
 }
 
-const TeamSelector = ({ selectedTeamId, teams, onChange }: TeamSelectorProps) => {
-  const selectedTeam = teams.find(team => team.id == selectedTeamId);
-  const handleChangeTeam = ({ key }: MenuItemType) => onChange?.(key.toLocaleString());
+const TeamSelector = ({ teams, selectedTeamId, onSelect }: TeamSelectorProps) => {
+  const teamId = selectedTeamId ? selectedTeamId : teams[0].id;
+  const selectedTeam = teams.find(team => team.id == teamId);
 
   const items: Array<ItemType> = teams.map(team => {
-    const isSelected = team.id == selectedTeamId;
+    const isSelected = team.id == teamId;
 
     return {
       key: team.id,
@@ -43,7 +43,7 @@ const TeamSelector = ({ selectedTeamId, teams, onChange }: TeamSelectorProps) =>
           </span>
         </div>
       ),
-      onClick: handleChangeTeam,
+      onClick: () => onSelect?.(team.id),
     };
   });
 

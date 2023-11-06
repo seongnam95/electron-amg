@@ -92,4 +92,6 @@ export const InitGlobalStyled = memo(createGlobalStyle`
       }
     }
   }
+
+
 `);

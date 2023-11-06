@@ -107,8 +107,8 @@ const EmployeeInfoDrawer = ({ employeeId, open, ...props }: EmployeeInfoDrawerPr
       <Divider />
       <Descriptions
         column={1}
-        title="계약조건"
         colon={false}
+        title="계약조건"
         contentStyle={{ display: 'inline-block', textAlign: 'right' }}
       >
         <Descriptions.Item label="소속 업체">{employee.team.name}</Descriptions.Item>

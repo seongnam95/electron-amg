@@ -6,11 +6,19 @@ import { RangeValue } from 'rc-picker/lib/interface';
 const DateRangePicker = generateRangePicker<Dayjs>(dayjsGenerateConfig);
 
 interface AntDateRangePickerProps {
+  fullWidth?: boolean;
   onChange?: (values: RangeValue<Dayjs>, formatString: [string, string]) => void;
 }
 
-const AntDateRangePicker = (props: AntDateRangePickerProps) => {
-  return <DateRangePicker inputReadOnly {...props} />;
+const AntDateRangePicker = ({ fullWidth, onChange, ...rest }: AntDateRangePickerProps) => {
+  return (
+    <DateRangePicker
+      inputReadOnly
+      style={{ width: fullWidth ? '100%' : 'auto' }}
+      onChange={onChange}
+      {...rest}
+    />
+  );
 };
 
 export default AntDateRangePicker;

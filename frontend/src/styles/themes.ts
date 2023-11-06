@@ -28,7 +28,7 @@ const _colors = {
   selectedBg: '#F6F9FF',
   selectedHoverBg: '#F1F5FF',
 
-  innerBg: '#F5F5F5',
+  innerBg: '#F9F9F9',
   contentBG: '#ffffff',
   formFieldBG: '#f9f9f9',
   disableBg: '#bdbdbd',
@@ -84,6 +84,9 @@ export const antdTheme: ThemeConfig = {
     },
     Popover: {
       colorBgElevated: colors.innerBg,
+    },
+    Descriptions: {
+      padding: 8,
     },
   },
 };

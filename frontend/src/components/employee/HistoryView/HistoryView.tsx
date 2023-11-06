@@ -1,20 +1,22 @@
 import { AiOutlineLink, AiTwotoneDelete } from 'react-icons/ai';
 
-import { Button, Flex, List, Space, Tag } from 'antd';
+import { Button, Flex, List, Skeleton, Space, Tag } from 'antd';
 
 import { useDraftQuery, useDraftRemove } from '~/hooks/queryHooks/useDraftQuery';
-import { DraftData } from '~/types/draft';
 import { POSITION_CODE, POSITION_COLORS } from '~/types/position';
 
 import { HistoryViewStyled } from './styled';
 
 interface HistoryViewProps {
-  selectedTeamId: string;
-  onClickCopy?: (id: string) => void;
+  selectedTeamId?: string;
+  onCopy?: (id: string) => void;
 }
 
-const HistoryView = ({ selectedTeamId, onClickCopy }: HistoryViewProps) => {
+const HistoryView = ({ selectedTeamId, onCopy }: HistoryViewProps) => {
+  if (!selectedTeamId) return <Skeleton active style={{ padding: '2rem' }} />;
+
   const { removeDraftMutate } = useDraftRemove();
+
   const handleRemoveClick = (id: string) => removeDraftMutate(id);
 
   const { drafts } = useDraftQuery({ teamId: selectedTeamId });
@@ -44,7 +46,7 @@ const HistoryView = ({ selectedTeamId, onClickCopy }: HistoryViewProps) => {
                   <Button
                     icon={<AiOutlineLink size="2rem" />}
                     type="link"
-                    onClick={() => onClickCopy?.(draft.id)}
+                    onClick={() => onCopy?.(draft.id)}
                   />
 
                   <Button

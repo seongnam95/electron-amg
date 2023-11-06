@@ -1,56 +1,55 @@
-import { useEffect, useRef, useState } from 'react';
-import { AiOutlinePaperClip } from 'react-icons/ai';
+import { useState } from 'react';
+import { AiFillCheckCircle, AiOutlinePaperClip } from 'react-icons/ai';
 
-import { Flex, Form, Button, Select, message, Alert, Drawer, Skeleton } from 'antd';
+import {
+  Flex,
+  Form,
+  Button,
+  Select,
+  Space,
+  Divider,
+  Typography,
+  Skeleton,
+  Alert,
+  Tag,
+  Descriptions,
+} from 'antd';
 import dayjs, { Dayjs } from 'dayjs';
 import { AnimatePresence, motion } from 'framer-motion';
 
 import AntDateRangePicker from '~/components/common/DateRangePicker';
-import HistoryView from '~/components/employee/HistoryView';
-import TeamSelector from '~/components/employee/TeamSelector';
-import {
-  useDraftCreate as useDraftCreateMutation,
-  useDraftQuery,
-} from '~/hooks/queryHooks/useDraftQuery';
-import { DraftCreateBody } from '~/types/draft';
+import { useDraftCreate as useDraftCreateMutation } from '~/hooks/queryHooks/useDraftQuery';
+import { DraftCreateBody, DraftData } from '~/types/draft';
+import { POSITION_CODE } from '~/types/position';
 import { TeamData } from '~/types/team';
 
 import { DraftCreateViewStyled } from './styled';
 
 export interface DraftCreateViewProps {
-  teams: Array<TeamData>;
-  selectedTeamId: string;
+  team?: TeamData;
+  onCopy?: (id: string) => void;
 }
 
-const DraftCreateView = ({ teams, selectedTeamId }: DraftCreateViewProps) => {
+const DraftCreateView = ({ team, onCopy }: DraftCreateViewProps) => {
+  if (!team) return <Skeleton active style={{ padding: '2rem' }} />;
+
   const [form] = Form.useForm();
-  const [messageApi, contextHolder] = message.useMessage({ top: 46, maxCount: 1 });
-
-  const linkInputRef = useRef<HTMLInputElement>(null);
-
-  const [draftId, setDraftId] = useState<string>();
-  const [teamId, setTeamId] = useState<string>(selectedTeamId);
-
-  useEffect(() => setTeamId(selectedTeamId), [selectedTeamId]);
+  const [draft, setDraft] = useState<DraftData | undefined>();
 
   const currentDate = dayjs();
   const lastDate = currentDate.endOf('month');
   const defaultPickerValue: [Dayjs, Dayjs] = [currentDate, lastDate];
-  const selectedTeam = teams.find(team => team.id == teamId);
 
   // 쿼리
-  const { createDraftMutate } = useDraftCreateMutation({ teamId: teamId });
+  const { createDraftMutate } = useDraftCreateMutation({ teamId: team.id });
   const resetForm = () => {
     form.resetFields();
-    setDraftId(undefined);
+    setDraft(undefined);
   };
-
-  // 기타 핸들러
-  const handleChangeTeam = (id: string) => setTeamId(id);
 
   // 직위 변경 핸들러
   const handleChangePosition = (positionId: string) => {
-    const pay = selectedTeam?.positions.find(pos => pos.id == positionId)?.unitPay;
+    const pay = team.positions.find(pos => pos.id == positionId)?.unitPay ?? 0;
     form.setFieldValue('unitPay', pay);
   };
 
@@ -64,57 +63,34 @@ const DraftCreateView = ({ teams, selectedTeamId }: DraftCreateViewProps) => {
 
     createDraftMutate(createBody, {
       onSuccess: v => {
-        setDraftId(v.result.id);
+        setDraft(v.result);
         form.resetFields();
       },
     });
   };
 
-  const copyInputLink = (id: string) => {
-    if (!linkInputRef.current) return;
-    linkInputRef.current.value = `http://amgcom.site/${id}`;
-
-    try {
-      const el = linkInputRef.current;
-      el?.select();
-      document.execCommand('copy');
-
-      messageApi.open({
-        type: 'success',
-        content: '클립보드에 저장되었습니다.',
-      });
-    } catch (err) {
-      messageApi.open({
-        type: 'error',
-        content: `클립보드 복사에 실패했습니다. \nErr: ${err}`,
-      });
-    }
-  };
-
   const { Option } = Select;
   return (
     <DraftCreateViewStyled className="DraftCreateView">
-      <TeamSelector teams={teams} selectedTeamId={teamId} onChange={handleChangeTeam} />
-
-      <Flex vertical justify="space-between" gap="2.4rem">
+      <Space direction="vertical" style={{ width: '100%' }}>
+        <Typography.Title className="view-title" level={5}>
+          계약서 폼 생성
+        </Typography.Title>
         <Form
           form={form}
           layout="vertical"
-          name="trigger"
           autoComplete="off"
-          style={{ marginTop: '2.4rem' }}
           onFinish={handleFinish}
-          initialValues={{
-            period: defaultPickerValue,
-          }}
+          initialValues={{ period: defaultPickerValue }}
         >
           <Form.Item
             label="직위 구분"
+            colon={false}
             name="position"
             rules={[{ required: true, message: '직위를 선택해주세요.' }]}
           >
             <Select placeholder="( 직위 선택 )" onChange={handleChangePosition}>
-              {selectedTeam?.positions.map(pos => {
+              {team.positions.map(pos => {
                 return (
                   <Option key={pos.id} value={pos.id}>
                     {pos.name}
@@ -125,48 +101,67 @@ const DraftCreateView = ({ teams, selectedTeamId }: DraftCreateViewProps) => {
           </Form.Item>
 
           <Form.Item
+            colon={false}
             label="계약일"
             name="period"
             rules={[{ required: true, message: '계약일을 선택해주세요.' }]}
           >
-            <AntDateRangePicker />
+            <AntDateRangePicker fullWidth />
           </Form.Item>
 
-          <Button style={{ marginTop: '2rem' }} size="large" type="primary" htmlType="submit">
-            생성하기
-          </Button>
+          <Flex flex={1} style={{ justifyContent: 'end' }}>
+            <Button type="primary" htmlType="submit">
+              생성하기
+            </Button>
+          </Flex>
         </Form>
+      </Space>
 
-        <AnimatePresence>
-          {!!draftId ? (
-            <motion.div
-              initial={{ opacity: 0, x: -10 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: 10 }}
-              transition={{ duration: 0.2, ease: 'easeOut' }}
+      <AnimatePresence>
+        {!!draft ? (
+          <motion.div
+            className="result-wrap"
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2, ease: 'easeOut' }}
+            style={{ marginTop: '3.4rem' }}
+          >
+            <Flex justify="space-between" align="center">
+              <Flex align="center" gap={8}>
+                <AiFillCheckCircle size={16} color="#52c41a" />
+                <span>폼 생성 완료!</span>
+              </Flex>
+
+              <Button size="small" type="link">
+                <Flex align="center" gap="0.5rem" style={{ paddingTop: '1px' }}>
+                  <AiOutlinePaperClip size="1.6rem" />
+                  링크복사
+                </Flex>
+              </Button>
+            </Flex>
+            <Divider />
+            <Descriptions
+              column={1}
+              colon={false}
+              contentStyle={{
+                display: 'inline-block',
+                textAlign: 'right',
+              }}
             >
-              <Alert
-                message="생성 완료!"
-                type="success"
-                showIcon
-                closable
-                onClose={resetForm}
-                action={
-                  <Button size="small" type="link" onClick={() => copyInputLink(draftId)}>
-                    <Flex align="center" gap="0.5rem" style={{ paddingTop: '3px' }}>
-                      <AiOutlinePaperClip size="1.6rem" />
-                      링크복사
-                    </Flex>
-                  </Button>
-                }
-              />
-            </motion.div>
-          ) : null}
-        </AnimatePresence>
-      </Flex>
-
-      {contextHolder}
-      <input ref={linkInputRef} style={{ position: 'absolute', top: '100%' }} />
+              <Descriptions.Item label="직위">
+                {POSITION_CODE[draft.position.positionCode]}
+              </Descriptions.Item>
+              <Descriptions.Item label="단가">
+                {draft.position.unitPay.toLocaleString()}원
+              </Descriptions.Item>
+              <Descriptions.Item label="계약일">
+                {draft.startPeriod} ~ {draft.endPeriod}
+              </Descriptions.Item>
+            </Descriptions>
+          </motion.div>
+        ) : null}
+      </AnimatePresence>
     </DraftCreateViewStyled>
   );
 };

@@ -1,4 +1,4 @@
-import { ChangeEvent, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { Skeleton } from 'antd';
 import { useRecoilValue } from 'recoil';
@@ -11,10 +11,9 @@ import { userState } from '~/stores/user';
 import { EmployeePageStyled } from '~/styles/pageStyled/employeePageStyled';
 
 const EmployeePage = () => {
-  const scrollRef = useDragScroll();
-
   const { user } = useRecoilValue(userState);
   const { teams, isLoading } = useTeamQuery({ userId: user.id });
+  const scrollRef = useDragScroll();
 
   const [selectedTeamId, setSelectedTeamId] = useState<string>();
 
