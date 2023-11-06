@@ -1,29 +1,29 @@
 import { AiOutlineLink, AiTwotoneDelete } from 'react-icons/ai';
 
-import { Button, DrawerProps, Flex, List, Space, Tag } from 'antd';
+import { Button, Flex, List, Space, Tag } from 'antd';
 
-import { useDraftRemove } from '~/hooks/queryHooks/useDraftQuery';
+import { useDraftQuery, useDraftRemove } from '~/hooks/queryHooks/useDraftQuery';
 import { DraftData } from '~/types/draft';
 import { POSITION_CODE, POSITION_COLORS } from '~/types/position';
 
-import { HistoryDrawerStyled } from './styled';
+import { HistoryViewStyled } from './styled';
 
-interface HistoryDrawerProps extends DrawerProps {
-  drafts: Array<DraftData>;
+interface HistoryViewProps {
+  selectedTeamId: string;
   onClickCopy?: (id: string) => void;
 }
 
-const HistoryDrawer = ({ drafts, onClickCopy, ...props }: HistoryDrawerProps) => {
+const HistoryView = ({ selectedTeamId, onClickCopy }: HistoryViewProps) => {
   const { removeDraftMutate } = useDraftRemove();
-
   const handleRemoveClick = (id: string) => removeDraftMutate(id);
 
+  const { drafts } = useDraftQuery({ teamId: selectedTeamId });
+
   return (
-    <HistoryDrawerStyled closable={false} {...props}>
+    <HistoryViewStyled>
       <List itemLayout="vertical">
         {drafts.map(draft => {
           const { position } = draft;
-
           return (
             <List.Item key={draft.id}>
               <Flex justify="space-between">
@@ -38,27 +38,29 @@ const HistoryDrawer = ({ drafts, onClickCopy, ...props }: HistoryDrawerProps) =>
                     {draft.startPeriod} - {draft.endPeriod}
                   </Tag>
                 </Space>
+
                 {/* Buttons Wrap */}
                 <Flex>
                   <Button
                     icon={<AiOutlineLink size="2rem" />}
                     type="link"
                     onClick={() => onClickCopy?.(draft.id)}
-                  ></Button>
+                  />
+
                   <Button
                     icon={<AiTwotoneDelete size="2rem" />}
                     type="text"
                     danger
                     onClick={() => handleRemoveClick(draft.id)}
-                  ></Button>
+                  />
                 </Flex>
               </Flex>
             </List.Item>
           );
         })}
       </List>
-    </HistoryDrawerStyled>
+    </HistoryViewStyled>
   );
 };
 
-export default HistoryDrawer;
+export default HistoryView;

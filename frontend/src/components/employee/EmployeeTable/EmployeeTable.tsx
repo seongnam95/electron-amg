@@ -16,9 +16,7 @@ import { EmployeeTableWrapStyled } from './styled';
 
 interface EmployeeTableProps {
   selectedTeamId: string;
-  searchTerm: string;
   tableWrapRef?: ForwardedRef<HTMLDivElement>;
-  onClickEmployee?: (id: string) => void;
 }
 
 interface EmployeeTableData {
@@ -31,7 +29,7 @@ interface EmployeeTableData {
   tool: string | null;
 }
 
-const EmployeeTable = ({ selectedTeamId, tableWrapRef, onClickEmployee }: EmployeeTableProps) => {
+const EmployeeTable = ({ selectedTeamId, tableWrapRef }: EmployeeTableProps) => {
   const [showToolModal, setShowToolModal] = useState<boolean>(false);
   const { employees, isLoading } = useEmployeeQuery({ teamId: selectedTeamId });
   const [selectedEmployeeId, setSelectedEmployeeId] = useState<string>();

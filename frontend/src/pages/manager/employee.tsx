@@ -17,31 +17,18 @@ const EmployeePage = () => {
   const { teams, isLoading } = useTeamQuery({ userId: user.id });
 
   const [selectedTeamId, setSelectedTeamId] = useState<string>();
-  const [searchTerm, setSearchTerm] = useState<string>('');
 
   useEffect(() => {
     if (teams.length > 0) setSelectedTeamId(teams[0].id);
   }, [teams]);
 
   const handleChangeTeam = (id: string) => setSelectedTeamId(id);
-  const handleChangeSearch = (e: ChangeEvent<HTMLInputElement>) => setSearchTerm(e.target.value);
-  const handleEmployeeClick = (id: string) => {};
 
   if (isLoading || !selectedTeamId) return <Skeleton active style={{ padding: '2rem' }} />;
   return (
     <EmployeePageStyled className="EmployeePage">
-      <ControlBar
-        selectedTeamId={selectedTeamId}
-        teams={teams}
-        onChangeTeam={handleChangeTeam}
-        onSearch={handleChangeSearch}
-      />
-      <EmployeeTable
-        tableWrapRef={scrollRef}
-        searchTerm={searchTerm}
-        selectedTeamId={selectedTeamId}
-        onClickEmployee={handleEmployeeClick}
-      />
+      <ControlBar selectedTeamId={selectedTeamId} teams={teams} onChangeTeam={handleChangeTeam} />
+      <EmployeeTable tableWrapRef={scrollRef} selectedTeamId={selectedTeamId} />
     </EmployeePageStyled>
   );
 };

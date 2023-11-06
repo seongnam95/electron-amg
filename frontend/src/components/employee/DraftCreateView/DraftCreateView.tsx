@@ -1,12 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
 import { AiOutlinePaperClip } from 'react-icons/ai';
-import { BsClockHistory } from 'react-icons/bs';
 
-import { Flex, DrawerProps, Form, Button, Select, message, Alert } from 'antd';
+import { Flex, Form, Button, Select, message, Alert, Drawer, Skeleton } from 'antd';
 import dayjs, { Dayjs } from 'dayjs';
 import { AnimatePresence, motion } from 'framer-motion';
 
 import AntDateRangePicker from '~/components/common/DateRangePicker';
+import HistoryView from '~/components/employee/HistoryView';
 import TeamSelector from '~/components/employee/TeamSelector';
 import {
   useDraftCreate as useDraftCreateMutation,
@@ -15,30 +15,19 @@ import {
 import { DraftCreateBody } from '~/types/draft';
 import { TeamData } from '~/types/team';
 
-import HistoryDrawer from './HistoryDrawer';
-import { DraftCreateDrawerStyled } from './styled';
+import { DraftCreateViewStyled } from './styled';
 
-export interface DraftCreateDrawerProps extends DrawerProps {
+export interface DraftCreateViewProps {
   teams: Array<TeamData>;
   selectedTeamId: string;
 }
 
-interface FormData {
-  position: string;
-  period: [Dayjs, Dayjs];
-}
-
-const DraftCreateDrawer = ({
-  teams,
-  selectedTeamId,
-  onClose,
-  ...props
-}: DraftCreateDrawerProps) => {
+const DraftCreateView = ({ teams, selectedTeamId }: DraftCreateViewProps) => {
   const [form] = Form.useForm();
   const [messageApi, contextHolder] = message.useMessage({ top: 46, maxCount: 1 });
 
   const linkInputRef = useRef<HTMLInputElement>(null);
-  const [openHistoryDrawer, setOpenHistoryDrawer] = useState<boolean>(false);
+
   const [draftId, setDraftId] = useState<string>();
   const [teamId, setTeamId] = useState<string>(selectedTeamId);
 
@@ -50,17 +39,13 @@ const DraftCreateDrawer = ({
   const selectedTeam = teams.find(team => team.id == teamId);
 
   // 쿼리
-  const { drafts } = useDraftQuery({ teamId: teamId });
   const { createDraftMutate } = useDraftCreateMutation({ teamId: teamId });
-
-  // 기타 핸들러
-  const handleShowDraftDrawer = () => setOpenHistoryDrawer(true);
-  const handleCloseDraftDrawer = () => setOpenHistoryDrawer(false);
   const resetForm = () => {
     form.resetFields();
     setDraftId(undefined);
   };
 
+  // 기타 핸들러
   const handleChangeTeam = (id: string) => setTeamId(id);
 
   // 직위 변경 핸들러
@@ -70,7 +55,7 @@ const DraftCreateDrawer = ({
   };
 
   // 폼 서브밋 핸들러
-  const handleFinish = (values: FormData) => {
+  const handleFinish = (values: { position: string; period: [Dayjs, Dayjs] }) => {
     const createBody: DraftCreateBody = {
       positionId: values.position,
       startPeriod: values.period[0].format('YYYY-MM-DD'),
@@ -106,26 +91,9 @@ const DraftCreateDrawer = ({
     }
   };
 
-  const RenderExtra = (
-    <Button
-      type="text"
-      icon={<BsClockHistory size="1.8rem" style={{ marginTop: 2 }} />}
-      onClick={handleShowDraftDrawer}
-    ></Button>
-  );
-
   const { Option } = Select;
   return (
-    <DraftCreateDrawerStyled
-      className="DraftCreateDrawer"
-      closable={false}
-      onClose={e => {
-        resetForm();
-        onClose?.(e);
-      }}
-      extra={RenderExtra}
-      {...props}
-    >
+    <DraftCreateViewStyled className="DraftCreateView">
       <TeamSelector teams={teams} selectedTeamId={teamId} onChange={handleChangeTeam} />
 
       <Flex vertical justify="space-between" gap="2.4rem">
@@ -197,19 +165,10 @@ const DraftCreateDrawer = ({
         </AnimatePresence>
       </Flex>
 
-      {/* 히스토리 Drawer */}
-      <HistoryDrawer
-        title={selectedTeam?.name}
-        open={openHistoryDrawer}
-        drafts={drafts}
-        onClose={handleCloseDraftDrawer}
-        onClickCopy={copyInputLink}
-      />
-
       {contextHolder}
       <input ref={linkInputRef} style={{ position: 'absolute', top: '100%' }} />
-    </DraftCreateDrawerStyled>
+    </DraftCreateViewStyled>
   );
 };
 
-export default DraftCreateDrawer;
+export default DraftCreateView;

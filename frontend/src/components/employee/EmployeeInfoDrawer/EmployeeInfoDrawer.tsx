@@ -1,8 +1,33 @@
-import { useEffect, useRef } from 'react';
-import { FaFileContract, FaRegIdCard, FaSignature, FaTrashAlt } from 'react-icons/fa';
+import { useEffect, useRef, useState } from 'react';
+import {
+  AiOutlineDownload,
+  AiOutlineRotateLeft,
+  AiOutlineRotateRight,
+  AiOutlineZoomIn,
+  AiOutlineZoomOut,
+} from 'react-icons/ai';
+import {
+  FaFileContract,
+  FaFileDownload,
+  FaRegIdCard,
+  FaSignature,
+  FaTrashAlt,
+} from 'react-icons/fa';
 
-import { Button, Descriptions, Divider, DrawerProps, Flex, Image, Skeleton, Tag } from 'antd';
+import {
+  Button,
+  Descriptions,
+  Divider,
+  DrawerProps,
+  Flex,
+  Image,
+  Skeleton,
+  Space,
+  Tag,
+} from 'antd';
+import { transform } from 'lodash';
 
+import ImagePreview from '~/components/common/ImagePreview';
 import { useEmployeeDetailQuery } from '~/hooks/queryHooks/useEmployeeQuery';
 import { POSITION_CODE, POSITION_COLORS } from '~/types/position';
 import { formatPhoneNumber, formatSSN } from '~/utils/formatData';
@@ -14,6 +39,8 @@ export interface EmployeeInfoDrawerProps extends DrawerProps {
 }
 
 const EmployeeInfoDrawer = ({ employeeId, open, ...props }: EmployeeInfoDrawerProps) => {
+  const [showBankBook, setShowBankBook] = useState<boolean>(false);
+  const [showIdCard, setShowIdCard] = useState<boolean>(false);
   const { employee } = useEmployeeDetailQuery({ employeeId: employeeId });
 
   if (!employee)
@@ -28,10 +55,9 @@ const EmployeeInfoDrawer = ({ employeeId, open, ...props }: EmployeeInfoDrawerPr
       </EmployeeInfoDrawerStyled>
     );
 
-  const handleIdCardClick = () => {};
-  const handleContractClick = () => {};
+  const handleIdCardClick = () => setShowBankBook(true);
+  const handleContractClick = () => setShowIdCard(true);
 
-  // 랜더
   const TitleRender = () => {
     const code = employee.position.positionCode;
     const label = POSITION_CODE[code];
@@ -107,21 +133,12 @@ const EmployeeInfoDrawer = ({ employeeId, open, ...props }: EmployeeInfoDrawerPr
         </button>
       </Flex>
 
-      <Image.PreviewGroup
-        preview={{
-          onChange: (current, prev) =>
-            console.log(`current index: ${current}, prev index: ${prev}`),
-        }}
-      >
-        <Image
-          width={200}
-          src="https://gw.alipayobjects.com/zos/rmsportal/KDpgvguMpGfqaHPjicRK.svg"
-        />
-        <Image
-          width={200}
-          src="https://gw.alipayobjects.com/zos/antfincdn/aPkFc8Sj7n/method-draw-image.svg"
-        />
-      </Image.PreviewGroup>
+      <ImagePreview
+        src={employee.bankBook}
+        open={showBankBook}
+        onClose={() => setShowBankBook(false)}
+      />
+      <ImagePreview src={employee.idCard} open={showIdCard} onClose={() => setShowIdCard(false)} />
     </EmployeeInfoDrawerStyled>
   );
 };

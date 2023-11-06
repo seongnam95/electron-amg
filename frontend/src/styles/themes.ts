@@ -27,6 +27,7 @@ const _colors = {
 
   selectedBg: '#F6F9FF',
   selectedHoverBg: '#F1F5FF',
+
   innerBg: '#F5F5F5',
   contentBG: '#ffffff',
   formFieldBG: '#f9f9f9',
@@ -45,6 +46,10 @@ const _colors = {
   textColorWhite1: '',
   textColorWhite2: '',
   textColorWhite3: '',
+
+  iconColor1: '#767676',
+  iconColor2: '#4E5058',
+  iconColor3: '#313338',
 
   success: '#4caf50',
   error: '#fe6968',

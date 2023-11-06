@@ -9,13 +9,16 @@ export const ControlBarStyled = styled.div`
   padding: 1.2rem 2rem 0;
   border-bottom: 1px solid ${p => p.theme.colors.borderColor};
 
-  .control-wrap {
+  .control-btn-wrap {
     display: flex;
     align-items: center;
-    gap: 0.4rem;
 
-    .search-input {
-      margin-right: 1rem;
+    > button {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.7rem;
+      padding: 0.2rem 1rem 0;
     }
   }
 `;

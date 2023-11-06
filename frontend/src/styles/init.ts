@@ -75,4 +75,21 @@ export const InitGlobalStyled = memo(createGlobalStyle`
   p {
     margin: 0;
   }
+
+  .toolbar-wrapper {
+    display: flex;
+    gap: 2.6rem;
+    padding: 0.8rem 2.4rem;
+    background-color: rgba(66,66,66,0.3);
+    border-radius: 50rem;
+
+    > svg {
+      transition: color 120ms ease-in-out;
+      cursor: pointer;
+      
+      :hover {
+        color: ${p => p.theme.colors.textColorWhite1};
+      }
+    }
+  }
 `);
