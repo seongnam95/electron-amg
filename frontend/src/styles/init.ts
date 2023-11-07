@@ -93,5 +93,10 @@ export const InitGlobalStyled = memo(createGlobalStyle`
     }
   }
 
+  .ant-drawer-header {
+    height: 6.4rem;
+    min-height: 6.4rem;
 
+    padding: 0 2.4rem;
+  }
 `);

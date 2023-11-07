@@ -1,7 +1,7 @@
 import { useEffect, useMemo } from 'react';
 import { Outlet } from 'react-router-dom';
 
-import { ConfigProvider, theme } from 'antd';
+import { ConfigProvider, message, theme } from 'antd';
 import locale from 'antd/lib/locale/ko_KR';
 import 'dayjs/locale/ko';
 import { useRecoilState, useRecoilValue } from 'recoil';
@@ -27,6 +27,8 @@ declare module 'styled-components' {
 }
 
 const App = () => {
+  message.config({ top: 46, maxCount: 1 });
+
   return (
     <ConfigProvider theme={antdTheme} locale={locale}>
       <AppInner />

@@ -15,23 +15,15 @@ import { CurrentUser } from '~/types/user';
 
 interface GeoLocationI {
   ip: string;
-  countryName: string;
   lat: string;
   lng: string;
+  countryName: string;
 }
 
 const Login = () => {
   const passwordInputRef = useRef<HTMLInputElement>(null);
   const setUser = useSetRecoilState(userState);
   const navigate = useNavigate();
-
-  const [messageApi, contextHolder] = message.useMessage({ top: 46, maxCount: 1 });
-  const error = () => {
-    messageApi.open({
-      type: 'error',
-      content: '아이디 또는 패스워드가 일치하지 않습니다.',
-    });
-  };
 
   const [geoData, setGeoData] = useState<GeoLocationI>();
   const [account, setAccount] = useState({ username: '', password: '' });
@@ -46,12 +38,14 @@ const Login = () => {
         .then(res => {
           setGeoData({
             ip: res.data.IPv4,
-            countryName: res.data.country_name,
             lat: res.data.latitude,
             lng: res.data.longitude,
+            countryName: res.data.country_name,
           });
         })
-        .catch(() => alert('IP를 조회할 수 없습니다.'));
+        .catch(() => {
+          message.error('IP 조회에 실패하였습니다.');
+        });
     };
     fetchGeoData();
   }, []);
@@ -82,11 +76,12 @@ const Login = () => {
           };
 
           setUser(user);
+          navigate('/manager/employee');
         })
         .catch(err => {
           passwordInputRef.current?.focus();
-          error();
-          navigate('/manager/employee');
+          message.error('아이디 또는 패스워드가 일치하지 않습니다.');
+          console.log(err);
         });
     }
   };
@@ -107,8 +102,6 @@ const Login = () => {
           로그인
         </Button>
       </form>
-
-      {contextHolder}
     </LoginPageStyled>
   );
 };

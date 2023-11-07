@@ -1,6 +1,7 @@
+import { Drawer } from 'antd';
 import styled from 'styled-components';
 
-export const DraftCreateViewStyled = styled.div`
+export const DraftCreateDrawerStyled = styled(Drawer)`
   .result-wrap {
     display: flex;
     flex-direction: column;

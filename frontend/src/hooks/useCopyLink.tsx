@@ -4,7 +4,6 @@ import { message } from 'antd';
 
 export const useCopyLink = () => {
   const inputRef = useRef<HTMLInputElement>(null);
-  const [messageApi, msgContextHolder] = message.useMessage({ top: 46, maxCount: 1 });
 
   const copyInputLink = (id: string) => {
     if (!inputRef.current) return;
@@ -14,30 +13,18 @@ export const useCopyLink = () => {
       const el = inputRef.current;
       el?.select();
       document.execCommand('copy');
-
-      messageApi.open({
-        type: 'success',
-        content: '클립보드에 저장되었습니다.',
-        style: { zIndex: 9999 },
-      });
+      message.success('클립보드에 저장되었습니다.');
     } catch (err) {
-      messageApi.open({
-        type: 'error',
-        content: `클립보드 복사에 실패했습니다. \nErr: ${err}`,
-        style: { zIndex: 9999 },
-      });
+      message.success('클립보드 복사에 실패했습니다.');
     }
   };
 
   const contextHolder = (
-    <>
-      <input ref={inputRef} style={{ position: 'absolute', opacity: 0, zIndex: '-9999' }} />
-      {msgContextHolder}
-    </>
+    <input ref={inputRef} style={{ position: 'absolute', opacity: 0, zIndex: '-9999' }} />
   );
 
   return {
-    contextHolder,
     copyInputLink,
+    contextHolder,
   };
 };

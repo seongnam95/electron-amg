@@ -6,20 +6,17 @@ import { BaseQueryOptions } from '~/types/query';
 import { TeamData } from '~/types/team';
 
 interface TeamQueryOptions extends BaseQueryOptions<FetchListResponse<TeamData>> {
-  userId: string;
+  userId?: string;
 }
 
-export const useTeamQuery = ({ userId, onSuccess, onError }: TeamQueryOptions) => {
+export const useTeamQuery = ({ userId, ...baseOptions }: TeamQueryOptions) => {
   const queryKey: Array<string> = [import.meta.env.VITE_TEAM_QUERY_KEY];
 
   const {
     data,
     isLoading: isTeamLoading,
     isError,
-  } = useQuery(queryKey, fetchTeamsByUser(userId), {
-    onSuccess: onSuccess,
-    onError: onError,
-  });
+  } = useQuery(queryKey, fetchTeamsByUser(userId), { ...baseOptions });
 
   const teams = data ? data.result.list : [];
   return { teams, isTeamLoading, isError };

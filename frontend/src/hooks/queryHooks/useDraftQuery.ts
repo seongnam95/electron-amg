@@ -1,54 +1,88 @@
-import { useMutation, useQuery, useQueryClient } from 'react-query';
+import { useMutation, useQuery, useQueryClient, QueryOptions, MutateOptions } from 'react-query';
 
 import { createDraft, fetchDrafts, removeDraft } from '~/api/draft';
-import { BaseQueryOptions, QueryDefaultOptions } from '~/types/query';
+import { DraftData } from '~/types/draft';
 
-interface DraftQueryOptions extends BaseQueryOptions {
-  teamId: string;
+interface DraftQueryOptions<T> {
+  teamId?: string;
+  enabled?: boolean;
+  onError?: (msg: string) => void;
+  onSuccess?: (draft: T) => void;
 }
 
-export const useDraftQuery = ({ teamId, onSuccess, onError }: DraftQueryOptions) => {
+/**
+ * Fetch List
+ */
+export const useDraftQuery = ({ teamId, ...options }: DraftQueryOptions<DraftData[]>) => {
   const queryKey: Array<string> = [import.meta.env.VITE_DRAFT_QUERY_KEY, teamId];
 
-  const { data, isLoading, isError } = useQuery(queryKey, fetchDrafts(teamId), {
-    onSuccess: onSuccess,
-    onError: onError,
-  });
+  const { data, isLoading, isError } = useQuery(queryKey, fetchDrafts(teamId), { ...options });
 
-  const drafts = data ? data.result.list.toReversed() : [];
+  const drafts = data ? data.toReversed() : [];
   return { drafts, isLoading, isError };
 };
 
-export const useDraftCreate = ({ teamId, onSuccess, onError }: DraftQueryOptions) => {
-  const queryKey: Array<string> = [import.meta.env.VITE_DRAFT_QUERY_KEY];
+/**
+ * Create Draft
+ */
+export const useDraftCreateMutation = ({
+  teamId,
+  onSuccess,
+  onError,
+}: DraftQueryOptions<DraftData>) => {
+  const queryKey: string[] = [import.meta.env.VITE_DRAFT_QUERY_KEY, teamId];
   const queryClient = useQueryClient();
 
-  const { mutate: createDraftMutate, isLoading: isDraftCreateLoading } = useMutation(
+  const onSettled = () => queryClient.invalidateQueries(queryKey);
+
+  const { mutate: createDraftMutate, isLoading: isCreateDraftLoading } = useMutation(
     queryKey,
     createDraft(teamId),
-    {
-      onSuccess: onSuccess,
-      onError: onError,
-      onSettled: () => queryClient.invalidateQueries(queryKey),
-    },
+    { onSettled, onSuccess, onError },
   );
 
-  return { createDraftMutate, isDraftCreateLoading };
+  return { createDraftMutate, isCreateDraftLoading };
 };
 
-export const useDraftRemove = ({ onSuccess, onError }: QueryDefaultOptions = {}) => {
-  const queryKey: Array<string> = [import.meta.env.VITE_DRAFT_QUERY_KEY];
+/**
+ * Remove Draft
+ */
+export const useDraftRemoveMutation = ({ teamId, onSuccess }: DraftQueryOptions<DraftData>) => {
+  const queryKey: string[] = [import.meta.env.VITE_DRAFT_QUERY_KEY, teamId];
   const queryClient = useQueryClient();
 
-  const { mutate: removeDraftMutate, isLoading: isDraftRemoveLoading } = useMutation(
+  const onSettled = () => queryClient.invalidateQueries(queryKey);
+
+  // 삭제 Mutate 핸들러
+  const handleRemoveMutate = (value: string) => {
+    const oldDraftData = queryClient.getQueryData<Array<DraftData>>(queryKey);
+
+    if (oldDraftData) {
+      // 쿼리 취소
+      queryClient.cancelQueries(queryKey);
+
+      // 대상 Draft를 제외한 리스트를 쿼리 데이터에 저장
+      queryClient.setQueryData(queryKey, (drafts: DraftData[] | undefined) => {
+        return drafts ? drafts.filter(draft => draft.id !== value) : oldDraftData;
+      });
+
+      // 에러 시, 롤백 할 함수
+      return () => queryClient.setQueryData(queryKey, oldDraftData);
+    }
+  };
+
+  const { mutate: removeDraftMutate, isLoading: isRemoveDraftLoading } = useMutation(
     queryKey,
     removeDraft(),
     {
-      onSuccess: onSuccess,
-      onError: onError,
-      onSettled: () => queryClient.invalidateQueries(queryKey),
+      onSettled,
+      onSuccess,
+      onMutate: handleRemoveMutate,
+      onError: ({ rollback }) => {
+        if (rollback) rollback();
+      },
     },
   );
 
-  return { removeDraftMutate, isDraftRemoveLoading };
+  return { removeDraftMutate, isRemoveDraftLoading };
 };

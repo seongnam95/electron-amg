@@ -12,11 +12,11 @@ import { formatPhoneNumber, formatSSN } from '~/utils/formatData';
 import { EmployeeInfoViewStyled } from './styled';
 
 export interface EmployeeInfoViewProps {
-  employeeId: string;
+  employeeId?: string;
 }
 
 const EmployeeInfoView = ({ employeeId }: EmployeeInfoViewProps) => {
-  const { employee } = useEmployeeDetailQuery({ employeeId: employeeId });
+  const { employee } = useEmployeeDetailQuery({ employeeId: employeeId, enabled: !!employeeId });
 
   const [showIdCard, setShowIdCard] = useState<boolean>(false);
   const [showBankBook, setShowBankBook] = useState<boolean>(false);

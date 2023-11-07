@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { FaTrashAlt } from 'react-icons/fa';
 
-import { Button, Drawer, Flex, Skeleton } from 'antd';
+import { Button, Drawer } from 'antd';
 import { useRecoilValue } from 'recoil';
 
 import ControlBar from '~/components/employee/ControlBar';
@@ -23,20 +23,15 @@ const EmployeePage = () => {
   // Hook
   const scrollRef = useDragScroll();
 
-  const { teams, isTeamLoading } = useTeamQuery({
-    userId: user.id,
-    onSuccess: ({ result }) => {
-      const teams = result.list;
-      if (teams.length > 0) setSelectedTeamId(teams[0].id);
-    },
-  });
-
+  const { teams } = useTeamQuery({ userId: user.id });
   const { employees } = useEmployeeQuery({
     teamId: selectedTeamId,
     enabled: !!selectedTeamId,
   });
 
-  const isLoading = isTeamLoading || !selectedTeamId;
+  useEffect(() => {
+    if (teams.length > 0) setSelectedTeamId(teams[0].id);
+  }, [teams]);
 
   const handleChangeTeam = (id: string) => setSelectedTeamId(id);
   const handleClickName = (id: string) => {
@@ -51,7 +46,6 @@ const EmployeePage = () => {
   return (
     <EmployeePageStyled className="EmployeePage">
       <ControlBar selectedTeamId={selectedTeamId} teams={teams} onChangeTeam={handleChangeTeam} />
-
       <EmployeeTable employees={employees} tableWrapRef={scrollRef} onClickName={handleClickName} />
 
       <Drawer
