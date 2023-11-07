@@ -4,13 +4,13 @@ export interface BaseMultiDataParams {
 }
 
 /** Create, Put, Remove Request Options */
-export interface QueryDefaultOptions {
-  onSuccess?: () => void;
-  onError?: () => void;
+export interface QueryDefaultOptions<T> {
+  onSuccess?: (data: T) => void;
+  onError?: (data: T) => void;
 }
 
 /** Fetch Request Options */
-export interface BaseQueryOptions<T = BaseMultiDataParams> extends QueryDefaultOptions {
+export interface BaseQueryOptions<R, T = BaseMultiDataParams> extends QueryDefaultOptions<R> {
   params?: T;
   enabled?: boolean;
 }

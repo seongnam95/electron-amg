@@ -1,23 +1,14 @@
-import { ForwardedRef, useRef, useState } from 'react';
-import { FaFileContract, FaImages } from 'react-icons/fa';
+import { ForwardedRef, useState } from 'react';
 
 import { Table, Tag } from 'antd';
 import { ColumnsType, Key } from 'antd/es/table/interface';
 
-import Button from '~/components/common/Button';
-import EmployeeInfoDrawer from '~/components/employee/EmployeeInfoDrawer';
-import { useEmployeeQuery } from '~/hooks/queryHooks/useEmployeeQuery';
 import { EmployeeData } from '~/types/employee';
 import { POSITION_CODE, POSITION_COLORS, PositionType } from '~/types/position';
 import { formatPhoneNumber } from '~/utils/formatData';
 
 import Dock from './Dock';
 import { EmployeeTableWrapStyled } from './styled';
-
-interface EmployeeTableProps {
-  selectedTeamId: string;
-  tableWrapRef?: ForwardedRef<HTMLDivElement>;
-}
 
 interface EmployeeTableData {
   key: string;
@@ -26,14 +17,18 @@ interface EmployeeTableData {
   position: PositionType;
   unitPay: number;
   attendance: string;
-  tool: string | null;
 }
 
-const EmployeeTable = ({ selectedTeamId, tableWrapRef }: EmployeeTableProps) => {
+interface EmployeeTableProps {
+  employees?: Array<EmployeeData>;
+  tableWrapRef?: ForwardedRef<HTMLDivElement>;
+  isLoading?: boolean;
+  onClickName?: (id: string) => void;
+}
+
+const EmployeeTable = ({ employees, tableWrapRef, isLoading, onClickName }: EmployeeTableProps) => {
   const [showToolModal, setShowToolModal] = useState<boolean>(false);
-  const { employees, isLoading } = useEmployeeQuery({ teamId: selectedTeamId });
-  const [selectedEmployeeId, setSelectedEmployeeId] = useState<string>();
-  const [openEmployeeInfoDrawer, setOpenEmployeeInfoDrawer] = useState<boolean>(false);
+  const [selectedEmployeeIds, setSelectedEmployeeIds] = useState<Array<string>>([]);
 
   const columns: ColumnsType<EmployeeTableData> = [
     {
@@ -43,7 +38,7 @@ const EmployeeTable = ({ selectedTeamId, tableWrapRef }: EmployeeTableProps) => 
       width: 110,
       ellipsis: true,
       onCell: v => {
-        return { onClick: () => handleNameClick(v.key) };
+        return { onClick: () => handleNameClick(v.key.toString()) };
       },
       sorter: (a, b) => a.name.localeCompare(b.name),
       render: (name: string) => <b>{name}</b>,
@@ -52,7 +47,7 @@ const EmployeeTable = ({ selectedTeamId, tableWrapRef }: EmployeeTableProps) => 
       key: 'phone',
       dataIndex: 'phone',
       title: '연락처',
-      width: 120,
+      width: 150,
       align: 'center',
       render: (phone: string) => <>{formatPhoneNumber(phone)}</>,
     },
@@ -60,14 +55,14 @@ const EmployeeTable = ({ selectedTeamId, tableWrapRef }: EmployeeTableProps) => 
       key: 'position',
       dataIndex: 'position',
       title: '직위',
-      width: 70,
+      width: 90,
       align: 'center',
       sorter: (a, b) => a.position.toString().localeCompare(b.position.toString()),
       render: (position: PositionType) => {
         const label = POSITION_CODE[position];
         const color = POSITION_COLORS[position];
         return (
-          <Tag style={{ width: '5rem', textAlign: 'center', marginRight: '1.2rem' }} color={color}>
+          <Tag style={{ width: '5rem', textAlign: 'center', marginInlineEnd: 0 }} color={color}>
             {label}
           </Tag>
         );
@@ -84,7 +79,7 @@ const EmployeeTable = ({ selectedTeamId, tableWrapRef }: EmployeeTableProps) => 
     {
       key: 'attendance',
       dataIndex: 'attendance',
-      width: 60,
+      width: 76,
       title: '근무일',
       align: 'center',
       render: (attendance: string) => <>{attendance}</>,
@@ -92,42 +87,22 @@ const EmployeeTable = ({ selectedTeamId, tableWrapRef }: EmployeeTableProps) => 
     {
       key: 'period',
       dataIndex: 'period',
-      width: 110,
+      width: 120,
       title: '계약 만료일',
       align: 'center',
       render: (period: string) => (
         <Tag
-          style={{ width: '8rem', textAlign: 'center' }}
+          style={{ width: '8rem', textAlign: 'center', marginInlineEnd: 0 }}
           color={period === '계약 만료' ? 'red' : ''}
         >
           {period}
         </Tag>
       ),
     },
-    {
-      key: 'tool',
-      dataIndex: 'tool',
-      width: 100,
-      title: '문서',
-      align: 'center',
-      render: (id: string) => {
-        if (!id) return <></>;
-        return (
-          <div style={{ display: 'flex', gap: '0.4rem', justifyContent: 'center' }}>
-            <Button $btnSize="small">
-              <FaImages />
-            </Button>
-            <Button $btnSize="small">
-              <FaFileContract />
-            </Button>
-          </div>
-        );
-      },
-    },
   ];
 
   // 테이블 데이터 맵핑
-  const dataSource: Array<EmployeeTableData> = employees.map((employee, i) => {
+  const dataSource: Array<EmployeeTableData> | undefined = employees?.map(employee => {
     const { attendances, position } = employee;
     const attendance = attendances ? `${attendances.length.toString()}일` : '-';
     const period = employee ? employee.endPeriod : '계약 만료';
@@ -140,20 +115,17 @@ const EmployeeTable = ({ selectedTeamId, tableWrapRef }: EmployeeTableProps) => 
       unitPay: position.unitPay,
       attendance: attendance,
       period: period,
-      tool: employee.id,
     };
   });
 
-  // 근무자 클릭 이벤트
-  const handleNameClick = (employeeId: string) => {
-    const employee = employees.find(employee => employee.id === employeeId);
-    setSelectedEmployeeId(employeeId);
-    setOpenEmployeeInfoDrawer(true);
-  };
+  // Row 이름 클릭 이벤트
+  const handleNameClick = (employeeId: string) => onClickName?.(employeeId);
 
-  // 근무자 선택 이벤트
-  const handleSelectedChange = (selectedIds: Key[]) => {
-    setShowToolModal(selectedIds.length > 0 ? true : false);
+  // Row 선택 이벤트
+  const handleSelectedChange = (_: Key[], selectedRows: EmployeeTableData[]) => {
+    const employeeIds = selectedRows.map(row => row.key.toString());
+    setSelectedEmployeeIds(employeeIds);
+    setShowToolModal(employeeIds.length > 0 ? true : false);
   };
 
   const handleDelete = () => {
@@ -175,13 +147,6 @@ const EmployeeTable = ({ selectedTeamId, tableWrapRef }: EmployeeTableProps) => 
         }}
       />
       <Dock open={showToolModal} onDelete={handleDelete} />
-      {selectedEmployeeId ? (
-        <EmployeeInfoDrawer
-          open={openEmployeeInfoDrawer}
-          onClose={() => setOpenEmployeeInfoDrawer(false)}
-          employeeId={selectedEmployeeId}
-        />
-      ) : null}
     </EmployeeTableWrapStyled>
   );
 };

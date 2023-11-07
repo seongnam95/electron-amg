@@ -1,6 +1,6 @@
 import { FiChevronDown } from 'react-icons/fi';
 
-import { Dropdown } from 'antd';
+import { Dropdown, Skeleton } from 'antd';
 import { ItemType } from 'antd/es/menu/hooks/useItems';
 
 import { TeamData } from '~/types/team';
@@ -8,17 +8,20 @@ import { TeamData } from '~/types/team';
 import { TeamSelectorStyled } from './styled';
 
 export interface TeamSelectorProps {
-  teams: Array<TeamData>;
-  selectedTeamId?: string;
+  teams?: Array<TeamData>;
+  selectedId?: string;
   onSelect?: (id: string) => void;
 }
 
-const TeamSelector = ({ teams, selectedTeamId, onSelect }: TeamSelectorProps) => {
-  const teamId = selectedTeamId ? selectedTeamId : teams[0].id;
-  const selectedTeam = teams.find(team => team.id == teamId);
+/**
+ * 팀 선택 드롭다운 Selector
+ */
+const TeamSelector = ({ teams, selectedId, onSelect }: TeamSelectorProps) => {
+  const selectedTeam = teams?.find(team => team.id == selectedId);
+  const isMulti = teams ? (teams.length > 1 ? true : false) : false;
 
-  const items: Array<ItemType> = teams.map(team => {
-    const isSelected = team.id == teamId;
+  const items: Array<ItemType> | undefined = teams?.map(team => {
+    const isSelected = team.id == selectedId;
 
     return {
       key: team.id,
@@ -47,9 +50,16 @@ const TeamSelector = ({ teams, selectedTeamId, onSelect }: TeamSelectorProps) =>
     };
   });
 
+  /**
+   * 선택 된 팀이 없을 경우 [ 스켈레톤 ]
+   * 팀이 여러개일 경우 [ 드롭다운 ]
+   * 팀이 하나일 경우 일반 [ 레이블 ]
+   */
   return (
     <TeamSelectorStyled className="TeamSelector">
-      {teams.length > 1 ? (
+      {!selectedTeam ? (
+        <Skeleton.Button active size="small" style={{ width: '16rem' }} />
+      ) : isMulti ? (
         <Dropdown menu={{ items }} trigger={['click']}>
           <label className="team-label selector">
             <span className="color-bar" style={{ backgroundColor: selectedTeam?.color }} />

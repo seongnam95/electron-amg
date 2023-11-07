@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { AiFillCheckCircle, AiOutlinePaperClip } from 'react-icons/ai';
+import { AiFillCheckCircle, AiOutlineClose, AiOutlinePaperClip } from 'react-icons/ai';
 
 import {
   Flex,
@@ -35,13 +35,14 @@ const DraftCreateView = ({ team, onCopy }: DraftCreateViewProps) => {
 
   const [form] = Form.useForm();
   const [draft, setDraft] = useState<DraftData | undefined>();
+  const [showResultBox, setShowResultBox] = useState<boolean>(false);
 
   const currentDate = dayjs();
   const lastDate = currentDate.endOf('month');
   const defaultPickerValue: [Dayjs, Dayjs] = [currentDate, lastDate];
 
   // 쿼리
-  const { createDraftMutate } = useDraftCreateMutation({ teamId: team.id });
+  const { createDraftMutate, isDraftCreateLoading } = useDraftCreateMutation({ teamId: team.id });
   const resetForm = () => {
     form.resetFields();
     setDraft(undefined);
@@ -64,10 +65,15 @@ const DraftCreateView = ({ team, onCopy }: DraftCreateViewProps) => {
     createDraftMutate(createBody, {
       onSuccess: v => {
         setDraft(v.result);
+        setShowResultBox(true);
+
         form.resetFields();
       },
     });
   };
+
+  //
+  const handleCloseResult = () => setShowResultBox(false);
 
   const { Option } = Select;
   return (
@@ -76,6 +82,7 @@ const DraftCreateView = ({ team, onCopy }: DraftCreateViewProps) => {
         <Typography.Title className="view-title" level={5}>
           계약서 폼 생성
         </Typography.Title>
+
         <Form
           form={form}
           layout="vertical"
@@ -110,7 +117,7 @@ const DraftCreateView = ({ team, onCopy }: DraftCreateViewProps) => {
           </Form.Item>
 
           <Flex flex={1} style={{ justifyContent: 'end' }}>
-            <Button type="primary" htmlType="submit">
+            <Button type="primary" htmlType="submit" loading={isDraftCreateLoading}>
               생성하기
             </Button>
           </Flex>
@@ -118,13 +125,14 @@ const DraftCreateView = ({ team, onCopy }: DraftCreateViewProps) => {
       </Space>
 
       <AnimatePresence>
-        {!!draft ? (
+        {showResultBox && draft ? (
           <motion.div
+            key={draft.id}
             className="result-wrap"
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.2, ease: 'easeOut' }}
+            initial={{ opacity: 0, x: -10 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: 10 }}
+            transition={{ duration: 0.2, ease: 'easeInOut' }}
             style={{ marginTop: '3.4rem' }}
           >
             <Flex justify="space-between" align="center">
@@ -133,14 +141,24 @@ const DraftCreateView = ({ team, onCopy }: DraftCreateViewProps) => {
                 <span>폼 생성 완료!</span>
               </Flex>
 
-              <Button size="small" type="link">
-                <Flex align="center" gap="0.5rem" style={{ paddingTop: '1px' }}>
-                  <AiOutlinePaperClip size="1.6rem" />
-                  링크복사
-                </Flex>
-              </Button>
+              <Flex align="center">
+                <Button size="small" type="link" onClick={() => onCopy?.(draft.id)}>
+                  <Flex align="center" gap="0.5rem">
+                    <AiOutlinePaperClip size="1.6rem" />
+                    링크복사
+                  </Flex>
+                </Button>
+                <Button
+                  size="small"
+                  type="text"
+                  style={{ paddingTop: '2px' }}
+                  onClick={handleCloseResult}
+                >
+                  <AiOutlineClose size="1.4rem" />
+                </Button>
+              </Flex>
             </Flex>
-            <Divider />
+
             <Descriptions
               column={1}
               colon={false}

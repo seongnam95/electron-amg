@@ -31,7 +31,7 @@ export const useCopyLink = () => {
 
   const contextHolder = (
     <>
-      <input ref={inputRef} style={{ position: 'absolute', top: '100%', zIndex: '-9999' }} />
+      <input ref={inputRef} style={{ position: 'absolute', opacity: 0, zIndex: '-9999' }} />
       {msgContextHolder}
     </>
   );

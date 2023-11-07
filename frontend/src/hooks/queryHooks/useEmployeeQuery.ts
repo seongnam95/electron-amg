@@ -1,26 +1,27 @@
 import { useQuery } from 'react-query';
 
 import { fetchEmployeeDetail, fetchEmployees } from '~/api/employee';
+import { FetchListResponse } from '~/api/response';
+import { EmployeeData, EmployeeDetailData } from '~/types/employee';
 import { BaseQueryOptions } from '~/types/query';
 
-interface EmployeeQueryOptions extends BaseQueryOptions {
-  teamId: string;
+interface EmployeeQueryOptions extends BaseQueryOptions<FetchListResponse<EmployeeData>> {
+  teamId?: string;
 }
 
-export const useEmployeeQuery = ({ teamId, onSuccess, onError }: EmployeeQueryOptions) => {
+export const useEmployeeQuery = ({ teamId, ...baseOptions }: EmployeeQueryOptions) => {
   const queryKey: Array<string> = [import.meta.env.VITE_EMPLOYEE_QUERY_KEY, teamId];
 
   const { data, isLoading, isError } = useQuery(queryKey, fetchEmployees(teamId), {
-    onSuccess: onSuccess,
-    onError: onError,
+    ...baseOptions,
   });
 
   const employees = data ? data.result.list.toReversed() : [];
-
   return { employees, isLoading, isError };
 };
 
-interface EmployeeDetailQueryOptions extends BaseQueryOptions {
+interface EmployeeDetailQueryOptions
+  extends BaseQueryOptions<FetchListResponse<EmployeeDetailData>> {
   employeeId: string;
 }
 

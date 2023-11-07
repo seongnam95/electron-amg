@@ -3,7 +3,7 @@ import { AiOutlineClose } from 'react-icons/ai';
 import { BsClockHistory, BsFilter } from 'react-icons/bs';
 import { FiPlus } from 'react-icons/fi';
 
-import { Button, Drawer, Typography } from 'antd';
+import { Button, Drawer, Flex, Skeleton, Space, Typography } from 'antd';
 
 import HistoryView from '~/components/employee/HistoryView';
 import TeamSelector from '~/components/employee/TeamSelector';
@@ -14,8 +14,8 @@ import DraftCreateView from '../DraftCreateView';
 import { ControlBarStyled } from './styled';
 
 interface ControlBarProps {
-  teams: Array<TeamData>;
-  selectedTeamId: string;
+  teams?: Array<TeamData>;
+  selectedTeamId?: string;
   onChangeTeam?: (id: string) => void;
 }
 
@@ -25,13 +25,16 @@ const ControlBar = ({ teams, selectedTeamId, onChangeTeam }: ControlBarProps) =>
   const [openDraftDrawer, setOpenDraftDrawer] = useState<boolean>(false);
   const [openHistoryDrawer, setOpenHistoryDrawer] = useState<boolean>(false);
 
-  const selectedTeam = teams.find(team => team.id === selectedTeamId);
+  const selectedTeam = teams?.find(team => team.id === selectedTeamId);
 
+  // Draft Drawer Show/Hide Handle
   const handleShowDraftDrawer = () => setOpenDraftDrawer(true);
-  const handleCloseDraftDrawer = () => setOpenDraftDrawer(false);
+  const handleHideDraftDrawer = () => setOpenDraftDrawer(false);
 
+  // History Drawer Handle
   const handleShowHistoryDrawer = () => setOpenHistoryDrawer(true);
-  const handleCloseHistoryDrawer = () => setOpenHistoryDrawer(false);
+  const handleHideHistoryDrawer = () => setOpenHistoryDrawer(false);
+
   const handleCopyFromHistory = (id: string) => {
     setOpenHistoryDrawer(false);
     copyInputLink(id);
@@ -49,7 +52,7 @@ const ControlBar = ({ teams, selectedTeamId, onChangeTeam }: ControlBarProps) =>
     <Button
       type="text"
       icon={<AiOutlineClose size="1.8rem" style={{ marginTop: 2 }} />}
-      onClick={handleCloseHistoryDrawer}
+      onClick={handleHideHistoryDrawer}
     />
   );
 
@@ -69,7 +72,7 @@ const ControlBar = ({ teams, selectedTeamId, onChangeTeam }: ControlBarProps) =>
 
   return (
     <ControlBarStyled className="ControlBar">
-      <TeamSelector teams={teams} selectedTeamId={selectedTeamId} onSelect={onChangeTeam} />
+      <TeamSelector teams={teams} selectedId={selectedTeamId} onSelect={onChangeTeam} />
 
       <div className="control-btn-wrap">
         <Button type="text">
@@ -86,7 +89,7 @@ const ControlBar = ({ teams, selectedTeamId, onChangeTeam }: ControlBarProps) =>
         extra={RenderDraftExtra}
         title={TeamNameRender}
         open={openDraftDrawer}
-        onClose={handleCloseDraftDrawer}
+        onClose={handleHideDraftDrawer}
       >
         <DraftCreateView team={openDraftDrawer ? selectedTeam : undefined} onCopy={copyInputLink} />
         <Drawer
@@ -94,7 +97,7 @@ const ControlBar = ({ teams, selectedTeamId, onChangeTeam }: ControlBarProps) =>
           extra={RenderHistoryExtra}
           title={TeamNameRender}
           open={openHistoryDrawer}
-          onClose={handleCloseHistoryDrawer}
+          onClose={handleHideHistoryDrawer}
         >
           <Typography.Title level={5}>히스토리</Typography.Title>
           <HistoryView selectedTeamId={selectedTeam?.id} onCopy={handleCopyFromHistory} />
