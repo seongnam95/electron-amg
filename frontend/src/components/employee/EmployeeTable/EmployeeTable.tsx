@@ -3,7 +3,7 @@ import { ForwardedRef, useState } from 'react';
 import { Table, Tag } from 'antd';
 import { ColumnsType, Key } from 'antd/es/table/interface';
 
-import { EmployeeData } from '~/types/employee';
+import { useEmployeeQuery, useEmployeeRemoveMutation } from '~/hooks/queryHooks/useEmployeeQuery';
 import { POSITION_CODE, POSITION_COLORS, PositionType } from '~/types/position';
 import { formatPhoneNumber } from '~/utils/formatData';
 
@@ -20,15 +20,19 @@ interface EmployeeTableData {
 }
 
 interface EmployeeTableProps {
-  employees?: Array<EmployeeData>;
+  teamId?: string;
+
   tableWrapRef?: ForwardedRef<HTMLDivElement>;
   isLoading?: boolean;
   onClickName?: (id: string) => void;
 }
 
-const EmployeeTable = ({ employees, tableWrapRef, isLoading, onClickName }: EmployeeTableProps) => {
+const EmployeeTable = ({ teamId, tableWrapRef, isLoading, onClickName }: EmployeeTableProps) => {
   const [showToolModal, setShowToolModal] = useState<boolean>(false);
-  const [selectedEmployeeIds, setSelectedEmployeeIds] = useState<Array<string>>([]);
+  const [selectedEmployeeIds, setSelectedEmployeeIds] = useState<string[]>([]);
+
+  const { employees } = useEmployeeQuery({ teamId: teamId, enabled: !!teamId });
+  const { removeEmployeeMutate } = useEmployeeRemoveMutation({ teamId: teamId });
 
   const columns: ColumnsType<EmployeeTableData> = [
     {
@@ -122,14 +126,15 @@ const EmployeeTable = ({ employees, tableWrapRef, isLoading, onClickName }: Empl
   const handleNameClick = (employeeId: string) => onClickName?.(employeeId);
 
   // Row 선택 이벤트
-  const handleSelectedChange = (_: Key[], selectedRows: EmployeeTableData[]) => {
-    const employeeIds = selectedRows.map(row => row.key.toString());
-    setSelectedEmployeeIds(employeeIds);
-    setShowToolModal(employeeIds.length > 0 ? true : false);
+  const handleSelectedChange = (keys: Key[]) => {
+    setSelectedEmployeeIds(keys.map(String));
+    setShowToolModal(keys.length > 0 ? true : false);
   };
 
+  // Row 삭제 이벤트
   const handleDelete = () => {
-    console.log('삭제');
+    removeEmployeeMutate(selectedEmployeeIds);
+    setShowToolModal(false);
   };
 
   return (

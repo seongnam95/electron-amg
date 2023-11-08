@@ -13,7 +13,7 @@ from datetime import date
 
 class CRUDAttendance(CRUDBase[Attendance, AttendanceCreate, AttendanceUpdate]):
     def create_attendance(
-        self, db: Session, *, employee_id: int, attendance_in: AttendanceCreate
+        self, db: Session, *, employee_id: str, attendance_in: AttendanceCreate
     ):
         today = date.today().strftime("%Y-%m-%d")  # 현재 날짜 가져오기
         working_date = (

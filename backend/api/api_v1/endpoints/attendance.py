@@ -11,7 +11,7 @@ from response_model import BaseResponse, DataResponse, ListResponse
 router = APIRouter()
 
 
-def get_attendance(attendance_id: int, db: Session = Depends(deps.get_db)):
+def get_attendance(attendance_id: str, db: Session = Depends(deps.get_db)):
     attendance = crud.attendance.get(db=db, id=attendance_id)
     if not attendance:
         raise HTTPException(status_code=404, detail="존재하지 않는 로그입니다.")

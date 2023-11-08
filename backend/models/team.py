@@ -1,15 +1,24 @@
-from sqlalchemy import Column, ForeignKey, Integer, String, DateTime
+from sqlalchemy import Column, Integer, String, DateTime
 from db.base_class import Base
 from datetime import datetime
 from sqlalchemy.orm import relationship
 from .associations import user_team
+
+from uuid import uuid4
+from b64uuid import B64UUID
 
 
 # 소속
 class Team(Base):
     __tablename__ = "team"
 
-    id = Column(Integer, primary_key=True, index=True)  # PK
+    id = Column(
+        String,
+        primary_key=True,
+        index=True,
+        unique=True,
+        default=lambda: str(B64UUID(uuid4())),
+    )  # PK
 
     name = Column(String, nullable=False)  # 이름
     color = Column(String, nullable=False)  # 색상

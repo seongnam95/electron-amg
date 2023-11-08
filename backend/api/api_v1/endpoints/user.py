@@ -22,7 +22,7 @@ def create_user(user_in: schemas.UserCreate, db: Session = Depends(deps.get_db))
 # 유저 업데이트
 @router.put("/{user_id}", response_model=BaseResponse)
 def update_user(
-    user_id: int,
+    user_id: str,
     user_in: schemas.UserUpdate,
     db: Session = Depends(deps.get_db),
 ):
@@ -37,7 +37,7 @@ def update_user(
 # 유저 삭제
 @router.delete("/{user_id}", response_model=BaseResponse)
 def delete_user(
-    user_id: int,
+    user_id: str,
     db: Session = Depends(deps.get_db),
 ):
     user = crud.user.get(db, id=user_id)
@@ -51,7 +51,7 @@ def delete_user(
 # 팀
 @router.get("/{user_id}/team", response_model=ListResponse[schemas.Team])
 def read_all_team(
-    user_id: int,
+    user_id: str,
     db: Session = Depends(deps.get_db),
     page: int = 1,
     limit: int = 100,
@@ -71,7 +71,7 @@ def read_all_team(
 # 팀 생성 (유저)
 @router.post("/{user_id}/team", response_model=BaseResponse)
 def create_team(
-    user_id: int, team_in: schemas.TeamCreate, db: Session = Depends(deps.get_db)
+    user_id: str, team_in: schemas.TeamCreate, db: Session = Depends(deps.get_db)
 ):
     user = crud.user.get(db, id=user_id)
     if not user:

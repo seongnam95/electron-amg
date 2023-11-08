@@ -1,15 +1,12 @@
-import { useQuery } from 'react-query';
+import { useMutation, useQuery, useQueryClient } from 'react-query';
 
-import { fetchEmployeeDetail, fetchEmployees } from '~/api/employee';
-import { FetchListResponse, FetchResponse } from '~/api/response';
+import { fetchEmployeeDetail, fetchEmployees, removeEmployees } from '~/api/employee';
+import { BaseResponse } from '~/api/response';
 import { EmployeeData, EmployeeDetailData } from '~/types/employee';
-import { BaseQueryOptions } from '~/types/query';
+import { QueryBaseOptions } from '~/types/query';
 
-interface EmployeeQueryOptions<T> {
+interface EmployeeQueryOptions<T> extends QueryBaseOptions<T> {
   teamId?: string;
-  enabled?: boolean;
-  onError?: (msg: string) => void;
-  onSuccess?: (draft: T) => void;
 }
 
 /**
@@ -26,13 +23,14 @@ export const useEmployeeQuery = ({
   });
 
   const employees = data ? data.toReversed() : [];
+  console.log(employees);
   return { employees, isLoading, isError };
 };
 
 /**
  * Employee Detail
  */
-interface EmployeeDetailQueryOptions extends EmployeeQueryOptions {
+interface EmployeeDetailQueryOptions extends QueryBaseOptions<EmployeeDetailData> {
   employeeId?: string;
 }
 
@@ -42,10 +40,53 @@ export const useEmployeeDetailQuery = ({
 }: EmployeeDetailQueryOptions) => {
   const queryKey: Array<string> = [import.meta.env.VITE_EMPLOYEE_QUERY_KEY, 'detail', employeeId];
 
-  const { data, isLoading, isError } = useQuery(queryKey, fetchEmployeeDetail(employeeId), {
+  const {
+    data: employee,
+    isLoading,
+    isError,
+  } = useQuery(queryKey, fetchEmployeeDetail(employeeId), {
     ...baseOptions,
   });
-  const employee = data?.result;
 
   return { employee, isLoading, isError };
+};
+
+export const useEmployeeRemoveMutation = ({ teamId, onSuccess }: EmployeeQueryOptions<unknown>) => {
+  const queryKey: string[] = [import.meta.env.VITE_EMPLOYEE_QUERY_KEY, teamId];
+  const queryClient = useQueryClient();
+
+  const onSettled = () => queryClient.invalidateQueries(queryKey);
+
+  // 삭제 Mutate 핸들러
+  const handleRemoveMutate = async (employeeIds: string[]) => {
+    const oldEmployeeData = queryClient.getQueryData<Array<EmployeeData>>(queryKey);
+
+    if (oldEmployeeData) {
+      // 쿼리 취소
+      queryClient.cancelQueries(queryKey);
+
+      // 대상 Employee를 제외한 리스트를 쿼리 데이터에 저장
+      queryClient.setQueryData(queryKey, (employees: EmployeeData[] | undefined) => {
+        return employees?.filter(employee => !employeeIds.includes(employee.id.toString())) ?? [];
+      });
+
+      // 에러 시, 롤백 할 함수
+      return () => queryClient.setQueryData(queryKey, oldEmployeeData);
+    }
+  };
+
+  const { mutate: removeEmployeeMutate, isLoading: isRemoveEmployeeLoading } = useMutation(
+    queryKey,
+    removeEmployees,
+    {
+      onSettled,
+      onSuccess,
+      onMutate: handleRemoveMutate,
+      onError: ({ rollback }) => {
+        if (rollback) rollback();
+      },
+    },
+  );
+
+  return { removeEmployeeMutate, isRemoveEmployeeLoading };
 };

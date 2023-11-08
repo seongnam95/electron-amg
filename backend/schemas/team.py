@@ -28,7 +28,7 @@ class TeamUpdate(BaseModel):
 
 
 class Team(TeamBase):
-    id: int
+    id: str
     create_date: datetime
     positions: List[Position]
 

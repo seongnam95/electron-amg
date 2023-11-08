@@ -1,3 +1,4 @@
+from typing import Any
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from schemas.employee import EmployeeCoveringResponse, EmployeeResponse
@@ -29,12 +30,12 @@ def search_employee(name: str, ssn: str, db: Session = Depends(deps.get_db)):
 # -----------------------------------------------------------------------------------------
 
 
-# ID로 근로자 불러오기
+# GET : ID로 근로자 불러오기
 @router.get(
     "/employee/{employee_id}",
     response_model=DataResponse[schemas.EmployeeDetailResponse],
 )
-def read_employee(employee_id: int, db: Session = Depends(deps.get_db)):
+def read_employee(employee_id: str, db: Session = Depends(deps.get_db)):
     employee = crud.employee.get(db=db, id=employee_id)
     if not employee:
         raise HTTPException(status_code=404, detail="해당 직원을 찾을 수 없습니다.")
@@ -43,11 +44,11 @@ def read_employee(employee_id: int, db: Session = Depends(deps.get_db)):
     return DataResponse(msg="정상 처리되었습니다.", result=employee_dec)
 
 
-# 팀 소속 전체 근로자 불러오기
+# GET : 팀 소속 전체 근로자 불러오기
 @router.get("/team/{team_id}/employee", response_model=ListResponse[EmployeeResponse])
 def read_multi_employee(
     # user: User = Depends(deps.get_current_user),
-    team_id: int,
+    team_id: str,
     db: Session = Depends(deps.get_db),
     page: int = 1,
     limit: int = 100,
@@ -62,10 +63,12 @@ def read_multi_employee(
     return ListResponse(msg="정상 처리되었습니다.", result=response)
 
 
-# 근로자 업데이트
-@router.put("/{employee_id}", response_model=DataResponse[schemas.EmployeeResponse])
+# PUT : 근로자 업데이트
+@router.put(
+    "/employee/{employee_id}", response_model=DataResponse[schemas.EmployeeResponse]
+)
 def update_employee(
-    employee_id: int,
+    employee_id: str,
     employee_in: schemas.EmployeeUpdate,
     db: Session = Depends(deps.get_db),
 ):
@@ -79,14 +82,14 @@ def update_employee(
     return DataResponse(msg="정상 처리되었습니다.", result=employee)
 
 
-# 근로자 다중 삭제
-@router.delete("/", response_model=BaseResponse)
+# REMOVE : 근로자 삭제
+@router.delete("/employee/{employee_id}", response_model=BaseResponse)
 def delete_employee(
     # user: User = Depends(deps.get_current_user),
-    employee_ids: schemas.MultipleIdBody,
+    employee_id: str,
     db: Session = Depends(deps.get_db),
 ):
-    crud.employee.remove_multi_employee(db=db, ids_in=employee_ids)
+    crud.employee.remove_employee(db=db, id=employee_id)
     return BaseResponse(msg="정상 처리되었습니다.")
 
 
@@ -96,9 +99,9 @@ def delete_employee(
 
 
 # 근무로그 생성 (날짜 중복 불가)
-@router.post("/{employee_id}/attendance", response_model=BaseResponse)
+@router.post("/employee/{employee_id}/attendance", response_model=BaseResponse)
 def create_attendance(
-    employee_id: int,
+    employee_id: str,
     attendance_in: schemas.AttendanceCreate,
     db: Session = Depends(deps.get_db),
 ):

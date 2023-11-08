@@ -9,11 +9,11 @@ from sqlalchemy.orm import Session
 
 
 class CRUDDraft(CRUDBase[Draft, DraftCreate, DraftUpdate]):
-    def get_multi_draft_by_team(self, *, db: Session, team_id: int) -> List[Draft]:
+    def get_multi_draft_by_team(self, *, db: Session, team_id: str) -> List[Draft]:
         return db.query(Draft).filter(Draft.team_id == team_id).all()
 
     def create_draft(
-        self, *, db: Session, team_id: int, draft_in: DraftCreate
+        self, *, db: Session, team_id: str, draft_in: DraftCreate
     ) -> Draft:
         # 랜덤 ID 생성 (중복 시, 재생성)
         while True:

@@ -24,7 +24,7 @@ class PositionUpdate(PositionBase):
 
 
 class Position(PositionBase):
-    id: int
+    id: str
 
     class Config:
         from_attributes = True

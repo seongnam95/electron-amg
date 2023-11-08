@@ -15,7 +15,7 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/login")
 # 직위 불러오기
 @router.get("/{position_id}", response_model=DataResponse[schemas.Position])
 def delete_position(
-    position_id: int,
+    position_id: str,
     db: Session = Depends(deps.get_db),
 ):
     position = crud.position.get(db=db, id=position_id)
@@ -48,7 +48,7 @@ def read_all_position(
 # 직위 업데이트
 @router.put("/{position_id}", response_model=BaseResponse)
 def update_position(
-    position_id: int,
+    position_id: str,
     position_in: schemas.PositionUpdate,
     db: Session = Depends(deps.get_db),
 ):
@@ -68,7 +68,7 @@ def update_position(
 # 직위 삭제
 @router.delete("/{position_id}", response_model=BaseResponse)
 def delete_position(
-    position_id: int,
+    position_id: str,
     db: Session = Depends(deps.get_db),
 ):
     position = crud.position.get(db=db, id=position_id)

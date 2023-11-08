@@ -28,7 +28,7 @@ class CRUDEmployee(CRUDBase[Employee, EmployeeCreate, EmployeeUpdate]):
 
     # 근로자 생성
     def create_employee(
-        self, db: Session, team_id: int, position_id: int, employee_in: EmployeeCreate
+        self, db: Session, team_id: str, position_id: str, employee_in: EmployeeCreate
     ) -> Employee:
         employee_enc_dict = self._encrypt_employee(employee_in)
         employee_enc_dict["team_id"] = team_id
@@ -57,25 +57,13 @@ class CRUDEmployee(CRUDBase[Employee, EmployeeCreate, EmployeeUpdate]):
         return employee_obj
 
     # 근로자 삭제
-    def remove_employee(self, db: Session, *, id: int):
+    def remove_employee(self, db: Session, *, id: str):
         employee_obj: Employee = db.query(Employee).get(id)
 
         remove_image(employee_obj.bank_book_file_nm)
         remove_image(employee_obj.id_card_file_nm)
 
         db.delete(employee_obj)
-        db.commit()
-
-    # 근로자 다중 삭제
-    def remove_multi_employee(self, db: Session, *, ids_in: MultipleIdBody):
-        employees = db.query(Employee).filter(Employee.id.in_(ids_in.ids)).all()
-
-        for employee in employees:
-            remove_image(employee.bank_book_file_nm)
-            remove_image(employee.id_card_file_nm)
-
-            db.delete(employee)
-
         db.commit()
 
     # 근로자 검색 [이름, 주민등록번호]

@@ -3,7 +3,7 @@ import axios, { AxiosError } from 'axios';
 import { DraftCreateBody, DraftData } from '~/types/draft';
 
 import axiosPrivate from './axios';
-import { FetchListResponse, FetchResponse } from './response';
+import { BaseResponse, FetchListResponse, FetchResponse } from './response';
 
 export const fetchDrafts =
   (teamId?: string) =>
@@ -30,18 +30,12 @@ export const createDraft =
     return data.result;
   };
 
-interface ErrorResponse {
-  msg: string;
-  status: string;
-}
-
 export const removeDraft =
   () =>
   async (draftId?: string): Promise<DraftData> => {
-    const draftEndpoint = import.meta.env.VITE_DRAFT_ENDPOINT;
+    const endpoint = import.meta.env.VITE_DRAFT_ENDPOINT;
 
-    const { data } = await axiosPrivate.delete<FetchResponse<DraftData>>(
-      `${draftEndpoint}/${draftId}`,
-    );
+    const { data } = await axiosPrivate.delete<FetchResponse<DraftData>>(`${endpoint}/${draftId}`);
+
     return data.result;
   };

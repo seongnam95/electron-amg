@@ -23,7 +23,7 @@ class AttendanceUpdate(AttendanceBase):
 
 
 class Attendance(AttendanceBase):
-    id: int
+    id: str
     pay: int
 
     class Config:

@@ -17,7 +17,7 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/login")
 # 팀 불러오기
 @router.get("/{team_id}", response_model=DataResponse[schemas.Team])
 def read_team(
-    team_id: int,
+    team_id: str,
     db: Session = Depends(deps.get_db),
 ):
     team = crud.team.get(db=db, id=team_id)
@@ -58,7 +58,7 @@ def create_team(team_in: schemas.TeamCreate, db: Session = Depends(deps.get_db))
 # 팀 업데이트
 @router.put("/{team_id}", response_model=BaseResponse)
 def update_team(
-    team_id: int,
+    team_id: str,
     team_in: schemas.TeamUpdate,
     db: Session = Depends(deps.get_db),
 ):
@@ -78,7 +78,7 @@ def update_team(
 # 팀 삭제
 @router.delete("/{team_id}", response_model=BaseResponse)
 def delete_team(
-    team_id: int,
+    team_id: str,
     db: Session = Depends(deps.get_db),
 ):
     team = crud.team.get(db=db, id=team_id)
@@ -95,7 +95,7 @@ def delete_team(
 # [ Position ] 직위 생성
 @router.post("/{team_id}/position", response_model=BaseResponse)
 def create_position_by_team(
-    team_id: int,
+    team_id: str,
     position_in: schemas.PositionCreate,
     db: Session = Depends(deps.get_db),
 ):
@@ -110,7 +110,7 @@ def create_position_by_team(
 # [ Draft ]계약 초안 생성
 @router.post("/{team_id}/draft", response_model=DataResponse[schemas.Draft])
 def create_draft_by_team(
-    team_id: int,
+    team_id: str,
     draft_in: schemas.DraftCreate,
     db: Session = Depends(deps.get_db),
 ):
@@ -125,7 +125,7 @@ def create_draft_by_team(
 # [ Draft ] 모든 계약 초안 불러오기
 @router.get("/{team_id}/draft", response_model=ListResponse[schemas.Draft])
 def read_all_draft_by_team(
-    team_id: int,
+    team_id: str,
     db: Session = Depends(deps.get_db),
     page: int = 1,
     limit: int = 100,
@@ -144,7 +144,7 @@ def read_all_draft_by_team(
 # [ Employee ] 근로자 생성
 @router.post("/{team_id}/employee", response_model=BaseResponse)
 def create_employee_by_team(
-    team_id: int,
+    team_id: str,
     employee_in: schemas.EmployeeCreate,
     db: Session = Depends(deps.get_db),
 ):

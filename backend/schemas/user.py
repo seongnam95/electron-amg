@@ -25,7 +25,7 @@ class UserUpdate(BaseModel):
 
 
 class User(BaseModel):
-    id: int
+    id: str
     name: str
     username: str
     hashed_password: str
@@ -38,7 +38,7 @@ class User(BaseModel):
 
 
 class UserResponse(BaseModel):
-    id: int
+    id: str
     username: str
     is_admin: bool
     is_approved: bool

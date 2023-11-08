@@ -10,7 +10,7 @@ class DraftBase(BaseModel):
 
 
 class DraftCreate(DraftBase):
-    position_id: int
+    position_id: str
 
 
 class DraftUpdate(BaseModel):
@@ -19,14 +19,14 @@ class DraftUpdate(BaseModel):
 
 class Draft(DraftBase):
     id: str
-    team_id: int
+    team_id: str
     create_date: datetime
     position: Position
 
 
 class DraftForContract(DraftBase):
     id: str
-    team_id: int
+    team_id: str
     team_name: str
-    position_id: int
+    position_id: str
     unit_pay: int

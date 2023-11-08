@@ -7,7 +7,6 @@ import { useRecoilValue } from 'recoil';
 import ControlBar from '~/components/employee/ControlBar';
 import EmployeeInfoView from '~/components/employee/EmployeeInfoView';
 import EmployeeTable from '~/components/employee/EmployeeTable';
-import { useEmployeeQuery } from '~/hooks/queryHooks/useEmployeeQuery';
 import { useTeamQuery } from '~/hooks/queryHooks/useTeamQuery';
 import { useDragScroll } from '~/hooks/useDragScroll';
 import { userState } from '~/stores/user';
@@ -23,14 +22,12 @@ const EmployeePage = () => {
   // Hook
   const scrollRef = useDragScroll();
 
+  // 렌더링 1회
   const { teams } = useTeamQuery({ userId: user.id });
-  const { employees } = useEmployeeQuery({
-    teamId: selectedTeamId,
-    enabled: !!selectedTeamId,
-  });
 
+  // selectedTeamId가 없을 때 teams가 불려왔을 경우 teams 첫 항목 ID 저장
   useEffect(() => {
-    if (teams.length > 0) setSelectedTeamId(teams[0].id);
+    if (!selectedTeamId && teams.length > 0) setSelectedTeamId(teams[0].id);
   }, [teams]);
 
   const handleChangeTeam = (id: string) => setSelectedTeamId(id);
@@ -46,7 +43,12 @@ const EmployeePage = () => {
   return (
     <EmployeePageStyled className="EmployeePage">
       <ControlBar selectedTeamId={selectedTeamId} teams={teams} onChangeTeam={handleChangeTeam} />
-      <EmployeeTable employees={employees} tableWrapRef={scrollRef} onClickName={handleClickName} />
+
+      <EmployeeTable
+        teamId={selectedTeamId}
+        tableWrapRef={scrollRef}
+        onClickName={handleClickName}
+      />
 
       <Drawer
         title="근무자 정보"

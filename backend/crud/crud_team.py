@@ -10,7 +10,7 @@ from models.associations import user_team
 
 
 class CRUDTeam(CRUDBase[Team, TeamCreate, TeamUpdate]):
-    def get_team_for_user(self, db: Session, *, user_id: int) -> List[Team]:
+    def get_team_for_user(self, db: Session, *, user_id: str) -> List[Team]:
         return (
             db.query(Team)
             .join(user_team, Team.id == user_team.c.team_id)
@@ -19,7 +19,7 @@ class CRUDTeam(CRUDBase[Team, TeamCreate, TeamUpdate]):
         )
 
     def create_team_for_user(
-        self, db: Session, *, user_id: int, obj_in: TeamCreate
+        self, db: Session, *, user_id: str, obj_in: TeamCreate
     ) -> Team:
         team_dict = obj_in.model_dump()
         team_obj = Team(**team_dict)  # type: ignore

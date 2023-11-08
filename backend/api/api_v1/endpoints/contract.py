@@ -10,7 +10,7 @@
 
 
 # # Contract 의존성
-# def get_contract(contract_id: int, db: Session = Depends(deps.get_db)):
+# def get_contract(contract_id: str, db: Session = Depends(deps.get_db)):
 #     contract = crud.contract.get(db=db, id=contract_id)
 
 #     if not contract:
@@ -36,7 +36,7 @@
 # # 계약서 삭제
 # @router.delete("/{contract_id}", response_model=BaseResponse)
 # def delete_contract(
-#     contract_id: int,
+#     contract_id: str,
 #     db: Session = Depends(deps.get_db),
 # ):
 #     contract = crud.contract.get(db=db, id=contract_id)

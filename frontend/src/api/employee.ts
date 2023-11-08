@@ -21,5 +21,13 @@ export const fetchEmployeeDetail =
     const { data } = await axiosPrivate.get<FetchResponse<EmployeeDetailData>>(
       `${endpoint}/${employeeId}`,
     );
+
     return data.result;
   };
+
+export const removeEmployees = async (employeeIds: string[]): Promise<void> => {
+  const endpoint = import.meta.env.VITE_EMPLOYEE_ENDPOINT;
+  const deletePromises = employeeIds.map(id => axiosPrivate.delete(`${endpoint}/${id}`));
+
+  await Promise.all(deletePromises);
+};

@@ -19,7 +19,7 @@ class EmployeeBase(BaseModel):
     bank_book: str
     id_card: str
     sign_base64: str
-    position_id: int
+    position_id: str
 
 
 class EmployeeCreate(EmployeeBase):
@@ -45,7 +45,7 @@ class EmployeeUpdate(BaseModel):
 
 
 class Employee(EmployeeBase):
-    id: int
+    id: str
     create_date: datetime
 
     class Config:
@@ -59,7 +59,7 @@ class Employee(EmployeeBase):
 
 # 기본 (계약서 작성 시 보이게 될 최소 정보)
 class EmployeeCoveringResponse(BaseModel):
-    id: int
+    id: str
     name: str
     phone: str
     address: str
@@ -72,7 +72,7 @@ class EmployeeCoveringResponse(BaseModel):
 
 # 관리자의 리스트에 표기될 데이터
 class EmployeeResponse(BaseModel):
-    id: int
+    id: str
     name: str
     phone: str
     address: str

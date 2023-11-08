@@ -63,7 +63,7 @@ export const useDraftRemoveMutation = ({ teamId, onSuccess }: DraftQueryOptions<
 
       // 대상 Draft를 제외한 리스트를 쿼리 데이터에 저장
       queryClient.setQueryData(queryKey, (drafts: DraftData[] | undefined) => {
-        return drafts ? drafts.filter(draft => draft.id !== value) : oldDraftData;
+        return drafts ? drafts.filter(draft => draft.id.toString() !== value) : oldDraftData;
       });
 
       // 에러 시, 롤백 할 함수
