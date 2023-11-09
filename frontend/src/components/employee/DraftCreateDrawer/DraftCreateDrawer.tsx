@@ -21,7 +21,6 @@ import AntDateRangePicker from '~/components/common/DateRangePicker';
 import { useDraftCreateMutation } from '~/hooks/queryHooks/useDraftQuery';
 import { useCopyLink } from '~/hooks/useCopyLink';
 import { DraftCreateBody, DraftData } from '~/types/draft';
-import { POSITION_CODE } from '~/types/position';
 import { TeamData } from '~/types/team';
 
 import HistoryDrawer from '../HistoryDrawer';
@@ -70,7 +69,7 @@ const DraftCreateDrawer = ({ team, onCopy, onClose, ...props }: DraftCreateDrawe
 
   // 직위 변경 핸들러
   const handleChangePosition = (positionId: string) => {
-    const pay = team?.positions.find(pos => pos.id == positionId)?.unitPay ?? 0;
+    const pay = team?.positions.find(pos => pos.id == positionId)?.pay ?? 0;
     form.setFieldValue('unitPay', pay);
   };
 
@@ -235,11 +234,9 @@ const DraftCreateDrawer = ({ team, onCopy, onClose, ...props }: DraftCreateDrawe
                 textAlign: 'right',
               }}
             >
-              <Descriptions.Item label="직위">
-                {POSITION_CODE[draft.position.positionCode]}
-              </Descriptions.Item>
-              <Descriptions.Item label="단가">
-                {draft.position.unitPay.toLocaleString()}원
+              <Descriptions.Item label="직위">{draft.position.name}</Descriptions.Item>
+              <Descriptions.Item label="페이">
+                {draft.position.pay.toLocaleString()}원
               </Descriptions.Item>
               <Descriptions.Item label="계약일">
                 {draft.startPeriod} ~ {draft.endPeriod}

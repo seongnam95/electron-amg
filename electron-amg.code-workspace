@@ -12,6 +12,7 @@
       "autoload",
       "boxicons",
       "Cryptodome",
+      "datas",
       "fastapi",
       "Flatform",
       "initlize",

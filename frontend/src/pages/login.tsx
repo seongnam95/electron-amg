@@ -81,7 +81,6 @@ const Login = () => {
         .catch(err => {
           passwordInputRef.current?.focus();
           message.error('아이디 또는 패스워드가 일치하지 않습니다.');
-          console.log(err);
         });
     }
   };

@@ -11,8 +11,7 @@ export type PositionType = keyof typeof POSITION_CODE;
 export interface PositionData {
   id: string;
   name: string;
-  positionCode: PositionType;
-  unitPay: number;
+  pay: number;
 }
 
 export interface DraftData {

@@ -1,5 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 
+import { AxiosError } from 'axios';
+
 import { fetchEmployeeDetail, fetchEmployees, removeEmployees } from '~/api/employee';
 import { BaseResponse } from '~/api/response';
 import { EmployeeData, EmployeeDetailData } from '~/types/employee';
@@ -23,7 +25,6 @@ export const useEmployeeQuery = ({
   });
 
   const employees = data ? data.toReversed() : [];
-  console.log(employees);
   return { employees, isLoading, isError };
 };
 
@@ -51,7 +52,11 @@ export const useEmployeeDetailQuery = ({
   return { employee, isLoading, isError };
 };
 
-export const useEmployeeRemoveMutation = ({ teamId, onSuccess }: EmployeeQueryOptions<unknown>) => {
+export const useEmployeeRemoveMutation = ({
+  teamId,
+  onSuccess,
+  onError,
+}: EmployeeQueryOptions<unknown>) => {
   const queryKey: string[] = [import.meta.env.VITE_EMPLOYEE_QUERY_KEY, teamId];
   const queryClient = useQueryClient();
 
@@ -82,8 +87,10 @@ export const useEmployeeRemoveMutation = ({ teamId, onSuccess }: EmployeeQueryOp
       onSettled,
       onSuccess,
       onMutate: handleRemoveMutate,
-      onError: ({ rollback }) => {
-        if (rollback) rollback();
+      onError: (err, _, rollback) => {
+        const { response } = err as AxiosError<BaseResponse>;
+        onError?.(response ? response.data.msg : '잠시후 다시 시도해주세요.');
+        rollback?.();
       },
     },
   );

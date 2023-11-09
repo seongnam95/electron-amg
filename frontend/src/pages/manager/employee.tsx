@@ -7,6 +7,8 @@ import { useRecoilValue } from 'recoil';
 import ControlBar from '~/components/employee/ControlBar';
 import EmployeeInfoView from '~/components/employee/EmployeeInfoView';
 import EmployeeTable from '~/components/employee/EmployeeTable';
+import ExcelDrawer from '~/components/employee/ExcelDrawer';
+import { useEmployeeQuery } from '~/hooks/queryHooks/useEmployeeQuery';
 import { useTeamQuery } from '~/hooks/queryHooks/useTeamQuery';
 import { useDragScroll } from '~/hooks/useDragScroll';
 import { userState } from '~/stores/user';
@@ -17,6 +19,8 @@ const EmployeePage = () => {
   const { user } = useRecoilValue(userState);
   const [selectedTeamId, setSelectedTeamId] = useState<string>();
   const [selectedEmployeeId, setSelectedEmployeeId] = useState<string>();
+  const [selectedEmployeeIds, setSelectedEmployeeIds] = useState<string[]>();
+
   const [openEmployeeInfoDrawer, setOpenEmployeeInfoDrawer] = useState<boolean>(false);
 
   // Hook
@@ -24,6 +28,7 @@ const EmployeePage = () => {
 
   // 렌더링 1회
   const { teams } = useTeamQuery({ userId: user.id });
+  const { employees } = useEmployeeQuery({ teamId: selectedTeamId, enabled: !!selectedTeamId });
 
   // selectedTeamId가 없을 때 teams가 불려왔을 경우 teams 첫 항목 ID 저장
   useEffect(() => {
@@ -54,6 +59,7 @@ const EmployeePage = () => {
         title="근무자 정보"
         extra={RenderExtra}
         closable={false}
+        getContainer={false}
         open={openEmployeeInfoDrawer}
         onClose={() => setOpenEmployeeInfoDrawer(false)}
       >

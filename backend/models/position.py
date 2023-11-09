@@ -19,8 +19,9 @@ class Position(Base):
     )  # PK
 
     name = Column(String, nullable=False)  # 이름
-    position_code = Column(Integer, nullable=False)  # 직위 코드
-    unit_pay = Column(Integer, nullable=False)  # 단가
+    color = Column(String, nullable=False)  # 색상
+    salary_code = Column(Integer, nullable=False)  # 급여 종류
+    pay = Column(Integer, nullable=False)  # 단가
 
     employee = relationship("Employee", back_populates="position")
     draft = relationship("Draft", back_populates="position")

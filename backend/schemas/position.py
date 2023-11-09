@@ -4,9 +4,10 @@ from schemas.common import check_update_fields
 
 
 class PositionBase(BaseModel):
-    position_code: int
     name: str
-    unit_pay: int
+    color: str
+    salary_code: int
+    pay: int
 
 
 class PositionCreate(PositionBase):
@@ -14,9 +15,10 @@ class PositionCreate(PositionBase):
 
 
 class PositionUpdate(PositionBase):
-    position_code: Optional[int] = None
     name: Optional[str] = None
-    unit_pay: Optional[int] = None
+    color: Optional[str] = None
+    salary_code: Optional[int] = None
+    pay: Optional[int] = None
 
     @model_validator(mode="before")
     def check_fields(cls, values: dict):

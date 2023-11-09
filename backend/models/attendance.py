@@ -22,10 +22,10 @@ class Attendance(Base):
 
     incentive = Column(Integer, default=0)  # 인센티브 (추가금)
     deduct = Column(Integer, default=0)  # 차감액
-    memo = Column(String)
+    memo = Column(String)  # 메모
 
-    is_meal_included = Column(Boolean, default=False)
-    working_date = Column(String, nullable=False)
+    is_meal_included = Column(Boolean, default=False)  # 식대 포함
+    working_date = Column(String, nullable=False)  # 근무일
 
     employee_id = Column(Integer, ForeignKey("employee.id"), nullable=False)
     employee = relationship("Employee", back_populates="attendances")

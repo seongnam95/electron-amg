@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 
 export const EmployeePageStyled = styled.div`
+  position: relative;
   height: 100%;
 
   .EmployeeTable {

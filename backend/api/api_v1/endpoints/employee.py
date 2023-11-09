@@ -89,7 +89,11 @@ def delete_employee(
     employee_id: str,
     db: Session = Depends(deps.get_db),
 ):
-    crud.employee.remove_employee(db=db, id=employee_id)
+    employee = crud.employee.get(db=db, id=employee_id)
+    if not employee:
+        raise HTTPException(status_code=404, detail="해당 직원을 찾을 수 없습니다.")
+
+    crud.employee.remove_employee(db=db, employee_obj=employee)
     return BaseResponse(msg="정상 처리되었습니다.")
 
 

@@ -58,7 +58,7 @@ const EmployeeInfoView = ({ employeeId }: EmployeeInfoViewProps) => {
       >
         <Descriptions.Item label="소속 업체">{employee.team.name}</Descriptions.Item>
         <Descriptions.Item label="단가">
-          {employee.position.unitPay.toLocaleString()}원
+          {employee.position.pay.toLocaleString()}원
         </Descriptions.Item>
         <Descriptions.Item label="계약기간">
           {employee.startPeriod} ~ {employee.endPeriod}

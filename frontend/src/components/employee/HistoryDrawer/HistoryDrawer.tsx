@@ -1,9 +1,9 @@
-import { AiOutlineClose, AiOutlineLink, AiTwotoneDelete } from 'react-icons/ai';
+import { AiOutlineClose, AiOutlineLink } from 'react-icons/ai';
+import { FaTrashAlt } from 'react-icons/fa';
 
 import { Button, Drawer, DrawerProps, Flex, List, Space, Tag } from 'antd';
 
 import { useDraftQuery, useDraftRemoveMutation } from '~/hooks/queryHooks/useDraftQuery';
-import { POSITION_CODE, POSITION_COLORS } from '~/types/position';
 
 /**
  * useDraftHook을 사용해 Draft 데이터들을 불러온 후 리스트에 랜더링
@@ -43,11 +43,8 @@ const HistoryDrawer = ({ teamId, onCopy, onClose, ...props }: HistoryDrawerProps
             <List.Item key={draft.id}>
               <Flex justify="space-between">
                 <Space>
-                  <Tag
-                    style={{ width: '6rem', textAlign: 'center' }}
-                    color={POSITION_COLORS[position.positionCode]}
-                  >
-                    {POSITION_CODE[position.positionCode]}
+                  <Tag style={{ width: '6rem', textAlign: 'center' }} color={position.color}>
+                    {position.name}
                   </Tag>
                   <Tag>
                     {draft.startPeriod} - {draft.endPeriod}
@@ -55,17 +52,17 @@ const HistoryDrawer = ({ teamId, onCopy, onClose, ...props }: HistoryDrawerProps
                 </Space>
 
                 {/* Buttons Wrap */}
-                <Flex>
+                <Flex gap={2}>
                   <Button
-                    icon={<AiOutlineLink size="2rem" />}
-                    type="link"
+                    icon={<AiOutlineLink size="2.2rem" />}
+                    type="text"
                     onClick={() => {
                       onCopy?.(draft.id);
                       onClose?.();
                     }}
                   />
                   <Button
-                    icon={<AiTwotoneDelete size="2rem" />}
+                    icon={<FaTrashAlt size="1.8rem" style={{ marginTop: 2 }} />}
                     type="text"
                     danger
                     onClick={() => handleRemoveClick(draft.id)}

@@ -1,12 +1,13 @@
 import { ForwardedRef, useState } from 'react';
 
-import { Table, Tag } from 'antd';
+import { Table, Tag, message } from 'antd';
 import { ColumnsType, Key } from 'antd/es/table/interface';
 
 import { useEmployeeQuery, useEmployeeRemoveMutation } from '~/hooks/queryHooks/useEmployeeQuery';
-import { POSITION_CODE, POSITION_COLORS, PositionType } from '~/types/position';
+import { PositionData } from '~/types/position';
 import { formatPhoneNumber } from '~/utils/formatData';
 
+import ExcelDrawer from '../ExcelDrawer';
 import Dock from './Dock';
 import { EmployeeTableWrapStyled } from './styled';
 
@@ -14,14 +15,13 @@ interface EmployeeTableData {
   key: string;
   name: string;
   phone: string;
-  position: PositionType;
+  position: PositionData;
   unitPay: number;
   attendance: string;
 }
 
 interface EmployeeTableProps {
   teamId?: string;
-
   tableWrapRef?: ForwardedRef<HTMLDivElement>;
   isLoading?: boolean;
   onClickName?: (id: string) => void;
@@ -30,9 +30,13 @@ interface EmployeeTableProps {
 const EmployeeTable = ({ teamId, tableWrapRef, isLoading, onClickName }: EmployeeTableProps) => {
   const [showToolModal, setShowToolModal] = useState<boolean>(false);
   const [selectedEmployeeIds, setSelectedEmployeeIds] = useState<string[]>([]);
+  const [openExcelDrawer, setOpenExcelDrawer] = useState<boolean>(false);
 
   const { employees } = useEmployeeQuery({ teamId: teamId, enabled: !!teamId });
-  const { removeEmployeeMutate } = useEmployeeRemoveMutation({ teamId: teamId });
+  const { removeEmployeeMutate } = useEmployeeRemoveMutation({
+    teamId: teamId,
+    onError: msg => message.error(msg),
+  });
 
   const columns: ColumnsType<EmployeeTableData> = [
     {
@@ -62,12 +66,13 @@ const EmployeeTable = ({ teamId, tableWrapRef, isLoading, onClickName }: Employe
       width: 90,
       align: 'center',
       sorter: (a, b) => a.position.toString().localeCompare(b.position.toString()),
-      render: (position: PositionType) => {
-        const label = POSITION_CODE[position];
-        const color = POSITION_COLORS[position];
+      render: (position: PositionData) => {
         return (
-          <Tag style={{ width: '5rem', textAlign: 'center', marginInlineEnd: 0 }} color={color}>
-            {label}
+          <Tag
+            style={{ width: '5rem', textAlign: 'center', marginInlineEnd: 0 }}
+            color={position.color}
+          >
+            {position.name}
           </Tag>
         );
       },
@@ -115,8 +120,8 @@ const EmployeeTable = ({ teamId, tableWrapRef, isLoading, onClickName }: Employe
       key: employee.id,
       name: employee.name,
       phone: employee.phone,
-      position: position.positionCode,
-      unitPay: position.unitPay,
+      position: position,
+      unitPay: position.pay,
       attendance: attendance,
       period: period,
     };
@@ -131,10 +136,17 @@ const EmployeeTable = ({ teamId, tableWrapRef, isLoading, onClickName }: Employe
     setShowToolModal(keys.length > 0 ? true : false);
   };
 
+  // Excel 이벤트
+  const handleExcelClose = () => setOpenExcelDrawer(false);
+  const handleExcel = () => {
+    setShowToolModal(false);
+    setOpenExcelDrawer(true);
+  };
+
   // Row 삭제 이벤트
   const handleDelete = () => {
-    removeEmployeeMutate(selectedEmployeeIds);
     setShowToolModal(false);
+    removeEmployeeMutate(selectedEmployeeIds);
   };
 
   return (
@@ -151,7 +163,8 @@ const EmployeeTable = ({ teamId, tableWrapRef, isLoading, onClickName }: Employe
           onChange: handleSelectedChange,
         }}
       />
-      <Dock open={showToolModal} onDelete={handleDelete} />
+      <Dock open={showToolModal} onExcel={handleExcel} onDelete={handleDelete} />
+      <ExcelDrawer employees={employees} open={openExcelDrawer} onClose={handleExcelClose} />
     </EmployeeTableWrapStyled>
   );
 };

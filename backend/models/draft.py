@@ -10,13 +10,7 @@ from b64uuid import B64UUID
 class Draft(Base):
     __tablename__ = "draft"
 
-    id = Column(
-        String,
-        primary_key=True,
-        index=True,
-        unique=True,
-        default=lambda: str(B64UUID(uuid4())),
-    )
+    id = Column(String, primary_key=True, index=True, unique=True)
 
     start_period = Column(Date, nullable=False)  # 계약 시작일
     end_period = Column(Date, nullable=False)  # 계약 종료일

@@ -1,39 +1,31 @@
 import styled from 'styled-components';
 
 export const DockStyled = styled.div`
-  position: absolute;
-  left: 50%;
-  bottom: 4rem;
-
   .dock-wrap {
+    position: absolute;
+    left: 50%;
+    bottom: 4rem;
+    transform: translateX(-50%);
+
     display: flex;
     align-items: center;
     justify-content: center;
+    gap: 0.6rem;
 
-    width: 6.4rem;
-    height: 6.4rem;
-
-    background-color: rgba(200, 200, 200, 0.4);
+    background-color: rgba(255, 255, 255, 0.4);
     backdrop-filter: blur(6px);
-    box-shadow: rgba(66, 66, 66, 0.2) 0 8px 36px;
+    box-shadow: rgba(66, 66, 66, 0.1) 0 8px 36px;
 
-    border: 1px solid ${p => p.theme.colors.borderColor};
-    border-radius: 1.2rem;
-    z-index: 9999;
+    font-size: 1.4rem;
+    padding: 1rem 1.8rem;
 
-    cursor: pointer;
+    border-radius: 0.8rem;
+  }
 
-    > svg {
-      font-size: 2.4rem;
-      color: ${p => p.theme.colors.error};
-      opacity: 0.9;
-      transition: all 180ms ease-in-out;
-    }
-
+  .excel-btn {
     :hover {
-      > svg {
-        font-size: 2.7rem;
-      }
+      color: #1f7342 !important;
+      background-color: rgb(31, 115, 66, 0.1) !important;
     }
   }
 `;

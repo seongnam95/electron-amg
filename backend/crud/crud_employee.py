@@ -57,9 +57,7 @@ class CRUDEmployee(CRUDBase[Employee, EmployeeCreate, EmployeeUpdate]):
         return employee_obj
 
     # 근로자 삭제
-    def remove_employee(self, db: Session, *, id: str):
-        employee_obj: Employee = db.query(Employee).get(id)
-
+    def remove_employee(self, db: Session, *, employee_obj: Employee):
         remove_image(employee_obj.bank_book_file_nm)
         remove_image(employee_obj.id_card_file_nm)
 

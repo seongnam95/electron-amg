@@ -4,6 +4,19 @@ from schemas.common import check_update_fields
 
 
 class AttendanceBase(BaseModel):
+    pay: int
+    working_date: str
+    incentive: Optional[int] = None
+    deduct: Optional[int] = None
+    is_meal_included: Optional[bool] = None
+    memo: Optional[str] = None
+
+
+class AttendanceCreate(AttendanceBase):
+    pass
+
+
+class AttendanceUpdate(BaseModel):
     pay: Optional[int] = None
     incentive: Optional[int] = None
     deduct: Optional[int] = None
@@ -11,12 +24,6 @@ class AttendanceBase(BaseModel):
     working_date: Optional[str] = None
     memo: Optional[str] = None
 
-
-class AttendanceCreate(AttendanceBase):
-    pay: int
-
-
-class AttendanceUpdate(AttendanceBase):
     @model_validator(mode="before")
     def check_fields(cls, values: dict):
         return check_update_fields(cls, values)
@@ -24,7 +31,6 @@ class AttendanceUpdate(AttendanceBase):
 
 class Attendance(AttendanceBase):
     id: str
-    pay: int
 
     class Config:
         from_attributes = True

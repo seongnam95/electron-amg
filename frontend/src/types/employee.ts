@@ -30,10 +30,3 @@ export type EmployeeCreateBody = Omit<EmployeeDetailData, 'id' | 'attendances'>;
 
 /** 근로자 업데이트 API 바디 */
 export type EmployeeUpdateBody = Partial<EmployeeCreateBody>;
-
-export const SALARY_CODE = {
-  daily: '일급',
-  weekly: '주급',
-  monthly: '월급',
-} as const;
-export type SalaryType = keyof typeof SALARY_CODE;

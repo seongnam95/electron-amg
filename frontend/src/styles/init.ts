@@ -97,6 +97,6 @@ export const InitGlobalStyled = memo(createGlobalStyle`
     height: 6.4rem;
     min-height: 6.4rem;
 
-    padding: 0 2.4rem;
+    padding: 0.3rem 2.4rem 0 !important;
   }
 `);

@@ -11,7 +11,7 @@ export interface LayoutProps {
 
 const Layout = ({ className, children }: LayoutProps) => {
   return (
-    <LayoutStyled className={clsx('Layout', className)}>
+    <LayoutStyled id="layout-wrap" className={clsx('Layout', className)}>
       <SideNavbar />
       <Content>{children}</Content>
     </LayoutStyled>
