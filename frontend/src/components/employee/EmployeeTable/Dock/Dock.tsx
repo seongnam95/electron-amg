@@ -27,7 +27,7 @@ const Dock = ({ open, parentElement, onExcel, onDelete }: DockProps) => {
             exit={{ opacity: 0, y: 5 }}
             transition={{ duration: 0.2, ease: 'easeOut' }}
           >
-            <Tooltip title="엑셀로 저장">
+            <Tooltip title="엑셀로 저장" mouseEnterDelay={0.6}>
               <Button
                 className="excel-btn"
                 type="text"
@@ -37,7 +37,7 @@ const Dock = ({ open, parentElement, onExcel, onDelete }: DockProps) => {
               />
             </Tooltip>
 
-            <Tooltip title="삭제">
+            <Tooltip title="삭제" mouseEnterDelay={0.6}>
               <Button
                 danger
                 type="text"

@@ -3,16 +3,9 @@ import { useState } from 'react';
 import { Radio } from 'antd';
 import dayjs, { Dayjs } from 'dayjs';
 
-import DatePicker from '~/components/common/DatePicker';
 import AntDatePicker from '~/components/common/DatePicker';
-import LayoutConfig from '~/components/layouts/LayoutConfig/LayoutConfig';
-import DayTable from '~/components/tracker/DayTable';
-import MonthTable from '~/components/tracker/MonthTable';
-import { useEmployeeQuery } from '~/hooks/queryHooks/useEmployeeQuery';
 import { useDragScroll } from '~/hooks/useDragScroll';
 import { EmployeeTrackerPageStyled } from '~/styles/pageStyled/employeeTrackerPageStyled';
-import { EmployeeData } from '~/types/employee';
-import { generateWeekColorDays } from '~/utils/commuteRange';
 
 const EmployeeTracker = () => {
   const dragRef = useDragScroll();

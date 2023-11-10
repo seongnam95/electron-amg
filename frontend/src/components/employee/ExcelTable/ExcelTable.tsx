@@ -19,9 +19,10 @@ interface ExcelTableProps extends DrawerProps {
 }
 
 const ExcelTable = ({ columns }: ExcelTableProps) => {
-  const alphabet = Array.from({ length: 26 }, (_, i) => String.fromCharCode(65 + i));
+  const columnAlphabet = Array.from({ length: 26 }, (_, i) => String.fromCharCode(65 + i));
+  const rowList = Array.from({ length: 20 }, (_, i) => i + 1);
 
-  const newColumns = alphabet.map((alpha, index) => {
+  const newColumns = columnAlphabet.map((alpha, index) => {
     if (columns[index]) {
       return columns[index];
     }
@@ -35,15 +36,23 @@ const ExcelTable = ({ columns }: ExcelTableProps) => {
     <ExcelTableStyled>
       <table>
         <thead>
-          <tr>
-            {newColumns.map(column => {
-              return <th key={column.key}>{column.title}</th>;
+          <tr className="column-title-row">
+            <th></th>
+            {columnAlphabet.map((alpha, columnIndex) => {
+              return <th key={alpha}>{alpha}</th>;
             })}
           </tr>
         </thead>
         <tbody>
-          {newColumns.map(column => {
-            return <th key={column.key}>{column.title}</th>;
+          {rowList.map(row => {
+            return (
+              <tr>
+                <td className="row-title">{row}</td>
+                {columnAlphabet.map((r, tdIndex) => {
+                  return <td></td>;
+                })}
+              </tr>
+            );
           })}
         </tbody>
       </table>

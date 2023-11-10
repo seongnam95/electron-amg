@@ -2,13 +2,14 @@ import { ChangeEvent, FormEvent, useEffect, useRef, useState } from 'react';
 import { BsFillPersonFill, BsLockFill } from 'react-icons/bs';
 import { useNavigate } from 'react-router-dom';
 
-import { message } from 'antd';
+import { App } from 'antd';
 import axios from 'axios';
 import { useSetRecoilState } from 'recoil';
 
 import { loginUser } from '~/api/auth';
 import Button from '~/components/common/Button';
 import Input from '~/components/common/Input';
+import { useSoundApp } from '~/hooks/useSoundApp';
 import { userState } from '~/stores/user';
 import { LoginPageStyled } from '~/styles/pageStyled/loginPageStyled';
 import { CurrentUser } from '~/types/user';
@@ -24,6 +25,7 @@ const Login = () => {
   const passwordInputRef = useRef<HTMLInputElement>(null);
   const setUser = useSetRecoilState(userState);
   const navigate = useNavigate();
+  const { soundMessage } = useSoundApp();
 
   const [geoData, setGeoData] = useState<GeoLocationI>();
   const [account, setAccount] = useState({ username: '', password: '' });
@@ -44,7 +46,7 @@ const Login = () => {
           });
         })
         .catch(() => {
-          message.error('IP 조회에 실패하였습니다.');
+          soundMessage.error('IP 조회에 실패하였습니다.');
         });
     };
     fetchGeoData();
@@ -80,7 +82,7 @@ const Login = () => {
         })
         .catch(err => {
           passwordInputRef.current?.focus();
-          message.error('아이디 또는 패스워드가 일치하지 않습니다.');
+          soundMessage.error('아이디 또는 패스워드가 일치하지 않습니다.');
         });
     }
   };

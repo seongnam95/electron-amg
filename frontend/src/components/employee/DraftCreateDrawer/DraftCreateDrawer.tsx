@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { AiFillCheckCircle, AiOutlineClose, AiOutlinePaperClip } from 'react-icons/ai';
 import { BsClockHistory } from 'react-icons/bs';
 
 import {
@@ -9,46 +8,52 @@ import {
   Select,
   Space,
   Typography,
-  Descriptions,
-  message,
   DrawerProps,
   Skeleton,
+  Drawer,
+  App,
 } from 'antd';
 import dayjs, { Dayjs } from 'dayjs';
-import { AnimatePresence, motion } from 'framer-motion';
 
 import AntDateRangePicker from '~/components/common/DateRangePicker';
 import { useDraftCreateMutation } from '~/hooks/queryHooks/useDraftQuery';
-import { useCopyLink } from '~/hooks/useCopyLink';
+import { useSoundApp } from '~/hooks/useSoundApp';
 import { DraftCreateBody, DraftData } from '~/types/draft';
 import { TeamData } from '~/types/team';
 
-import HistoryDrawer from '../HistoryDrawer';
-import { DraftCreateDrawerStyled } from './styled';
+import DraftResultBox from './DraftResultBox/DraftResultBox';
 
 export interface DraftCreateDrawerProps extends DrawerProps {
   team?: TeamData;
   onCopy?: (id: string) => void;
   onClose?: () => void;
+  onHistory?: () => void;
 }
 
-const DraftCreateDrawer = ({ team, onCopy, onClose, ...props }: DraftCreateDrawerProps) => {
-  const hasTeam = !!team;
+const DraftCreateDrawer = ({
+  team,
+  onCopy,
+  onClose,
+  onHistory,
+  children,
+  ...props
+}: DraftCreateDrawerProps) => {
+  const existTeam = !!team;
 
   const [draft, setDraft] = useState<DraftData | undefined>();
   const [showResultBox, setShowResultBox] = useState<boolean>(false);
-  const [openHistoryDrawer, setOpenHistoryDrawer] = useState<boolean>(false);
 
   const [form] = Form.useForm();
-  const { contextHolder, copyInputLink } = useCopyLink();
+  const { soundMessage, modal } = useSoundApp();
 
+  // DatePicker 기본 값 [ 오늘 날짜, 이번달 마지막 날짜 ]
   const currentDate = dayjs();
   const lastDate = currentDate.endOf('month');
   const defaultPickerValue: [Dayjs, Dayjs] = [currentDate, lastDate];
 
   const { createDraftMutate, isCreateDraftLoading } = useDraftCreateMutation({
-    teamId: hasTeam ? team.id : undefined,
-    enabled: hasTeam,
+    teamId: team?.id,
+    enabled: existTeam,
   });
 
   // 폼 초기화
@@ -58,14 +63,11 @@ const DraftCreateDrawer = ({ team, onCopy, onClose, ...props }: DraftCreateDrawe
     setShowResultBox(false);
   };
 
-  // Drawer Close 핸들러
+  // Drawer 닫기 핸들러
   const handleClose = () => {
     resetForm();
     onClose?.();
   };
-
-  const handleClickHistory = () => setOpenHistoryDrawer(true);
-  const handleCloseHistory = () => setOpenHistoryDrawer(false);
 
   // 직위 변경 핸들러
   const handleChangePosition = (positionId: string) => {
@@ -88,7 +90,7 @@ const DraftCreateDrawer = ({ team, onCopy, onClose, ...props }: DraftCreateDrawe
         form.resetFields();
       },
       onError: v => {
-        message.error('생성 실패. 잠시후 다시 시도해주세요.');
+        soundMessage.error('생성 실패. 잠시후 다시 시도해주세요.');
       },
     });
   };
@@ -96,17 +98,17 @@ const DraftCreateDrawer = ({ team, onCopy, onClose, ...props }: DraftCreateDrawe
   // 결과 박스 닫기 핸들러
   const handleCloseResult = () => setShowResultBox(false);
 
-  const RenderExtra = hasTeam ? (
+  const RenderExtra = existTeam ? (
     <Button
       type="text"
       icon={<BsClockHistory size="1.8rem" style={{ marginTop: 2 }} />}
-      onClick={handleClickHistory}
+      onClick={onHistory}
     />
   ) : (
     <Skeleton.Button active size="small" />
   );
 
-  const RenderTitle = hasTeam ? (
+  const RenderTitle = existTeam ? (
     <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
       <span
         style={{
@@ -124,130 +126,73 @@ const DraftCreateDrawer = ({ team, onCopy, onClose, ...props }: DraftCreateDrawe
 
   const { Option } = Select;
   return (
-    <DraftCreateDrawerStyled
+    <Drawer
+      getContainer={false}
       extra={RenderExtra}
       title={RenderTitle}
       closable={false}
       onClose={handleClose}
       {...props}
     >
-      {hasTeam ? (
-        <Space direction="vertical" style={{ width: '100%' }}>
-          <Typography.Title className="view-title" level={5}>
-            계약서 폼 생성
-          </Typography.Title>
+      {existTeam ? (
+        <Space direction="vertical" size={34} style={{ width: '100%' }}>
+          <Space direction="vertical" style={{ width: '100%' }}>
+            <Typography.Title className="view-title" level={5}>
+              계약서 폼 생성
+            </Typography.Title>
 
-          <Form
-            form={form}
-            layout="vertical"
-            autoComplete="off"
-            onFinish={handleFinish}
-            initialValues={{ period: defaultPickerValue }}
-          >
-            <Form.Item
-              label="직위 구분"
-              colon={false}
-              name="position"
-              rules={[{ required: true, message: '직위를 선택해주세요.' }]}
+            <Form
+              form={form}
+              layout="vertical"
+              autoComplete="off"
+              onFinish={handleFinish}
+              initialValues={{ period: defaultPickerValue }}
             >
-              <Select placeholder="( 직위 선택 )" onChange={handleChangePosition}>
-                {team.positions.map(pos => {
-                  return (
-                    <Option key={pos.id} value={pos.id}>
-                      {pos.name}
-                    </Option>
-                  );
-                })}
-              </Select>
-            </Form.Item>
+              <Form.Item
+                label="직위 구분"
+                colon={false}
+                name="position"
+                rules={[{ required: true, message: '직위를 선택해주세요.' }]}
+              >
+                <Select placeholder="( 직위 선택 )" onChange={handleChangePosition}>
+                  {team.positions.map(pos => {
+                    return (
+                      <Option key={pos.id} value={pos.id}>
+                        {pos.name}
+                      </Option>
+                    );
+                  })}
+                </Select>
+              </Form.Item>
 
-            <Form.Item
-              colon={false}
-              label="계약일"
-              name="period"
-              rules={[{ required: true, message: '계약일을 선택해주세요.' }]}
-            >
-              <AntDateRangePicker fullWidth />
-            </Form.Item>
+              <Form.Item
+                colon={false}
+                label="계약일"
+                name="period"
+                rules={[{ required: true, message: '계약일을 선택해주세요.' }]}
+              >
+                <AntDateRangePicker fullWidth />
+              </Form.Item>
 
-            <Flex flex={1} style={{ justifyContent: 'end' }}>
-              <Button type="primary" htmlType="submit" loading={isCreateDraftLoading}>
-                생성하기
-              </Button>
-            </Flex>
-          </Form>
+              <Flex flex={1} style={{ justifyContent: 'end' }}>
+                <Button type="primary" htmlType="submit" loading={isCreateDraftLoading}>
+                  생성하기
+                </Button>
+              </Flex>
+            </Form>
+          </Space>
+
+          <DraftResultBox
+            show={showResultBox}
+            draft={draft}
+            onCopy={onCopy}
+            onClose={handleCloseResult}
+          />
         </Space>
       ) : (
         <Skeleton active />
       )}
-
-      {hasTeam && (
-        <HistoryDrawer
-          teamId={team.id}
-          title={RenderTitle}
-          open={openHistoryDrawer}
-          onCopy={copyInputLink}
-          onClose={handleCloseHistory}
-        />
-      )}
-
-      <AnimatePresence>
-        {showResultBox && draft ? (
-          <motion.div
-            key={draft.id}
-            className="result-wrap"
-            initial={{ opacity: 0, x: -10 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: 10 }}
-            transition={{ duration: 0.2, ease: 'easeInOut' }}
-            style={{ marginTop: '3.4rem' }}
-          >
-            <Flex justify="space-between" align="center">
-              <Flex align="center" gap={8}>
-                <AiFillCheckCircle size={16} color="#52c41a" />
-                <span>폼 생성 완료!</span>
-              </Flex>
-
-              <Flex align="center">
-                <Button size="small" type="link" onClick={() => copyInputLink(draft.id)}>
-                  <Flex align="center" gap="0.5rem">
-                    <AiOutlinePaperClip size="1.6rem" />
-                    링크복사
-                  </Flex>
-                </Button>
-                <Button
-                  size="small"
-                  type="text"
-                  style={{ paddingTop: '2px' }}
-                  onClick={handleCloseResult}
-                >
-                  <AiOutlineClose size="1.4rem" />
-                </Button>
-              </Flex>
-            </Flex>
-
-            <Descriptions
-              column={1}
-              colon={false}
-              contentStyle={{
-                display: 'inline-block',
-                textAlign: 'right',
-              }}
-            >
-              <Descriptions.Item label="직위">{draft.position.name}</Descriptions.Item>
-              <Descriptions.Item label="페이">
-                {draft.position.pay.toLocaleString()}원
-              </Descriptions.Item>
-              <Descriptions.Item label="계약일">
-                {draft.startPeriod} ~ {draft.endPeriod}
-              </Descriptions.Item>
-            </Descriptions>
-          </motion.div>
-        ) : null}
-      </AnimatePresence>
-
-      {contextHolder}
-    </DraftCreateDrawerStyled>
+    </Drawer>
   );
 };
 

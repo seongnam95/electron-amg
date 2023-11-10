@@ -5,11 +5,6 @@ import { Button, Drawer, DrawerProps, Flex, List, Space, Tag } from 'antd';
 
 import { useDraftQuery, useDraftRemoveMutation } from '~/hooks/queryHooks/useDraftQuery';
 
-/**
- * useDraftHook을 사용해 Draft 데이터들을 불러온 후 리스트에 랜더링
- * useDraftRemove을 사용해 Draft 데이터를 삭제
- */
-
 interface HistoryDrawerProps extends DrawerProps {
   teamId: string;
   onCopy?: (id: string) => void;
@@ -32,7 +27,14 @@ const HistoryDrawer = ({ teamId, onCopy, onClose, ...props }: HistoryDrawerProps
   );
 
   return (
-    <Drawer closable={false} extra={RenderExtra} onClose={onClose} {...props}>
+    <Drawer
+      getContainer={false}
+      title="히스토리"
+      closable={false}
+      extra={RenderExtra}
+      onClose={onClose}
+      {...props}
+    >
       <List
         loading={isLoading}
         dataSource={drafts}

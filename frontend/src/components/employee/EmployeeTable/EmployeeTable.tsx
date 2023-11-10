@@ -1,13 +1,12 @@
-import { ForwardedRef, useState } from 'react';
+import { ForwardedRef, useEffect, useState } from 'react';
 
 import { Table, Tag, message } from 'antd';
 import { ColumnsType, Key } from 'antd/es/table/interface';
 
 import { useEmployeeQuery, useEmployeeRemoveMutation } from '~/hooks/queryHooks/useEmployeeQuery';
-import { PositionData } from '~/types/position';
+import { PositionData, SALARY, SalaryType } from '~/types/position';
 import { formatPhoneNumber } from '~/utils/formatData';
 
-import ExcelDrawer from '../ExcelDrawer';
 import Dock from './Dock';
 import { EmployeeTableWrapStyled } from './styled';
 
@@ -16,7 +15,10 @@ interface EmployeeTableData {
   name: string;
   phone: string;
   position: PositionData;
-  unitPay: number;
+  salary: {
+    salaryCode: SalaryType;
+    pay: number;
+  };
   attendance: string;
 }
 
@@ -24,19 +26,22 @@ interface EmployeeTableProps {
   teamId?: string;
   tableWrapRef?: ForwardedRef<HTMLDivElement>;
   isLoading?: boolean;
+  onRemove?: (ids: string[]) => void;
   onClickName?: (id: string) => void;
 }
 
-const EmployeeTable = ({ teamId, tableWrapRef, isLoading, onClickName }: EmployeeTableProps) => {
-  const [showToolModal, setShowToolModal] = useState<boolean>(false);
+const EmployeeTable = ({
+  teamId,
+  tableWrapRef,
+  isLoading,
+  onRemove,
+  onClickName,
+}: EmployeeTableProps) => {
   const [selectedEmployeeIds, setSelectedEmployeeIds] = useState<string[]>([]);
   const [openExcelDrawer, setOpenExcelDrawer] = useState<boolean>(false);
+  const isSelected = selectedEmployeeIds.length > 0;
 
   const { employees } = useEmployeeQuery({ teamId: teamId, enabled: !!teamId });
-  const { removeEmployeeMutate } = useEmployeeRemoveMutation({
-    teamId: teamId,
-    onError: msg => message.error(msg),
-  });
 
   const columns: ColumnsType<EmployeeTableData> = [
     {
@@ -78,12 +83,17 @@ const EmployeeTable = ({ teamId, tableWrapRef, isLoading, onClickName }: Employe
       },
     },
     {
-      key: 'unitPay',
-      dataIndex: 'unitPay',
-      title: '단가',
-      width: 130,
+      key: 'salary',
+      dataIndex: 'salary',
+      title: '급여',
+      width: 200,
       align: 'center',
-      render: (unitPay: number) => <>{unitPay.toLocaleString()}원</>,
+      render: ({ salaryCode, pay }: { salaryCode: SalaryType; pay: number }) => (
+        <>
+          <Tag>{SALARY[salaryCode]}</Tag>
+          {pay.toLocaleString()}원
+        </>
+      ),
     },
     {
       key: 'attendance',
@@ -121,7 +131,10 @@ const EmployeeTable = ({ teamId, tableWrapRef, isLoading, onClickName }: Employe
       name: employee.name,
       phone: employee.phone,
       position: position,
-      unitPay: position.pay,
+      salary: {
+        salaryCode: position.salaryCode,
+        pay: position.pay,
+      },
       attendance: attendance,
       period: period,
     };
@@ -131,22 +144,16 @@ const EmployeeTable = ({ teamId, tableWrapRef, isLoading, onClickName }: Employe
   const handleNameClick = (employeeId: string) => onClickName?.(employeeId);
 
   // Row 선택 이벤트
-  const handleSelectedChange = (keys: Key[]) => {
-    setSelectedEmployeeIds(keys.map(String));
-    setShowToolModal(keys.length > 0 ? true : false);
-  };
+  const handleSelectedChange = (keys: Key[]) => setSelectedEmployeeIds(keys.map(String));
 
   // Excel 이벤트
   const handleExcelClose = () => setOpenExcelDrawer(false);
-  const handleExcel = () => {
-    setShowToolModal(false);
-    setOpenExcelDrawer(true);
-  };
+  const handleExcel = () => setOpenExcelDrawer(true);
 
   // Row 삭제 이벤트
   const handleDelete = () => {
-    setShowToolModal(false);
-    removeEmployeeMutate(selectedEmployeeIds);
+    onRemove?.(selectedEmployeeIds);
+    setSelectedEmployeeIds([]);
   };
 
   return (
@@ -163,8 +170,7 @@ const EmployeeTable = ({ teamId, tableWrapRef, isLoading, onClickName }: Employe
           onChange: handleSelectedChange,
         }}
       />
-      <Dock open={showToolModal} onExcel={handleExcel} onDelete={handleDelete} />
-      <ExcelDrawer employees={employees} open={openExcelDrawer} onClose={handleExcelClose} />
+      <Dock open={isSelected} onExcel={handleExcel} onDelete={handleDelete} />
     </EmployeeTableWrapStyled>
   );
 };

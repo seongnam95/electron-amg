@@ -1,70 +1,132 @@
 import { useEffect, useState } from 'react';
-import { FaTrashAlt } from 'react-icons/fa';
 
-import { Button, Drawer } from 'antd';
 import { useRecoilValue } from 'recoil';
 
 import ControlBar from '~/components/employee/ControlBar';
-import EmployeeInfoView from '~/components/employee/EmployeeInfoView';
+import DraftCreateDrawer from '~/components/employee/DraftCreateDrawer';
+import EmployeeInfoDrawer from '~/components/employee/EmployeeInfoDrawer';
 import EmployeeTable from '~/components/employee/EmployeeTable';
-import ExcelDrawer from '~/components/employee/ExcelDrawer';
-import { useEmployeeQuery } from '~/hooks/queryHooks/useEmployeeQuery';
+import HistoryDrawer from '~/components/employee/HistoryDrawer';
+import { useEmployeeRemoveMutation } from '~/hooks/queryHooks/useEmployeeQuery';
 import { useTeamQuery } from '~/hooks/queryHooks/useTeamQuery';
+import { useCopyLink } from '~/hooks/useCopyLink';
 import { useDragScroll } from '~/hooks/useDragScroll';
+import { useSoundApp } from '~/hooks/useSoundApp';
 import { userState } from '~/stores/user';
 import { EmployeePageStyled } from '~/styles/pageStyled/employeePageStyled';
 
 const EmployeePage = () => {
   // State
   const { user } = useRecoilValue(userState);
-  const [selectedTeamId, setSelectedTeamId] = useState<string>();
-  const [selectedEmployeeId, setSelectedEmployeeId] = useState<string>();
-  const [selectedEmployeeIds, setSelectedEmployeeIds] = useState<string[]>();
+
+  const [teamId, setTeamId] = useState<string>();
+  const [employeeId, setEmployeeId] = useState<string>();
+  const [openDraftDrawer, setOpenDraftDrawer] = useState<boolean>(false);
 
   const [openEmployeeInfoDrawer, setOpenEmployeeInfoDrawer] = useState<boolean>(false);
+  const [openHistoryDrawer, setOpenHistoryDrawer] = useState<boolean>(false);
 
   // Hook
+  const { soundMessage, modal } = useSoundApp();
   const scrollRef = useDragScroll();
-
-  // 렌더링 1회
+  const { contextHolder, copyInputLink } = useCopyLink();
   const { teams } = useTeamQuery({ userId: user.id });
-  const { employees } = useEmployeeQuery({ teamId: selectedTeamId, enabled: !!selectedTeamId });
+  const { removeEmployeeMutate } = useEmployeeRemoveMutation({
+    teamId: teamId,
+    onError: msg => soundMessage.error(msg),
+  });
 
   // selectedTeamId가 없을 때 teams가 불려왔을 경우 teams 첫 항목 ID 저장
   useEffect(() => {
-    if (!selectedTeamId && teams.length > 0) setSelectedTeamId(teams[0].id);
+    if (!teamId && teams.length > 0) setTeamId(teams[0].id);
   }, [teams]);
 
-  const handleChangeTeam = (id: string) => setSelectedTeamId(id);
+  const selectedTeam = teams?.find(team => team.id === teamId);
+
+  // 계약서 폼 Drawer 핸들러
+  const handleShowDraftDrawer = () => setOpenDraftDrawer(true);
+  const handleHideDraftDrawer = () => setOpenDraftDrawer(false);
+
+  // 히스토리 Drawer 핸들러
+  const handleClickHistory = () => setOpenHistoryDrawer(true);
+  const handleCloseHistory = () => setOpenHistoryDrawer(false);
+
+  const handleChangeTeam = (id: string) => setTeamId(id);
   const handleClickName = (id: string) => {
-    setSelectedEmployeeId(id);
+    setEmployeeId(id);
     setOpenEmployeeInfoDrawer(true);
   };
 
-  const RenderExtra = (
-    <Button type="text" danger icon={<FaTrashAlt size="1.6rem" style={{ marginTop: 3 }} />} />
-  );
+  const removeEmployee = (ids: string[]) => {
+    removeEmployeeMutate(ids);
+    setOpenEmployeeInfoDrawer(false);
+  };
+
+  // 삭제 확인 모달
+  const showRemoveConfirm = (ids: string[]) => {
+    modal.confirm({
+      type: 'warning',
+      title: '해당 근로자를 삭제하시겠습니까?',
+      content: '휴지통으로 이동되며, 30일 후 완전히 삭제됩니다.',
+      okText: '삭제',
+      okType: 'danger',
+      cancelText: '취소',
+      centered: true,
+      onOk: () => removeEmployee(ids),
+    });
+  };
 
   return (
     <EmployeePageStyled className="EmployeePage">
-      <ControlBar selectedTeamId={selectedTeamId} teams={teams} onChangeTeam={handleChangeTeam} />
+      {/* <button onClick={() => soundMessage.error('')}>에러</button>
+      <button onClick={() => soundMessage.info('')}>정보</button>
+      <button onClick={() => soundMessage.success('')}>성공</button>
+      <button onClick={() => soundMessage.warning('')}>경고</button> */}
 
+      <ControlBar
+        selectedTeamId={teamId}
+        teams={teams}
+        onCreateDraft={handleShowDraftDrawer}
+        onChangeTeam={handleChangeTeam}
+      />
+
+      {/* 근무자 테이블 */}
       <EmployeeTable
-        teamId={selectedTeamId}
+        teamId={teamId}
         tableWrapRef={scrollRef}
+        onRemove={showRemoveConfirm}
         onClickName={handleClickName}
       />
 
-      <Drawer
-        title="근무자 정보"
-        extra={RenderExtra}
-        closable={false}
-        getContainer={false}
+      {/* 근무자 정보 Drawer */}
+      <EmployeeInfoDrawer
         open={openEmployeeInfoDrawer}
+        employeeId={employeeId}
+        onRemove={showRemoveConfirm}
         onClose={() => setOpenEmployeeInfoDrawer(false)}
-      >
-        {selectedEmployeeId ? <EmployeeInfoView employeeId={selectedEmployeeId} /> : null}
-      </Drawer>
+      />
+
+      {/* 계약서 폼 생성 Drawer */}
+      <DraftCreateDrawer
+        open={openDraftDrawer}
+        team={selectedTeam}
+        onCopy={copyInputLink}
+        onHistory={handleClickHistory}
+        onClose={handleHideDraftDrawer}
+      />
+
+      {/* 계약서 폼 히스토리 Drawer */}
+      {teamId && (
+        <HistoryDrawer
+          teamId={teamId}
+          open={openHistoryDrawer}
+          onCopy={copyInputLink}
+          onClose={handleCloseHistory}
+        />
+      )}
+
+      {/* Copy Input */}
+      {contextHolder}
     </EmployeePageStyled>
   );
 };

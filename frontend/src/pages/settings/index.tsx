@@ -4,7 +4,6 @@ import { Switch } from 'antd';
 import { useRecoilState, useRecoilValue } from 'recoil';
 
 import UpdateStatus from '~/components/common/UpdateStatus';
-import LayoutConfig from '~/components/layouts/LayoutConfig';
 import Section from '~/components/layouts/Section';
 import { useCustomForm } from '~/hooks/useCustomForm';
 import { configStore } from '~/stores/config';
@@ -27,8 +26,6 @@ const Settings = () => {
 
   return (
     <SettingsPageStyled>
-      <LayoutConfig breadcrumbs={['설정', '일반 설정']} />
-
       <Section
         title="개발자모드 설정"
         description={

@@ -18,8 +18,8 @@ def get_attendance(attendance_id: str, db: Session = Depends(deps.get_db)):
     return attendance
 
 
-# 전체 근무로그 조회
-@router.get("/", response_model=ListResponse[schemas.Attendance])
+# 특정 날짜 전체 로그 조회
+@router.get("/attendance", response_model=ListResponse[schemas.Attendance])
 def read_all_attendance(
     date: Optional[str] = None,
     db: Session = Depends(deps.get_db),
@@ -37,7 +37,9 @@ def read_all_attendance(
 
 
 # 근무로그 조회
-@router.get("/{attendance_id}", response_model=DataResponse[schemas.Attendance])
+@router.get(
+    "/attendance/{attendance_id}", response_model=DataResponse[schemas.Attendance]
+)
 def read_attendance(attendance: schemas.Attendance = Depends(get_attendance)):
     return DataResponse(result=attendance)
 

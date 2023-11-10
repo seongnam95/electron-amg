@@ -1,11 +1,12 @@
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Outlet } from 'react-router-dom';
 
-import { ConfigProvider, message, theme } from 'antd';
+import { ConfigProvider, theme, App } from 'antd';
+import { ConfigOptions } from 'antd/es/message/interface';
 import locale from 'antd/lib/locale/ko_KR';
 import 'dayjs/locale/ko';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { ThemeProvider } from 'styled-components';
+import styled, { ThemeProvider } from 'styled-components';
 
 import Layout from '~/components/layouts/Layout';
 import Titlebar from '~/components/layouts/Titlebar';
@@ -26,17 +27,7 @@ declare module 'styled-components' {
   }
 }
 
-const App = () => {
-  message.config({ top: 46, maxCount: 1 });
-
-  return (
-    <ConfigProvider theme={antdTheme} locale={locale}>
-      <AppInner />
-    </ConfigProvider>
-  );
-};
-
-const AppInner = () => {
+const AppWrap = () => {
   const antdToken = theme.useToken();
   const { isLogin } = useRecoilValue(userState);
   const [update, setUpdate] = useRecoilState(updateStore);
@@ -70,22 +61,31 @@ const AppInner = () => {
   }, []);
 
   return (
-    <ThemeProvider theme={styledTheme}>
-      <InitGlobalStyled />
+    <ConfigProvider theme={antdTheme} locale={locale}>
+      <ThemeProvider theme={styledTheme}>
+        <InitGlobalStyled />
 
-      <div id="app">
-        <Titlebar />
+        <div id="app">
+          <AntApp message={{ maxCount: 1 }}>
+            <Titlebar />
 
-        {isLogin ? (
-          <Layout>
-            <Outlet />
-          </Layout>
-        ) : (
-          <Login />
-        )}
-      </div>
-    </ThemeProvider>
+            {isLogin ? (
+              <Layout>
+                <Outlet />
+              </Layout>
+            ) : (
+              <Login />
+            )}
+          </AntApp>
+        </div>
+      </ThemeProvider>
+    </ConfigProvider>
   );
 };
 
-export default App;
+const AntApp = styled(App)`
+  width: 100vw;
+  height: 100vh;
+`;
+
+export default AppWrap;

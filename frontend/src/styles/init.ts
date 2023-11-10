@@ -99,4 +99,13 @@ export const InitGlobalStyled = memo(createGlobalStyle`
 
     padding: 0.3rem 2.4rem 0 !important;
   }
+
+  .ant-message {
+    overflow: hidden;
+    top: ${p => p.theme.sizes.titleBarHeight} !important;
+
+    .ant-message-notice-wrapper {
+      height: 8rem;
+    }
+  }
 `);

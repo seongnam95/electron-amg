@@ -1,6 +1,7 @@
+import { Drawer } from 'antd';
 import styled from 'styled-components';
 
-export const EmployeeInfoViewStyled = styled.div`
+export const EmployeeInfoDrawerStyled = styled(Drawer)`
   .img-btn {
     flex: 1;
     display: flex;

@@ -18,13 +18,13 @@ const preservedRoutes: Partial<Record<string, Element>> = Object.keys(PRESERVED)
   {},
 );
 
-const App = preservedRoutes?.['_app'] || Fragment;
+const AppWrap = preservedRoutes?.['_app'] || Fragment;
 const NotFound = preservedRoutes?.['404'] || Fragment;
 
 const router = createHashRouter([
   {
     path: '/',
-    element: <App />,
+    element: <AppWrap />,
     children: Object.keys(ROUTES).reduce<RouteObject[]>(
       (routes, key) => {
         const module = ROUTES[key];
