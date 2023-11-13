@@ -1,12 +1,16 @@
 import { useEffect, useState } from 'react';
+import { BsFilter } from 'react-icons/bs';
+import { FiPlus } from 'react-icons/fi';
 
+import { Button, Flex } from 'antd';
 import { useRecoilValue } from 'recoil';
 
-import ControlBar from '~/components/employee/ControlBar';
 import DraftCreateDrawer from '~/components/employee/DraftCreateDrawer';
 import EmployeeInfoDrawer from '~/components/employee/EmployeeInfoDrawer';
 import EmployeeTable from '~/components/employee/EmployeeTable';
 import HistoryDrawer from '~/components/employee/HistoryDrawer';
+import TeamSelector from '~/components/employee/TeamSelector';
+import Header from '~/components/layouts/Header';
 import { useEmployeeRemoveMutation } from '~/hooks/queryHooks/useEmployeeQuery';
 import { useTeamQuery } from '~/hooks/queryHooks/useTeamQuery';
 import { useCopyLink } from '~/hooks/useCopyLink';
@@ -27,7 +31,7 @@ const EmployeePage = () => {
   const [openHistoryDrawer, setOpenHistoryDrawer] = useState<boolean>(false);
 
   // Hook
-  const { soundMessage, modal } = useSoundApp();
+  const { soundMessage, soundModal } = useSoundApp();
   const scrollRef = useDragScroll();
   const { contextHolder, copyInputLink } = useCopyLink();
   const { teams } = useTeamQuery({ userId: user.id });
@@ -64,7 +68,7 @@ const EmployeePage = () => {
 
   // 삭제 확인 모달
   const showRemoveConfirm = (ids: string[]) => {
-    modal.confirm({
+    soundModal({
       type: 'warning',
       title: '해당 근로자를 삭제하시겠습니까?',
       content: '휴지통으로 이동되며, 30일 후 완전히 삭제됩니다.',
@@ -83,12 +87,17 @@ const EmployeePage = () => {
       <button onClick={() => soundMessage.success('')}>성공</button>
       <button onClick={() => soundMessage.warning('')}>경고</button> */}
 
-      <ControlBar
-        selectedTeamId={teamId}
-        teams={teams}
-        onCreateDraft={handleShowDraftDrawer}
-        onChangeTeam={handleChangeTeam}
-      />
+      <Header>
+        <TeamSelector teams={teams} selectedId={teamId} onSelect={handleChangeTeam} />
+        <Flex>
+          <Button type="text" icon={<BsFilter size="1.8rem" />}>
+            필터
+          </Button>
+          <Button type="link" icon={<FiPlus size="1.8rem" />} onClick={handleShowDraftDrawer}>
+            폼 생성
+          </Button>
+        </Flex>
+      </Header>
 
       {/* 근무자 테이블 */}
       <EmployeeTable

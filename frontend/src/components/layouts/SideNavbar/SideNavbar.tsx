@@ -18,7 +18,7 @@ const SideNavbar = () => {
       },
       {
         icon: 'bx-time',
-        link: '/manager/tracker',
+        link: '/manager/attendance',
         text: '근태',
       },
     ],

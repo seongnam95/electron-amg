@@ -1,8 +1,9 @@
-import { PositionType } from './contract';
-
 export interface AttendanceData {
   id: string;
-  positionCode: PositionType;
-  wage: number;
+  pay: number;
+  incentive?: number;
+  deduct?: number;
+  memo?: string;
+  isMealIncluded: boolean;
   workingDate: string;
 }

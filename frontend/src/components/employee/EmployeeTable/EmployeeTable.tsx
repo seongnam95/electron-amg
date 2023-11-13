@@ -160,7 +160,6 @@ const EmployeeTable = ({
     <EmployeeTableWrapStyled ref={tableWrapRef} className="EmployeeTable">
       <Table
         loading={isLoading}
-        prefixCls="employee-table"
         pagination={false}
         columns={columns}
         tableLayout="fixed"

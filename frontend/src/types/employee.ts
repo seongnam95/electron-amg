@@ -12,7 +12,7 @@ export interface EmployeeData {
   endPeriod: string;
   createDate: string;
   position: PositionData;
-  attendances?: Array<AttendanceData>;
+  attendances?: AttendanceData[];
 }
 
 export interface EmployeeDetailData extends EmployeeData {
