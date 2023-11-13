@@ -19,21 +19,39 @@ def get_attendance(attendance_id: str, db: Session = Depends(deps.get_db)):
 
 
 # 특정 날짜 전체 로그 조회
-@router.get("/attendance", response_model=ListResponse[schemas.Attendance])
+@router.get(
+    "/team/{team_id}/attendance",
+    response_model=ListResponse[schemas.EmployeeAttendanceResponse],
+)
 def read_all_attendance(
-    date: Optional[str] = None,
+    team_id: str,
+    date: str,
     db: Session = Depends(deps.get_db),
-    skip: int = 0,
+    page: int = 1,
     limit: int = 100,
 ):
-    if date:
-        attendances = crud.attendance.get_all_attendance_by_date(
-            db, skip=skip, limit=limit, date_str=date
-        )
-    else:
-        attendances = crud.attendance.get_multi(db, offset=skip, limit=limit)
+    team = crud.team.get(db=db, id=team_id)
+    if not team:
+        raise HTTPException(status_code=404, detail="존재하지 않는 팀입니다.")
 
-    return ListResponse(count=len(attendances), msg="정상 처리되었습니다.", result=attendances)
+    new_employee = []
+    for employee in team.employees:
+        attendances = crud.attendance.get_all_attendance_by_month(
+            db, employee_id=employee.id, month_str=date
+        )
+
+        new_employee.append(
+            schemas.EmployeeAttendanceResponse(
+                id=employee.id,
+                name=employee.name,
+                position=employee.position,
+                attendances=attendances,
+            )
+        )
+    response = deps.create_list_response(
+        data=new_employee, total=len(new_employee), limit=limit, page=page
+    )
+    return ListResponse(msg="정상 처리되었습니다.", result=response)
 
 
 # 근무로그 조회
@@ -42,6 +60,24 @@ def read_all_attendance(
 )
 def read_attendance(attendance: schemas.Attendance = Depends(get_attendance)):
     return DataResponse(result=attendance)
+
+
+# 근무로그 생성 (날짜 중복 불가)
+@router.post("/employee/{employee_id}/attendance", response_model=BaseResponse)
+def create_attendance(
+    employee_id: str,
+    attendance_in: schemas.AttendanceCreate,
+    db: Session = Depends(deps.get_db),
+):
+    employee = crud.employee.get(db=db, id=employee_id)
+    if not employee:
+        raise HTTPException(status_code=404, detail="해당 직원을 찾을 수 없습니다.")
+
+    crud.attendance.create_attendance(
+        db=db, attendance_in=attendance_in, employee_id=employee.id
+    )
+
+    return BaseResponse(msg="정상 처리되었습니다.")
 
 
 # 근무로그 업데이트

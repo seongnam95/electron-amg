@@ -98,29 +98,6 @@ def delete_employee(
 
 
 # -----------------------------------------------------------------------------------------
-#  의존성 데이터 엔드포인트
-# -----------------------------------------------------------------------------------------
-
-
-# 근무로그 생성 (날짜 중복 불가)
-@router.post("/employee/{employee_id}/attendance", response_model=BaseResponse)
-def create_attendance(
-    employee_id: str,
-    attendance_in: schemas.AttendanceCreate,
-    db: Session = Depends(deps.get_db),
-):
-    employee = crud.employee.get(db=db, id=employee_id)
-    if not employee:
-        raise HTTPException(status_code=404, detail="해당 직원을 찾을 수 없습니다.")
-
-    crud.attendance.create_attendance(
-        db=db, attendance_in=attendance_in, employee_id=employee.id
-    )
-
-    return BaseResponse(msg="정상 처리되었습니다.")
-
-
-# -----------------------------------------------------------------------------------------
 #  암호화, 커버링 함수
 # -----------------------------------------------------------------------------------------
 

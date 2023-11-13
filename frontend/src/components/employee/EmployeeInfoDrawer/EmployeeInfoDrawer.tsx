@@ -9,28 +9,34 @@ import { DrawerProps } from 'antd';
 import ImagePreview from '~/components/common/ImagePreview';
 import { useEmployeeDetailQuery } from '~/hooks/queryHooks/useEmployeeQuery';
 import { SALARY } from '~/types/position';
+import { TeamData } from '~/types/team';
 import { formatPhoneNumber, formatSSN } from '~/utils/formatData';
 
 import { EmployeeInfoDrawerStyled } from './styled';
 
 export interface EmployeeInfoDrawerProps extends DrawerProps {
+  team?: TeamData;
   employeeId?: string;
   onRemove?: (ids: string[]) => void;
 }
 
-const EmployeeInfoDrawer = ({ employeeId, onRemove, ...props }: EmployeeInfoDrawerProps) => {
+const EmployeeInfoDrawer = ({ team, employeeId, onRemove, ...props }: EmployeeInfoDrawerProps) => {
   const { employee } = useEmployeeDetailQuery({ employeeId: employeeId, enabled: !!employeeId });
+  const isLoading = employee === undefined || team === undefined;
 
   const [showIdCard, setShowIdCard] = useState<boolean>(false);
   const [showBankBook, setShowBankBook] = useState<boolean>(false);
   const [showContract, setShowContract] = useState<boolean>(false);
 
+  // 신분증 버튼 핸들러
   const handleIdCardClick = () => setShowIdCard(true);
   const handleIdCardClose = () => setShowIdCard(false);
 
+  // 통장사본 버튼 핸들러
   const handleBankBookClick = () => setShowBankBook(true);
   const handleBankBookClose = () => setShowBankBook(false);
 
+  // 계약서 버튼 핸들러
   const handleContractClick = () => setShowContract(true);
   const handleContractClose = () => setShowContract(false);
 
@@ -39,11 +45,7 @@ const EmployeeInfoDrawer = ({ employeeId, onRemove, ...props }: EmployeeInfoDraw
   };
 
   const RenderExtra = (
-    <Button
-      type="text"
-      danger
-      icon={<FaTrashAlt size="1.6rem" style={{ marginTop: 3 }} onClick={handleRemove} />}
-    />
+    <Button type="text" danger icon={<FaTrashAlt size="1.6rem" onClick={handleRemove} />} />
   );
 
   return (
@@ -54,7 +56,7 @@ const EmployeeInfoDrawer = ({ employeeId, onRemove, ...props }: EmployeeInfoDraw
       getContainer={false}
       {...props}
     >
-      {!!employee ? (
+      {!isLoading ? (
         <>
           <Descriptions
             column={1}
@@ -80,7 +82,7 @@ const EmployeeInfoDrawer = ({ employeeId, onRemove, ...props }: EmployeeInfoDraw
             title="계약조건"
             contentStyle={{ display: 'inline-block', textAlign: 'right' }}
           >
-            <Descriptions.Item label="소속 업체">{employee.team.name}</Descriptions.Item>
+            <Descriptions.Item label="소속 업체">{team.name}</Descriptions.Item>
             <Descriptions.Item label="급여">
               <Tag>{SALARY[employee.position.salaryCode]}</Tag>
               {employee.position.pay.toLocaleString()}원

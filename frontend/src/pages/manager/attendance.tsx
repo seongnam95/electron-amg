@@ -8,6 +8,7 @@ import AntDatePicker from '~/components/common/DatePicker';
 import TeamSelector from '~/components/employee/TeamSelector';
 import Header from '~/components/layouts/Header';
 import DayTable from '~/components/tracker/DayTable';
+import { useAttendanceQuery } from '~/hooks/queryHooks/useAttendanceQuery';
 import { useTeamQuery } from '~/hooks/queryHooks/useTeamQuery';
 import { useDragScroll } from '~/hooks/useDragScroll';
 import { userState } from '~/stores/user';
@@ -17,12 +18,18 @@ type ViewType = 'monthly' | 'daily';
 
 const Attendance = () => {
   const { user } = useRecoilValue(userState);
-  const [viewType, setViewType] = useState<ViewType>('monthly');
-  const [selectedDay, setSelectedDay] = useState<Dayjs>(dayjs());
   const [teamId, setTeamId] = useState<string>();
+  const [viewType, setViewType] = useState<ViewType>('daily');
+  const [selectedDay, setSelectedDay] = useState<Dayjs>(dayjs());
+  const selectedDayStr = selectedDay.format(viewType === 'daily' ? 'YY-MM-DD' : 'YY-MM');
 
   const dragRef = useDragScroll();
   const { teams } = useTeamQuery({ userId: user.id });
+  const { attendances } = useAttendanceQuery({
+    teamId: teamId,
+    date: selectedDayStr,
+    enabled: !!teamId,
+  });
 
   // selectedTeamId가 없을 때 teams가 불려왔을 경우 teams 첫 항목 ID 저장
   useEffect(() => {
@@ -54,7 +61,7 @@ const Attendance = () => {
         </Flex>
       </Header>
 
-      <DayTable teamId={teamId} date={selectedDay} />
+      <DayTable date={selectedDay} employees={attendances} />
       {/* <div className="table-wrap" ref={dragRef}>
         {viewType === 'month' ? (
           <MonthTable selectedDay={selectedDay} employees={employees} />

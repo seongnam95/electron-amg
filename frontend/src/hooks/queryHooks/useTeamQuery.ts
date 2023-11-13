@@ -1,23 +1,18 @@
 import { useQuery } from 'react-query';
 
-import { FetchListResponse } from '~/api/response';
-import { fetchTeamsByUser } from '~/api/team';
-import { BaseQueryOptions } from '~/types/query';
+import { fetchTeams } from '~/api/team';
+import { QueryBaseOptions } from '~/types/query';
 import { TeamData } from '~/types/team';
 
-interface TeamQueryOptions extends BaseQueryOptions<FetchListResponse<TeamData>> {
+interface TeamQueryOptions<T> extends QueryBaseOptions<T> {
   userId?: string;
 }
 
-export const useTeamQuery = ({ userId, ...baseOptions }: TeamQueryOptions) => {
+export const useTeamQuery = ({ userId, ...baseOptions }: TeamQueryOptions<TeamData[]>) => {
   const queryKey: Array<string> = [import.meta.env.VITE_TEAM_QUERY_KEY];
 
-  const {
-    data,
-    isLoading: isTeamLoading,
-    isError,
-  } = useQuery(queryKey, fetchTeamsByUser(userId), { ...baseOptions });
+  const { data, isLoading, isError } = useQuery(queryKey, fetchTeams(userId), { ...baseOptions });
 
-  const teams = data ? data.result.list : [];
-  return { teams, isTeamLoading, isError };
+  const teams = data ? data : [];
+  return { teams, isLoading, isError };
 };

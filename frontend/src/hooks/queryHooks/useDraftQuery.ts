@@ -1,22 +1,20 @@
-import { useMutation, useQuery, useQueryClient, QueryOptions, MutateOptions } from 'react-query';
+import { useMutation, useQuery, useQueryClient } from 'react-query';
 
 import { createDraft, fetchDrafts, removeDraft } from '~/api/draft';
 import { DraftData } from '~/types/draft';
+import { QueryBaseOptions } from '~/types/query';
 
-interface DraftQueryOptions<T> {
+interface DraftQueryOptions<T> extends QueryBaseOptions<T> {
   teamId?: string;
-  enabled?: boolean;
-  onError?: (msg: string) => void;
-  onSuccess?: (draft: T) => void;
 }
 
 /**
  * Fetch List
  */
-export const useDraftQuery = ({ teamId, ...options }: DraftQueryOptions<DraftData[]>) => {
+export const useDraftQuery = ({ teamId, ...baseOptions }: DraftQueryOptions<DraftData[]>) => {
   const queryKey: Array<string> = [import.meta.env.VITE_DRAFT_QUERY_KEY, teamId];
 
-  const { data, isLoading, isError } = useQuery(queryKey, fetchDrafts(teamId), { ...options });
+  const { data, isLoading, isError } = useQuery(queryKey, fetchDrafts(teamId), { ...baseOptions });
 
   const drafts = data ? data.toReversed() : [];
   return { drafts, isLoading, isError };
@@ -27,8 +25,7 @@ export const useDraftQuery = ({ teamId, ...options }: DraftQueryOptions<DraftDat
  */
 export const useDraftCreateMutation = ({
   teamId,
-  onSuccess,
-  onError,
+  ...baseOptions
 }: DraftQueryOptions<DraftData>) => {
   const queryKey: string[] = [import.meta.env.VITE_DRAFT_QUERY_KEY, teamId];
   const queryClient = useQueryClient();
@@ -38,7 +35,7 @@ export const useDraftCreateMutation = ({
   const { mutate: createDraftMutate, isLoading: isCreateDraftLoading } = useMutation(
     queryKey,
     createDraft(teamId),
-    { onSettled, onSuccess, onError },
+    { onSettled, ...baseOptions },
   );
 
   return { createDraftMutate, isCreateDraftLoading };

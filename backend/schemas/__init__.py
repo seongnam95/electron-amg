@@ -6,7 +6,12 @@ from .employee import (
     EmployeeCoveringResponse,
     EmployeeDetailResponse,
 )
-from .attendance import Attendance, AttendanceCreate, AttendanceUpdate
+from .attendance import (
+    Attendance,
+    AttendanceCreate,
+    AttendanceUpdate,
+    EmployeeAttendanceResponse,
+)
 from .user import User, UserCreate, UserUpdate, UserResponse, UserLogin
 from .draft import Draft, DraftCreate, DraftUpdate, DraftForContract
 from .team import TeamCreate, TeamUpdate, Team

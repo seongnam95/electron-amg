@@ -5,7 +5,7 @@ from fastapi.encoders import jsonable_encoder
 
 from sqlalchemy import func
 from crud.base import CRUDBase
-from models import Attendance
+from models import Attendance, Employee
 from schemas import AttendanceCreate, AttendanceUpdate
 from sqlalchemy.orm import Session
 from datetime import date
@@ -40,14 +40,17 @@ class CRUDAttendance(CRUDBase[Attendance, AttendanceCreate, AttendanceUpdate]):
         db.refresh(db_obj)
 
     # 특정 날짜의 Attendance 전체 불러오기
-    def get_all_attendance_by_date(
+    def get_all_attendance_by_month(
         self,
-        date_str: str,
         db: Session,
+        *,
+        employee_id: str,
+        month_str: str,
     ) -> List[Attendance]:
         return (
-            db.query(self.model)
-            .filter(Attendance.create_date.like(f"{date_str}%"))
+            db.query(Attendance)
+            .filter(Attendance.employee_id == employee_id)
+            .filter(Attendance.working_date.startswith(month_str))
             .all()
         )
 

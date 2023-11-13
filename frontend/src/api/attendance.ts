@@ -1,30 +1,35 @@
-import { AttendanceData } from '~/types/attendance';
+import { EmployeeAttendanceData } from '~/types/attendance';
 
 import axiosPrivate from './axios';
-import { BaseResponse } from './response';
+import { FetchListResponse } from './response';
 
-export type AttendanceCreateBody = Omit<AttendanceData, 'id' | 'workingDate'> & {
-  workingDate?: string;
-};
+export const fetchAttendances =
+  ({ teamId, date }: { teamId?: string; date?: string }) =>
+  async (): Promise<EmployeeAttendanceData[]> => {
+    const teamEndpoint = import.meta.env.VITE_TEAM_ENDPOINT;
+    const attendanceEndpoint = import.meta.env.VITE_ATTENDANCE_ENDPOINT;
 
-export interface CreateAttendanceProps {
-  employeeId: string;
-  body: AttendanceCreateBody;
-}
-
-export const createAttendanceRequest =
-  (parentEndpoint: string, endpoint: string) =>
-  async ({ employeeId, body }: CreateAttendanceProps): Promise<BaseResponse> => {
-    const { data } = await axiosPrivate.post<BaseResponse>(
-      `${parentEndpoint}/${employeeId}/${endpoint}`,
-      body,
+    const { data } = await axiosPrivate.get<FetchListResponse<EmployeeAttendanceData>>(
+      `${teamEndpoint}/${teamId}/${attendanceEndpoint}`,
+      { params: { date: date } },
     );
-    return data;
+
+    return data.result.list;
   };
 
-export const removeAttendanceRequest =
-  (endpoint: string) =>
-  async (id: string): Promise<BaseResponse> => {
-    const { data } = await axiosPrivate.delete<BaseResponse>(`${endpoint}/${id}`);
-    return data;
-  };
+// export const createAttendanceRequest =
+//   (parentEndpoint: string, endpoint: string) =>
+//   async ({ employeeId, body }: CreateAttendanceProps): Promise<BaseResponse> => {
+//     const { data } = await axiosPrivate.post<BaseResponse>(
+//       `${parentEndpoint}/${employeeId}/${endpoint}`,
+//       body,
+//     );
+//     return data;
+//   };
+
+// export const removeAttendanceRequest =
+//   (endpoint: string) =>
+//   async (id: string): Promise<BaseResponse> => {
+//     const { data } = await axiosPrivate.delete<BaseResponse>(`${endpoint}/${id}`);
+//     return data;
+//   };

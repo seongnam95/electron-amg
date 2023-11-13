@@ -1,26 +1,29 @@
-import { useMutation, useQueryClient } from 'react-query';
+import { useQuery } from 'react-query';
 
-import { createAttendanceRequest, removeAttendanceRequest } from '~/api/attendance';
-import { BaseQueryOptions } from '~/types/query';
+import { fetchAttendances } from '~/api/attendance';
+import { EmployeeAttendanceData } from '~/types/attendance';
+import { QueryBaseOptions } from '~/types/query';
 
-export const useAttendanceMutation = (queryKey?: string[], options?: BaseQueryOptions) => {
-  const queryClient = useQueryClient();
-  const employeeEndpoint = import.meta.env.VITE_EMPLOYEE_ENDPOINT;
-  const attendanceEndpoint = import.meta.env.VITE_ATTENDANCE_ENDPOINT;
-  const employeeQueryKey = [import.meta.env.VITE_EMPLOYEE_QUERY_KEY, ...(queryKey || [])];
+interface AttendanceQueryOptions<T> extends QueryBaseOptions<T> {
+  teamId?: string;
+  date?: string;
+}
 
-  const onSettled = () => queryClient.invalidateQueries(employeeQueryKey);
+export const useAttendanceQuery = ({
+  teamId,
+  date,
+  ...baseOptions
+}: AttendanceQueryOptions<EmployeeAttendanceData[]>) => {
+  const queryKey: Array<string> = [import.meta.env.VITE_EMPLOYEE_QUERY_KEY, teamId, date];
 
-  const { mutate: createAttendance, isLoading: createAttendanceLoading } = useMutation(
-    createAttendanceRequest(employeeEndpoint, attendanceEndpoint),
-    { ...options, onSettled },
+  const { data, isLoading, isError } = useQuery(
+    queryKey,
+    fetchAttendances({ teamId: teamId, date: date }),
+    {
+      ...baseOptions,
+    },
   );
 
-  const { mutate: removeAttendance, isLoading: removeAttendanceLoading } = useMutation(
-    removeAttendanceRequest(attendanceEndpoint),
-    { ...options, onSettled },
-  );
-
-  const isLoading = createAttendanceLoading || removeAttendanceLoading;
-  return { createAttendance, removeAttendance, isLoading };
+  const attendances = data ? data.toReversed() : [];
+  return { attendances, isLoading, isError };
 };

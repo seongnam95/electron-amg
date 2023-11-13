@@ -19,7 +19,6 @@ interface EmployeeTableData {
     salaryCode: SalaryType;
     pay: number;
   };
-  attendance: string;
 }
 
 interface EmployeeTableProps {
@@ -96,14 +95,6 @@ const EmployeeTable = ({
       ),
     },
     {
-      key: 'attendance',
-      dataIndex: 'attendance',
-      width: 76,
-      title: '근무일',
-      align: 'center',
-      render: (attendance: string) => <>{attendance}</>,
-    },
-    {
       key: 'period',
       dataIndex: 'period',
       width: 120,
@@ -122,8 +113,7 @@ const EmployeeTable = ({
 
   // 테이블 데이터 맵핑
   const dataSource: Array<EmployeeTableData> | undefined = employees?.map(employee => {
-    const { attendances, position } = employee;
-    const attendance = attendances ? `${attendances.length.toString()}일` : '-';
+    const { position } = employee;
     const period = employee ? employee.endPeriod : '계약 만료';
 
     return {
@@ -135,7 +125,6 @@ const EmployeeTable = ({
         salaryCode: position.salaryCode,
         pay: position.pay,
       },
-      attendance: attendance,
       period: period,
     };
   });

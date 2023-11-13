@@ -110,7 +110,7 @@ export const InitGlobalStyled = memo(createGlobalStyle`
   }
 
   .ant-btn {
-    display: flex;
+    display: inline-flex;
     align-items: center;
     justify-content: center;
     
@@ -118,6 +118,7 @@ export const InitGlobalStyled = memo(createGlobalStyle`
       padding-top: 0.2rem;
     }
   }
+  
   .ant-table-content {
     white-space: nowrap;
     

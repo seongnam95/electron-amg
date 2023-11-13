@@ -35,6 +35,7 @@ const EmployeePage = () => {
   const scrollRef = useDragScroll();
   const { contextHolder, copyInputLink } = useCopyLink();
   const { teams } = useTeamQuery({ userId: user.id });
+
   const { removeEmployeeMutate } = useEmployeeRemoveMutation({
     teamId: teamId,
     onError: msg => soundMessage.error(msg),
@@ -110,6 +111,7 @@ const EmployeePage = () => {
       {/* 근무자 정보 Drawer */}
       <EmployeeInfoDrawer
         open={openEmployeeInfoDrawer}
+        team={selectedTeam}
         employeeId={employeeId}
         onRemove={showRemoveConfirm}
         onClose={() => setOpenEmployeeInfoDrawer(false)}

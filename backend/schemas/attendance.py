@@ -1,6 +1,7 @@
 from pydantic import BaseModel, model_validator
-from typing import Optional
+from typing import List, Optional
 from schemas.common import check_update_fields
+from schemas.position import Position
 
 
 class AttendanceBase(BaseModel):
@@ -31,6 +32,16 @@ class AttendanceUpdate(BaseModel):
 
 class Attendance(AttendanceBase):
     id: str
+
+    class Config:
+        from_attributes = True
+
+
+class EmployeeAttendanceResponse(BaseModel):
+    id: str
+    name: str
+    position: Position
+    attendances: List[Attendance]
 
     class Config:
         from_attributes = True

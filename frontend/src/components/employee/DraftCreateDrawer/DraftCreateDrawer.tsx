@@ -1,18 +1,7 @@
 import { useState } from 'react';
 import { BsClockHistory } from 'react-icons/bs';
 
-import {
-  Flex,
-  Form,
-  Button,
-  Select,
-  Space,
-  Typography,
-  DrawerProps,
-  Skeleton,
-  Drawer,
-  App,
-} from 'antd';
+import { Flex, Form, Button, Select, Space, Typography, DrawerProps, Skeleton, Drawer } from 'antd';
 import dayjs, { Dayjs } from 'dayjs';
 
 import AntDateRangePicker from '~/components/common/DateRangePicker';
@@ -144,13 +133,13 @@ const DraftCreateDrawer = ({
             <Form
               form={form}
               layout="vertical"
+              colon={false}
               autoComplete="off"
               onFinish={handleFinish}
               initialValues={{ period: defaultPickerValue }}
             >
               <Form.Item
                 label="직위 구분"
-                colon={false}
                 name="position"
                 rules={[{ required: true, message: '직위를 선택해주세요.' }]}
               >
@@ -166,7 +155,6 @@ const DraftCreateDrawer = ({
               </Form.Item>
 
               <Form.Item
-                colon={false}
                 label="계약일"
                 name="period"
                 rules={[{ required: true, message: '계약일을 선택해주세요.' }]}

@@ -12,7 +12,6 @@ export interface EmployeeData {
   endPeriod: string;
   createDate: string;
   position: PositionData;
-  attendances?: AttendanceData[];
 }
 
 export interface EmployeeDetailData extends EmployeeData {
@@ -22,7 +21,6 @@ export interface EmployeeDetailData extends EmployeeData {
   bankBook: string;
   idCard: string;
   sign: string;
-  team: TeamData;
 }
 
 /** 근로자 생성 API 바디 */

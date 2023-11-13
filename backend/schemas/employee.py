@@ -82,7 +82,6 @@ class EmployeeResponse(BaseModel):
     create_date: datetime
 
     position: Position
-    attendances: List[Attendance]
 
     class Config:
         from_attributes = True
@@ -90,4 +89,3 @@ class EmployeeResponse(BaseModel):
 
 class EmployeeDetailResponse(EmployeeBase):
     position: Position
-    team: Team
