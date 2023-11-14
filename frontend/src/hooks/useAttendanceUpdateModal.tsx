@@ -1,14 +1,11 @@
-import { useEffect, useState } from 'react';
-import ReactDOM from 'react-dom';
+import { useState } from 'react';
 
 import { Modal, Form, Input, InputNumber, Switch, Flex, Button } from 'antd';
-
-import { AttendanceUpdateBody } from '~/types/attendance';
 
 import { useAttendanceUpdateMutation } from './queryHooks/useAttendanceQuery';
 
 interface FormData {
-  isMealInclude?: boolean;
+  isMealIncluded?: boolean;
   incentive?: number;
   deduct?: number;
   memo?: string;
@@ -19,12 +16,12 @@ export const useAttendanceUpdateModal = (teamId?: string, date?: string) => {
   const [attendanceIds, setAttendanceIds] = useState<string[]>([]);
   const [open, setOpen] = useState<boolean>(false);
 
-  const handleCancel = () => setOpen(false);
+  const handleCancel = () => {
+    setOpen(false);
+  };
+
   const handleFinish = (data: FormData) => {
-    updateAttendanceMutate({
-      ids: attendanceIds,
-      body: data,
-    });
+    updateAttendanceMutate({ ids: attendanceIds, body: data });
   };
 
   const { updateAttendanceMutate, isUpdateAttendanceLoading } = useAttendanceUpdateMutation({
@@ -60,10 +57,10 @@ export const useAttendanceUpdateModal = (teamId?: string, date?: string) => {
         colon={false}
         autoComplete="off"
         style={{ marginTop: 24 }}
-        initialValues={{ meal: false, incentive: 0, deduct: 0 }}
+        initialValues={{ isMealIncluded: false, incentive: 0, deduct: 0 }}
         onFinish={handleFinish}
       >
-        <Form.Item label="식대 포함" name="meal" valuePropName="checked">
+        <Form.Item label="식대 포함" name="isMealIncluded" valuePropName="checked">
           <Switch />
         </Form.Item>
 
@@ -96,6 +93,8 @@ export const useAttendanceUpdateModal = (teamId?: string, date?: string) => {
 
   const openModal = (ids: string[], values?: FormData) => {
     if (values) form.setFieldsValue(values);
+    else form.resetFields();
+
     setAttendanceIds(ids);
     setOpen(true);
   };

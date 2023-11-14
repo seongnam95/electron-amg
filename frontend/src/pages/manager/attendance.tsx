@@ -7,7 +7,6 @@ import { useRecoilValue } from 'recoil';
 import AntDatePicker from '~/components/common/DatePicker';
 import TeamSelector from '~/components/employee/TeamSelector';
 import Header from '~/components/layouts/Header';
-import AttendanceEditModal from '~/components/tracker/AttendanceEditModal';
 import DayTable from '~/components/tracker/DayTable';
 import { TableDataType } from '~/components/tracker/DayTable/tableConfig';
 import {
@@ -17,10 +16,9 @@ import {
 import { useTeamQuery } from '~/hooks/queryHooks/useTeamQuery';
 import { useAttendanceUpdateModal } from '~/hooks/useAttendanceUpdateModal';
 import { useDragScroll } from '~/hooks/useDragScroll';
-import { useSoundApp } from '~/hooks/useSoundApp';
 import { userState } from '~/stores/user';
 import { AttendancePageStyled } from '~/styles/pageStyled/attendancePageStyled';
-import { AttendanceData, AttendanceUpdateBody } from '~/types/attendance';
+import { AttendanceUpdateBody } from '~/types/attendance';
 
 type ViewType = 'monthly' | 'daily';
 
@@ -71,10 +69,8 @@ const Attendance = () => {
   };
 
   //
-  const handleRowClick = (id: string) => {
-    openModal([id], {
-      memo: '테스트',
-    });
+  const handleRowClick = (id: string, data: TableDataType) => {
+    openModal([id], { ...data });
   };
 
   const handleRowSelect = (ids: string[]) => setSelectedAttendanceIds(ids);
@@ -105,6 +101,28 @@ const Attendance = () => {
         onRow={{
           onClick: handleRowClick,
           onSelect: handleRowSelect,
+        }}
+        onCell={{
+          onChangeMealInclude: v =>
+            updateAttendance({
+              ids: [v.id],
+              body: { isMealIncluded: v.value ? v.value : undefined },
+            }),
+          onChangeIncentive: v =>
+            updateAttendance({
+              ids: [v.id],
+              body: { incentive: v.value !== null ? v.value : undefined },
+            }),
+          onChangeDeduct: v =>
+            updateAttendance({
+              ids: [v.id],
+              body: { deduct: v.value !== null ? v.value : undefined },
+            }),
+          onChangeMemo: v =>
+            updateAttendance({
+              ids: [v.id],
+              body: { memo: v.value !== null ? v.value : undefined },
+            }),
         }}
       />
 

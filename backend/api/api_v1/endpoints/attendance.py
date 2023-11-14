@@ -90,6 +90,7 @@ def update_attendance(
     db: Session = Depends(deps.get_db),
     attendance_in: schemas.AttendanceUpdate,
 ):
+    print(attendance_in)
     attendance = crud.attendance.update(db=db, db_obj=attendance, obj_in=attendance_in)
     return DataResponse(msg="정상 처리되었습니다.", result=attendance)
 

@@ -15,7 +15,7 @@ export const useAttendanceQuery = ({
   date,
   ...baseOptions
 }: AttendanceQueryOptions<EmployeeAttendanceData[]>) => {
-  const queryKey: Array<string> = [import.meta.env.VITE_EMPLOYEE_QUERY_KEY, teamId, date];
+  const queryKey: Array<string> = [import.meta.env.VITE_ATTENDANCE_QUERY_KEY, teamId, date];
 
   const { data, isLoading, isError } = useQuery(
     queryKey,
@@ -34,7 +34,7 @@ export const useAttendanceUpdateMutation = ({
   date,
   ...baseOptions
 }: AttendanceQueryOptions<AttendanceData[]>) => {
-  const queryKey: string[] = [import.meta.env.VITE_DRAFT_QUERY_KEY, teamId, date];
+  const queryKey: string[] = [import.meta.env.VITE_ATTENDANCE_QUERY_KEY, teamId, date];
   const queryClient = useQueryClient();
 
   const onSettled = () => queryClient.invalidateQueries(queryKey);

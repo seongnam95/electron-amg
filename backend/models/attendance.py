@@ -20,11 +20,11 @@ class Attendance(Base):
 
     pay = Column(Integer, nullable=False)
 
-    incentive = Column(Integer, default=0)  # 인센티브 (추가금)
-    deduct = Column(Integer, default=0)  # 차감액
-    memo = Column(String)  # 메모
+    incentive = Column(Integer, nullable=False, default=0)  # 인센티브 (추가금)
+    deduct = Column(Integer, nullable=False, default=0)  # 차감액
+    memo = Column(String, nullable=True)  # 메모
 
-    is_meal_included = Column(Boolean, default=False)  # 식대 포함
+    is_meal_included = Column(Boolean, nullable=False, default=False)  # 식대 포함
     working_date = Column(String, nullable=False)  # 근무일
 
     employee_id = Column(Integer, ForeignKey("employee.id"), nullable=False)

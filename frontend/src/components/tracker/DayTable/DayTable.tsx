@@ -3,51 +3,53 @@ import { useState } from 'react';
 import { Table } from 'antd';
 import { Dayjs } from 'dayjs';
 
-import { useAttendanceUpdateModal } from '~/hooks/useAttendanceUpdateModal';
-import { AttendanceData, AttendanceUpdateBody, EmployeeAttendanceData } from '~/types/attendance';
+import { EmployeeAttendanceData } from '~/types/attendance';
 
 import { DayTableStyled } from './styled';
-import {
-  AttendanceDayTableColumns,
-  AttendanceDayTableDataSource,
-  TableDataType,
-} from './tableConfig';
+import { ChangeValueType, getColumns, getDataSource, TableDataType } from './tableConfig';
 
 export interface DayTableProps {
   employees?: EmployeeAttendanceData[];
   date: Dayjs;
   onRow?: {
-    onClick?: (attendanceId: string) => void;
-    onSelect?: (attendanceIds: string[]) => void;
+    onClick?: (id: string, data: TableDataType) => void;
+    onSelect?: (ids: string[]) => void;
+  };
+  onCell?: {
+    onChangeMealInclude?: (v: ChangeValueType<boolean>) => void;
+    onChangeIncentive?: (v: ChangeValueType<number>) => void;
+    onChangeDeduct?: (v: ChangeValueType<number>) => void;
+    onChangeMemo?: (v: ChangeValueType<string>) => void;
   };
 }
 
-const DayTable = ({ employees, date, onRow }: DayTableProps) => {
+const DayTable = ({ employees, onCell }: DayTableProps) => {
   const [selectedAttendanceIds, setSelectedAttendanceIds] = useState<string[]>([]);
 
-  const handleRowClick = (data: TableDataType) => {
-    if (data.attendanceId && onRow?.onClick) {
-      onRow.onClick(data.attendanceId);
-    }
+  const onSelectedAttendanceIdsChange = (keys: React.Key[]) => {
+    setSelectedAttendanceIds(keys.map(key => String(key)));
   };
+
+  const rowSelection = {
+    selectedAttendanceIds,
+    onChange: onSelectedAttendanceIdsChange,
+  };
+
+  const dataSource = getDataSource(employees);
+  const columns = getColumns({
+    onChangeIncentive: onCell?.onChangeIncentive,
+    onChangeDeduct: onCell?.onChangeDeduct,
+    onClickMealInclude: onCell?.onChangeMealInclude,
+    onChangeMemo: onCell?.onChangeMemo,
+  });
 
   return (
     <DayTableStyled className="AttendanceTable">
       <Table
         pagination={false}
-        columns={AttendanceDayTableColumns}
-        dataSource={AttendanceDayTableDataSource(employees)}
-        rowSelection={{
-          type: 'checkbox',
-          onChange: keys => {
-            setSelectedAttendanceIds(keys.map(key => String(key)));
-          },
-        }}
-        onRow={data => {
-          return {
-            onClick: () => handleRowClick(data),
-          };
-        }}
+        columns={columns}
+        dataSource={dataSource}
+        rowSelection={rowSelection}
       />
     </DayTableStyled>
   );
