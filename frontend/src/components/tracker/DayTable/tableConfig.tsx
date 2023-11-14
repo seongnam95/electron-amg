@@ -1,14 +1,8 @@
-import { Button, Flex, InputNumber, Popover, Tag } from 'antd';
+import { Button, Tag } from 'antd';
 import { ColumnsType } from 'antd/es/table';
-import { Dayjs } from 'dayjs';
 
 import { EmployeeAttendanceData } from '~/types/attendance';
 import { PositionData, SALARY, SalaryType } from '~/types/position';
-
-export interface ChangeValueType<T = string> {
-  id: string;
-  value: T;
-}
 
 export interface TableDataType {
   key: string;
@@ -18,9 +12,10 @@ export interface TableDataType {
     salaryCode: SalaryType;
     pay: number;
   };
-  includeMeal: boolean;
-  incentive: number;
-  deduct: number;
+  attendanceId?: string;
+  includeMeal?: boolean;
+  incentive?: number;
+  deduct?: number;
 }
 
 export const AttendanceDayTableColumns: ColumnsType<TableDataType> = [
@@ -70,10 +65,14 @@ export const AttendanceDayTableColumns: ColumnsType<TableDataType> = [
     title: '식대 포함',
     width: 94,
     align: 'center',
-    render: (isInclude: boolean) => {
-      const color = isInclude ? '#71B3F0' : '#F87B6A';
-      const label = isInclude ? 'Y' : 'N';
-      return <b style={{ color: color, marginInlineEnd: 0 }}>{label}</b>;
+    render: (isInclude?: boolean) => {
+      if (isInclude !== undefined) {
+        const color = isInclude ? '#71B3F0' : '#F87B6A';
+        const label = isInclude ? 'Y' : 'N';
+
+        return <b style={{ color: color, marginInlineEnd: 0 }}>{label}</b>;
+      }
+      return <>-</>;
     },
   },
   {
@@ -82,11 +81,16 @@ export const AttendanceDayTableColumns: ColumnsType<TableDataType> = [
     title: '인센티브',
     width: 110,
     align: 'center',
-    render: (incentive: number) => (
-      <Button size="small" type="text" style={{ color: '#2DD329' }}>
-        + {incentive.toLocaleString()}
-      </Button>
-    ),
+    render: (incentive?: number) => {
+      if (incentive !== undefined) {
+        return (
+          <Button size="small" type="text" style={{ color: '#2DD329' }}>
+            + {incentive.toLocaleString()}
+          </Button>
+        );
+      }
+      return <>-</>;
+    },
   },
   {
     key: 'deduct',
@@ -94,11 +98,16 @@ export const AttendanceDayTableColumns: ColumnsType<TableDataType> = [
     title: '페널티',
     width: 100,
     align: 'center',
-    render: (deduct: number) => (
-      <Button type="text" size="small" style={{ color: '#EA3B3B', width: '100%' }}>
-        - {deduct.toLocaleString()}
-      </Button>
-    ),
+    render: (deduct?: number) => {
+      if (deduct !== undefined) {
+        return (
+          <Button type="text" size="small" style={{ color: '#EA3B3B', width: '100%' }}>
+            - {deduct.toLocaleString()}
+          </Button>
+        );
+      }
+      return <>-</>;
+    },
   },
   {
     key: 'total',
@@ -106,18 +115,23 @@ export const AttendanceDayTableColumns: ColumnsType<TableDataType> = [
     title: '결정 수당',
     width: 120,
     align: 'center',
-    render: (total: number) => <b style={{ color: '#5855F5' }}>{total.toLocaleString()}원</b>,
+    render: (total?: number) => {
+      if (total !== undefined) {
+        return <b style={{ color: '#5855F5' }}>{total.toLocaleString()}원</b>;
+      }
+      return <Tag>미출근</Tag>;
+    },
   },
 ];
 
 export const AttendanceDayTableDataSource = (
-  date: Dayjs,
   employees?: EmployeeAttendanceData[],
 ): TableDataType[] | undefined => {
   if (!employees) return;
+
   return employees.map(employee => {
     const { attendances, position } = employee;
-    const attendance = attendances?.find(data => data.workingDate === date?.format('YY-MM-DD'));
+    const attendance = attendances?.[0];
 
     if (attendance) {
       const { incentive, deduct, isMealIncluded } = attendance;
@@ -132,6 +146,7 @@ export const AttendanceDayTableDataSource = (
           salaryCode: position.salaryCode,
           pay: position.pay,
         },
+        attendanceId: attendance.id,
         includeMeal: attendance.isMealIncluded ? attendance.isMealIncluded : false,
         incentive: attendance.incentive ? attendance.incentive : 0,
         deduct: attendance.deduct ? attendance.deduct : 0,
@@ -147,10 +162,6 @@ export const AttendanceDayTableDataSource = (
         salaryCode: position.salaryCode,
         pay: position.pay,
       },
-      includeMeal: false,
-      incentive: 0,
-      deduct: 0,
-      total: 0,
     };
   });
 };

@@ -81,7 +81,9 @@ def create_attendance(
 
 
 # 근무로그 업데이트
-@router.put("/{attendance_id}", response_model=BaseResponse)
+@router.put(
+    "/attendance/{attendance_id}", response_model=DataResponse[schemas.Attendance]
+)
 def update_attendance(
     *,
     attendance: schemas.Attendance = Depends(get_attendance),
@@ -89,11 +91,11 @@ def update_attendance(
     attendance_in: schemas.AttendanceUpdate,
 ):
     attendance = crud.attendance.update(db=db, db_obj=attendance, obj_in=attendance_in)
-    return BaseResponse(msg="정상 처리되었습니다.")
+    return DataResponse(msg="정상 처리되었습니다.", result=attendance)
 
 
 # 로그 삭제
-@router.delete("/{attendance_id}", response_model=BaseResponse)
+@router.delete("/attendance/{attendance_id}", response_model=BaseResponse)
 def delete_attendance(
     *,
     attendance: schemas.Attendance = Depends(get_attendance),

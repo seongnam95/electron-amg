@@ -5,7 +5,7 @@ import { Button, Flex, Form, Input, InputNumber, Modal, ModalProps, Switch } fro
 import { AttendanceData } from '~/types/attendance';
 
 export interface AttendanceEditModalProps extends ModalProps {
-  attendances: AttendanceData[];
+  attendances?: AttendanceData[];
   type?: 'single' | 'multi';
 }
 
@@ -16,17 +16,17 @@ const AttendanceEditModal = ({
   ...props
 }: AttendanceEditModalProps) => {
   const [form] = Form.useForm();
-  const attendance = attendances.length === 1 ? attendances[0] : undefined;
+  // const attendance = attendances.length === 1 ? attendances[0] : undefined;
 
-  useEffect(() => {
-    if (attendance) {
-      console.log('in');
-      form.setFieldValue('meal', attendance.isMealIncluded);
-      form.setFieldValue('incentive', attendance.incentive);
-      form.setFieldValue('deduct', attendance.deduct);
-      form.setFieldValue('memo', attendance.memo);
-    }
-  }, [attendances]);
+  // useEffect(() => {
+  //   if (attendance) {
+  //     console.log('in');
+  //     form.setFieldValue('meal', attendance.isMealIncluded);
+  //     form.setFieldValue('incentive', attendance.incentive);
+  //     form.setFieldValue('deduct', attendance.deduct);
+  //     form.setFieldValue('memo', attendance.memo);
+  //   }
+  // }, [attendances]);
 
   const handleFinish = (v: any) => {
     console.log(v);
@@ -48,50 +48,54 @@ const AttendanceEditModal = ({
   );
 
   return (
-    <Modal
-      centered
-      open={open}
-      title="수당 변경"
-      width={300}
-      footer={RenderFooter}
-      onCancel={handleCancel}
-      {...props}
+    // <Modal
+    //   centered
+    //   open={open}
+    //   title="수당 변경"
+    //   width={340}
+    //   footer={RenderFooter}
+    //   onCancel={handleCancel}
+    //   {...props}
+    // >
+    <Form
+      form={form}
+      labelCol={{ span: 7 }}
+      labelAlign="left"
+      colon={false}
+      autoComplete="off"
+      style={{ marginTop: 24 }}
+      initialValues={{ meal: false, incentive: 0, deduct: 0 }}
+      onFinish={handleFinish}
     >
-      <Form
-        form={form}
-        labelCol={{ span: 7 }}
-        labelAlign="left"
-        colon={false}
-        autoComplete="off"
-        style={{ marginTop: 24 }}
-        initialValues={{ meal: false, incentive: 0, deduct: 0 }}
-        onFinish={handleFinish}
-      >
-        <Form.Item label="식대 포함" name="meal" valuePropName="checked">
-          <Switch />
-        </Form.Item>
+      <Form.Item label="식대 포함" name="meal" valuePropName="checked">
+        <Switch />
+      </Form.Item>
 
-        <Form.Item label="인센티브" name="incentive">
-          <InputNumber
-            min={0}
-            style={{ width: '100%' }}
-            formatter={value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
-          />
-        </Form.Item>
+      <Form.Item label="인센티브" name="incentive">
+        <InputNumber
+          min={0}
+          style={{ width: '100%' }}
+          addonBefore="+"
+          addonAfter="원"
+          formatter={value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+        />
+      </Form.Item>
 
-        <Form.Item label="페널티" name="deduct">
-          <InputNumber
-            max={0}
-            style={{ width: '100%' }}
-            formatter={value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
-          />
-        </Form.Item>
+      <Form.Item label="페널티" name="deduct">
+        <InputNumber
+          min={0}
+          style={{ width: '100%' }}
+          addonBefore="-"
+          addonAfter="원"
+          formatter={value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+        />
+      </Form.Item>
 
-        <Form.Item label="메모" name="memo">
-          <Input />
-        </Form.Item>
-      </Form>
-    </Modal>
+      <Form.Item label="한줄 메모" name="memo">
+        <Input maxLength={20} />
+      </Form.Item>
+    </Form>
+    // </Modal>
   );
 };
 

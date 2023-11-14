@@ -3,32 +3,31 @@ import { useState } from 'react';
 import { Table } from 'antd';
 import { Dayjs } from 'dayjs';
 
-import { AttendanceData, EmployeeAttendanceData } from '~/types/attendance';
+import { useAttendanceUpdateModal } from '~/hooks/useAttendanceUpdateModal';
+import { AttendanceData, AttendanceUpdateBody, EmployeeAttendanceData } from '~/types/attendance';
 
-import AttendanceEditModal from '../AttendanceEditModal';
 import { DayTableStyled } from './styled';
 import {
   AttendanceDayTableColumns,
   AttendanceDayTableDataSource,
-  ChangeValueType,
   TableDataType,
 } from './tableConfig';
 
 export interface DayTableProps {
   employees?: EmployeeAttendanceData[];
   date: Dayjs;
-  onChangeIncentive?: (value: ChangeValueType) => void;
+  onRow?: {
+    onClick?: (attendanceId: string) => void;
+    onSelect?: (attendanceIds: string[]) => void;
+  };
 }
 
-const DayTable = ({ employees, date }: DayTableProps) => {
-  const [selectedAttendances, setSelectedAttendances] = useState<AttendanceData[]>([]);
-  const [openEditor, setOpenEditor] = useState<boolean>(false);
+const DayTable = ({ employees, date, onRow }: DayTableProps) => {
+  const [selectedAttendanceIds, setSelectedAttendanceIds] = useState<string[]>([]);
 
   const handleRowClick = (data: TableDataType) => {
-    const employee = employees?.find(e => e.id === data.key);
-    if (employee?.attendances) {
-      setSelectedAttendances([employee.attendances[0]]);
-      setOpenEditor(true);
+    if (data.attendanceId && onRow?.onClick) {
+      onRow.onClick(data.attendanceId);
     }
   };
 
@@ -37,21 +36,18 @@ const DayTable = ({ employees, date }: DayTableProps) => {
       <Table
         pagination={false}
         columns={AttendanceDayTableColumns}
-        dataSource={AttendanceDayTableDataSource(date, employees)}
+        dataSource={AttendanceDayTableDataSource(employees)}
         rowSelection={{
           type: 'checkbox',
-          onChange: () => {},
+          onChange: keys => {
+            setSelectedAttendanceIds(keys.map(key => String(key)));
+          },
         }}
         onRow={data => {
           return {
             onClick: () => handleRowClick(data),
           };
         }}
-      />
-      <AttendanceEditModal
-        open={openEditor}
-        attendances={selectedAttendances}
-        onCancel={() => setOpenEditor(false)}
       />
     </DayTableStyled>
   );

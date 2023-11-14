@@ -1,9 +1,7 @@
-import axios, { AxiosError } from 'axios';
-
 import { DraftCreateBody, DraftData } from '~/types/draft';
 
 import axiosPrivate from './axios';
-import { BaseResponse, FetchListResponse, FetchResponse } from './response';
+import { FetchListResponse, FetchResponse } from './response';
 
 export const fetchDrafts =
   (teamId?: string) =>
@@ -30,12 +28,10 @@ export const createDraft =
     return data.result;
   };
 
-export const removeDraft =
-  () =>
-  async (draftId?: string): Promise<DraftData> => {
-    const endpoint = import.meta.env.VITE_DRAFT_ENDPOINT;
+export const removeDraft = async (draftId?: string): Promise<DraftData> => {
+  const endpoint = import.meta.env.VITE_DRAFT_ENDPOINT;
 
-    const { data } = await axiosPrivate.delete<FetchResponse<DraftData>>(`${endpoint}/${draftId}`);
+  const { data } = await axiosPrivate.delete<FetchResponse<DraftData>>(`${endpoint}/${draftId}`);
 
-    return data.result;
-  };
+  return data.result;
+};

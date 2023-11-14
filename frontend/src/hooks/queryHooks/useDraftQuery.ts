@@ -70,7 +70,7 @@ export const useDraftRemoveMutation = ({ teamId, onSuccess }: DraftQueryOptions<
 
   const { mutate: removeDraftMutate, isLoading: isRemoveDraftLoading } = useMutation(
     queryKey,
-    removeDraft(),
+    removeDraft,
     {
       onSettled,
       onSuccess,

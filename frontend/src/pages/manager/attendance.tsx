@@ -7,28 +7,51 @@ import { useRecoilValue } from 'recoil';
 import AntDatePicker from '~/components/common/DatePicker';
 import TeamSelector from '~/components/employee/TeamSelector';
 import Header from '~/components/layouts/Header';
+import AttendanceEditModal from '~/components/tracker/AttendanceEditModal';
 import DayTable from '~/components/tracker/DayTable';
-import { useAttendanceQuery } from '~/hooks/queryHooks/useAttendanceQuery';
+import { TableDataType } from '~/components/tracker/DayTable/tableConfig';
+import {
+  useAttendanceQuery,
+  useAttendanceUpdateMutation,
+} from '~/hooks/queryHooks/useAttendanceQuery';
 import { useTeamQuery } from '~/hooks/queryHooks/useTeamQuery';
+import { useAttendanceUpdateModal } from '~/hooks/useAttendanceUpdateModal';
 import { useDragScroll } from '~/hooks/useDragScroll';
+import { useSoundApp } from '~/hooks/useSoundApp';
 import { userState } from '~/stores/user';
 import { AttendancePageStyled } from '~/styles/pageStyled/attendancePageStyled';
+import { AttendanceData, AttendanceUpdateBody } from '~/types/attendance';
 
 type ViewType = 'monthly' | 'daily';
 
 const Attendance = () => {
+  // state
   const { user } = useRecoilValue(userState);
+
   const [teamId, setTeamId] = useState<string>();
   const [viewType, setViewType] = useState<ViewType>('daily');
   const [selectedDay, setSelectedDay] = useState<Dayjs>(dayjs());
   const selectedDayStr = selectedDay.format(viewType === 'daily' ? 'YY-MM-DD' : 'YY-MM');
 
+  const [selectedAttendanceIds, setSelectedAttendanceIds] = useState<string[]>([]);
+  const [openEditor, setOpenEditor] = useState<boolean>(false);
+
+  // hook
   const dragRef = useDragScroll();
   const { teams } = useTeamQuery({ userId: user.id });
-  const { attendances } = useAttendanceQuery({
+  const { openModal, contextHolder } = useAttendanceUpdateModal(teamId, selectedDayStr);
+
+  const { employees } = useAttendanceQuery({
     teamId: teamId,
     date: selectedDayStr,
     enabled: !!teamId,
+  });
+
+  // 근무 로그 업데이트
+  const { updateAttendanceMutate } = useAttendanceUpdateMutation({
+    teamId: teamId,
+    date: selectedDayStr,
+    onSuccess: data => console.log(data),
   });
 
   // selectedTeamId가 없을 때 teams가 불려왔을 경우 teams 첫 항목 ID 저장
@@ -36,10 +59,25 @@ const Attendance = () => {
     if (!teamId && teams.length > 0) setTeamId(teams[0].id);
   }, [teams]);
 
+  //
+  const updateAttendance = ({ ids, body }: { ids: string[]; body: AttendanceUpdateBody }) => {
+    updateAttendanceMutate({ ids: ids, body: body });
+  };
+
+  // 팀 변경, 날짜 변경 핸들러
   const handleChangeTeam = (id: string) => setTeamId(id);
   const handleOnChangeDate = (date: Dayjs | null) => {
     if (date) setSelectedDay(date);
   };
+
+  //
+  const handleRowClick = (id: string) => {
+    openModal([id], {
+      memo: '테스트',
+    });
+  };
+
+  const handleRowSelect = (ids: string[]) => setSelectedAttendanceIds(ids);
 
   return (
     <AttendancePageStyled>
@@ -61,14 +99,16 @@ const Attendance = () => {
         </Flex>
       </Header>
 
-      <DayTable date={selectedDay} employees={attendances} />
-      {/* <div className="table-wrap" ref={dragRef}>
-        {viewType === 'month' ? (
-          <MonthTable selectedDay={selectedDay} employees={employees} />
-        ) : (
-          <DayTable />
-        )}
-      </div> */}
+      <DayTable
+        date={selectedDay}
+        employees={employees}
+        onRow={{
+          onClick: handleRowClick,
+          onSelect: handleRowSelect,
+        }}
+      />
+
+      {contextHolder}
     </AttendancePageStyled>
   );
 };
