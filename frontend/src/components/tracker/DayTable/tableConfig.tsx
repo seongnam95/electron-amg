@@ -49,7 +49,11 @@ export const getColumns = ({
       width: 110,
       ellipsis: true,
       sorter: (a, b) => a.name.localeCompare(b.name),
-      render: (name: string) => <b>{name}</b>,
+      render: (name: string) => (
+        <Button size="small" type="text">
+          <b>{name}</b>
+        </Button>
+      ),
     },
     {
       key: 'position',
@@ -73,8 +77,7 @@ export const getColumns = ({
       key: 'salary',
       dataIndex: 'salary',
       title: '기준 수당',
-      width: 200,
-      align: 'center',
+      width: 160,
       render: ({ salaryCode, pay }: { salaryCode: SalaryType; pay: number }) => (
         <>
           <Tag>{SALARY[salaryCode]}</Tag>
@@ -89,44 +92,41 @@ export const getColumns = ({
       width: 94,
       align: 'center',
       render: (isInclude, data) => {
-        if (isInclude !== undefined) {
-          const color = isInclude ? '#71B3F0' : '#F87B6A';
-          const label = isInclude ? 'Y' : 'N';
+        if (isInclude === undefined) return '-';
 
-          const handleClick = () =>
-            onClickMealInclude?.({ id: data.attendanceId, value: !isInclude });
+        const color = isInclude ? '#71B3F0' : '#F87B6A';
+        const label = isInclude ? 'Y' : 'N';
 
-          return (
-            <Button size="small" type="text" style={{ color: color }} onClick={handleClick}>
-              {label}
-            </Button>
-          );
-        }
-        return <>-</>;
+        const handleClick = () =>
+          onClickMealInclude?.({ id: data.attendanceId, value: !isInclude });
+
+        return (
+          <Button size="small" type="text" style={{ color: color }} onClick={handleClick}>
+            {label}
+          </Button>
+        );
       },
     },
     {
       key: 'incentive',
       dataIndex: 'incentive',
       title: '인센티브',
-      width: 110,
+      width: 100,
       align: 'center',
       render: (incentive, data) => {
-        if (incentive !== undefined) {
-          return (
-            <InputPopover
-              title="인센티브"
-              inputType="number"
-              placeholder={incentive}
-              onSubmit={v => onChangeIncentive?.({ id: data.attendanceId, value: v as number })}
-            >
-              <Button size="small" type="text" style={{ color: '#2DD329' }}>
-                + {incentive.toLocaleString()}
-              </Button>
-            </InputPopover>
-          );
-        }
-        return <>-</>;
+        if (incentive === undefined) return '-';
+        return (
+          <InputPopover
+            title="인센티브"
+            inputType="number"
+            placeholder={incentive}
+            onSubmit={v => onChangeIncentive?.({ id: data.attendanceId, value: v as number })}
+          >
+            <Button size="small" type="text" style={{ color: '#2DD329' }}>
+              + {incentive.toLocaleString()}
+            </Button>
+          </InputPopover>
+        );
       },
     },
     {
@@ -136,21 +136,19 @@ export const getColumns = ({
       width: 100,
       align: 'center',
       render: (deduct, data) => {
-        if (deduct !== undefined) {
-          return (
-            <InputPopover
-              title="패널티"
-              inputType="number"
-              placeholder={deduct}
-              onSubmit={v => onChangeDeduct?.({ id: data.attendanceId, value: v as number })}
-            >
-              <Button type="text" size="small" style={{ color: '#EA3B3B' }}>
-                - {deduct.toLocaleString()}
-              </Button>
-            </InputPopover>
-          );
-        }
-        return <>-</>;
+        if (deduct === undefined) return '-';
+        return (
+          <InputPopover
+            title="패널티"
+            inputType="number"
+            placeholder={deduct}
+            onSubmit={v => onChangeDeduct?.({ id: data.attendanceId, value: v as number })}
+          >
+            <Button type="text" size="small" style={{ color: '#EA3B3B' }}>
+              - {deduct.toLocaleString()}
+            </Button>
+          </InputPopover>
+        );
       },
     },
     {
@@ -159,42 +157,35 @@ export const getColumns = ({
       title: '메모',
       width: 70,
       align: 'center',
-
       render: (memo, data) => {
-        if (memo) {
-          return (
-            <InputPopover
-              title="메모"
-              inputType="text"
-              placeholder={memo}
-              onSubmit={v => onChangeMemo?.({ id: data.attendanceId, value: v as string })}
-            >
-              <Flex>
-                <Tooltip title={memo}>
-                  <Button
-                    type="text"
-                    size="small"
-                    icon={<MdEditNote size={20} color="#767676" />}
-                  />
-                </Tooltip>
-              </Flex>
-            </InputPopover>
-          );
-        }
-        return <></>;
+        if (memo === undefined) return '-';
+        return (
+          <InputPopover
+            title="메모"
+            inputType="text"
+            placeholder={memo ?? ''}
+            onSubmit={v => onChangeMemo?.({ id: data.attendanceId, value: v as string })}
+          >
+            <Flex justify="center">
+              <Tooltip title={memo}>
+                <Button type="text" size="small" icon={<MdEditNote size={20} color="#767676" />} />
+              </Tooltip>
+            </Flex>
+          </InputPopover>
+        );
       },
     },
     {
       key: 'total',
       dataIndex: 'total',
       title: '결정 수당',
-      width: 120,
+      width: 110,
       align: 'center',
       render: (total?: number) => {
         if (total !== undefined) {
           return <b style={{ color: '#5855F5' }}>{total.toLocaleString()}원</b>;
         }
-        return <Tag>미출근</Tag>;
+        return <Tag style={{ marginInlineEnd: 0 }}>미출근</Tag>;
       },
     },
   ];

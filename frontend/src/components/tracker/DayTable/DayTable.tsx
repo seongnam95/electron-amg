@@ -5,6 +5,7 @@ import { Dayjs } from 'dayjs';
 
 import { EmployeeAttendanceData } from '~/types/attendance';
 
+import DayTableFooter from './DayTableFooter';
 import { DayTableStyled } from './styled';
 import { ChangeValueType, getColumns, getDataSource, TableDataType } from './tableConfig';
 

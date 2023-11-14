@@ -8,6 +8,7 @@ import AntDatePicker from '~/components/common/DatePicker';
 import TeamSelector from '~/components/employee/TeamSelector';
 import Header from '~/components/layouts/Header';
 import DayTable from '~/components/tracker/DayTable';
+import DayTableFooter from '~/components/tracker/DayTable/DayTableFooter';
 import { TableDataType } from '~/components/tracker/DayTable/tableConfig';
 import {
   useAttendanceQuery,
@@ -94,37 +95,39 @@ const Attendance = () => {
           />
         </Flex>
       </Header>
-
-      <DayTable
-        date={selectedDay}
-        employees={employees}
-        onRow={{
-          onClick: handleRowClick,
-          onSelect: handleRowSelect,
-        }}
-        onCell={{
-          onChangeMealInclude: v =>
-            updateAttendance({
-              ids: [v.id],
-              body: { isMealIncluded: v.value ? v.value : undefined },
-            }),
-          onChangeIncentive: v =>
-            updateAttendance({
-              ids: [v.id],
-              body: { incentive: v.value !== null ? v.value : undefined },
-            }),
-          onChangeDeduct: v =>
-            updateAttendance({
-              ids: [v.id],
-              body: { deduct: v.value !== null ? v.value : undefined },
-            }),
-          onChangeMemo: v =>
-            updateAttendance({
-              ids: [v.id],
-              body: { memo: v.value !== null ? v.value : undefined },
-            }),
-        }}
-      />
+      <Flex>
+        <DayTable
+          date={selectedDay}
+          employees={employees}
+          onRow={{
+            onClick: handleRowClick,
+            onSelect: handleRowSelect,
+          }}
+          onCell={{
+            onChangeMealInclude: v =>
+              updateAttendance({
+                ids: [v.id],
+                body: { isMealIncluded: v.value ? v.value : undefined },
+              }),
+            onChangeIncentive: v =>
+              updateAttendance({
+                ids: [v.id],
+                body: { incentive: v.value !== null ? v.value : undefined },
+              }),
+            onChangeDeduct: v =>
+              updateAttendance({
+                ids: [v.id],
+                body: { deduct: v.value !== null ? v.value : undefined },
+              }),
+            onChangeMemo: v =>
+              updateAttendance({
+                ids: [v.id],
+                body: { memo: v.value !== null ? v.value : undefined },
+              }),
+          }}
+        />
+        <DayTableFooter />
+      </Flex>
 
       {contextHolder}
     </AttendancePageStyled>

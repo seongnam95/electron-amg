@@ -149,7 +149,7 @@ export const InitGlobalStyled = memo(createGlobalStyle`
 
     .ant-table-tbody > tr > td {
       border: none;
-      padding: 1.2rem 1.8rem;
+      padding: 1.2rem 1.6rem;
     }
 
     .ant-table-cell {
