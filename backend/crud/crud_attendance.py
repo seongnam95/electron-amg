@@ -45,12 +45,12 @@ class CRUDAttendance(CRUDBase[Attendance, AttendanceCreate, AttendanceUpdate]):
         db: Session,
         *,
         employee_id: str,
-        month_str: str,
+        date_str: str,
     ) -> List[Attendance]:
         return (
             db.query(Attendance)
             .filter(Attendance.employee_id == employee_id)
-            .filter(Attendance.working_date.startswith(month_str))
+            .filter(Attendance.working_date.startswith(date_str))
             .all()
         )
 

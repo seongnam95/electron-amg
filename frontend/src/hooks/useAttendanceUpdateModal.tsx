@@ -74,7 +74,7 @@ export const useAttendanceUpdateModal = (teamId?: string, date?: string) => {
           />
         </Form.Item>
 
-        <Form.Item label="페널티" name="deduct">
+        <Form.Item label="공제" name="deduct">
           <InputNumber
             min={0}
             style={{ width: '100%' }}

@@ -10,7 +10,8 @@ from .attendance import (
     Attendance,
     AttendanceCreate,
     AttendanceUpdate,
-    EmployeeAttendanceResponse,
+    AttendanceMonthly,
+    AttendanceDaily,
 )
 from .user import User, UserCreate, UserUpdate, UserResponse, UserLogin
 from .draft import Draft, DraftCreate, DraftUpdate, DraftForContract

@@ -5,6 +5,7 @@ export const AttendancePageStyled = styled.div`
   overflow: hidden;
 
   .AttendanceTable {
+    overflow: auto;
     height: calc(100% - ${p => p.theme.sizes.headerHeight});
   }
 `;

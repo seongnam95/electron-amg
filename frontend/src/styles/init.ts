@@ -12,8 +12,8 @@ export const InitGlobalStyled = memo(createGlobalStyle`
   }
 
   *::-webkit-scrollbar {
-    width: 9px;
-    height: 10px;
+    width: 0;
+    height: 0;
   }
 
 

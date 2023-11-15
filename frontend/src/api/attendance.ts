@@ -1,6 +1,6 @@
 import { AxiosResponse } from 'axios';
 
-import { AttendanceData, AttendanceUpdateBody, EmployeeAttendanceData } from '~/types/attendance';
+import { AttendanceData, AttendanceUpdateBody } from '~/types/attendance';
 
 import axiosPrivate from './axios';
 import { BaseResponse, FetchListResponse, FetchResponse } from './response';
@@ -12,11 +12,11 @@ interface FetchAttendancesProps {
 
 export const fetchAttendances =
   ({ id, date }: FetchAttendancesProps) =>
-  async (): Promise<EmployeeAttendanceData[]> => {
+  async (): Promise<AttendanceData[]> => {
     const teamEndpoint = import.meta.env.VITE_TEAM_ENDPOINT;
     const attendanceEndpoint = import.meta.env.VITE_ATTENDANCE_ENDPOINT;
 
-    const { data } = await axiosPrivate.get<FetchListResponse<EmployeeAttendanceData>>(
+    const { data } = await axiosPrivate.get<FetchListResponse<AttendanceData>>(
       `${teamEndpoint}/${id}/${attendanceEndpoint}`,
       { params: { date: date } },
     );

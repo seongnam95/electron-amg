@@ -1,7 +1,6 @@
 import styled from 'styled-components';
 
 export const DayTableStyled = styled.div`
-  overflow: auto;
+  position: relative;
+  padding-bottom: 9rem;
 `;
-
-export const InputModal = styled.div``;

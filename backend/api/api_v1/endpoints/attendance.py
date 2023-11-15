@@ -18,12 +18,11 @@ def get_attendance(attendance_id: str, db: Session = Depends(deps.get_db)):
     return attendance
 
 
-# 특정 날짜 전체 로그 조회
 @router.get(
     "/team/{team_id}/attendance",
-    response_model=ListResponse[schemas.EmployeeAttendanceResponse],
+    response_model=ListResponse[schemas.Attendance],
 )
-def read_all_attendance(
+def read_attendances(
     team_id: str,
     date: str,
     db: Session = Depends(deps.get_db),
@@ -34,22 +33,18 @@ def read_all_attendance(
     if not team:
         raise HTTPException(status_code=404, detail="존재하지 않는 팀입니다.")
 
-    new_employee = []
+    attendances = []
     for employee in team.employees:
-        attendances = crud.attendance.get_all_attendance_by_month(
-            db, employee_id=employee.id, month_str=date
+        attendance_objs = crud.attendance.get_all_attendance_by_month(
+            db, employee_id=employee.id, date_str=date
         )
 
-        new_employee.append(
-            schemas.EmployeeAttendanceResponse(
-                id=employee.id,
-                name=employee.name,
-                position=employee.position,
-                attendances=attendances,
-            )
-        )
+        if attendance_objs:
+            for attendance in attendance_objs:
+                attendances.append(attendance)
+
     response = deps.create_list_response(
-        data=new_employee, total=len(new_employee), limit=limit, page=page
+        data=attendances, total=len(attendances), limit=limit, page=page
     )
     return ListResponse(msg="정상 처리되었습니다.", result=response)
 

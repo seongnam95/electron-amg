@@ -1,20 +1,12 @@
-import { PositionData } from './position';
-
 export interface AttendanceData {
   id: string;
   pay: number;
-  incentive?: number;
-  deduct?: number;
-  memo?: string;
   isMealIncluded: boolean;
   workingDate: string;
-}
-
-export interface EmployeeAttendanceData {
-  id: string;
-  name: string;
-  position: PositionData;
-  attendances?: AttendanceData[];
+  employeeId: string;
+  incentive: number;
+  deduct: number;
+  memo: string;
 }
 
 /** 근로자 생성 API 바디 */

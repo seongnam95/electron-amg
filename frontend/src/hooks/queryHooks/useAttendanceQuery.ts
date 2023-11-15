@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 
 import { fetchAttendances, updateAttendance } from '~/api/attendance';
-import { AttendanceData, EmployeeAttendanceData } from '~/types/attendance';
+import { AttendanceData } from '~/types/attendance';
 import { QueryBaseOptions } from '~/types/query';
 
 interface AttendanceQueryOptions<T> extends QueryBaseOptions<T> {
@@ -14,7 +14,7 @@ export const useAttendanceQuery = ({
   teamId,
   date,
   ...baseOptions
-}: AttendanceQueryOptions<EmployeeAttendanceData[]>) => {
+}: AttendanceQueryOptions<AttendanceData[]>) => {
   const queryKey: Array<string> = [import.meta.env.VITE_ATTENDANCE_QUERY_KEY, teamId, date];
 
   const { data, isLoading, isError } = useQuery(
@@ -25,8 +25,8 @@ export const useAttendanceQuery = ({
     },
   );
 
-  const employees = data ? data.toReversed() : [];
-  return { employees, isLoading, isError };
+  const attendances = data ? data.toReversed() : [];
+  return { attendances, isLoading, isError };
 };
 
 export const useAttendanceUpdateMutation = ({

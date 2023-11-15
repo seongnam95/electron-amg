@@ -5,8 +5,8 @@ from schemas.position import Position
 
 
 class AttendanceBase(BaseModel):
-    pay: int
-    working_date: str
+    working_date: Optional[str] = None
+    pay: Optional[int] = None
     incentive: Optional[int] = None
     deduct: Optional[int] = None
     is_meal_included: Optional[bool] = None
@@ -14,7 +14,12 @@ class AttendanceBase(BaseModel):
 
 
 class AttendanceCreate(AttendanceBase):
-    pass
+    working_date: Optional[str] = None
+    pay: Optional[int] = None
+    incentive: Optional[int] = None
+    deduct: Optional[int] = None
+    is_meal_included: Optional[bool] = None
+    memo: Optional[str] = None
 
 
 class AttendanceUpdate(BaseModel):
@@ -22,7 +27,6 @@ class AttendanceUpdate(BaseModel):
     incentive: Optional[int] = None
     deduct: Optional[int] = None
     is_meal_included: Optional[bool] = None
-    working_date: Optional[str] = None
     memo: Optional[str] = None
 
     @model_validator(mode="before")
@@ -32,16 +36,34 @@ class AttendanceUpdate(BaseModel):
 
 class Attendance(AttendanceBase):
     id: str
+    working_date: str
+    pay: int
+    is_meal_included: bool
+    employee_id: str
+    incentive: int
+    deduct: int
+    memo: str
 
     class Config:
         from_attributes = True
 
 
-class EmployeeAttendanceResponse(BaseModel):
+class AttendanceMonthly(BaseModel):
     id: str
     name: str
     position: Position
     attendances: List[Attendance]
+
+    class Config:
+        from_attributes = True
+
+
+class AttendanceDaily(Attendance):
+    is_attendance: bool
+    meal_cost: int
+    employee_id: str
+    employee_name: str
+    position: Position
 
     class Config:
         from_attributes = True
