@@ -10,7 +10,7 @@ export interface PositionData {
   name: string;
   color: string;
   salaryCode: SalaryType;
-  pay: number;
+  standardPay: number;
 }
 
 /** 근로자 생성 API 바디 */

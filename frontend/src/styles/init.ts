@@ -138,7 +138,7 @@ export const InitGlobalStyled = memo(createGlobalStyle`
         font-weight: normal;
         font-size: ${p => [p.theme.sizes.textSmall]};
         color: ${p => p.theme.colors.textColor2};
-        padding: 1rem 1.8rem;
+        padding: 1rem 1rem;
         background-color: transparent;
 
         ::before {
@@ -149,7 +149,7 @@ export const InitGlobalStyled = memo(createGlobalStyle`
 
     .ant-table-tbody > tr > td {
       border: none;
-      padding: 1.2rem 1.6rem;
+      padding: 1.2rem 1rem;
     }
 
     .ant-table-cell {

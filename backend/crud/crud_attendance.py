@@ -13,16 +13,16 @@ from datetime import date
 
 class CRUDAttendance(CRUDBase[Attendance, AttendanceCreate, AttendanceUpdate]):
     def create_attendance(
-        self, db: Session, *, employee_id: str, attendance_in: AttendanceCreate
+        self, db: Session, *, employee: Employee, attendance_in: AttendanceCreate
     ):
-        today = date.today().strftime("%Y-%m-%d")  # 현재 날짜 가져오기
+        today = date.today().strftime("%y-%m-%d")  # 현재 날짜 가져오기
         working_date = (
             attendance_in.working_date if attendance_in.working_date else today
         )
 
         attendance = (
             db.query(Attendance)
-            .filter(Attendance.employee_id == employee_id)
+            .filter(Attendance.employee_id == employee.id)
             .filter(Attendance.working_date == working_date)
             .first()
         )
@@ -30,9 +30,14 @@ class CRUDAttendance(CRUDBase[Attendance, AttendanceCreate, AttendanceUpdate]):
         if attendance:
             raise HTTPException(status_code=404, detail="이미 출근처리 되었습니다.")
 
+        standard_pay = employee.position.standard_pay
+        incentive = attendance_in.incentive if attendance_in.incentive else 0
+        deduct = attendance_in.deduct if attendance_in.deduct else 0
+
         obj_in_data = jsonable_encoder(attendance_in)
-        obj_in_data["employee_id"] = employee_id
+        obj_in_data["employee_id"] = employee.id
         obj_in_data["working_date"] = working_date
+        obj_in_data["pay"] = standard_pay + incentive - deduct
         db_obj = self.model(**obj_in_data)
 
         db.add(db_obj)
@@ -53,6 +58,31 @@ class CRUDAttendance(CRUDBase[Attendance, AttendanceCreate, AttendanceUpdate]):
             .filter(Attendance.working_date.startswith(date_str))
             .all()
         )
+
+    # Attendance 업데이트
+    def update_attendance(
+        self, db: Session, attendance: Attendance, attendance_in: AttendanceUpdate
+    ):
+        update_data = attendance_in.model_dump(exclude_unset=True)
+
+        attendance.pay = (
+            attendance.employee.position.standard_pay
+            + update_data.get("incentive", attendance.incentive)
+            - update_data.get("deduct", attendance.deduct)
+        )
+
+        meal_cost = attendance.employee.team.meal_cost
+        if update_data.get("is_meal_included", attendance.is_meal_included):
+            attendance.pay += meal_cost
+
+        for field, value in update_data.items():
+            if field != "pay":
+                setattr(attendance, field, value)
+
+        db.add(attendance)
+        db.commit()
+        db.refresh(attendance)
+        return attendance
 
 
 attendance = CRUDAttendance(Attendance)

@@ -1,32 +1,25 @@
 import { ForwardedRef, useEffect, useState } from 'react';
+import { FaTrashAlt } from 'react-icons/fa';
+import { ImFileExcel } from 'react-icons/im';
 
-import { Table, Tag, message } from 'antd';
+import { Button, Table, Tag, Tooltip, message } from 'antd';
 import { ColumnsType, Key } from 'antd/es/table/interface';
 
+import Dock from '~/components/common/Dock';
 import { useEmployeeQuery, useEmployeeRemoveMutation } from '~/hooks/queryHooks/useEmployeeQuery';
+import { EmployeeData } from '~/types/employee';
 import { PositionData, SALARY, SalaryType } from '~/types/position';
 import { formatPhoneNumber } from '~/utils/formatData';
 
-import Dock from './Dock';
+import { EmployeeTableDataType, getColumns } from './config';
 import { EmployeeTableWrapStyled } from './styled';
-
-interface EmployeeTableData {
-  key: string;
-  name: string;
-  phone: string;
-  position: PositionData;
-  salary: {
-    salaryCode: SalaryType;
-    pay: number;
-  };
-}
 
 interface EmployeeTableProps {
   teamId?: string;
   tableWrapRef?: ForwardedRef<HTMLDivElement>;
   isLoading?: boolean;
-  onRemove?: (ids: string[]) => void;
-  onClickName?: (id: string) => void;
+  onRemove: (ids: string[]) => void;
+  onClickName: (id: string) => void;
 }
 
 const EmployeeTable = ({
@@ -37,107 +30,9 @@ const EmployeeTable = ({
   onClickName,
 }: EmployeeTableProps) => {
   const [selectedEmployeeIds, setSelectedEmployeeIds] = useState<string[]>([]);
-  const [openExcelDrawer, setOpenExcelDrawer] = useState<boolean>(false);
   const isSelected = selectedEmployeeIds.length > 0;
 
   const { employees } = useEmployeeQuery({ teamId: teamId, enabled: !!teamId });
-
-  const columns: ColumnsType<EmployeeTableData> = [
-    {
-      key: 'name',
-      dataIndex: 'name',
-      title: '이름',
-      width: 110,
-      ellipsis: true,
-      onCell: v => {
-        return { onClick: () => handleNameClick(v.key.toString()) };
-      },
-      sorter: (a, b) => a.name.localeCompare(b.name),
-      render: (name: string) => <b>{name}</b>,
-    },
-    {
-      key: 'phone',
-      dataIndex: 'phone',
-      title: '연락처',
-      width: 150,
-      align: 'center',
-      render: (phone: string) => <>{formatPhoneNumber(phone)}</>,
-    },
-    {
-      key: 'position',
-      dataIndex: 'position',
-      title: '직위',
-      width: 90,
-      align: 'center',
-      sorter: (a, b) => a.position.toString().localeCompare(b.position.toString()),
-      render: (position: PositionData) => {
-        return (
-          <Tag
-            style={{ width: '5rem', textAlign: 'center', marginInlineEnd: 0 }}
-            color={position.color}
-          >
-            {position.name}
-          </Tag>
-        );
-      },
-    },
-    {
-      key: 'salary',
-      dataIndex: 'salary',
-      title: '급여',
-      width: 200,
-      align: 'center',
-      render: ({ salaryCode, pay }: { salaryCode: SalaryType; pay: number }) => (
-        <>
-          <Tag>{SALARY[salaryCode]}</Tag>
-          {pay.toLocaleString()}원
-        </>
-      ),
-    },
-    {
-      key: 'period',
-      dataIndex: 'period',
-      width: 120,
-      title: '계약 만료일',
-      align: 'center',
-      render: (period: string) => (
-        <Tag
-          style={{ width: '8rem', textAlign: 'center', marginInlineEnd: 0 }}
-          color={period === '계약 만료' ? 'red' : ''}
-        >
-          {period}
-        </Tag>
-      ),
-    },
-  ];
-
-  // 테이블 데이터 맵핑
-  const dataSource: Array<EmployeeTableData> | undefined = employees?.map(employee => {
-    const { position } = employee;
-    const period = employee ? employee.endPeriod : '계약 만료';
-
-    return {
-      key: employee.id,
-      name: employee.name,
-      phone: employee.phone,
-      position: position,
-      salary: {
-        salaryCode: position.salaryCode,
-        pay: position.pay,
-      },
-      period: period,
-    };
-  });
-
-  // Row 이름 클릭 이벤트
-  const handleNameClick = (employeeId: string) => onClickName?.(employeeId);
-
-  // Row 선택 이벤트
-  const handleSelectedChange = (keys: Key[]) => setSelectedEmployeeIds(keys.map(String));
-
-  // Excel 이벤트
-  const handleExcelClose = () => setOpenExcelDrawer(false);
-  const handleExcel = () => setOpenExcelDrawer(true);
 
   // Row 삭제 이벤트
   const handleDelete = () => {
@@ -145,20 +40,57 @@ const EmployeeTable = ({
     setSelectedEmployeeIds([]);
   };
 
+  const columns = getColumns({
+    onClickName: onClickName,
+  });
+
+  // Row 체크 핸들러
+  const rowSelection = {
+    onChange: (keys: React.Key[]) => setSelectedEmployeeIds(keys.map(String)),
+  };
+
+  // 테이블 데이터 맵핑
+  const dataSource: EmployeeTableDataType[] = employees.map((employee, index) => {
+    return {
+      key: employee.id,
+      name: employee.name,
+      phone: employee.phone,
+      endPeriod: employee.endPeriod,
+      position: employee.position,
+    };
+  });
+
   return (
     <EmployeeTableWrapStyled ref={tableWrapRef} className="EmployeeTable">
       <Table
+        tableLayout="fixed"
         loading={isLoading}
         pagination={false}
         columns={columns}
-        tableLayout="fixed"
         dataSource={dataSource}
-        rowSelection={{
-          type: 'checkbox',
-          onChange: handleSelectedChange,
-        }}
+        rowSelection={rowSelection}
       />
-      <Dock open={isSelected} onExcel={handleExcel} onDelete={handleDelete} />
+
+      <Dock open={isSelected}>
+        <Tooltip title="엑셀로 저장" mouseEnterDelay={0.6}>
+          <Button
+            className="excel-btn"
+            type="text"
+            size="large"
+            icon={<ImFileExcel size="2.1rem" />}
+          />
+        </Tooltip>
+
+        <Tooltip title="삭제" mouseEnterDelay={0.6}>
+          <Button
+            danger
+            type="text"
+            size="large"
+            icon={<FaTrashAlt size="2.1rem" />}
+            onClick={handleDelete}
+          />
+        </Tooltip>
+      </Dock>
     </EmployeeTableWrapStyled>
   );
 };

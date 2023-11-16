@@ -72,6 +72,7 @@ const InputPopover = ({
         <Input
           ref={inputRef}
           value={inputValue ?? ''}
+          maxLength={30}
           placeholder={String(placeholder)}
           onKeyDown={handleKeyDown}
           onChange={e => {

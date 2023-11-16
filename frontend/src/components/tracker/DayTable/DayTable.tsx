@@ -1,23 +1,22 @@
 import { ForwardedRef, useState } from 'react';
+import { RiExchangeFundsLine } from 'react-icons/ri';
 
-import { Table } from 'antd';
+import { Button, Table, Tooltip } from 'antd';
+import { TableRowSelection } from 'antd/es/table/interface';
 
+import Dock from '~/components/common/Dock';
 import { useAttendanceQuery } from '~/hooks/queryHooks/useAttendanceQuery';
 import { EmployeeData } from '~/types/employee';
 import { TeamData } from '~/types/team';
 
+import { ChangeValueType, getColumns, DayTableDataType } from './config';
 import { DayTableStyled } from './styled';
-import { ChangeValueType, getColumns, TableDataType } from './tableConfig';
 
 export interface DayTableProps {
   date?: string;
   team?: TeamData;
   employees: EmployeeData[];
   tableWrapRef?: ForwardedRef<HTMLDivElement>;
-  onRow?: {
-    onClick?: (id: string, data: TableDataType) => void;
-    onSelect?: (ids: string[]) => void;
-  };
   onCell: {
     onChangeMealInclude: (v: ChangeValueType<boolean>) => void;
     onChangeIncentive: (v: ChangeValueType<number>) => void;
@@ -27,15 +26,9 @@ export interface DayTableProps {
 }
 
 const DayTable = ({ date, team, employees, tableWrapRef, onCell }: DayTableProps) => {
-  const [selectedAttendanceIds, setSelectedAttendanceIds] = useState<string[]>([]);
-
   const { attendances } = useAttendanceQuery({ teamId: team?.id, date: date, enabled: !!team });
-
-  // Row 체크 핸들러
-  const rowSelection = {
-    selectedAttendanceIds,
-    onChange: (keys: React.Key[]) => setSelectedAttendanceIds(keys.map(key => String(key))),
-  };
+  const [attendanceIds, setAttendanceIds] = useState<string[]>([]);
+  const isSelected = attendanceIds.length > 0;
 
   // 테이블 컬럼 불러오기, 핸들러
   const columns = getColumns({
@@ -45,8 +38,13 @@ const DayTable = ({ date, team, employees, tableWrapRef, onCell }: DayTableProps
     onChangeMemo: onCell.onChangeMemo,
   });
 
+  // Row 체크 핸들러
+  const rowSelection: TableRowSelection<DayTableDataType> = {
+    onChange: (keys: React.Key[]) => setAttendanceIds(keys.map(key => String(key))),
+  };
+
   // 테이블 데이터 맵핑
-  const dataSource: TableDataType[] = employees.map((employee, index) => {
+  const dataSource: DayTableDataType[] = employees.map((employee, index) => {
     const attendance = attendances.find(data => data.employeeId === employee.id);
     return {
       key: employee.id,
@@ -64,6 +62,12 @@ const DayTable = ({ date, team, employees, tableWrapRef, onCell }: DayTableProps
         dataSource={dataSource}
         rowSelection={rowSelection}
       />
+
+      <Dock open={isSelected}>
+        <Tooltip title="일괄 변경" mouseEnterDelay={0.6}>
+          <Button type="text" size="large" icon={<RiExchangeFundsLine size="2.1rem" />} />
+        </Tooltip>
+      </Dock>
 
       {/* <DayTableFooter employees={employees} /> */}
     </DayTableStyled>

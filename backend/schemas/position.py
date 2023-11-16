@@ -7,7 +7,7 @@ class PositionBase(BaseModel):
     name: str
     color: str
     salary_code: int
-    pay: int
+    standard_pay: int
 
 
 class PositionCreate(PositionBase):
@@ -18,7 +18,7 @@ class PositionUpdate(PositionBase):
     name: Optional[str] = None
     color: Optional[str] = None
     salary_code: Optional[int] = None
-    pay: Optional[int] = None
+    standard_pay: Optional[int] = None
 
     @model_validator(mode="before")
     def check_fields(cls, values: dict):

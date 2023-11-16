@@ -83,9 +83,9 @@ const EmployeeInfoDrawer = ({ team, employeeId, onRemove, ...props }: EmployeeIn
             contentStyle={{ display: 'inline-block', textAlign: 'right' }}
           >
             <Descriptions.Item label="소속 업체">{team.name}</Descriptions.Item>
-            <Descriptions.Item label="급여">
+            <Descriptions.Item label="기준 수당">
               <Tag>{SALARY[employee.position.salaryCode]}</Tag>
-              {employee.position.pay.toLocaleString()}원
+              {employee.position.standardPay.toLocaleString()}원
             </Descriptions.Item>
             <Descriptions.Item label="계약기간">
               {employee.startPeriod} ~ {employee.endPeriod}

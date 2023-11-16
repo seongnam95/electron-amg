@@ -56,12 +56,16 @@ const EmployeePage = () => {
   const handleClickHistory = () => setOpenHistoryDrawer(true);
   const handleCloseHistory = () => setOpenHistoryDrawer(false);
 
+  // 팀 변경 핸들러
   const handleChangeTeam = (id: string) => setTeamId(id);
+
+  // 근로자명 클릭 핸들러
   const handleClickName = (id: string) => {
     setEmployeeId(id);
     setOpenEmployeeInfoDrawer(true);
   };
 
+  // 근로자 삭제
   const removeEmployee = (ids: string[]) => {
     removeEmployeeMutate(ids);
     setOpenEmployeeInfoDrawer(false);
@@ -83,11 +87,6 @@ const EmployeePage = () => {
 
   return (
     <EmployeePageStyled className="EmployeePage">
-      {/* <button onClick={() => soundMessage.error('')}>에러</button>
-      <button onClick={() => soundMessage.info('')}>정보</button>
-      <button onClick={() => soundMessage.success('')}>성공</button>
-      <button onClick={() => soundMessage.warning('')}>경고</button> */}
-
       <Header>
         <TeamSelector teams={teams} selectedId={teamId} onSelect={handleChangeTeam} />
         <Flex>

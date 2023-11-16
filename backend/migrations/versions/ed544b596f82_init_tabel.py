@@ -1,8 +1,8 @@
-"""init table
+"""init tabel
 
-Revision ID: 0d82af2cf395
+Revision ID: ed544b596f82
 Revises: 
-Create Date: 2023-11-09 11:24:19.193294
+Create Date: 2023-11-16 14:56:33.851326
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = '0d82af2cf395'
+revision: str = 'ed544b596f82'
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -46,7 +46,7 @@ def upgrade() -> None:
     sa.Column('name', sa.String(), nullable=False),
     sa.Column('color', sa.String(), nullable=False),
     sa.Column('salary_code', sa.Integer(), nullable=False),
-    sa.Column('pay', sa.Integer(), nullable=False),
+    sa.Column('standard_pay', sa.Integer(), nullable=False),
     sa.Column('team_id', sa.Integer(), nullable=False),
     sa.ForeignKeyConstraint(['team_id'], ['team.id'], ),
     sa.PrimaryKeyConstraint('id')
@@ -82,8 +82,8 @@ def upgrade() -> None:
     sa.Column('bank_book_file_nm', sa.String(), nullable=False),
     sa.Column('id_card_file_nm', sa.String(), nullable=False),
     sa.Column('sign_base64', sa.Text(), nullable=False),
-    sa.Column('start_period', sa.DateTime(timezone=True), nullable=False),
-    sa.Column('end_period', sa.DateTime(timezone=True), nullable=False),
+    sa.Column('start_period', sa.Date(), nullable=False),
+    sa.Column('end_period', sa.Date(), nullable=False),
     sa.Column('create_date', sa.DateTime(timezone=True), nullable=False),
     sa.Column('team_id', sa.Integer(), nullable=False),
     sa.Column('position_id', sa.Integer(), nullable=False),
@@ -95,10 +95,10 @@ def upgrade() -> None:
     op.create_table('attendance',
     sa.Column('id', sa.String(), nullable=False),
     sa.Column('pay', sa.Integer(), nullable=False),
-    sa.Column('incentive', sa.Integer(), nullable=True),
-    sa.Column('deduct', sa.Integer(), nullable=True),
-    sa.Column('memo', sa.String(), nullable=True),
-    sa.Column('is_meal_included', sa.Boolean(), nullable=True),
+    sa.Column('incentive', sa.Integer(), nullable=False),
+    sa.Column('deduct', sa.Integer(), nullable=False),
+    sa.Column('memo', sa.String(), nullable=False),
+    sa.Column('is_meal_included', sa.Boolean(), nullable=False),
     sa.Column('working_date', sa.String(), nullable=False),
     sa.Column('employee_id', sa.Integer(), nullable=False),
     sa.ForeignKeyConstraint(['employee_id'], ['employee.id'], ),

@@ -1,4 +1,4 @@
-from sqlalchemy import Column, ForeignKey, Text, Integer, String, DateTime
+from sqlalchemy import Column, ForeignKey, Text, Integer, String, DateTime, Date
 from db.base_class import Base
 from datetime import datetime
 from sqlalchemy.orm import relationship
@@ -30,8 +30,8 @@ class Employee(Base):
     id_card_file_nm = Column(String, nullable=False)  # 신분증
 
     sign_base64 = Column(Text, nullable=False)  # 서명 Base64
-    start_period = Column(DateTime(timezone=True), nullable=False)  # 계약 시작일
-    end_period = Column(DateTime(timezone=True), nullable=False)  # 계약 종료일
+    start_period = Column(Date, nullable=False)  # 계약 시작일
+    end_period = Column(Date, nullable=False)  # 계약 종료일
 
     create_date = Column(DateTime(timezone=True), nullable=False, default=datetime.now)
 

@@ -8,11 +8,9 @@ import AntDatePicker from '~/components/common/DatePicker';
 import TeamSelector from '~/components/employee/TeamSelector';
 import Header from '~/components/layouts/Header';
 import DayTable from '~/components/tracker/DayTable';
-import { ChangeValueType, TableDataType } from '~/components/tracker/DayTable/tableConfig';
-import {
-  useAttendanceQuery,
-  useAttendanceUpdateMutation,
-} from '~/hooks/queryHooks/useAttendanceQuery';
+import { ChangeValueType } from '~/components/tracker/DayTable/config';
+import MonthTable from '~/components/tracker/MonthTable';
+import { useAttendanceUpdateMutation } from '~/hooks/queryHooks/useAttendanceQuery';
 import { useEmployeeQuery } from '~/hooks/queryHooks/useEmployeeQuery';
 import { useTeamQuery } from '~/hooks/queryHooks/useTeamQuery';
 import { useAttendanceUpdateModal } from '~/hooks/useAttendanceUpdateModal';
@@ -74,7 +72,7 @@ const Attendance = () => {
     updateAttendance({ ids: [id], body: { [key]: value } });
   };
 
-  // Attendance 변경 함수
+  // Attendance Mutate 호출 함수
   const updateAttendance = ({ ids, body }: { ids: string[]; body: AttendanceUpdateBody }) => {
     updateAttendanceMutate({ ids: ids, body: body });
   };
@@ -99,18 +97,22 @@ const Attendance = () => {
         </Flex>
       </Header>
 
-      <DayTable
-        team={team}
-        date={selectedDayStr}
-        tableWrapRef={scrollRef}
-        employees={employees}
-        onCell={{
-          onChangeMealInclude: v => handleChangeValue({ key: 'isMealIncluded', changeValue: v }),
-          onChangeIncentive: v => handleChangeValue({ key: 'incentive', changeValue: v }),
-          onChangeDeduct: v => handleChangeValue({ key: 'deduct', changeValue: v }),
-          onChangeMemo: v => handleChangeValue({ key: 'memo', changeValue: v }),
-        }}
-      />
+      {viewType === 'daily' ? (
+        <DayTable
+          team={team}
+          date={selectedDayStr}
+          tableWrapRef={scrollRef}
+          employees={employees}
+          onCell={{
+            onChangeMealInclude: v => handleChangeValue({ key: 'isMealIncluded', changeValue: v }),
+            onChangeIncentive: v => handleChangeValue({ key: 'incentive', changeValue: v }),
+            onChangeDeduct: v => handleChangeValue({ key: 'deduct', changeValue: v }),
+            onChangeMemo: v => handleChangeValue({ key: 'memo', changeValue: v }),
+          }}
+        />
+      ) : (
+        <MonthTable team={team} date={selectedDayStr} employees={employees}></MonthTable>
+      )}
 
       {contextHolder}
     </AttendancePageStyled>

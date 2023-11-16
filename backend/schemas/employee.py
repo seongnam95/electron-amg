@@ -27,17 +27,12 @@ class EmployeeCreate(EmployeeBase):
 
 
 class EmployeeUpdate(BaseModel):
-    name: Optional[str] = None
     phone: Optional[str] = None
     address: Optional[str] = None
     bank: Optional[str] = None
     bank_num: Optional[str] = None
-    ssn: Optional[str] = None
     bank_book: Optional[str] = None
     id_card: Optional[str] = None
-    sign_base64: Optional[str] = None
-    start_period: Optional[date] = None
-    end_period: Optional[date] = None
 
     @model_validator(mode="before")
     def check_fields(cls, values: dict):

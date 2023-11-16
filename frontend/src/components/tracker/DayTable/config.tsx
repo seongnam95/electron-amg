@@ -7,7 +7,7 @@ import InputPopover from '~/components/common/InputPopover';
 import { AttendanceData } from '~/types/attendance';
 import { PositionData, SALARY } from '~/types/position';
 
-export interface TableDataType {
+export interface DayTableDataType {
   key: string;
   name: string;
   position: PositionData;
@@ -31,7 +31,7 @@ export const getColumns = ({
   onChangeIncentive,
   onChangeDeduct,
   onChangeMemo,
-}: ColumnProps): ColumnsType<TableDataType> => {
+}: ColumnProps): ColumnsType<DayTableDataType> => {
   return [
     {
       key: 'name',
@@ -70,11 +70,11 @@ export const getColumns = ({
       title: '기준 수당',
       width: 160,
       render: (_, { position }) => {
-        const { pay, salaryCode } = position;
+        const { salaryCode, standardPay } = position;
         return (
           <>
             <Tag>{SALARY[salaryCode]}</Tag>
-            {pay.toLocaleString()}원
+            {standardPay.toLocaleString()}원
           </>
         );
       },
@@ -83,7 +83,7 @@ export const getColumns = ({
       key: 'isMealIncluded',
       dataIndex: 'isMealIncluded',
       title: '식대 포함',
-      width: 94,
+      width: 84,
       align: 'center',
       render: (_, { attendance }) => {
         if (attendance === undefined) return '-';
@@ -155,7 +155,7 @@ export const getColumns = ({
       key: 'memo',
       dataIndex: 'memo',
       title: '메모',
-      width: 70,
+      width: 50,
       align: 'center',
       render: (_, { attendance }) => {
         if (attendance === undefined) return '-';

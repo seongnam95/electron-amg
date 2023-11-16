@@ -3,10 +3,10 @@ export interface AttendanceData {
   pay: number;
   isMealIncluded: boolean;
   workingDate: string;
-  employeeId: string;
   incentive: number;
   deduct: number;
   memo: string;
+  employeeId: string;
 }
 
 /** 근로자 생성 API 바디 */
