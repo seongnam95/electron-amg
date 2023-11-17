@@ -1,15 +1,28 @@
 import styled from 'styled-components';
 
 export const MonthTableStyled = styled.div`
-  table {
-    width: 100%;
+  tr {
+    border-bottom: 1px solid ${p => p.theme.colors.borderColor} !important;
   }
 
-  th {
-    font-weight: normal;
-    font-size: 13px;
-    color: rgb(118, 118, 118);
-    padding: 1rem;
-    background-color: transparent;
+  .ant-table-cell {
+    :not(:nth-last-child(2)):not(:first-child) {
+      border-right: 1px solid ${p => p.theme.colors.borderColor};
+    }
+
+    &.day-cell {
+      padding: none !important;
+
+      &.is-sunday {
+        background-color: rgba();
+      }
+    }
+
+    &.last-cell {
+      position: sticky;
+      right: 0;
+      background-color: ${p => p.theme.colors.innerBg};
+      border-left: 1px solid ${p => p.theme.colors.borderColor};
+    }
   }
 `;

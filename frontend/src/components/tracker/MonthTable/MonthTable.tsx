@@ -1,41 +1,61 @@
-import { ReactNode } from 'react';
+import { ForwardedRef } from 'react';
 
-import dayjs, { Dayjs } from 'dayjs';
-import styled, { css } from 'styled-components';
+import { Table } from 'antd';
+import { TableRowSelection } from 'antd/es/table/interface';
+import dayjs from 'dayjs';
 
+import { useAttendanceQuery } from '~/hooks/queryHooks/useAttendanceQuery';
+import { useDragScroll } from '~/hooks/useDragScroll';
 import { EmployeeData } from '~/types/employee';
 import { TeamData } from '~/types/team';
-import { WeekColorData, generateWeekColorDays } from '~/utils/commuteRange';
 
-import Row from './Row';
+import { MonthTableData, getColumns } from './config';
 import { MonthTableStyled } from './styled';
 
 export interface MonthTableProps {
+  date: string;
   team?: TeamData;
-  date?: string;
-  employees?: Array<EmployeeData>;
+  employees: EmployeeData[];
 }
 
-const MonthTable = ({ date, employees }: MonthTableProps) => {
-  const days = generateWeekColorDays(dayjs(date, 'YY-MM'));
+const MonthTable = ({ team, date, employees }: MonthTableProps) => {
+  const { attendances } = useAttendanceQuery({ teamId: team?.id, date: date, enabled: !!team });
+
+  const scrollRef = useDragScroll();
+
+  const rowSelection: TableRowSelection<MonthTableData> = {
+    onChange: (keys: React.Key[]) => console.log(keys),
+  };
+
+  const columns = getColumns({
+    date: dayjs(date, 'YY-MM'),
+  });
+
+  const dataSource: MonthTableData[] = employees.map(employee => {
+    const targetAttendances = attendances.filter(data => data.employeeId === employee.id);
+
+    const paySum = targetAttendances.reduce((total, value) => total + value.pay, 0);
+    const incomeTax = paySum * 0.033;
+    const totalPay = paySum - incomeTax;
+
+    return {
+      key: employee.id,
+      employee: employee,
+      attendances: targetAttendances,
+      paySum: paySum,
+      incomeTax: incomeTax,
+      totalPay: totalPay,
+    };
+  });
 
   return (
-    <MonthTableStyled className="AttendanceTable">
-      <table>
-        <thead>
-          <tr>
-            <th className="name-column" />
-            {days.map(day => (
-              <th key={day.day}>{day.day}</th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {employees?.map((employee: EmployeeData) => (
-            <Row key={'row' + employee.id} days={days} name={employee.name} />
-          ))}
-        </tbody>
-      </table>
+    <MonthTableStyled className="AttendanceTable" ref={scrollRef}>
+      <Table
+        pagination={false}
+        columns={columns}
+        dataSource={dataSource}
+        rowSelection={rowSelection}
+      />
     </MonthTableStyled>
   );
 };

@@ -7,7 +7,7 @@ import InputPopover from '~/components/common/InputPopover';
 import { AttendanceData } from '~/types/attendance';
 import { PositionData, SALARY } from '~/types/position';
 
-export interface DayTableDataType {
+export interface DayTableData {
   key: string;
   name: string;
   position: PositionData;
@@ -31,7 +31,7 @@ export const getColumns = ({
   onChangeIncentive,
   onChangeDeduct,
   onChangeMemo,
-}: ColumnProps): ColumnsType<DayTableDataType> => {
+}: ColumnProps): ColumnsType<DayTableData> => {
   return [
     {
       key: 'name',

@@ -40,7 +40,6 @@ const Attendance = () => {
   const [openEditor, setOpenEditor] = useState<boolean>(false);
 
   // hook
-  const scrollRef = useDragScroll();
   const { teams } = useTeamQuery({ userId: user.id });
   const { employees } = useEmployeeQuery({ teamId: team?.id, enabled: !!team });
 
@@ -101,7 +100,6 @@ const Attendance = () => {
         <DayTable
           team={team}
           date={selectedDayStr}
-          tableWrapRef={scrollRef}
           employees={employees}
           onCell={{
             onChangeMealInclude: v => handleChangeValue({ key: 'isMealIncluded', changeValue: v }),
@@ -111,7 +109,7 @@ const Attendance = () => {
           }}
         />
       ) : (
-        <MonthTable team={team} date={selectedDayStr} employees={employees}></MonthTable>
+        <MonthTable team={team} date={selectedDayStr} employees={employees} />
       )}
 
       {contextHolder}

@@ -2,11 +2,13 @@ import { Dayjs } from 'dayjs';
 
 export interface WeekColorData {
   day: string;
+  dayOfWeek: string;
   color: string;
 }
 
 export const generateWeekColorDays = (day: Dayjs): Array<WeekColorData> => {
   const numDaysInMonth = day.daysInMonth();
+  const days = ['일', '월', '화', '수', '목', '금', '토']; // 요일 이름 배열
 
   return Array.from({ length: numDaysInMonth }, (_, index) => {
     const dayNumber = index + 1;
@@ -21,6 +23,7 @@ export const generateWeekColorDays = (day: Dayjs): Array<WeekColorData> => {
 
     return {
       day: String(dayNumber),
+      dayOfWeek: days[dayOfWeek], // 요일 이름 추가
       color: color,
     };
   });

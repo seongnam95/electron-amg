@@ -1,27 +1,61 @@
 import { useRef, useEffect } from 'react';
 
-export function useDragScroll() {
+interface DragScrollOptions {
+  draggableX?: boolean;
+  draggableY?: boolean;
+  inertia?: boolean;
+  inertiaVelocity?: number;
+}
+
+export const useDragScroll = ({
+  draggableX = true,
+  draggableY = true,
+  inertia = true,
+  inertiaVelocity = 0.95,
+}: DragScrollOptions = {}) => {
   const ref = useRef<HTMLDivElement>(null);
+
   let isDragging = false;
-  let startMouseX: number;
-  let startMouseY: number;
-  let startScrollX: number;
-  let startScrollY: number;
+
+  let startX: number, startY: number;
+  let scrollX: number, scrollY: number;
+
+  let velocityX = 0;
+  let velocityY = 0;
+  let lastX = 0;
+  let lastY = 0;
+
+  let rafId: number | null = null;
 
   const handleMouseDown = (e: MouseEvent) => {
     isDragging = true;
-    startMouseX = e.pageX - (ref.current?.offsetLeft || 0);
-    startMouseY = e.pageY - (ref.current?.offsetTop || 0);
-    startScrollX = ref.current?.scrollLeft || 0;
-    startScrollY = ref.current?.scrollTop || 0;
+
+    startX = e.pageX - (ref.current?.offsetLeft || 0);
+    startY = e.pageY - (ref.current?.offsetTop || 0);
+
+    scrollX = ref.current?.scrollLeft || 0;
+    scrollY = ref.current?.scrollTop || 0;
+
+    lastX = e.pageX;
+    lastY = e.pageY;
+
+    if (ref.current) ref.current.style.cursor = 'grabbing';
   };
 
-  const handleMouseLeave = () => {
-    isDragging = false;
-  };
+  const animateScroll = () => {
+    if (ref.current && (Math.abs(velocityX) > 0.5 || Math.abs(velocityY) > 0.5)) {
+      if (draggableX) {
+        ref.current.scrollLeft -= velocityX;
+        velocityX *= inertiaVelocity;
+      }
 
-  const handleMouseUp = () => {
-    isDragging = false;
+      if (draggableY) {
+        ref.current.scrollTop -= velocityY;
+        velocityY *= inertiaVelocity;
+      }
+
+      rafId = requestAnimationFrame(animateScroll);
+    }
   };
 
   const handleMouseMove = (e: MouseEvent) => {
@@ -31,31 +65,57 @@ export function useDragScroll() {
     const mouseX = e.pageX - (ref.current?.offsetLeft || 0);
     const mouseY = e.pageY - (ref.current?.offsetTop || 0);
 
-    const deltaX = mouseX - startMouseX;
-    const deltaY = mouseY - startMouseY;
-
     if (ref.current) {
-      ref.current.scrollLeft = startScrollX - deltaX;
-      ref.current.scrollTop = startScrollY - deltaY;
+      // 마우스의 이동 거리를 기반으로 속도를 계산
+      velocityX = mouseX - startX - (ref.current.scrollLeft - scrollX);
+      velocityY = mouseY - startY - (ref.current.scrollTop - scrollY);
+
+      if (draggableX) ref.current.scrollLeft = scrollX - (mouseX - startX);
+      if (draggableY) ref.current.scrollTop = scrollY - (mouseY - startY);
+    }
+
+    startX = mouseX;
+    startY = mouseY;
+
+    scrollX = ref.current?.scrollLeft || 0;
+    scrollY = ref.current?.scrollTop || 0;
+  };
+
+  const handleMouseUpLeave = () => {
+    isDragging = false;
+    if (ref.current) ref.current.style.cursor = 'default';
+
+    const minVelocityThreshold = 5;
+
+    // 마우스의 최종 속도가 임계값 이상일 경우 관성 스크롤을 실행
+    if (
+      inertia &&
+      (Math.abs(velocityX) > minVelocityThreshold || Math.abs(velocityY) > minVelocityThreshold)
+    ) {
+      animateScroll();
+    } else {
+      velocityX = 0;
+      velocityY = 0;
     }
   };
 
   useEffect(() => {
     const elem = ref.current;
-    if (!elem) return;
 
+    if (!elem) return;
     elem.addEventListener('mousedown', handleMouseDown);
-    elem.addEventListener('mouseleave', handleMouseLeave);
-    elem.addEventListener('mouseup', handleMouseUp);
+    elem.addEventListener('mouseup', handleMouseUpLeave);
     elem.addEventListener('mousemove', handleMouseMove);
+    elem.addEventListener('mouseleave', handleMouseUpLeave);
 
     return () => {
       elem.removeEventListener('mousedown', handleMouseDown);
-      elem.removeEventListener('mouseleave', handleMouseLeave);
-      elem.removeEventListener('mouseup', handleMouseUp);
+      elem.removeEventListener('mouseup', handleMouseUpLeave);
       elem.removeEventListener('mousemove', handleMouseMove);
+      elem.removeEventListener('mouseleave', handleMouseUpLeave);
+      if (rafId) cancelAnimationFrame(rafId);
     };
   }, []);
 
   return ref;
-}
+};
