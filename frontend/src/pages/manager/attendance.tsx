@@ -10,6 +10,7 @@ import Header from '~/components/layouts/Header';
 import DayTable from '~/components/tracker/DayTable';
 import { ChangeValueType } from '~/components/tracker/DayTable/config';
 import MonthTable from '~/components/tracker/MonthTable';
+import MonthTable2 from '~/components/tracker/MonthTable2';
 import { useAttendanceUpdateMutation } from '~/hooks/queryHooks/useAttendanceQuery';
 import { useEmployeeQuery } from '~/hooks/queryHooks/useEmployeeQuery';
 import { useTeamQuery } from '~/hooks/queryHooks/useTeamQuery';
@@ -109,7 +110,7 @@ const Attendance = () => {
           }}
         />
       ) : (
-        <MonthTable team={team} date={selectedDayStr} employees={employees} />
+        <MonthTable2 team={team} date={selectedDayStr} employees={employees} />
       )}
 
       {contextHolder}

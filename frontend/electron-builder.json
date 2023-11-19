@@ -3,9 +3,7 @@
   "productName": "TemplateApp",
   "protocols": {
     "name": "templateapp",
-    "schemes": [
-      "templateapp"
-    ]
+    "schemes": ["templateapp"]
   },
   "publish": [
     {
@@ -28,9 +26,7 @@
     "artifactName": "TemplateApp-Setup-${version}.${ext}",
     "uninstallDisplayName": "TemplateApp"
   },
-  "extraResources": [
-    "./resources/**"
-  ],
+  "extraResources": ["./resources/**"],
   "directories": {
     "output": "release/"
   }

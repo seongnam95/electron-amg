@@ -112,7 +112,48 @@ const createPromptInput = options => {
   };
 };
 
-// 컴포넌트 생성, 생성 된 컴포넌트 파일 열기
+const editParentComponentExportFile = async parentComponentName => {
+  const parentComponentDir = `${COMPONENT_DIR}/${parentComponentName}`;
+  const parentComponentExportFile = `${parentComponentDir}/index.ts`;
+
+  const subComponentNames = await getDirectories(parentComponentDir);
+
+  let texts = [
+    `// === Automatically generated file. Don't edit it. ===`,
+    `import _${parentComponentName} from './${parentComponentName}';`,
+  ];
+
+  texts.push(
+    ...subComponentNames.map(
+      subComponentName => `import ${subComponentName} from './${subComponentName}';`,
+    ),
+  );
+
+  texts.push(
+    ...[
+      ``,
+      `type _${parentComponentName} = typeof _${parentComponentName};`,
+      ``,
+      `interface ${parentComponentName}Type extends _${parentComponentName} {`,
+      ...subComponentNames.map(
+        subComponentName => `  ${subComponentName}: typeof ${subComponentName};`,
+      ),
+      `}`,
+      ``,
+      `const ${parentComponentName} = _${parentComponentName} as ${parentComponentName}Type;`,
+      ``,
+      ...subComponentNames.map(
+        subComponentName => `${parentComponentName}.${subComponentName} = ${subComponentName};`,
+      ),
+      ``,
+      `export default ${parentComponentName};`,
+      ``,
+    ],
+  );
+
+  fs.writeFileSync(parentComponentExportFile, texts.join('\n'));
+};
+
 const createComponentAndFileOpen = (dir, name) => {
   fs.mkdirSync(dir, { recursive: true });
   fs.writeFileSync(`${dir}/styled.ts`, createStyledFileText(name));
@@ -131,7 +172,7 @@ const start = async () => {
       type: 'list',
       name: 'type',
       message: 'Choose type',
-      choices: ['feature', 'page', 'component', 'sub-component'],
+      choices: ['component2', 'feature', 'page', 'component', 'sub-component'],
       default: 'feature',
     },
   ]);
@@ -165,14 +206,35 @@ const start = async () => {
     }
 
     case 'component': {
+      const { componentName } = await inquirer.prompt([
+        createPromptInput({
+          name: 'componentName',
+          label: 'Component name (PascalCase)',
+        }),
+      ]);
+
+      const componentDir = `${COMPONENT_DIR}/${componentName}`;
+
+      // check component dir already exists
+      if (fs.existsSync(componentDir)) {
+        console.log(`🛑 Component [${componentName}] already exists`);
+        process.exit(0);
+      }
+
+      createComponentAndFileOpen(componentDir, componentName);
+
+      break;
+    }
+
+    case 'component2': {
       const parentDirNames = await getDirectories(COMPONENT_DIR);
 
       // 분류 선택
-      const { parentDirName } = await inquirer.prompt([
+      const { parentComponentName } = await inquirer.prompt([
         {
           type: 'autocomplete',
-          name: 'parentDirName',
-          message: 'Choose parent dir',
+          name: 'parentComponentName',
+          message: 'Choose component',
           source: (_, input) => {
             return parentDirNames.filter(name =>
               name.toLowerCase().includes((input || '').toLowerCase()),
@@ -184,18 +246,57 @@ const start = async () => {
       const { componentName } = await inquirer.prompt([
         createPromptInput({
           name: 'componentName',
-          label: 'component name (PascalCase)',
+          label: 'Sub component name (PascalCase)',
         }),
       ]);
 
-      const componentDir = `${COMPONENT_DIR}/${parentDirName}/${componentName}`;
+      const componentDir = `${COMPONENT_DIR}/${parentComponentName}/${componentName}`;
 
+      // check component dir already exists
       if (fs.existsSync(componentDir)) {
         console.log(`🛑 Component [${componentName}] already exists`);
         process.exit(0);
       }
 
       createComponentAndFileOpen(componentDir, componentName);
+      await editParentComponentExportFile(parentComponentName);
+
+      break;
+    }
+
+    case 'sub-component': {
+      const componentNames = await getDirectories(COMPONENT_DIR);
+
+      const { parentComponentName } = await inquirer.prompt([
+        {
+          type: 'autocomplete',
+          name: 'parentComponentName',
+          message: 'Choose component',
+          source: (_, input) => {
+            return componentNames.filter(name =>
+              name.toLowerCase().includes((input || '').toLowerCase()),
+            );
+          },
+        },
+      ]);
+
+      const { componentName } = await inquirer.prompt([
+        createPromptInput({
+          name: 'componentName',
+          label: 'Sub component name (PascalCase)',
+        }),
+      ]);
+
+      const componentDir = `${COMPONENT_DIR}/${parentComponentName}/${componentName}`;
+
+      // check component dir already exists
+      if (fs.existsSync(componentDir)) {
+        console.log(`🛑 Component [${componentName}] already exists`);
+        process.exit(0);
+      }
+
+      createComponentAndFileOpen(componentDir, componentName);
+      await editParentComponentExportFile(parentComponentName);
 
       break;
     }

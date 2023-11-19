@@ -1,4 +1,4 @@
-import { ForwardedRef } from 'react';
+import { ForwardedRef, useEffect } from 'react';
 
 import { Table } from 'antd';
 import { TableRowSelection } from 'antd/es/table/interface';
@@ -22,6 +22,8 @@ const MonthTable = ({ team, date, employees }: MonthTableProps) => {
   const { attendances } = useAttendanceQuery({ teamId: team?.id, date: date, enabled: !!team });
 
   const scrollRef = useDragScroll();
+
+  useEffect(() => {}, []);
 
   const rowSelection: TableRowSelection<MonthTableData> = {
     onChange: (keys: React.Key[]) => console.log(keys),

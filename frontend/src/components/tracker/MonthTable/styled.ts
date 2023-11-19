@@ -6,15 +6,21 @@ export const MonthTableStyled = styled.div`
   }
 
   .ant-table-cell {
+    :not(:first-child) {
+      padding: 0 !important;
+    }
+
     :not(:nth-last-child(2)):not(:first-child) {
       border-right: 1px solid ${p => p.theme.colors.borderColor};
     }
 
     &.day-cell {
-      padding: none !important;
+      &.saturday {
+        background-color: rgba(51, 118, 205, 0.04);
+      }
 
-      &.is-sunday {
-        background-color: rgba();
+      &.sunday {
+        background-color: rgba(237, 106, 94, 0.04);
       }
     }
 

@@ -1,4 +1,4 @@
-import { Button } from 'antd';
+import { Button, Flex, Tag } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 import clsx from 'clsx';
 import { Dayjs } from 'dayjs';
@@ -26,7 +26,7 @@ export const getColumns = ({ date }: ColumnProps): ColumnsType<MonthTableData> =
   const mapping: ColumnsType<MonthTableData> = days.map(day => {
     const isSaturday = day.dayOfWeek === '토';
     const isSunday = day.dayOfWeek === '일';
-    const dayCellClassName = isSaturday ? 'is-saturday' : isSunday ? 'is-sunday' : '';
+    const dayCellClassName = isSaturday ? 'saturday' : isSunday ? 'sunday' : '';
 
     return {
       key: day.day,
@@ -35,7 +35,7 @@ export const getColumns = ({ date }: ColumnProps): ColumnsType<MonthTableData> =
       title: day.day,
       width: 40,
       align: 'center',
-      render: (_, { attendances }) => {
+      render: (_, { attendances, employee }) => {
         const attendance = attendances.find(att => {
           const strSplit = att.workingDate.split('-');
           const workingDay = strSplit[strSplit.length - 1];
@@ -44,7 +44,11 @@ export const getColumns = ({ date }: ColumnProps): ColumnsType<MonthTableData> =
         });
 
         if (!attendance) return <></>;
-        return <Button size="small" type="primary"></Button>;
+        return (
+          <Flex>
+            <div style={{ background: 'red' }}></div>
+          </Flex>
+        );
       },
     };
   });
