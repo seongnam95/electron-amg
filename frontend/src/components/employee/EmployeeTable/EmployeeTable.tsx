@@ -6,47 +6,50 @@ import { Button, Table, Tooltip } from 'antd';
 
 import Dock from '~/components/common/Dock';
 import { useEmployeeQuery } from '~/hooks/queryHooks/useEmployeeQuery';
+import { EmployeeData } from '~/types/employee';
 
 import { EmployeeTableDataType, getColumns } from './config';
 import { EmployeeTableWrapStyled } from './styled';
 
 interface EmployeeTableProps {
-  teamId?: string;
+  employees?: EmployeeData[];
   tableWrapRef?: ForwardedRef<HTMLDivElement>;
   isLoading?: boolean;
   onRemove: (ids: string[]) => void;
   onClickName: (id: string) => void;
+  onCopy?: (data: string) => void;
 }
 
 const EmployeeTable = ({
-  teamId,
+  employees,
   tableWrapRef,
   isLoading,
   onRemove,
   onClickName,
+  onCopy,
 }: EmployeeTableProps) => {
-  const [selectedEmployeeIds, setSelectedEmployeeIds] = useState<string[]>([]);
-  const isSelected = selectedEmployeeIds.length > 0;
-
-  const { employees } = useEmployeeQuery({ teamId: teamId, enabled: !!teamId });
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const isSelected = selectedIds.length > 0;
 
   // Row 삭제 이벤트
   const handleDelete = () => {
-    onRemove?.(selectedEmployeeIds);
-    setSelectedEmployeeIds([]);
+    onRemove?.(selectedIds);
+    setSelectedIds([]);
   };
 
   const columns = getColumns({
+    employees: employees,
     onClickName: onClickName,
+    onCopy: onCopy,
   });
 
   // Row 체크 핸들러
   const rowSelection = {
-    onChange: (keys: React.Key[]) => setSelectedEmployeeIds(keys.map(String)),
+    onChange: (keys: React.Key[]) => setSelectedIds(keys.map(String)),
   };
 
   // 테이블 데이터 맵핑
-  const dataSource: EmployeeTableDataType[] = employees.map((employee, index) => {
+  const dataSource: EmployeeTableDataType[] | undefined = employees?.map((employee, index) => {
     return {
       key: employee.id,
       name: employee.name,

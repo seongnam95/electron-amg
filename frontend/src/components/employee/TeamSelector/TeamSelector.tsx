@@ -2,36 +2,45 @@ import { FiChevronDown } from 'react-icons/fi';
 
 import { Dropdown, Skeleton } from 'antd';
 import { ItemType } from 'antd/es/menu/hooks/useItems';
+import { useRecoilState } from 'recoil';
 
+import { teamStore } from '~/stores/team';
 import { TeamData } from '~/types/team';
 
 import { TeamSelectorStyled } from './styled';
 
 export interface TeamSelectorProps {
   teams?: Array<TeamData>;
-  selectedId?: string;
-  onSelect?: (id: string) => void;
 }
 
 /**
  * 팀 선택 드롭다운 Selector
  */
-const TeamSelector = ({ teams, selectedId, onSelect }: TeamSelectorProps) => {
-  const selectedTeam = teams?.find(team => team.id == selectedId);
+const TeamSelector = ({ teams }: TeamSelectorProps) => {
+  const [team, setTeam] = useRecoilState(teamStore);
+
+  const isLoading = team.id === '' || teams === undefined;
+  if (isLoading) return <Skeleton.Button active size="small" style={{ width: '16rem' }} />;
+
   const isMulti = teams ? (teams.length > 1 ? true : false) : false;
 
-  const items: Array<ItemType> | undefined = teams?.map(team => {
-    const isSelected = team.id == selectedId;
+  const handleChangeTeam = (item: ItemType) => {
+    const selectedTeam = teams.find(t => t.id === item?.key?.toString());
+    if (selectedTeam) setTeam(selectedTeam);
+  };
+
+  const items: Array<ItemType> | undefined = teams?.map(item => {
+    const isSelected = item.id == team.id;
 
     return {
-      key: team.id,
+      key: item.id,
       label: (
         <div style={{ display: 'flex', padding: '1px 0', gap: '14px', alignItems: 'center' }}>
           <span
             style={{
               width: '6px',
               height: '6px',
-              backgroundColor: team.color,
+              backgroundColor: item.color,
               borderRadius: '50%',
             }}
           />
@@ -42,35 +51,28 @@ const TeamSelector = ({ teams, selectedId, onSelect }: TeamSelectorProps) => {
               fontWeight: isSelected ? 'bold' : 'normal',
             }}
           >
-            {team.name}
+            {item.name}
           </span>
         </div>
       ),
-      onClick: () => onSelect?.(team.id),
+      onClick: handleChangeTeam,
     };
   });
 
-  /**
-   * 선택 된 팀이 없을 경우 [ 스켈레톤 ]
-   * 팀이 여러개일 경우 [ 드롭다운 ]
-   * 팀이 하나일 경우 일반 [ 레이블 ]
-   */
   return (
     <TeamSelectorStyled className="TeamSelector">
-      {!selectedTeam ? (
-        <Skeleton.Button active size="small" style={{ width: '16rem' }} />
-      ) : isMulti ? (
+      {isMulti ? (
         <Dropdown menu={{ items }} trigger={['click']}>
           <label className="team-label selector">
-            <span className="color-bar" style={{ backgroundColor: selectedTeam?.color }} />
-            {selectedTeam?.name}
+            <span className="color-bar" style={{ backgroundColor: team.color }} />
+            {team.name}
             <FiChevronDown style={{ marginLeft: '8px' }} />
           </label>
         </Dropdown>
       ) : (
         <label className="team-label">
-          <span className="color-bar" style={{ backgroundColor: selectedTeam?.color }} />
-          {selectedTeam?.name}
+          <span className="color-bar" style={{ backgroundColor: team.color }} />
+          {team.name}
         </label>
       )}
     </TeamSelectorStyled>

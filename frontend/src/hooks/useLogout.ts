@@ -1,10 +1,10 @@
 import { useSetRecoilState } from 'recoil';
 
 import axiosPrivate from '~/api/axios';
-import { initUser, userState } from '~/stores/user';
+import { initUser, userStore } from '~/stores/user';
 
 export const useLogout = () => {
-  const setUser = useSetRecoilState(userState);
+  const setUser = useSetRecoilState(userStore);
 
   const logout = () => {
     setUser(initUser);

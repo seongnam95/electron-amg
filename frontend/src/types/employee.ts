@@ -15,14 +15,16 @@ export interface EmployeeData {
   position: PositionData;
 }
 
-export interface EmployeeDetailData extends EmployeeData {
+export interface EmployeeDocument {
+  id: string;
   bankBook: string;
   idCard: string;
   sign: string;
 }
 
 /** 근로자 생성 API 바디 */
-export type EmployeeCreateBody = Omit<EmployeeDetailData, 'id' | 'attendances'>;
+export type EmployeeCreateBody = Omit<EmployeeData, 'id' | 'attendances'> &
+  Omit<EmployeeDocument, 'id'>;
 
 /** 근로자 업데이트 API 바디 */
 export type EmployeeUpdateBody = Partial<EmployeeCreateBody>;

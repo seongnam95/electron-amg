@@ -27,6 +27,8 @@ def login():
 
 # Create Team
 def create_team(user_id: str):
+    empty_team_body = {"name": "트리우스광명", "color": "#FA5454", "meal_cost": 7000}
+    session.post(f"{base_url}/user/{user_id}/team", json=empty_team_body)
     create_team_body = {"name": "광명자이더샵포레나", "color": "#3284FF", "meal_cost": 7000}
     team_res = session.post(f"{base_url}/user/{user_id}/team", json=create_team_body)
 
@@ -37,12 +39,12 @@ def create_team(user_id: str):
 # Create Position
 def create_positions(team_id: str):
     create_position_bodys = [
-        {"name": "팀장", "salary_code": 1, "color": "#F87B6A", "standard_pay": 100000},
-        {"name": "부팀장", "salary_code": 1, "color": "#F8A66A", "standard_pay": 100000},
-        {"name": "알바", "salary_code": 1, "color": "#71B3F0", "standard_pay": 80000},
-        {"name": "기사", "salary_code": 1, "color": "#B491FF", "standard_pay": 100000},
-        {"name": "홍보단", "salary_code": 2, "color": "#64E6AF", "standard_pay": 450000},
-        {"name": "사무보조", "salary_code": 3, "color": "#F4A3F1", "standard_pay": 2500000},
+        {"name": "팀장", "salary_code": 1, "color": "#F35F4A", "standard_pay": 100000},
+        {"name": "부팀장", "salary_code": 1, "color": "#FC8B39", "standard_pay": 100000},
+        {"name": "알바", "salary_code": 1, "color": "#57ABF8", "standard_pay": 80000},
+        {"name": "기사", "salary_code": 1, "color": "#A075FD", "standard_pay": 100000},
+        {"name": "홍보단", "salary_code": 2, "color": "#2ADA90", "standard_pay": 450000},
+        {"name": "사무보조", "salary_code": 3, "color": "#6764FF", "standard_pay": 2500000},
     ]
 
     positions = []
@@ -103,8 +105,8 @@ def create_employees(*, team_id, positions, employees):
     return crate_employee_res
 
 
-# user_id = login()
-team_id = "FidiwafZT1CeJsMYC8Gwsg"  # create_team(user_id)
+user_id = login()
+team_id = create_team(user_id)
 positions = create_positions(team_id)
 
 # print(positions)

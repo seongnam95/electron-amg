@@ -3,47 +3,38 @@ import { BsClockHistory } from 'react-icons/bs';
 
 import { Flex, Form, Button, Select, Space, Typography, DrawerProps, Skeleton, Drawer } from 'antd';
 import dayjs, { Dayjs } from 'dayjs';
+import { useRecoilValue } from 'recoil';
 
 import AntDateRangePicker from '~/components/common/DateRangePicker';
 import { useDraftCreateMutation } from '~/hooks/queryHooks/useDraftQuery';
 import { useSoundApp } from '~/hooks/useSoundApp';
+import { teamStore } from '~/stores/team';
 import { DraftCreateBody, DraftData } from '~/types/draft';
-import { TeamData } from '~/types/team';
 
 import DraftResultBox from './DraftResultBox/DraftResultBox';
 
 export interface DraftCreateDrawerProps extends DrawerProps {
-  team?: TeamData;
-  onCopy?: (id: string) => void;
+  onCopy?: (data: string) => void;
   onClose?: () => void;
   onHistory?: () => void;
 }
 
-const DraftCreateDrawer = ({
-  team,
-  onCopy,
-  onClose,
-  onHistory,
-  children,
-  ...props
-}: DraftCreateDrawerProps) => {
-  const existTeam = !!team;
+const DraftCreateDrawer = ({ onCopy, onClose, onHistory, ...props }: DraftCreateDrawerProps) => {
+  const team = useRecoilValue(teamStore);
+  const existTeam = team.id !== '';
 
   const [draft, setDraft] = useState<DraftData | undefined>();
   const [showResultBox, setShowResultBox] = useState<boolean>(false);
 
   const [form] = Form.useForm();
-  const { soundMessage, modal } = useSoundApp();
+  const { soundMessage } = useSoundApp();
 
   // DatePicker 기본 값 [ 오늘 날짜, 이번달 마지막 날짜 ]
   const currentDate = dayjs();
   const lastDate = currentDate.endOf('month');
   const defaultPickerValue: [Dayjs, Dayjs] = [currentDate, lastDate];
 
-  const { createDraftMutate, isCreateDraftLoading } = useDraftCreateMutation({
-    teamId: team?.id,
-    enabled: existTeam,
-  });
+  const { createDraftMutate, isCreateDraftLoading } = useDraftCreateMutation({ teamId: team.id });
 
   // 폼 초기화
   const resetForm = () => {
@@ -60,7 +51,7 @@ const DraftCreateDrawer = ({
 
   // 직위 변경 핸들러
   const handleChangePosition = (positionId: string) => {
-    const pay = team?.positions.find(pos => pos.id == positionId)?.pay ?? 0;
+    const pay = team?.positions.find(pos => pos.id == positionId)?.standardPay ?? 0;
     form.setFieldValue('unitPay', pay);
   };
 

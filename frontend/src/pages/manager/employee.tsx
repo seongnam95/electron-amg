@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { BsFilter } from 'react-icons/bs';
 import { FiPlus } from 'react-icons/fi';
 
@@ -11,19 +11,20 @@ import EmployeeTable from '~/components/employee/EmployeeTable';
 import HistoryDrawer from '~/components/employee/HistoryDrawer';
 import TeamSelector from '~/components/employee/TeamSelector';
 import Header from '~/components/layouts/Header';
-import { useEmployeeRemoveMutation } from '~/hooks/queryHooks/useEmployeeQuery';
+import { useEmployeeQuery } from '~/hooks/queryHooks/useEmployeeQuery';
 import { useTeamQuery } from '~/hooks/queryHooks/useTeamQuery';
-import { useCopyLink } from '~/hooks/useCopyLink';
+import { useCopyText } from '~/hooks/useCopyText';
 import { useDragScroll } from '~/hooks/useDragScroll';
-import { useSoundApp } from '~/hooks/useSoundApp';
-import { userState } from '~/stores/user';
+import { useRemoveEmployee } from '~/hooks/useRemoveEmployee';
+import { teamStore } from '~/stores/team';
+import { userStore } from '~/stores/user';
 import { EmployeePageStyled } from '~/styles/pageStyled/employeePageStyled';
 
 const EmployeePage = () => {
   // State
-  const { user } = useRecoilValue(userState);
+  const { user } = useRecoilValue(userStore);
 
-  const [teamId, setTeamId] = useState<string>();
+  const team = useRecoilValue(teamStore);
   const [employeeId, setEmployeeId] = useState<string>();
   const [openDraftDrawer, setOpenDraftDrawer] = useState<boolean>(false);
 
@@ -31,22 +32,20 @@ const EmployeePage = () => {
   const [openHistoryDrawer, setOpenHistoryDrawer] = useState<boolean>(false);
 
   // Hook
-  const { soundMessage, soundModal } = useSoundApp();
   const scrollRef = useDragScroll();
-  const { contextHolder, copyInputLink } = useCopyLink();
-  const { teams } = useTeamQuery({ userId: user.id });
+  const { copyText } = useCopyText();
 
-  const { removeEmployeeMutate } = useEmployeeRemoveMutation({
-    teamId: teamId,
-    onError: msg => soundMessage.error(msg),
+  const { teams } = useTeamQuery({ userId: user.id });
+  const { employees } = useEmployeeQuery({ teamId: team.id, enabled: team.id !== '' });
+
+  const { removeEmployee } = useRemoveEmployee({
+    teamId: team.id,
+    onSuccess: () => {
+      setOpenEmployeeInfoDrawer(false);
+    },
   });
 
-  // selectedTeamId가 없을 때 teams가 불려왔을 경우 teams 첫 항목 ID 저장
-  useEffect(() => {
-    if (!teamId && teams.length > 0) setTeamId(teams[0].id);
-  }, [teams]);
-
-  const selectedTeam = teams?.find(team => team.id === teamId);
+  const selectedEmployee = employees.find(employee => employee.id === employeeId);
 
   // 계약서 폼 Drawer 핸들러
   const handleShowDraftDrawer = () => setOpenDraftDrawer(true);
@@ -56,9 +55,6 @@ const EmployeePage = () => {
   const handleClickHistory = () => setOpenHistoryDrawer(true);
   const handleCloseHistory = () => setOpenHistoryDrawer(false);
 
-  // 팀 변경 핸들러
-  const handleChangeTeam = (id: string) => setTeamId(id);
-
   // 근로자명 클릭 핸들러
   const handleClickName = (id: string) => {
     setEmployeeId(id);
@@ -66,29 +62,14 @@ const EmployeePage = () => {
   };
 
   // 근로자 삭제
-  const removeEmployee = (ids: string[]) => {
-    removeEmployeeMutate(ids);
-    setOpenEmployeeInfoDrawer(false);
-  };
-
-  // 삭제 확인 모달
-  const showRemoveConfirm = (ids: string[]) => {
-    soundModal({
-      type: 'warning',
-      title: '해당 근로자를 삭제하시겠습니까?',
-      content: '휴지통으로 이동되며, 30일 후 완전히 삭제됩니다.',
-      okText: '삭제',
-      okType: 'danger',
-      cancelText: '취소',
-      centered: true,
-      onOk: () => removeEmployee(ids),
-    });
+  const handleClickRemove = (ids: string | string[]) => {
+    removeEmployee(ids);
   };
 
   return (
     <EmployeePageStyled className="EmployeePage">
       <Header>
-        <TeamSelector teams={teams} selectedId={teamId} onSelect={handleChangeTeam} />
+        <TeamSelector teams={teams} />
         <Flex>
           <Button type="text" icon={<BsFilter size="1.8rem" />}>
             필터
@@ -101,42 +82,33 @@ const EmployeePage = () => {
 
       {/* 근무자 테이블 */}
       <EmployeeTable
-        teamId={teamId}
+        employees={employees}
         tableWrapRef={scrollRef}
-        onRemove={showRemoveConfirm}
+        onCopy={copyText}
+        onRemove={handleClickRemove}
         onClickName={handleClickName}
       />
 
       {/* 근무자 정보 Drawer */}
       <EmployeeInfoDrawer
         open={openEmployeeInfoDrawer}
-        team={selectedTeam}
-        employeeId={employeeId}
-        onRemove={showRemoveConfirm}
+        employee={selectedEmployee}
+        onRemove={handleClickRemove}
         onClose={() => setOpenEmployeeInfoDrawer(false)}
       />
 
       {/* 계약서 폼 생성 Drawer */}
       <DraftCreateDrawer
         open={openDraftDrawer}
-        team={selectedTeam}
-        onCopy={copyInputLink}
+        onCopy={copyText}
         onHistory={handleClickHistory}
         onClose={handleHideDraftDrawer}
       />
 
       {/* 계약서 폼 히스토리 Drawer */}
-      {teamId && (
-        <HistoryDrawer
-          teamId={teamId}
-          open={openHistoryDrawer}
-          onCopy={copyInputLink}
-          onClose={handleCloseHistory}
-        />
+      {team && (
+        <HistoryDrawer open={openHistoryDrawer} onCopy={copyText} onClose={handleCloseHistory} />
       )}
-
-      {/* Copy Input */}
-      {contextHolder}
     </EmployeePageStyled>
   );
 };

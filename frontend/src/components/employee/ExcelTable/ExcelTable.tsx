@@ -4,7 +4,7 @@ import { AiOutlineClose } from 'react-icons/ai';
 import { Table, DrawerProps, Drawer, Button, Tag, Space } from 'antd';
 import { ColumnsType } from 'antd/es/table/interface';
 
-import { EmployeeDetailData } from '~/types/employee';
+import { EmployeeDocument } from '~/types/employee';
 
 import { ExcelTableStyled } from './styled';
 
@@ -15,7 +15,7 @@ interface ColumnData {
 
 interface ExcelTableProps extends DrawerProps {
   columns: ColumnData[];
-  employees?: EmployeeDetailData[];
+  employees?: EmployeeDocument[];
 }
 
 const ExcelTable = ({ columns }: ExcelTableProps) => {

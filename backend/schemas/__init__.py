@@ -4,7 +4,7 @@ from .employee import (
     EmployeeUpdate,
     EmployeeResponse,
     EmployeeCoveringResponse,
-    EmployeeDetailResponse,
+    EmployeeDocumentResponse,
     EncryptEmployee,
 )
 from .attendance import Attendance, AttendanceCreate, AttendanceUpdate

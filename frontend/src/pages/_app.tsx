@@ -11,7 +11,7 @@ import styled, { ThemeProvider } from 'styled-components';
 import Layout from '~/components/layouts/Layout';
 import Titlebar from '~/components/layouts/Titlebar';
 import { updateStore } from '~/stores/update';
-import { userState } from '~/stores/user';
+import { userStore } from '~/stores/user';
 import { InitGlobalStyled } from '~/styles/init';
 import { antdTheme, colors, sizes } from '~/styles/themes';
 
@@ -29,7 +29,7 @@ declare module 'styled-components' {
 
 const AppWrap = () => {
   const antdToken = theme.useToken();
-  const { isLogin } = useRecoilValue(userState);
+  const { isLogin } = useRecoilValue(userStore);
   const [update, setUpdate] = useRecoilState(updateStore);
 
   const bootstrap = async () => {

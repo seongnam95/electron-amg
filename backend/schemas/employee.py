@@ -104,5 +104,8 @@ class EmployeeResponse(BaseModel):
         from_attributes = True
 
 
-class EmployeeDetailResponse(EmployeeBase):
-    position: Position
+class EmployeeDocumentResponse(BaseModel):
+    id: str
+    bank_book: str
+    id_card: str
+    sign_base64: str

@@ -81,8 +81,10 @@ export const useDragScroll = ({
     scrollY = ref.current?.scrollTop || 0;
   };
 
-  const handleMouseUpLeave = () => {
+  const handleMouseUpLeave = (e: MouseEvent) => {
     isDragging = false;
+    e.preventDefault();
+
     if (ref.current) ref.current.style.cursor = 'default';
 
     const minVelocityThreshold = 5;

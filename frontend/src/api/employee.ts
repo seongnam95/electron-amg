@@ -1,6 +1,6 @@
 import { AxiosError, AxiosResponse } from 'axios';
 
-import { EmployeeData, EmployeeDetailData } from '~/types/employee';
+import { EmployeeData, EmployeeDocument } from '~/types/employee';
 
 import axiosPrivate from './axios';
 import { BaseResponse, FetchListResponse, FetchResponse } from './response';
@@ -16,12 +16,12 @@ export const fetchEmployees = (teamId?: string) => async (): Promise<EmployeeDat
   return data.result.list;
 };
 
-export const fetchEmployeeDetail =
-  (employeeId?: string) => async (): Promise<EmployeeDetailData> => {
+export const fetchEmployeeDocument =
+  (employeeId?: string) => async (): Promise<EmployeeDocument> => {
     const endpoint = import.meta.env.VITE_EMPLOYEE_ENDPOINT;
 
-    const { data } = await axiosPrivate.get<FetchResponse<EmployeeDetailData>>(
-      `${endpoint}/${employeeId}`,
+    const { data } = await axiosPrivate.get<FetchResponse<EmployeeDocument>>(
+      `${endpoint}/${employeeId}/document`,
     );
 
     return data.result;

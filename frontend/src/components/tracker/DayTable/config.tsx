@@ -5,6 +5,7 @@ import { ColumnsType } from 'antd/es/table';
 
 import InputPopover from '~/components/common/InputPopover';
 import { AttendanceData } from '~/types/attendance';
+import { EmployeeData } from '~/types/employee';
 import { PositionData, SALARY } from '~/types/position';
 
 export interface DayTableData {
@@ -20,6 +21,8 @@ export type ChangeValueType<T> = {
 };
 
 interface ColumnProps {
+  employees?: EmployeeData[];
+  onClickName: (id: string) => void;
   onClickMealInclude: (v: ChangeValueType<boolean>) => void;
   onChangeIncentive: (v: ChangeValueType<number>) => void;
   onChangeDeduct: (v: ChangeValueType<number>) => void;
@@ -27,24 +30,48 @@ interface ColumnProps {
 }
 
 export const getColumns = ({
+  employees,
+  onClickName,
   onClickMealInclude,
   onChangeIncentive,
   onChangeDeduct,
   onChangeMemo,
 }: ColumnProps): ColumnsType<DayTableData> => {
+  const positionFilters = [...new Set(employees?.map(employee => employee.position.name))].map(
+    position => {
+      return {
+        value: position,
+        text: position,
+      };
+    },
+  );
+
+  const salaryFilters = [...new Set(employees?.map(employee => employee.position.salaryCode))].map(
+    salary => {
+      return {
+        value: salary,
+        text: SALARY[salary],
+      };
+    },
+  );
+
   return [
     {
       key: 'name',
       dataIndex: 'name',
       title: '이름',
-      width: 110,
+      width: 90,
       ellipsis: true,
       sorter: (a, b) => a.name.localeCompare(b.name),
-      render: (_, { name }) => (
-        <Button size="small" type="text">
-          <b>{name}</b>
-        </Button>
-      ),
+      render: (_, { key, name }) => {
+        const handleClick = () => onClickName(key.toString());
+
+        return (
+          <Button size="small" type="text" onClick={handleClick}>
+            <b>{name}</b>
+          </Button>
+        );
+      },
     },
     {
       key: 'position',
@@ -52,11 +79,12 @@ export const getColumns = ({
       title: '직위',
       width: 90,
       align: 'center',
-      sorter: (a, b) => a.position.toString().localeCompare(b.position.toString()),
+      filters: positionFilters,
+      onFilter: (value, record) => record.position.name === value,
       render: (_, { position }) => {
         return (
           <Tag
-            style={{ width: '5rem', textAlign: 'center', marginInlineEnd: 0 }}
+            style={{ width: 64, textAlign: 'center', marginInlineEnd: 0 }}
             color={position.color}
           >
             {position.name}
@@ -68,16 +96,18 @@ export const getColumns = ({
       key: 'salary',
       dataIndex: 'salary',
       title: '기준 수당',
-      width: 160,
-      render: (_, { position }) => {
-        const { salaryCode, standardPay } = position;
-        return (
-          <>
-            <Tag>{SALARY[salaryCode]}</Tag>
-            {standardPay.toLocaleString()}원
-          </>
-        );
-      },
+      width: 130,
+      align: 'center',
+      filters: salaryFilters,
+      onFilter: (value, record) => record.position.salaryCode === value,
+      render: (_, { position }) => (
+        <Flex justify="center">
+          <Flex justify="space-between" style={{ width: 130, maxWidth: 130 }}>
+            <Tag>{SALARY[position.salaryCode]}</Tag>
+            <span>{position.standardPay.toLocaleString()}원</span>
+          </Flex>
+        </Flex>
+      ),
     },
     {
       key: 'isMealIncluded',

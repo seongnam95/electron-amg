@@ -5,24 +5,31 @@ import { RiBankCard2Fill } from 'react-icons/ri';
 
 import { Button, Descriptions, Divider, Flex, Skeleton, Tag } from 'antd';
 import { DrawerProps } from 'antd';
+import { useRecoilValue } from 'recoil';
 
 import ImagePreview from '~/components/common/ImagePreview';
-import { useEmployeeDetailQuery } from '~/hooks/queryHooks/useEmployeeQuery';
+import { useEmployeeDocumentQuery } from '~/hooks/queryHooks/useEmployeeQuery';
+import { teamStore } from '~/stores/team';
+import { EmployeeData } from '~/types/employee';
 import { SALARY } from '~/types/position';
-import { TeamData } from '~/types/team';
 import { formatPhoneNumber, formatSSN } from '~/utils/formatData';
 
 import { EmployeeInfoDrawerStyled } from './styled';
 
 export interface EmployeeInfoDrawerProps extends DrawerProps {
-  team?: TeamData;
-  employeeId?: string;
-  onRemove?: (ids: string[]) => void;
+  employee?: EmployeeData;
+  onRemove?: (ids: string) => void;
 }
 
-const EmployeeInfoDrawer = ({ team, employeeId, onRemove, ...props }: EmployeeInfoDrawerProps) => {
-  const { employee } = useEmployeeDetailQuery({ employeeId: employeeId, enabled: !!employeeId });
-  const isLoading = employee === undefined || team === undefined;
+const EmployeeInfoDrawer = ({ employee, onRemove, ...props }: EmployeeInfoDrawerProps) => {
+  const team = useRecoilValue(teamStore);
+
+  const { employeeDocument, isLoading: isQueryLoading } = useEmployeeDocumentQuery({
+    employeeId: employee?.id,
+    enabled: !!employee?.id,
+  });
+
+  const isLoading = employee === undefined || !employeeDocument || isQueryLoading;
 
   const [showIdCard, setShowIdCard] = useState<boolean>(false);
   const [showBankBook, setShowBankBook] = useState<boolean>(false);
@@ -41,7 +48,7 @@ const EmployeeInfoDrawer = ({ team, employeeId, onRemove, ...props }: EmployeeIn
   const handleContractClose = () => setShowContract(false);
 
   const handleRemove = () => {
-    if (employeeId) onRemove?.([employeeId]);
+    if (employee?.id) onRemove?.(employee.id);
   };
 
   const RenderExtra = (
@@ -109,8 +116,16 @@ const EmployeeInfoDrawer = ({ team, employeeId, onRemove, ...props }: EmployeeIn
             </button>
           </Flex>
 
-          <ImagePreview src={employee.idCard} open={showIdCard} onClose={handleIdCardClose} />
-          <ImagePreview src={employee.bankBook} open={showBankBook} onClose={handleBankBookClose} />
+          <ImagePreview
+            src={employeeDocument.idCard}
+            open={showIdCard}
+            onClose={handleIdCardClose}
+          />
+          <ImagePreview
+            src={employeeDocument.bankBook}
+            open={showBankBook}
+            onClose={handleBankBookClose}
+          />
         </>
       ) : (
         <Skeleton active />

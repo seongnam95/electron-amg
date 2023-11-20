@@ -21,7 +21,7 @@ const { persistAtom } = recoilPersist({
   storage: sessionStorage,
 });
 
-export const userState = atom<CurrentUser>({
+export const userStore = atom<CurrentUser>({
   key: 'userState',
   default: initUser,
   effects_UNSTABLE: [persistAtom],

@@ -16,7 +16,8 @@ import { useEmployeeQuery } from '~/hooks/queryHooks/useEmployeeQuery';
 import { useTeamQuery } from '~/hooks/queryHooks/useTeamQuery';
 import { useAttendanceUpdateModal } from '~/hooks/useAttendanceUpdateModal';
 import { useDragScroll } from '~/hooks/useDragScroll';
-import { userState } from '~/stores/user';
+import { teamStore } from '~/stores/team';
+import { userStore } from '~/stores/user';
 import { AttendancePageStyled } from '~/styles/pageStyled/attendancePageStyled';
 import { AttendanceUpdateBody } from '~/types/attendance';
 import { TeamData } from '~/types/team';
@@ -30,11 +31,13 @@ interface ChangeValueMutateProps {
 
 const Attendance = () => {
   // state
-  const { user } = useRecoilValue(userState);
+  const { user } = useRecoilValue(userStore);
 
-  const [team, setTeam] = useState<TeamData>();
+  const team = useRecoilValue(teamStore);
+
   const [viewType, setViewType] = useState<ViewType>('daily');
   const [selectedDay, setSelectedDay] = useState<Dayjs>(dayjs());
+
   const selectedDayStr = selectedDay.format(viewType === 'daily' ? 'YY-MM-DD' : 'YY-MM');
 
   const [selectedAttendanceIds, setSelectedAttendanceIds] = useState<string[]>([]);
@@ -42,24 +45,18 @@ const Attendance = () => {
 
   // hook
   const { teams } = useTeamQuery({ userId: user.id });
-  const { employees } = useEmployeeQuery({ teamId: team?.id, enabled: !!team });
+  const { employees } = useEmployeeQuery({ teamId: team?.id, enabled: team.id !== '' });
 
   const { openModal, contextHolder } = useAttendanceUpdateModal(team?.id, selectedDayStr);
 
   // 근무 로그 Update Mutate
   const { updateAttendanceMutate } = useAttendanceUpdateMutation({
-    teamId: team?.id,
+    teamId: team.id,
     date: selectedDayStr,
     onSuccess: data => console.log(data),
   });
 
-  // selectedTeamId가 없을 때 teams가 불려왔을 경우 teams 첫 항목 ID 저장
-  useEffect(() => {
-    if (!team && teams.length > 0) setTeam(teams[0]);
-  }, [teams]);
-
   // 팀 변경, 날짜 변경 핸들러
-  const handleChangeTeam = (id: string) => setTeam(teams.find(t => t.id === id));
   const handleOnChangeDate = (date: Dayjs | null) => {
     if (date) setSelectedDay(date);
   };
@@ -80,7 +77,7 @@ const Attendance = () => {
   return (
     <AttendancePageStyled>
       <Header>
-        <TeamSelector teams={teams} selectedId={team?.id} onSelect={handleChangeTeam} />
+        <TeamSelector teams={teams} />
         <Flex gap={14}>
           <Segmented
             options={[

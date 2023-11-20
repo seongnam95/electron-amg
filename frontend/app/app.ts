@@ -75,10 +75,10 @@ class AppContext {
     }
 
     this.window = new BrowserWindow({
-      width: 800,
-      height: 600,
-      minWidth: 700,
-      minHeight: 500,
+      width: 1100,
+      height: 700,
+      minWidth: 800,
+      minHeight: 600,
       backgroundColor: '#36393F',
       darkTheme: true,
       show: false,

@@ -10,7 +10,7 @@ import { DraftResultBoxStyled } from './styled';
 interface DraftResultBoxProps {
   show?: boolean;
   draft?: DraftData;
-  onCopy?: (id: string) => void;
+  onCopy?: (data: string) => void;
   onClose?: () => void;
 }
 
@@ -34,7 +34,11 @@ const DraftResultBox = ({ show, draft, onCopy, onClose }: DraftResultBoxProps) =
           </Flex>
 
           <Flex align="center">
-            <Button size="small" type="link" onClick={() => onCopy?.(draft.id)}>
+            <Button
+              size="small"
+              type="link"
+              onClick={() => onCopy?.(`http://amgcom.site/${draft.id}`)}
+            >
               <Flex align="center" gap="0.5rem">
                 <AiOutlinePaperClip size="1.6rem" />
                 링크복사
@@ -56,7 +60,7 @@ const DraftResultBox = ({ show, draft, onCopy, onClose }: DraftResultBoxProps) =
         >
           <Descriptions.Item label="직위">{draft.position.name}</Descriptions.Item>
           <Descriptions.Item label="페이">
-            {draft.position.pay.toLocaleString()}원
+            {draft.position.standardPay.toLocaleString()}원
           </Descriptions.Item>
           <Descriptions.Item label="계약일">
             {draft.startPeriod} ~ {draft.endPeriod}

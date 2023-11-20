@@ -2,11 +2,11 @@ import { AiOutlineClose } from 'react-icons/ai';
 
 import { Transfer, DrawerProps, Drawer, Button, Flex } from 'antd';
 
-import { EmployeeDetailData } from '~/types/employee';
+import { EmployeeDocument } from '~/types/employee';
 
 interface ExcelDrawerProps extends DrawerProps {
   open?: boolean;
-  employees?: EmployeeDetailData[];
+  employees?: EmployeeDocument[];
   onCopy?: (id: string) => void;
   onClose?: () => void;
 }

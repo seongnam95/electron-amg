@@ -6,7 +6,7 @@ from schemas.employee import (
     EmployeeCoveringResponse,
     EmployeeResponse,
     EncryptEmployee,
-    EmployeeDetailResponse,
+    EmployeeDocumentResponse,
 )
 from response_model import BaseResponse, DataResponse, ListResponse
 from ... import deps
@@ -38,17 +38,17 @@ def search_employee(name: str, ssn: str, db: Session = Depends(deps.get_db)):
 # -----------------------------------------------------------------------------------------
 
 
-# GET : ID로 근로자 불러오기
+# GET : 근로자 [신분증, 통장사본, 서명] 불러오기
 @router.get(
-    "/employee/{employee_id}",
-    response_model=DataResponse[EmployeeDetailResponse],
+    "/employee/{employee_id}/document",
+    response_model=DataResponse[EmployeeDocumentResponse],
 )
 def read_employee(employee_id: str, db: Session = Depends(deps.get_db)):
     employee = crud.employee.get(db=db, id=employee_id)
     if not employee:
         raise HTTPException(status_code=404, detail="해당 직원을 찾을 수 없습니다.")
 
-    employee_dec = _decrypt_employees(employee, EmployeeDetailResponse)
+    employee_dec = _decrypt_employees(employee, EmployeeDocumentResponse)
     return DataResponse(msg="정상 처리되었습니다.", result=employee_dec)
 
 

@@ -2,9 +2,9 @@ import { useMutation, useQuery, useQueryClient } from 'react-query';
 
 import { AxiosError } from 'axios';
 
-import { fetchEmployeeDetail, fetchEmployees, removeEmployees } from '~/api/employee';
+import { fetchEmployeeDocument, fetchEmployees, removeEmployees } from '~/api/employee';
 import { BaseResponse } from '~/api/response';
-import { EmployeeData, EmployeeDetailData } from '~/types/employee';
+import { EmployeeData, EmployeeDocument } from '~/types/employee';
 import { QueryBaseOptions } from '~/types/query';
 
 interface EmployeeQueryOptions<T> extends QueryBaseOptions<T> {
@@ -31,25 +31,25 @@ export const useEmployeeQuery = ({
 /**
  * Employee Detail
  */
-interface EmployeeDetailQueryOptions extends QueryBaseOptions<EmployeeDetailData> {
+interface EmployeeDetailQueryOptions extends QueryBaseOptions<EmployeeDocument> {
   employeeId?: string;
 }
 
-export const useEmployeeDetailQuery = ({
+export const useEmployeeDocumentQuery = ({
   employeeId,
   ...baseOptions
 }: EmployeeDetailQueryOptions) => {
-  const queryKey: Array<string> = [import.meta.env.VITE_EMPLOYEE_QUERY_KEY, 'detail', employeeId];
+  const queryKey: Array<string> = [import.meta.env.VITE_EMPLOYEE_QUERY_KEY, 'document', employeeId];
 
   const {
-    data: employee,
+    data: employeeDocument,
     isLoading,
     isError,
-  } = useQuery(queryKey, fetchEmployeeDetail(employeeId), {
+  } = useQuery(queryKey, fetchEmployeeDocument(employeeId), {
     ...baseOptions,
   });
 
-  return { employee, isLoading, isError };
+  return { employeeDocument, isLoading, isError };
 };
 
 export const useEmployeeRemoveMutation = ({

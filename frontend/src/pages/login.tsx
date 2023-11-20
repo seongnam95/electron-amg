@@ -10,7 +10,7 @@ import { loginUser } from '~/api/auth';
 import Button from '~/components/common/Button';
 import Input from '~/components/common/Input';
 import { useSoundApp } from '~/hooks/useSoundApp';
-import { userState } from '~/stores/user';
+import { userStore } from '~/stores/user';
 import { LoginPageStyled } from '~/styles/pageStyled/loginPageStyled';
 import { CurrentUser } from '~/types/user';
 
@@ -23,7 +23,7 @@ interface GeoLocationI {
 
 const Login = () => {
   const passwordInputRef = useRef<HTMLInputElement>(null);
-  const setUser = useSetRecoilState(userState);
+  const setUser = useSetRecoilState(userStore);
   const navigate = useNavigate();
   const { soundMessage } = useSoundApp();
 

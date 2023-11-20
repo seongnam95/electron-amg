@@ -18,6 +18,7 @@ export interface DayTableProps {
   team?: TeamData;
   employees: EmployeeData[];
   onCell: {
+    onClickName: (id: string) => void;
     onChangeMealInclude: (v: ChangeValueType<boolean>) => void;
     onChangeIncentive: (v: ChangeValueType<number>) => void;
     onChangeDeduct: (v: ChangeValueType<number>) => void;
@@ -34,6 +35,8 @@ const DayTable = ({ date, team, employees, onCell }: DayTableProps) => {
 
   // 테이블 컬럼 불러오기, 핸들러
   const columns = getColumns({
+    employees: employees,
+    onClickName: onCell.onClickName,
     onChangeIncentive: onCell.onChangeIncentive,
     onChangeDeduct: onCell.onChangeDeduct,
     onClickMealInclude: onCell.onChangeMealInclude,

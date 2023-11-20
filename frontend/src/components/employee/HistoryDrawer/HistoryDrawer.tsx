@@ -2,18 +2,22 @@ import { AiOutlineClose, AiOutlineLink } from 'react-icons/ai';
 import { FaTrashAlt } from 'react-icons/fa';
 
 import { Button, Drawer, DrawerProps, Flex, List, Space, Tag } from 'antd';
+import { useRecoilValue } from 'recoil';
 
 import { useDraftQuery, useDraftRemoveMutation } from '~/hooks/queryHooks/useDraftQuery';
+import { teamStore } from '~/stores/team';
 
 interface HistoryDrawerProps extends DrawerProps {
-  teamId: string;
   onCopy?: (id: string) => void;
   onClose?: () => void;
 }
 
-const HistoryDrawer = ({ teamId, onCopy, onClose, ...props }: HistoryDrawerProps) => {
-  const { drafts, isLoading } = useDraftQuery({ teamId: teamId });
-  const { removeDraftMutate } = useDraftRemoveMutation({ teamId: teamId });
+const HistoryDrawer = ({ onCopy, onClose, ...props }: HistoryDrawerProps) => {
+  const team = useRecoilValue(teamStore);
+  const existTeam = team.id !== '';
+
+  const { drafts, isLoading } = useDraftQuery({ teamId: team.id, enabled: existTeam });
+  const { removeDraftMutate } = useDraftRemoveMutation({ teamId: team.id });
 
   // 계정 삭제 핸들러
   const handleRemoveClick = (id: string) => removeDraftMutate(id);
@@ -59,7 +63,7 @@ const HistoryDrawer = ({ teamId, onCopy, onClose, ...props }: HistoryDrawerProps
                     icon={<AiOutlineLink size="2.2rem" />}
                     type="text"
                     onClick={() => {
-                      onCopy?.(draft.id);
+                      onCopy?.(`http://amgcom.site/${draft.id}`);
                       onClose?.();
                     }}
                   />
