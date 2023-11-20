@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
 
+import clsx from 'clsx';
 import dayjs from 'dayjs';
 
 import { useAttendanceQuery } from '~/hooks/queryHooks/useAttendanceQuery';
@@ -10,87 +11,6 @@ import { generateWeekColorDays } from '~/utils/commuteRange';
 
 import { MonthTable2Styled } from './styled';
 import { groupByEmployeeIdAndDate } from './util';
-
-const test = [
-  {
-    employeeId: 'asdasd',
-    workingDates: [
-      [
-        {
-          workingDate: '23-11-01',
-        },
-        {
-          workingDate: '23-11-02',
-        },
-        {
-          workingDate: '23-11-03',
-        },
-      ],
-      [
-        {
-          workingDate: '23-11-11',
-        },
-        {
-          workingDate: '23-11-12',
-        },
-      ],
-    ],
-    incentives: [
-      [
-        {
-          workingDate: '23-11-01',
-        },
-        {
-          workingDate: '23-11-02',
-        },
-      ],
-      [
-        {
-          workingDate: '23-11-12',
-        },
-      ],
-    ],
-  },
-  {
-    employeeId: 'asdasd',
-    workingDates: [
-      [
-        {
-          workingDate: '23-11-01',
-        },
-        {
-          workingDate: '23-11-02',
-        },
-        {
-          workingDate: '23-11-03',
-        },
-      ],
-      [
-        {
-          workingDate: '23-11-11',
-        },
-        {
-          workingDate: '23-11-12',
-        },
-      ],
-    ],
-    incentives: [
-      [
-        {
-          workingDate: '23-11-05',
-        },
-        {
-          workingDate: '23-11-06',
-        },
-      ],
-      [
-        {
-          workingDate: '23-11-12',
-        },
-      ],
-    ],
-  },
-];
 
 export interface MonthTable2Props {
   date: string;
@@ -155,24 +75,48 @@ const MonthTableBody = ({
   const dayArray = generateWeekColorDays(dayjs(date, 'YY-MM'));
 
   const createRangeDiv = () => {
-    dataSource.map(data => {
-      data.workingDates.map(date => {
-        const day = dayjs(date[0].workingDate, 'YY-MM-DD').date();
+    dataSource.forEach(data => {
+      data.workingDates.forEach(dates => {
+        const day = dayjs(dates[0].workingDate, 'YY-MM-DD').date();
         const firstCell = document.getElementById(`${data.employeeId}-${day}`);
         let barElement, divWidth;
 
         if (firstCell) {
-          divWidth = firstCell.clientWidth * date.length - 10;
+          divWidth = firstCell.clientWidth * dates.length - 10;
 
           barElement = document.createElement('div');
           barElement.style.width = `${divWidth}px`;
-          barElement.className = 'attendances-bar';
-          barElement.style.height = '20px';
-          barElement.style.background = '#326CF9';
-          barElement.style.borderRadius = '3px';
-          barElement.style.position = 'absolute';
-          barElement.style.left = '5px';
-          barElement.style.top = '0';
+          barElement.className = 'attendance-bar attendance';
+
+          firstCell.appendChild(barElement);
+        }
+      });
+      data.incentives.forEach(dates => {
+        const day = dayjs(dates[0].workingDate, 'YY-MM-DD').date();
+        const firstCell = document.getElementById(`${data.employeeId}-${day}`);
+        let barElement, divWidth;
+
+        if (firstCell) {
+          divWidth = firstCell.clientWidth * dates.length - 10;
+
+          barElement = document.createElement('div');
+          barElement.style.width = `${divWidth}px`;
+          barElement.className = 'attendance-bar incentive';
+
+          firstCell.appendChild(barElement);
+        }
+      });
+      data.deducts.forEach(dates => {
+        const day = dayjs(dates[0].workingDate, 'YY-MM-DD').date();
+        const firstCell = document.getElementById(`${data.employeeId}-${day}`);
+        let barElement, divWidth;
+
+        if (firstCell) {
+          divWidth = firstCell.clientWidth * dates.length - 10;
+
+          barElement = document.createElement('div');
+          barElement.style.width = `${divWidth}px`;
+          barElement.className = 'attendance-bar deduct';
 
           firstCell.appendChild(barElement);
         }
@@ -188,10 +132,10 @@ const MonthTableBody = ({
     <tbody ref={tbodyRef}>
       {employees.map(employee => {
         return (
-          <tr key={employee.id}>
-            <td>{employee.name}</td>
+          <tr key={employee.id} className="table-row">
+            <td className="table-cell first-cell">{employee.name}</td>
             {dayArray.map(day => (
-              <td key={day.day} id={`${employee.id}-${day.day}`}></td>
+              <td className="table-cell" key={day.day} id={`${employee.id}-${day.day}`}></td>
             ))}
           </tr>
         );

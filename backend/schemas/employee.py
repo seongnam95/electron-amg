@@ -47,6 +47,27 @@ class Employee(EmployeeBase):
         from_attributes = True
 
 
+class EncryptEmployee(BaseModel):
+    id: str
+    name: str
+    phone: str
+    address: str
+    start_period: date
+    end_period: date
+    bank: str
+    bank_num_enc: str
+    ssn_enc: str
+    bank_book_file_nm: str
+    id_card_file_nm: str
+    sign_base64: str
+    position_id: str
+    create_date: datetime
+    position: Position
+
+    class Config:
+        from_attributes = True
+
+
 ###############################################################
 # Response
 ###############################################################
@@ -71,11 +92,12 @@ class EmployeeResponse(BaseModel):
     name: str
     phone: str
     address: str
-
+    ssn: str
+    bank: str
+    bank_num: str
     start_period: date
     end_period: date
     create_date: datetime
-
     position: Position
 
     class Config:

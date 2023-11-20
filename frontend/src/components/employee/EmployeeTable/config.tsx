@@ -1,12 +1,15 @@
 import { Button, TableColumnsType, Tag } from 'antd';
 
 import { PositionData, SALARY } from '~/types/position';
-import { formatPhoneNumber } from '~/utils/formatData';
+import { formatPhoneNumber, formatSSN } from '~/utils/formatData';
 
 export interface EmployeeTableDataType {
   key: string;
   name: string;
   phone: string;
+  ssn: string;
+  bank: string;
+  bankNum: string;
   endPeriod: string;
   position: PositionData;
 }
@@ -41,15 +44,35 @@ export const getColumns = ({
       key: 'phone',
       dataIndex: 'phone',
       title: '연락처',
-      width: 150,
+      width: 140,
       align: 'center',
       render: (_, { phone }) => <>{formatPhoneNumber(phone)}</>,
+    },
+    {
+      key: 'ssn',
+      dataIndex: 'ssn',
+      title: '주민등록번호',
+      width: 140,
+      align: 'center',
+      render: (_, { ssn }) => <>{formatSSN(ssn)}</>,
+    },
+    {
+      key: 'bank',
+      dataIndex: 'bank',
+      title: '계좌번호',
+      width: 220,
+      align: 'right',
+      render: (_, { bank, bankNum }) => (
+        <>
+          <Tag>{bank}</Tag> {bankNum}
+        </>
+      ),
     },
     {
       key: 'position',
       dataIndex: 'position',
       title: '직위',
-      width: 90,
+      width: 80,
       align: 'center',
       sorter: (a, b) => a.position.toString().localeCompare(b.position.toString()),
       render: (_, { position }) => {
@@ -67,8 +90,7 @@ export const getColumns = ({
       key: 'salary',
       dataIndex: 'salary',
       title: '기준 수당',
-      width: 200,
-      align: 'center',
+      width: 180,
       render: (_, { position }) => (
         <>
           <Tag>{SALARY[position.salaryCode]}</Tag>
@@ -79,7 +101,7 @@ export const getColumns = ({
     {
       key: 'period',
       dataIndex: 'period',
-      width: 120,
+      width: 110,
       title: '계약 만료일',
       align: 'center',
       render: (_, { endPeriod }) => (

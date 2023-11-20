@@ -1,15 +1,11 @@
-import { ForwardedRef, useEffect, useState } from 'react';
+import { ForwardedRef, useState } from 'react';
 import { FaTrashAlt } from 'react-icons/fa';
 import { ImFileExcel } from 'react-icons/im';
 
-import { Button, Table, Tag, Tooltip, message } from 'antd';
-import { ColumnsType, Key } from 'antd/es/table/interface';
+import { Button, Table, Tooltip } from 'antd';
 
 import Dock from '~/components/common/Dock';
-import { useEmployeeQuery, useEmployeeRemoveMutation } from '~/hooks/queryHooks/useEmployeeQuery';
-import { EmployeeData } from '~/types/employee';
-import { PositionData, SALARY, SalaryType } from '~/types/position';
-import { formatPhoneNumber } from '~/utils/formatData';
+import { useEmployeeQuery } from '~/hooks/queryHooks/useEmployeeQuery';
 
 import { EmployeeTableDataType, getColumns } from './config';
 import { EmployeeTableWrapStyled } from './styled';
@@ -55,6 +51,9 @@ const EmployeeTable = ({
       key: employee.id,
       name: employee.name,
       phone: employee.phone,
+      ssn: employee.ssn,
+      bank: employee.bank,
+      bankNum: employee.bankNum,
       endPeriod: employee.endPeriod,
       position: employee.position,
     };

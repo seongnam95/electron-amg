@@ -13,50 +13,8 @@ router = APIRouter()
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/login")
 
 
-# ? DEV
-# 팀 불러오기
-@router.get("/{team_id}", response_model=DataResponse[schemas.Team])
-def read_team(
-    team_id: str,
-    db: Session = Depends(deps.get_db),
-):
-    team = crud.team.get(db=db, id=team_id)
-    if not team:
-        raise HTTPException(status_code=404, detail="존재하지 팀 입니다.")
-
-    return DataResponse(msg="정상 처리되었습니다.", result=team)
-
-
-# ! 미사용
-# 모든 팀 불러오기
-@router.get("/", response_model=ListResponse[schemas.Team])
-def read_all_team(
-    db: Session = Depends(deps.get_db),
-    page: int = 1,
-    limit: int = 100,
-):
-    offset = (page - 1) * limit
-
-    teams = crud.team.get_multi(db, offset=offset, limit=limit)
-    if not teams:
-        raise HTTPException(status_code=404, detail="생성된 팀이 없습니다.")
-
-    response = deps.create_list_response(
-        data=teams, total=len(teams), limit=limit, page=page
-    )
-    return ListResponse(msg="정상 처리되었습니다.", result=response)
-
-
-# ? DEV
-# 팀 생성 (개별)
-@router.post("/", response_model=BaseResponse)
-def create_team(team_in: schemas.TeamCreate, db: Session = Depends(deps.get_db)):
-    crud.team.create(db=db, obj_in=team_in)
-    return BaseResponse(msg="정상 처리되었습니다.")
-
-
 # 팀 업데이트
-@router.put("/{team_id}", response_model=BaseResponse)
+@router.put("/team/{team_id}", response_model=BaseResponse)
 def update_team(
     team_id: str,
     team_in: schemas.TeamUpdate,
@@ -76,7 +34,7 @@ def update_team(
 
 
 # 팀 삭제
-@router.delete("/{team_id}", response_model=BaseResponse)
+@router.delete("/team/{team_id}", response_model=BaseResponse)
 def delete_team(
     team_id: str,
     db: Session = Depends(deps.get_db),
@@ -92,8 +50,41 @@ def delete_team(
 # ------------------------------------------------------------------------------------------------
 
 
+# 팀
+@router.get("/user/{user_id}/team", response_model=ListResponse[schemas.Team])
+def read_all_team(
+    user_id: str,
+    db: Session = Depends(deps.get_db),
+    page: int = 1,
+    limit: int = 100,
+):
+    total = crud.employee.get_count(db)
+
+    teams = crud.team.get_team_for_user(db, user_id=user_id)
+    if not teams:
+        raise HTTPException(status_code=404, detail="생성된 팀이 없습니다.")
+
+    response = deps.create_list_response(
+        data=teams, total=total, limit=limit, page=page
+    )
+    return ListResponse(msg="정상 처리되었습니다.", result=response)
+
+
+# # 팀 생성
+@router.post("/user/{user_id}/team", response_model=DataResponse[schemas.Team])
+def create_team(
+    user_id: str, team_in: schemas.TeamCreate, db: Session = Depends(deps.get_db)
+):
+    user = crud.user.get(db, id=user_id)
+    if not user:
+        raise HTTPException(status_code=404, detail="존재하지 않는 계정입니다.")
+
+    team = crud.team.create_team_for_user(db=db, obj_in=team_in, user_id=user_id)
+    return DataResponse(msg="정상 처리되었습니다.", result=team)
+
+
 # [ Position ] 직위 생성
-@router.post("/{team_id}/position", response_model=BaseResponse)
+@router.post("/team/{team_id}/position", response_model=DataResponse[schemas.Position])
 def create_position_by_team(
     team_id: str,
     position_in: schemas.PositionCreate,
@@ -103,12 +94,12 @@ def create_position_by_team(
     if not team:
         raise HTTPException(status_code=404, detail="존재하지 않는 팀입니다.")
 
-    crud.position.create_position(db=db, obj_in=position_in, team_id=team_id)
-    return BaseResponse(msg="정상 처리되었습니다.")
+    position = crud.position.create_position(db=db, obj_in=position_in, team_id=team_id)
+    return DataResponse(msg="정상 처리되었습니다.", result=position)
 
 
 # [ Draft ]계약 초안 생성
-@router.post("/{team_id}/draft", response_model=DataResponse[schemas.Draft])
+@router.post("/team/{team_id}/draft", response_model=DataResponse[schemas.Draft])
 def create_draft_by_team(
     team_id: str,
     draft_in: schemas.DraftCreate,
@@ -123,7 +114,7 @@ def create_draft_by_team(
 
 
 # [ Draft ] 모든 계약 초안 불러오기
-@router.get("/{team_id}/draft", response_model=ListResponse[schemas.Draft])
+@router.get("/team/{team_id}/draft", response_model=ListResponse[schemas.Draft])
 def read_all_draft_by_team(
     team_id: str,
     db: Session = Depends(deps.get_db),
@@ -142,7 +133,7 @@ def read_all_draft_by_team(
 
 
 # [ Employee ] 근로자 생성
-@router.post("/{team_id}/employee", response_model=BaseResponse)
+@router.post("/team/{team_id}/employee", response_model=BaseResponse)
 def create_employee_by_team(
     team_id: str,
     employee_in: schemas.EmployeeCreate,

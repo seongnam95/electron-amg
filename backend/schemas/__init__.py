@@ -5,6 +5,7 @@ from .employee import (
     EmployeeResponse,
     EmployeeCoveringResponse,
     EmployeeDetailResponse,
+    EncryptEmployee,
 )
 from .attendance import Attendance, AttendanceCreate, AttendanceUpdate
 from .user import User, UserCreate, UserUpdate, UserResponse, UserLogin

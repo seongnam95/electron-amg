@@ -1,7 +1,13 @@
-from typing import Any
+from typing import Any, List, TypeVar, Union
 from fastapi import APIRouter, Depends, HTTPException
+from pydantic import BaseModel
 from sqlalchemy.orm import Session
-from schemas.employee import EmployeeCoveringResponse, EmployeeResponse
+from schemas.employee import (
+    EmployeeCoveringResponse,
+    EmployeeResponse,
+    EncryptEmployee,
+    EmployeeDetailResponse,
+)
 from response_model import BaseResponse, DataResponse, ListResponse
 from ... import deps
 
@@ -12,6 +18,8 @@ from util.image_converter import image_to_base64
 
 
 router = APIRouter()
+
+SchemaType = TypeVar("SchemaType", bound=BaseModel)
 
 
 # 개인정보로 근로자 불러오기
@@ -33,14 +41,14 @@ def search_employee(name: str, ssn: str, db: Session = Depends(deps.get_db)):
 # GET : ID로 근로자 불러오기
 @router.get(
     "/employee/{employee_id}",
-    response_model=DataResponse[schemas.EmployeeDetailResponse],
+    response_model=DataResponse[EmployeeDetailResponse],
 )
 def read_employee(employee_id: str, db: Session = Depends(deps.get_db)):
     employee = crud.employee.get(db=db, id=employee_id)
     if not employee:
         raise HTTPException(status_code=404, detail="해당 직원을 찾을 수 없습니다.")
 
-    employee_dec = _decrypt_employee(employee)
+    employee_dec = _decrypt_employees(employee, EmployeeDetailResponse)
     return DataResponse(msg="정상 처리되었습니다.", result=employee_dec)
 
 
@@ -57,9 +65,15 @@ def read_multi_employee(
     if not team:
         raise HTTPException(status_code=404, detail="해당 팀을 찾을 수 없습니다.")
 
+    dec_employees = _decrypt_employees(team.employees, EmployeeResponse)
+
     response = deps.create_list_response(
-        data=team.employees, total=len(team.employees), limit=limit, page=page
+        data=dec_employees,
+        total=len(dec_employees),
+        limit=limit,
+        page=page,
     )
+
     return ListResponse(msg="정상 처리되었습니다.", result=response)
 
 
@@ -102,25 +116,46 @@ def delete_employee(
 # -----------------------------------------------------------------------------------------
 
 
-# 암호화
-def _decrypt_employee(employee: models.Employee):
-    return schemas.EmployeeDetailResponse(
-        id=employee.id,
-        name=employee.name,
-        phone=employee.phone,
-        ssn=decrypt(employee.ssn_enc),
-        bank=employee.bank,
-        bank_num=decrypt(employee.bank_num_enc),
-        address=employee.address,
-        bank_book=image_to_base64(employee.bank_book_file_nm),
-        id_card=image_to_base64(employee.id_card_file_nm),
-        create_date=employee.create_date,
-        sign_base64=employee.sign_base64,
-        start_period=employee.start_period,
-        end_period=employee.end_period,
-        position_id=employee.position_id,
-        position=employee.position,
-        team=employee.team,
+def _decrypt_employees(
+    employees: Union[models.Employee, List[models.Employee]], schema: SchemaType
+):
+    isList = isinstance(employees, list)
+
+    employees = employees if isList else [employees]
+
+    employee_dicts = [
+        EncryptEmployee.model_validate(employee).model_dump() for employee in employees
+    ]
+
+    transform_functions = {
+        "ssn_enc": decrypt,
+        "bank_num_enc": decrypt,
+        "bank_book_file_nm": image_to_base64,
+        "id_card_file_nm": image_to_base64,
+    }
+
+    key_transforms = {
+        "ssn_enc": "ssn",
+        "bank_num_enc": "bank_num",
+        "bank_book_file_nm": "bank_book",
+        "id_card_file_nm": "id_card",
+    }
+
+    response_fields = set(schema.model_fields.keys())
+
+    transformed_data = [
+        {
+            key_transforms.get(k, k): transform_functions.get(k, lambda x: x)(v)
+            for k, v in d.items()
+            if k in response_fields or key_transforms.get(k, k) in response_fields
+        }
+        for d in employee_dicts
+    ]
+
+    return (
+        [schema(**data) for data in transformed_data]
+        if isList
+        else schema(**transformed_data[0])
     )
 
 

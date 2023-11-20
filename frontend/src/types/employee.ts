@@ -1,6 +1,4 @@
-import { AttendanceData } from './attendance';
 import { PositionData } from './position';
-import { TeamData } from './team';
 
 /** 근로자 데이터 인터페이스 */
 export interface EmployeeData {
@@ -8,6 +6,9 @@ export interface EmployeeData {
   name: string;
   phone: string;
   address: string;
+  ssn: string;
+  bank: string;
+  bankNum: string;
   startPeriod: string;
   endPeriod: string;
   createDate: string;
@@ -15,9 +16,6 @@ export interface EmployeeData {
 }
 
 export interface EmployeeDetailData extends EmployeeData {
-  bank: string;
-  bankNum: string;
-  ssn: string;
   bankBook: string;
   idCard: string;
   sign: string;
