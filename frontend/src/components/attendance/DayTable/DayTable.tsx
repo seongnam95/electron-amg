@@ -3,6 +3,7 @@ import { RiExchangeFundsLine } from 'react-icons/ri';
 
 import { Button, Table, Tooltip } from 'antd';
 import { TableRowSelection } from 'antd/es/table/interface';
+import { useRecoilValue } from 'recoil';
 
 import Dock from '~/components/common/Dock';
 import {
@@ -10,6 +11,7 @@ import {
   useAttendanceUpdateMutation,
 } from '~/hooks/queryHooks/useAttendanceQuery';
 import { useDragScroll } from '~/hooks/useDragScroll';
+import { teamStore } from '~/stores/team';
 import { EmployeeData } from '~/types/employee';
 import { TeamData } from '~/types/team';
 
@@ -18,23 +20,23 @@ import { DayTableStyled } from './styled';
 
 export interface DayTableProps {
   date?: string;
-  team?: TeamData;
   employees: EmployeeData[];
   onClickName: (id: string) => void;
 }
 
-const DayTable = ({ date, team, employees, onClickName }: DayTableProps) => {
+const DayTable = ({ date, employees, onClickName }: DayTableProps) => {
+  const team = useRecoilValue(teamStore);
   const scrollRef = useDragScroll();
   const [selectedRowKeys, setSelectedRowKeys] = useState<Key[]>([]);
 
   const { attendances } = useAttendanceQuery({
     date: date,
-    teamId: team?.id,
-    enabled: team?.id !== '',
+    teamId: team.id,
+    enabled: team.id !== '',
   });
 
   const { updateAttendanceMutate } = useAttendanceUpdateMutation({
-    teamId: team?.id,
+    teamId: team.id,
     date: date,
     onSuccess: data => console.log(data),
   });

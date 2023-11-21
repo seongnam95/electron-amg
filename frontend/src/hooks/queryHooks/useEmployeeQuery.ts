@@ -9,23 +9,30 @@ import { QueryBaseOptions } from '~/types/query';
 
 interface EmployeeQueryOptions<T> extends QueryBaseOptions<T> {
   teamId?: string;
+  valid?: boolean;
 }
 
-/**
- * Employee List
- */
 export const useEmployeeQuery = ({
   teamId,
+  valid,
   ...baseOptions
 }: EmployeeQueryOptions<EmployeeData[]>) => {
-  const queryKey: Array<string> = [import.meta.env.VITE_EMPLOYEE_QUERY_KEY, teamId];
+  const queryKey: string[] = [
+    import.meta.env.VITE_EMPLOYEE_QUERY_KEY,
+    teamId,
+    ...(valid !== undefined ? [valid ? 'valid' : 'invalid'] : []),
+  ];
 
-  const { data, isLoading, isError } = useQuery(queryKey, fetchEmployees(teamId), {
-    ...baseOptions,
-  });
+  const { data, isLoading, isError, refetch } = useQuery(
+    queryKey,
+    fetchEmployees({ teamId, valid }),
+    {
+      ...baseOptions,
+    },
+  );
 
   const employees = data ? data.toReversed() : [];
-  return { employees, isLoading, isError };
+  return { employees, isLoading, isError, refetch };
 };
 
 /**
@@ -54,8 +61,8 @@ export const useEmployeeDocumentQuery = ({
 
 export const useEmployeeRemoveMutation = ({
   teamId,
-  onSuccess,
   onError,
+  onSuccess,
 }: EmployeeQueryOptions<unknown>) => {
   const queryKey: string[] = [import.meta.env.VITE_EMPLOYEE_QUERY_KEY, teamId];
   const queryClient = useQueryClient();

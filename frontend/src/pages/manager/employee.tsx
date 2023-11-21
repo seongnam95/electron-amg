@@ -15,16 +15,20 @@ import { useTeamQuery } from '~/hooks/queryHooks/useTeamQuery';
 import { useCopyText } from '~/hooks/useCopyText';
 import { useDragScroll } from '~/hooks/useDragScroll';
 import { useRemoveEmployee } from '~/hooks/useRemoveEmployee';
+import { useSoundApp } from '~/hooks/useSoundApp';
 import { teamStore } from '~/stores/team';
 import { userStore } from '~/stores/user';
 import { EmployeePageStyled } from '~/styles/pageStyled/employeePageStyled';
 
+type ViewType = 'all' | 'valid' | 'invalid';
 const EmployeePage = () => {
   // ---- State
   const { user } = useRecoilValue(userStore);
 
   const team = useRecoilValue(teamStore);
   const [employeeId, setEmployeeId] = useState<string>();
+  const [viewType, setViewType] = useState<ViewType>('all');
+  const { soundMessage } = useSoundApp();
 
   const [openEmployeeInfoDrawer, setOpenEmployeeInfoDrawer] = useState<boolean>(false);
   const [openDraftDrawer, setOpenDraftDrawer] = useState<boolean>(false);
@@ -35,7 +39,11 @@ const EmployeePage = () => {
   const { copyText } = useCopyText();
 
   const { teams } = useTeamQuery({ userId: user.id });
-  const { employees } = useEmployeeQuery({ teamId: team.id, enabled: team.id !== '' });
+  const { employees, isLoading, refetch } = useEmployeeQuery({
+    teamId: team.id,
+    valid: viewType === 'valid' ? true : viewType === 'invalid' ? false : undefined,
+    enabled: team.id !== '',
+  });
 
   const { removeEmployee } = useRemoveEmployee({
     teamId: team.id,
@@ -50,6 +58,10 @@ const EmployeePage = () => {
     setOpenEmployeeInfoDrawer(true);
   };
 
+  const handleRefetch = () => {
+    refetch().then(() => soundMessage.info('새로고침 되었습니다.'));
+  };
+
   const selectedEmployee = employees.find(employee => employee.id === employeeId);
 
   return (
@@ -58,18 +70,21 @@ const EmployeePage = () => {
         <TeamSelector teams={teams} />
         <Flex gap={14}>
           <Segmented
+            defaultValue={viewType}
             options={[
-              { label: '계약중', value: 'ing' },
-              { label: '계약종료', value: 'end' },
+              { label: '전체', value: 'all' },
+              { label: '계약중', value: 'valid' },
+              { label: '계약종료', value: 'invalid' },
             ]}
-            onChange={() => {}}
+            onChange={value => setViewType(value as ViewType)}
           />
-          <EmployeeMenu />
+          <EmployeeMenu onDraft={() => setOpenDraftDrawer(true)} onRefetch={handleRefetch} />
         </Flex>
       </Header>
 
       {/* 근무자 테이블 */}
       <EmployeeTable
+        isLoading={isLoading}
         employees={employees}
         tableWrapRef={scrollRef}
         onCopy={copyText}

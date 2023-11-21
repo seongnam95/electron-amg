@@ -1,20 +1,30 @@
-import { AxiosError, AxiosResponse } from 'axios';
+import { AxiosResponse } from 'axios';
 
 import { EmployeeData, EmployeeDocument } from '~/types/employee';
 
 import axiosPrivate from './axios';
 import { BaseResponse, FetchListResponse, FetchResponse } from './response';
 
-export const fetchEmployees = (teamId?: string) => async (): Promise<EmployeeData[]> => {
-  const teamEndpoint = import.meta.env.VITE_TEAM_ENDPOINT;
-  const endpoint = import.meta.env.VITE_EMPLOYEE_ENDPOINT;
+export type FetchEmployeeFilter = 'all' | 'valid' | 'invalid';
 
-  const { data } = await axiosPrivate.get<FetchListResponse<EmployeeData>>(
-    `${teamEndpoint}/${teamId}/${endpoint}`,
-  );
+interface FetchEmployeesParams {
+  teamId?: string;
+  valid?: boolean;
+}
 
-  return data.result.list;
-};
+export const fetchEmployees =
+  ({ teamId, ...params }: FetchEmployeesParams) =>
+  async (): Promise<EmployeeData[]> => {
+    const teamEndpoint = import.meta.env.VITE_TEAM_ENDPOINT;
+    const endpoint = import.meta.env.VITE_EMPLOYEE_ENDPOINT;
+
+    const { data } = await axiosPrivate.get<FetchListResponse<EmployeeData>>(
+      `${teamEndpoint}/${teamId}/${endpoint}`,
+      { params },
+    );
+
+    return data.result.list;
+  };
 
 export const fetchEmployeeDocument =
   (employeeId?: string) => async (): Promise<EmployeeDocument> => {

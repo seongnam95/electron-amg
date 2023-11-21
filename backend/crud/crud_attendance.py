@@ -13,9 +13,13 @@ from datetime import date
 
 class CRUDAttendance(CRUDBase[Attendance, AttendanceCreate, AttendanceUpdate]):
     def create_attendance(
-        self, db: Session, *, employee: Employee, attendance_in: AttendanceCreate
+        self,
+        db: Session,
+        *,
+        employee: Employee,
+        attendance_in: AttendanceCreate,
     ):
-        today = date.today().strftime("%y-%m-%d")  # 현재 날짜 가져오기
+        today = date.today().strftime("%y-%m-%d")
         working_date = (
             attendance_in.working_date if attendance_in.working_date else today
         )

@@ -25,25 +25,27 @@ export const MonthTable2Styled = styled.div`
     .attendance-bar {
       position: absolute;
       left: 5px;
-
       height: 30%;
 
       border-radius: 3px;
-      z-index: 10;
+      user-select: none;
 
       &.attendance {
         top: 5px;
-        background-color: ${p => p.theme.colors.primary};
+        background-color: ${p => p.theme.colors.blue};
+        z-index: 9;
       }
 
       &.incentive {
-        top: calc(30% + 7px);
-        background-color: ${p => p.theme.colors.secondary};
+        top: calc(25%);
+        background-color: ${p => p.theme.colors.green};
+        z-index: 8;
       }
 
       &.deduct {
-        top: 100%;
-        background-color: ${p => p.theme.colors.error};
+        top: calc(55%);
+        background-color: ${p => p.theme.colors.red};
+        z-index: 7;
       }
     }
   }

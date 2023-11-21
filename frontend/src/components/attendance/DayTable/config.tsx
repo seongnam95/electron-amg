@@ -117,7 +117,7 @@ export const getColumns = ({
         const color = isMealIncluded ? '#71B3F0' : '#F87B6A';
         const label = isMealIncluded ? 'Y' : 'N';
 
-        const handleClick = () => {
+        const handleDoubleClick = () => {
           onChangeValue?.({
             key: 'isMealIncluded',
             id: id,
@@ -126,7 +126,12 @@ export const getColumns = ({
         };
 
         return (
-          <Button size="small" type="text" style={{ color: color }} onClick={handleClick}>
+          <Button
+            size="small"
+            type="text"
+            style={{ color: color }}
+            onDoubleClick={handleDoubleClick}
+          >
             {label}
           </Button>
         );
@@ -144,13 +149,15 @@ export const getColumns = ({
 
         return (
           <InputPopover
-            key="incentive"
+            columnKey="incentive"
             title="인센티브"
             inputType="number"
+            trigger="contextMenu"
             placeholder={incentive}
-            onSubmit={(key, value) =>
-              onChangeValue?.({ key: key as keyof AttendanceUpdateBody, id: id, value: value })
-            }
+            onSubmit={(key, value) => {
+              console.log(key);
+              onChangeValue?.({ key: key as keyof AttendanceUpdateBody, id: id, value: value });
+            }}
           >
             <Button size="small" type="text" style={{ color: '#2DD329' }}>
               + {incentive.toLocaleString()}
@@ -171,9 +178,10 @@ export const getColumns = ({
 
         return (
           <InputPopover
-            key="deduct"
+            columnKey="deduct"
             title="공제"
             inputType="number"
+            trigger="contextMenu"
             placeholder={deduct}
             onSubmit={(key, value) =>
               onChangeValue?.({ key: key as keyof AttendanceUpdateBody, id: id, value: value })
@@ -198,9 +206,10 @@ export const getColumns = ({
 
         return (
           <InputPopover
-            key="memo"
+            columnKey="memo"
             title="메모"
             inputType="text"
+            trigger="contextMenu"
             placeholder={memo}
             onSubmit={(key, value) =>
               onChangeValue?.({ key: key as keyof AttendanceUpdateBody, id: id, value: value })

@@ -4,16 +4,18 @@ import { Flex, Segmented } from 'antd';
 import dayjs, { Dayjs } from 'dayjs';
 import { useRecoilValue } from 'recoil';
 
+import DayTable from '~/components/attendance/DayTable';
+import MonthTable from '~/components/attendance/MonthTable';
+import MonthTable2 from '~/components/attendance/MonthTable2';
 import AntDatePicker from '~/components/common/DatePicker';
+import EmployeeInfoDrawer from '~/components/employee/EmployeeInfoDrawer';
 import TeamSelector from '~/components/employee/TeamSelector';
 import Header from '~/components/layouts/Header';
-import DayTable from '~/components/tracker/DayTable';
-import MonthTable2 from '~/components/tracker/MonthTable2';
-import useEmployeeInfoDrawer from '~/hooks/componentHooks/useEmployeeInfoDrawer';
 import { useAttendanceUpdateMutation } from '~/hooks/queryHooks/useAttendanceQuery';
 import { useEmployeeQuery } from '~/hooks/queryHooks/useEmployeeQuery';
 import { useTeamQuery } from '~/hooks/queryHooks/useTeamQuery';
 import { useAttendanceUpdateModal } from '~/hooks/useAttendanceUpdateModal';
+import { useRemoveEmployee } from '~/hooks/useRemoveEmployee';
 import { teamStore } from '~/stores/team';
 import { userStore } from '~/stores/user';
 import { AttendancePageStyled } from '~/styles/pageStyled/attendancePageStyled';
@@ -26,21 +28,27 @@ const Attendance = () => {
   const team = useRecoilValue(teamStore);
 
   const [viewType, setViewType] = useState<ViewType>('daily');
-  const [selectedAttendanceIds, setSelectedAttendanceIds] = useState<string[]>([]);
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [openEditor, setOpenEditor] = useState<boolean>(false);
 
+  const [employeeId, setEmployeeId] = useState<string>();
+  const [openEmployeeInfo, setOpenEmployeeInfo] = useState<boolean>(false);
+
   const [selectedDay, setSelectedDay] = useState<Dayjs>(dayjs());
-  const selectedDayStr = selectedDay.format(viewType === 'daily' ? 'YY-MM-DD' : 'YY-MM');
+  const date = selectedDay.format(viewType === 'daily' ? 'YY-MM-DD' : 'YY-MM');
 
   // hook
-  const { openDrawer, EmployeeInfoDrawer } = useEmployeeInfoDrawer();
   const { teams } = useTeamQuery({ userId: user.id });
   const { employees } = useEmployeeQuery({ teamId: team?.id, enabled: team.id !== '' });
-  const { openModal, contextHolder } = useAttendanceUpdateModal(team?.id, selectedDayStr);
+  const { openModal, AttendanceUpdateModal } = useAttendanceUpdateModal(team?.id, date);
   const { updateAttendanceMutate } = useAttendanceUpdateMutation({
     teamId: team.id,
-    date: selectedDayStr,
+    date: date,
     onSuccess: data => console.log(data),
+  });
+  const { removeEmployee } = useRemoveEmployee({
+    teamId: team.id,
+    onSuccess: () => setOpenEmployeeInfo(false),
   });
 
   // handler
@@ -49,10 +57,11 @@ const Attendance = () => {
   };
 
   const handleClickName = (id: string) => {
-    const employee = employees.find(employee => employee.id === id);
-    if (employee) openDrawer(employee);
+    setEmployeeId(id);
+    setOpenEmployeeInfo(true);
   };
 
+  const selectedEmployee = employees.find(employee => employee.id === employeeId);
   return (
     <AttendancePageStyled>
       <Header>
@@ -74,20 +83,21 @@ const Attendance = () => {
       </Header>
 
       {viewType === 'daily' ? (
-        <DayTable
-          team={team}
-          date={selectedDayStr}
-          employees={employees}
-          onClickName={handleClickName}
-        />
+        <DayTable date={date} employees={employees} onClickName={handleClickName} />
       ) : (
-        <MonthTable2 team={team} date={selectedDayStr} employees={employees} />
+        <MonthTable date={date} employees={employees} />
       )}
 
       {/* 근로자 정보 Drawer */}
-      <EmployeeInfoDrawer />
+      <EmployeeInfoDrawer
+        open={openEmployeeInfo}
+        employee={selectedEmployee}
+        onRemove={removeEmployee}
+        onClose={() => setOpenEmployeeInfo(false)}
+      />
 
-      {contextHolder}
+      {/* 일괄 업데이트 Modal */}
+      <AttendanceUpdateModal />
     </AttendancePageStyled>
   );
 };

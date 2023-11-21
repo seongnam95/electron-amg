@@ -1,4 +1,4 @@
-import { Button, Flex, Tag } from 'antd';
+import { Button, Flex } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 import clsx from 'clsx';
 import { Dayjs } from 'dayjs';
@@ -58,14 +58,16 @@ export const getColumns = ({ date }: ColumnProps): ColumnsType<MonthTableData> =
       key: 'name',
       dataIndex: 'name',
       title: '이름',
-      width: 110,
+      width: 90,
       ellipsis: true,
       sorter: (a, b) => a.employee.name.localeCompare(b.employee.name),
-      render: (_, { employee }) => (
-        <Button size="small" type="text">
-          <b>{employee.name}</b>
-        </Button>
-      ),
+      render: (_, { key, employee }) => {
+        return (
+          <Button size="small" type="text">
+            <b>{employee.name}</b>
+          </Button>
+        );
+      },
     },
     ...mapping,
     {

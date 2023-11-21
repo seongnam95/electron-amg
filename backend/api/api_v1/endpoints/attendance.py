@@ -1,17 +1,38 @@
 from fastapi import APIRouter, HTTPException, Depends
 from sqlalchemy.orm import Session
 from ... import deps
-
-import crud, schemas
+from schemas import Attendance, AttendanceCreate, AttendanceUpdate
+import crud, schemas, models
 from response_model import BaseResponse, DataResponse, ListResponse
 
 
 router = APIRouter()
 
 
+@router.post("/attendance/init", response_model=BaseResponse)
+def create_init_attendances(db: Session = Depends(deps.get_db)):
+    employees = db.query(models.Employee).all()
+
+    idx = 0
+    for employee in employees:
+        if idx == 6:
+            break
+        print(idx)
+        attendance_in = AttendanceCreate(
+            pay=employee.position.standard_pay, working_date="23-11-07", deduct=5000
+        )
+
+        crud.attendance.create_attendance(
+            db=db, attendance_in=attendance_in, employee=employee
+        )
+        idx += 1
+
+    return BaseResponse(msg="정상 처리되었습니다.")
+
+
 @router.get(
     "/team/{team_id}/attendance",
-    response_model=ListResponse[schemas.Attendance],
+    response_model=ListResponse[Attendance],
 )
 def read_attendances(
     team_id: str,
@@ -44,7 +65,7 @@ def read_attendances(
 @router.post("/employee/{employee_id}/attendance", response_model=BaseResponse)
 def create_attendance(
     employee_id: str,
-    attendance_in: schemas.AttendanceCreate,
+    attendance_in: AttendanceCreate,
     db: Session = Depends(deps.get_db),
 ):
     employee = crud.employee.get(db=db, id=employee_id)
@@ -59,12 +80,10 @@ def create_attendance(
 
 
 # 근무로그 업데이트
-@router.put(
-    "/attendance/{attendance_id}", response_model=DataResponse[schemas.Attendance]
-)
+@router.put("/attendance/{attendance_id}", response_model=DataResponse[Attendance])
 def update_attendance(
     attendance_id: str,
-    attendance_in: schemas.AttendanceUpdate,
+    attendance_in: AttendanceUpdate,
     db: Session = Depends(deps.get_db),
 ):
     attendance = crud.attendance.get(db=db, id=attendance_id)

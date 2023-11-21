@@ -1,4 +1,4 @@
-from typing import Any, List, TypeVar, Union
+from typing import Any, List, Optional, TypeVar, Union
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
@@ -55,8 +55,8 @@ def read_employee(employee_id: str, db: Session = Depends(deps.get_db)):
 # GET : 팀 소속 전체 근로자 불러오기
 @router.get("/team/{team_id}/employee", response_model=ListResponse[EmployeeResponse])
 def read_multi_employee(
-    # user: User = Depends(deps.get_current_user),
     team_id: str,
+    valid: Optional[bool] = None,
     db: Session = Depends(deps.get_db),
     page: int = 1,
     limit: int = 100,
@@ -65,11 +65,16 @@ def read_multi_employee(
     if not team:
         raise HTTPException(status_code=404, detail="해당 팀을 찾을 수 없습니다.")
 
-    dec_employees = _decrypt_employees(team.employees, EmployeeResponse)
+    offset = (page - 1) * limit
+    employees = crud.employee.get_multi_employee(
+        db=db, limit=limit, offset=offset, team_id=team_id, valid=valid
+    )
+
+    employees_enc = _decrypt_employees(employees, EmployeeResponse)
 
     response = deps.create_list_response(
-        data=dec_employees,
-        total=len(dec_employees),
+        data=employees_enc,
+        total=len(employees_enc),
         limit=limit,
         page=page,
     )

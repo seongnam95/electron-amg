@@ -49,7 +49,7 @@ const EmployeeTable = ({
   };
 
   // 테이블 데이터 맵핑
-  const dataSource: EmployeeTableDataType[] | undefined = employees?.map((employee, index) => {
+  const dataSource: EmployeeTableDataType[] | undefined = employees?.map(employee => {
     return {
       key: employee.id,
       name: employee.name,

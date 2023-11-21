@@ -23,7 +23,7 @@ const NavBar = ({ className }: NavBarProps) => {
       },
       {
         icon: 'bx-time',
-        link: '/manager/tracker',
+        link: '/manager/attendance',
         text: '근태',
       },
     ],
@@ -41,7 +41,7 @@ const NavBar = ({ className }: NavBarProps) => {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -5 }}
           >
-            <Tooltip placement="bottom" title={menu.text}>
+            <Tooltip placement="right" title={menu.text}>
               <Link key={menu.text} to={menu.link} className={clsx('item', isActive && 'active')}>
                 {isActive && (
                   <motion.div

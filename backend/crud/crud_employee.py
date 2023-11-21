@@ -1,11 +1,10 @@
-from operator import and_
 from typing import Optional
 from datetime import date
-
+from enum import Enum
 from crud.base import CRUDBase
-from models import Employee, Attendance
-from schemas import EmployeeCreate, EmployeeUpdate, EmployeeResponse, MultipleIdBody
-from sqlalchemy.orm import Session, selectinload
+from models import Employee
+from schemas import EmployeeCreate, EmployeeUpdate
+from sqlalchemy.orm import Session
 from util.crypto import encrypt, verify
 from util.image_converter import base64_to_image, remove_image
 
@@ -76,20 +75,26 @@ class CRUDEmployee(CRUDBase[Employee, EmployeeCreate, EmployeeUpdate]):
 
         return None
 
-    def get_multi_employee(self, db: Session, *, offset: int, limit: int):
-        today = date.today().strftime("%Y-%m")
-        employees = (
-            db.query(Employee)
-            .options(
-                selectinload(
-                    Employee.attendances.and_(Attendance.working_date.like(f"{today}%"))
-                )
+    def get_multi_employee(
+        self,
+        db: Session,
+        *,
+        team_id: str,
+        valid: Optional[bool],
+        offset: int,
+        limit: int,
+    ):
+        today = date.today()
+        base_query = db.query(Employee).filter(Employee.team_id == team_id)
+
+        if valid is True:
+            base_query = base_query.filter(
+                Employee.start_period <= today, Employee.end_period >= today
             )
-            .distinct(Employee.id)
-            .offset(offset)
-            .limit(limit)
-            .all()
-        )
+        elif valid is False:
+            base_query = base_query.filter(Employee.end_period < today)
+
+        employees = base_query.offset(offset).limit(limit).all()
         return employees
 
 

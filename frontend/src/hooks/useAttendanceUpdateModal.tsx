@@ -41,7 +41,7 @@ export const useAttendanceUpdateModal = (teamId?: string, date?: string) => {
     </Flex>
   );
 
-  const contextHolder = (
+  const AttendanceUpdateModal = () => (
     <Modal
       title="수당 변경"
       width={340}
@@ -99,5 +99,5 @@ export const useAttendanceUpdateModal = (teamId?: string, date?: string) => {
     setOpen(true);
   };
 
-  return { openModal, contextHolder };
+  return { openModal, AttendanceUpdateModal };
 };

@@ -135,7 +135,12 @@ const MonthTableBody = ({
           <tr key={employee.id} className="table-row">
             <td className="table-cell first-cell">{employee.name}</td>
             {dayArray.map(day => (
-              <td className="table-cell" key={day.day} id={`${employee.id}-${day.day}`}></td>
+              <td
+                onClick={() => console.log(day)}
+                className="table-cell"
+                key={day.day}
+                id={`${employee.id}-${day.day}`}
+              ></td>
             ))}
           </tr>
         );
