@@ -52,6 +52,7 @@ const _colors = {
   iconColor2: '#4E5058',
   iconColor3: '#313338',
 
+  blue: '#1677FF',
   success: '#4caf50',
   error: '#fe6968',
   relic: '#ff6000',

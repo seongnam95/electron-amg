@@ -122,18 +122,18 @@ export const getColumns = ({
       onFilter: (value, record) => record.bank === value,
       render: (_, { bank, bankNum }) => (
         <Button size="small" type="text" onDoubleClick={() => onCopy?.(`${bank} ${bankNum}`)}>
-          <Flex>
-            <Tag style={{ width: 50, textAlign: 'center' }}>{bank}</Tag> <span>{bankNum}</span>
+          <Flex justify="space-between" style={{ width: 180, maxWidth: 180 }}>
+            <Tag style={{ width: 50, textAlign: 'center' }}>{bank}</Tag>
+            <span>{bankNum}</span>
           </Flex>
         </Button>
       ),
     },
-
     {
       key: 'salary',
       dataIndex: 'salary',
       title: '기준 수당',
-      width: 130,
+      width: 160,
       align: 'center',
       filters: salaryFilters,
       onFilter: (value, record) => record.position.salaryCode === value,

@@ -5,12 +5,14 @@ import { Button, Flex, Input, PopoverProps, InputRef, Space, InputNumber } from 
 import { InputPopoverStyled } from './styled';
 
 export interface InputPopoverProps extends PopoverProps {
+  key: string;
   inputType?: 'text' | 'number';
   placeholder?: string | number;
-  onSubmit?: (value: number | string) => void;
+  onSubmit?: (key: string, value: number | string) => void;
 }
 
 const InputPopover = ({
+  key,
   inputType,
   placeholder,
   children,
@@ -40,11 +42,13 @@ const InputPopover = ({
   };
 
   // 입력 핸들러
-  const handleInputChange = (value: string | number | null) => setInputValue(value);
+  const handleInputChange = (value: string | number | null) => {
+    setInputValue(value);
+  };
 
   // 서브밋 핸들러
   const handleSubmit = () => {
-    if (onSubmit && inputValue !== null) onSubmit(inputValue);
+    if (onSubmit && inputValue !== null) onSubmit(key, inputValue);
     closePopover();
   };
 

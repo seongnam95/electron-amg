@@ -1,9 +1,10 @@
-import { Drawer } from 'antd';
 import styled from 'styled-components';
 
-export const EmployeeInfoDrawerStyled = styled(Drawer)`
+export const ImageViewButtonStyled = styled.div`
+  flex: 1;
+
   .img-btn {
-    flex: 1;
+    width: 100%;
     display: flex;
     flex-direction: column;
 
@@ -14,7 +15,7 @@ export const EmployeeInfoDrawerStyled = styled(Drawer)`
     border: none;
     border-radius: 0.8rem;
 
-    padding: 1.4rem 0 0.8rem;
+    padding: 1.4rem 2rem 0.8rem;
     color: ${p => p.theme.colors.textColor2};
     background-color: ${p => p.theme.colors.innerBg};
     transition: all 200ms ease-in-out;

@@ -1,12 +1,11 @@
 import { useState } from 'react';
-import { BsFilter } from 'react-icons/bs';
-import { FiPlus } from 'react-icons/fi';
 
-import { Button, Flex } from 'antd';
+import { Flex, Segmented } from 'antd';
 import { useRecoilValue } from 'recoil';
 
 import DraftCreateDrawer from '~/components/employee/DraftCreateDrawer';
 import EmployeeInfoDrawer from '~/components/employee/EmployeeInfoDrawer';
+import EmployeeMenu from '~/components/employee/EmployeeMenu';
 import EmployeeTable from '~/components/employee/EmployeeTable';
 import HistoryDrawer from '~/components/employee/HistoryDrawer';
 import TeamSelector from '~/components/employee/TeamSelector';
@@ -21,17 +20,17 @@ import { userStore } from '~/stores/user';
 import { EmployeePageStyled } from '~/styles/pageStyled/employeePageStyled';
 
 const EmployeePage = () => {
-  // State
+  // ---- State
   const { user } = useRecoilValue(userStore);
 
   const team = useRecoilValue(teamStore);
   const [employeeId, setEmployeeId] = useState<string>();
-  const [openDraftDrawer, setOpenDraftDrawer] = useState<boolean>(false);
 
   const [openEmployeeInfoDrawer, setOpenEmployeeInfoDrawer] = useState<boolean>(false);
+  const [openDraftDrawer, setOpenDraftDrawer] = useState<boolean>(false);
   const [openHistoryDrawer, setOpenHistoryDrawer] = useState<boolean>(false);
 
-  // Hook
+  // ---- Hook
   const scrollRef = useDragScroll();
   const { copyText } = useCopyText();
 
@@ -45,38 +44,27 @@ const EmployeePage = () => {
     },
   });
 
-  const selectedEmployee = employees.find(employee => employee.id === employeeId);
-
-  // 계약서 폼 Drawer 핸들러
-  const handleShowDraftDrawer = () => setOpenDraftDrawer(true);
-  const handleHideDraftDrawer = () => setOpenDraftDrawer(false);
-
-  // 히스토리 Drawer 핸들러
-  const handleClickHistory = () => setOpenHistoryDrawer(true);
-  const handleCloseHistory = () => setOpenHistoryDrawer(false);
-
-  // 근로자명 클릭 핸들러
+  // ---- Handler
   const handleClickName = (id: string) => {
     setEmployeeId(id);
     setOpenEmployeeInfoDrawer(true);
   };
 
-  // 근로자 삭제
-  const handleClickRemove = (ids: string | string[]) => {
-    removeEmployee(ids);
-  };
+  const selectedEmployee = employees.find(employee => employee.id === employeeId);
 
   return (
     <EmployeePageStyled className="EmployeePage">
       <Header>
         <TeamSelector teams={teams} />
-        <Flex>
-          <Button type="text" icon={<BsFilter size="1.8rem" />}>
-            필터
-          </Button>
-          <Button type="link" icon={<FiPlus size="1.8rem" />} onClick={handleShowDraftDrawer}>
-            폼 생성
-          </Button>
+        <Flex gap={14}>
+          <Segmented
+            options={[
+              { label: '계약중', value: 'ing' },
+              { label: '계약종료', value: 'end' },
+            ]}
+            onChange={() => {}}
+          />
+          <EmployeeMenu />
         </Flex>
       </Header>
 
@@ -85,15 +73,15 @@ const EmployeePage = () => {
         employees={employees}
         tableWrapRef={scrollRef}
         onCopy={copyText}
-        onRemove={handleClickRemove}
+        onRemove={removeEmployee}
         onClickName={handleClickName}
       />
 
-      {/* 근무자 정보 Drawer */}
+      {/* 근로자 정보 Drawer */}
       <EmployeeInfoDrawer
         open={openEmployeeInfoDrawer}
         employee={selectedEmployee}
-        onRemove={handleClickRemove}
+        onRemove={removeEmployee}
         onClose={() => setOpenEmployeeInfoDrawer(false)}
       />
 
@@ -101,13 +89,17 @@ const EmployeePage = () => {
       <DraftCreateDrawer
         open={openDraftDrawer}
         onCopy={copyText}
-        onHistory={handleClickHistory}
-        onClose={handleHideDraftDrawer}
+        onHistory={() => setOpenHistoryDrawer(true)}
+        onClose={() => setOpenDraftDrawer(false)}
       />
 
       {/* 계약서 폼 히스토리 Drawer */}
       {team && (
-        <HistoryDrawer open={openHistoryDrawer} onCopy={copyText} onClose={handleCloseHistory} />
+        <HistoryDrawer
+          open={openHistoryDrawer}
+          onCopy={copyText}
+          onClose={() => setOpenHistoryDrawer(false)}
+        />
       )}
     </EmployeePageStyled>
   );

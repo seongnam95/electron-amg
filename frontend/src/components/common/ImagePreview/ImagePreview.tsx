@@ -1,4 +1,3 @@
-import { ReactNode } from 'react';
 import {
   AiOutlineDownload,
   AiOutlineRotateLeft,
@@ -7,9 +6,7 @@ import {
   AiOutlineZoomOut,
 } from 'react-icons/ai';
 
-import { ImageProps, Space } from 'antd';
-
-import { ImagePreviewStyled } from './styled';
+import { Image, ImageProps } from 'antd';
 
 export interface ImagePreviewProps extends ImageProps {
   src?: string;
@@ -36,10 +33,7 @@ const ImagePreview = ({ src, open, onClose }: ImagePreviewProps) => {
   };
 
   return (
-    <ImagePreviewStyled
-      className="ImagePreview"
-      style={{ display: 'none' }}
-      width={200}
+    <Image
       preview={{
         toolbarRender: (_, { actions: { onRotateLeft, onRotateRight, onZoomOut, onZoomIn } }) => (
           <div className="toolbar-wrapper">

@@ -3,7 +3,7 @@ import { BiSolidIdCard } from 'react-icons/bi';
 import { FaSignature, FaTrashAlt } from 'react-icons/fa';
 import { RiBankCard2Fill } from 'react-icons/ri';
 
-import { Button, Descriptions, Divider, Flex, Skeleton, Tag } from 'antd';
+import { Button, Descriptions, Divider, Drawer, Flex, Skeleton, Tag } from 'antd';
 import { DrawerProps } from 'antd';
 import { useRecoilValue } from 'recoil';
 
@@ -14,7 +14,7 @@ import { EmployeeData } from '~/types/employee';
 import { SALARY } from '~/types/position';
 import { formatPhoneNumber, formatSSN } from '~/utils/formatData';
 
-import { EmployeeInfoDrawerStyled } from './styled';
+import ImageViewButton from './ImageViewButton';
 
 export interface EmployeeInfoDrawerProps extends DrawerProps {
   employee?: EmployeeData;
@@ -56,7 +56,7 @@ const EmployeeInfoDrawer = ({ employee, onRemove, ...props }: EmployeeInfoDrawer
   );
 
   return (
-    <EmployeeInfoDrawerStyled
+    <Drawer
       title="근무자 정보"
       extra={RenderExtra}
       closable={false}
@@ -102,35 +102,27 @@ const EmployeeInfoDrawer = ({ employee, onRemove, ...props }: EmployeeInfoDrawer
           <Divider />
 
           <Flex gap={12}>
-            <button className="img-btn" onClick={handleIdCardClick}>
-              <BiSolidIdCard size={24} />
-              신분증
-            </button>
-            <button className="img-btn" onClick={handleBankBookClick}>
-              <RiBankCard2Fill rotate="-60deg" size={24} style={{ padding: '1px' }} />
-              통장사본
-            </button>
-            <button className="img-btn" onClick={handleContractClick}>
-              <FaSignature size={24} />
-              계약서
-            </button>
+            <ImageViewButton
+              label="신분증"
+              icon={<BiSolidIdCard size={24} />}
+              src={employeeDocument.idCard}
+            />
+            <ImageViewButton
+              label="통장사본"
+              icon={<RiBankCard2Fill rotate="-60deg" size={24} style={{ padding: '1px' }} />}
+              src={employeeDocument.bankBook}
+            />
+            <ImageViewButton
+              label="계약서"
+              icon={<FaSignature size={24} />}
+              src={employeeDocument.idCard}
+            />
           </Flex>
-
-          <ImagePreview
-            src={employeeDocument.idCard}
-            open={showIdCard}
-            onClose={handleIdCardClose}
-          />
-          <ImagePreview
-            src={employeeDocument.bankBook}
-            open={showBankBook}
-            onClose={handleBankBookClose}
-          />
         </>
       ) : (
         <Skeleton active />
       )}
-    </EmployeeInfoDrawerStyled>
+    </Drawer>
   );
 };
 

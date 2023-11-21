@@ -12,7 +12,7 @@ interface TeamQueryOptions<T> extends QueryBaseOptions<T> {
 }
 
 export const useTeamQuery = ({ userId, ...baseOptions }: TeamQueryOptions<TeamData[]>) => {
-  const queryKey: Array<string> = [import.meta.env.VITE_TEAM_QUERY_KEY];
+  const queryKey: Array<string> = [import.meta.env.VITE_TEAM_QUERY_KEY, userId];
   const [team, setTeam] = useRecoilState(teamStore);
 
   const onSuccess = (teams: TeamData[]) => {

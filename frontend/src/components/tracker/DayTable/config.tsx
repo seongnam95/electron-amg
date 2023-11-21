@@ -4,7 +4,7 @@ import { Button, Flex, Tag, Tooltip } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 
 import InputPopover from '~/components/common/InputPopover';
-import { AttendanceData } from '~/types/attendance';
+import { AttendanceData, AttendanceUpdateBody } from '~/types/attendance';
 import { EmployeeData } from '~/types/employee';
 import { PositionData, SALARY } from '~/types/position';
 
@@ -15,27 +15,22 @@ export interface DayTableData {
   attendance?: AttendanceData;
 }
 
-export type ChangeValueType<T> = {
+export type ChangeValueType = {
+  key: keyof AttendanceUpdateBody;
   id: string;
-  value: T | null;
+  value: any;
 };
 
 interface ColumnProps {
   employees?: EmployeeData[];
-  onClickName: (id: string) => void;
-  onClickMealInclude: (v: ChangeValueType<boolean>) => void;
-  onChangeIncentive: (v: ChangeValueType<number>) => void;
-  onChangeDeduct: (v: ChangeValueType<number>) => void;
-  onChangeMemo: (v: ChangeValueType<string>) => void;
+  onClickName?: (id: string) => void;
+  onChangeValue?: (v: ChangeValueType) => void;
 }
 
 export const getColumns = ({
   employees,
   onClickName,
-  onClickMealInclude,
-  onChangeIncentive,
-  onChangeDeduct,
-  onChangeMemo,
+  onChangeValue,
 }: ColumnProps): ColumnsType<DayTableData> => {
   const positionFilters = [...new Set(employees?.map(employee => employee.position.name))].map(
     position => {
@@ -64,7 +59,7 @@ export const getColumns = ({
       ellipsis: true,
       sorter: (a, b) => a.name.localeCompare(b.name),
       render: (_, { key, name }) => {
-        const handleClick = () => onClickName(key.toString());
+        const handleClick = () => onClickName?.(key.toString());
 
         return (
           <Button size="small" type="text" onClick={handleClick}>
@@ -96,7 +91,7 @@ export const getColumns = ({
       key: 'salary',
       dataIndex: 'salary',
       title: '기준 수당',
-      width: 130,
+      width: 160,
       align: 'center',
       filters: salaryFilters,
       onFilter: (value, record) => record.position.salaryCode === value,
@@ -123,7 +118,11 @@ export const getColumns = ({
         const label = isMealIncluded ? 'Y' : 'N';
 
         const handleClick = () => {
-          onClickMealInclude({ id: id, value: !isMealIncluded });
+          onChangeValue?.({
+            key: 'isMealIncluded',
+            id: id,
+            value: !isMealIncluded,
+          });
         };
 
         return (
@@ -145,10 +144,13 @@ export const getColumns = ({
 
         return (
           <InputPopover
+            key="incentive"
             title="인센티브"
             inputType="number"
             placeholder={incentive}
-            onSubmit={v => onChangeIncentive({ id: id, value: v as number })}
+            onSubmit={(key, value) =>
+              onChangeValue?.({ key: key as keyof AttendanceUpdateBody, id: id, value: value })
+            }
           >
             <Button size="small" type="text" style={{ color: '#2DD329' }}>
               + {incentive.toLocaleString()}
@@ -169,10 +171,13 @@ export const getColumns = ({
 
         return (
           <InputPopover
+            key="deduct"
             title="공제"
             inputType="number"
             placeholder={deduct}
-            onSubmit={v => onChangeDeduct({ id: id, value: v as number })}
+            onSubmit={(key, value) =>
+              onChangeValue?.({ key: key as keyof AttendanceUpdateBody, id: id, value: value })
+            }
           >
             <Button type="text" size="small" style={{ color: '#EA3B3B' }}>
               - {deduct.toLocaleString()}
@@ -193,10 +198,13 @@ export const getColumns = ({
 
         return (
           <InputPopover
+            key="memo"
             title="메모"
             inputType="text"
             placeholder={memo}
-            onSubmit={v => onChangeMemo({ id: id, value: v as string })}
+            onSubmit={(key, value) =>
+              onChangeValue?.({ key: key as keyof AttendanceUpdateBody, id: id, value: value })
+            }
           >
             <Flex justify="center">
               <Tooltip title={memo}>
