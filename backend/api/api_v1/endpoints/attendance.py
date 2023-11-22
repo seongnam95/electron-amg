@@ -1,3 +1,4 @@
+import random
 from fastapi import APIRouter, HTTPException, Depends
 from sqlalchemy.orm import Session
 from ... import deps
@@ -9,23 +10,54 @@ from response_model import BaseResponse, DataResponse, ListResponse
 router = APIRouter()
 
 
+def generate_random_days(min_elements=5, max_elements=16, max_day=30, max_continuous=5):
+    num_elements = random.randrange(min_elements, max_elements)
+    start_day = random.randrange(1, max_day)
+
+    # 연속된 일자 생성을 위한 기본 범위 설정
+    # 연속되는 숫자의 최대 개수를 고려
+    continuous_range = min(max_continuous, num_elements, max_day - start_day + 1)
+    days = list(range(start_day, start_day + continuous_range))
+
+    # 나머지 날짜 무작위 추가
+    while len(days) < num_elements:
+        day = random.randrange(1, max_day + 1)
+        if day not in days:
+            days.append(day)
+
+    # 날짜 순으로 정렬
+    days.sort()
+
+    return days
+
+
 @router.post("/attendance/init", response_model=BaseResponse)
 def create_init_attendances(db: Session = Depends(deps.get_db)):
     employees = db.query(models.Employee).all()
 
-    idx = 0
     for employee in employees:
-        if idx == 6:
-            break
-        print(idx)
-        attendance_in = AttendanceCreate(
-            pay=employee.position.standard_pay, working_date="23-11-07", deduct=5000
-        )
+        random_days = generate_random_days()
 
-        crud.attendance.create_attendance(
-            db=db, attendance_in=attendance_in, employee=employee
-        )
-        idx += 1
+        for day in random_days:
+            day = str(day)
+
+            attendance_in = AttendanceCreate(
+                pay=employee.position.standard_pay, working_date=f"23-11-{day.zfill(2)}"
+            )
+            crud.attendance.create_attendance(
+                db=db, attendance_in=attendance_in, employee=employee
+            )
+
+    return BaseResponse(msg="정상 처리되었습니다.")
+
+
+@router.delete("/attendance/reset", response_model=BaseResponse)
+def reset_attendances(db: Session = Depends(deps.get_db)):
+    attendances = db.query(models.Attendance).all()
+
+    for attendance in attendances:
+        db.delete(attendance)
+        db.commit()
 
     return BaseResponse(msg="정상 처리되었습니다.")
 

@@ -1,7 +1,7 @@
 {
-  "name": "electron-vite-react-ts-template",
+  "name": "amg-admin",
   "version": "1.2.0",
-  "description": "electron-vite-react-ts-template",
+  "description": "amg-admin",
   "main": "dist-electron/index.js",
   "license": "MIT",
   "scripts": {

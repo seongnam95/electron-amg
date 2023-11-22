@@ -122,10 +122,11 @@ export const InitGlobalStyled = memo(createGlobalStyle`
   .ant-table-content {
     white-space: nowrap;
     
+    /* Table Head */
     .ant-table-thead {
       position: sticky;
       top: 0;
-      z-index: 3;
+      z-index: 11;
 
       .anticon {
         font-size: 8px;
@@ -136,7 +137,7 @@ export const InitGlobalStyled = memo(createGlobalStyle`
         font-size: ${p => [p.theme.sizes.textSmall]};
         color: ${p => p.theme.colors.textColor2};
         padding: 1rem 1rem;
-        background-color: rgb(255, 255, 255, 0.7);
+        background-color: rgb(250, 250, 250, 0.8);
         backdrop-filter: blur(10px);
 
         ::before {
@@ -154,8 +155,8 @@ export const InitGlobalStyled = memo(createGlobalStyle`
       :nth-child(1),
       :nth-child(2) {
         position: sticky;
-        z-index: 2;
-        background-color: rgb(255, 255, 255, 0.7);
+        z-index: 10;
+        background-color: rgb(250, 250, 250, 0.8);
         backdrop-filter: blur(10px);
       }
 

@@ -6,29 +6,63 @@ export const MonthTableStyled = styled.div`
   }
 
   .ant-table-cell {
-    :not(:first-child) {
-      padding: 0 !important;
-    }
-
     :not(:nth-last-child(2)):not(:first-child) {
       border-right: 1px solid ${p => p.theme.colors.borderColor};
     }
 
-    &.day-cell {
+    &.day {
+      padding: 0 !important;
+
       &.saturday {
-        background-color: rgba(51, 118, 205, 0.04);
+        font-weight: bold;
+        color: ${p => p.theme.colors.blue};
+        background-color: rgb(247, 250, 253, 0.8);
       }
 
       &.sunday {
-        background-color: rgba(237, 106, 94, 0.04);
+        font-weight: bold;
+        color: ${p => p.theme.colors.red};
+        background-color: rgba(254, 249, 249, 0.8);
       }
     }
 
-    &.last-cell {
+    &.amount-paid {
       position: sticky;
       right: 0;
       background-color: ${p => p.theme.colors.innerBg};
       border-left: 1px solid ${p => p.theme.colors.borderColor};
+      z-index: 10;
+    }
+  }
+`;
+
+export const AttendanceBarStyled = styled.div`
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  height: 100%;
+  padding: 0 0.4rem;
+
+  z-index: 2;
+  cursor: pointer;
+
+  .attendance-bar {
+    flex: 1;
+    height: 1.8rem;
+
+    border-radius: 4px;
+    background-color: ${p => p.theme.colors.green};
+
+    transition: all 140ms ease-in-out;
+    opacity: 0.8;
+
+    :hover {
+      background-color: ${p => p.theme.colors.blue};
     }
   }
 `;

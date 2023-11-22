@@ -7,7 +7,7 @@ import { useAttendanceQuery } from '~/hooks/queryHooks/useAttendanceQuery';
 import { AttendanceData } from '~/types/attendance';
 import { EmployeeData } from '~/types/employee';
 import { TeamData } from '~/types/team';
-import { generateWeekColorDays } from '~/utils/commuteRange';
+import { generateDays } from '~/utils/commuteRange';
 
 import { MonthTable2Styled } from './styled';
 import { groupByEmployeeIdAndDate } from './util';
@@ -32,7 +32,7 @@ const MonthTable2 = ({ team, date, employees }: MonthTable2Props) => {
 };
 
 const MonthTableHead = ({ date }: { date: string }) => {
-  const dayArray = generateWeekColorDays(dayjs(date, 'YY-MM'));
+  const dayArray = generateDays(dayjs(date, 'YY-MM'));
   const columns = [
     {
       key: 'name',
@@ -72,7 +72,7 @@ const MonthTableBody = ({
 }) => {
   const tbodyRef = useRef<HTMLTableSectionElement>(null);
   const dataSource = groupByEmployeeIdAndDate(attendances);
-  const dayArray = generateWeekColorDays(dayjs(date, 'YY-MM'));
+  const dayArray = generateDays(dayjs(date, 'YY-MM'));
 
   const createRangeDiv = () => {
     dataSource.forEach(data => {
