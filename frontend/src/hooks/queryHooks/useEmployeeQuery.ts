@@ -26,13 +26,15 @@ export const useEmployeeQuery = ({
   const { data, isLoading, isError, refetch } = useQuery(
     queryKey,
     fetchEmployees({ teamId, valid }),
-    {
-      ...baseOptions,
-    },
+    { ...baseOptions },
   );
 
-  const employees = data ? data.toReversed() : [];
-  return { employees, isLoading, isError, refetch };
+  const teamLeader = data?.find(employees => employees.position.isTeamLeader);
+  const employees = data
+    ? data.filter(employees => !employees.position.isTeamLeader).toReversed()
+    : [];
+
+  return { teamLeader, employees, isLoading, isError, refetch };
 };
 
 /**

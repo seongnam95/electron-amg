@@ -2,7 +2,7 @@ import random
 from fastapi import APIRouter, HTTPException, Depends
 from sqlalchemy.orm import Session
 from ... import deps
-from schemas import Attendance, AttendanceCreate, AttendanceUpdate
+from schemas import AttendanceResponse, AttendanceCreate, AttendanceUpdate
 import crud, schemas, models
 from response_model import BaseResponse, DataResponse, ListResponse
 
@@ -64,7 +64,7 @@ def reset_attendances(db: Session = Depends(deps.get_db)):
 
 @router.get(
     "/team/{team_id}/attendance",
-    response_model=ListResponse[Attendance],
+    response_model=ListResponse[AttendanceResponse],
 )
 def read_attendances(
     team_id: str,
@@ -112,7 +112,9 @@ def create_attendance(
 
 
 # 근무로그 업데이트
-@router.put("/attendance/{attendance_id}", response_model=DataResponse[Attendance])
+@router.put(
+    "/attendance/{attendance_id}", response_model=DataResponse[AttendanceResponse]
+)
 def update_attendance(
     attendance_id: str,
     attendance_in: AttendanceUpdate,

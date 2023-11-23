@@ -37,11 +37,13 @@ class Employee(Base):
 
     # 소속
     team = relationship("Team", uselist=False, back_populates="employees")
-    team_id = Column(Integer, ForeignKey("team.id"), nullable=False)
+    team_id = Column(String, ForeignKey("team.id"), nullable=False)
 
     # 직위
     position = relationship("Position", uselist=False, back_populates="employee")
-    position_id = Column(Integer, ForeignKey("position.id"), nullable=False)
+    position_id = Column(String, ForeignKey("position.id"), nullable=False)
+
+    user = relationship("User", uselist=False, back_populates="employee")
 
     # 근무 로그
     attendances = relationship(

@@ -97,7 +97,7 @@ export const getColumns = ({
       onFilter: (value, record) => record.position.salaryCode === value,
       render: (_, { position }) => (
         <Flex justify="center">
-          <Flex justify="space-between" style={{ width: 130, maxWidth: 130 }}>
+          <Flex justify="space-between" style={{ width: 120, maxWidth: 120 }}>
             <Tag>{SALARY[position.salaryCode]}</Tag>
             <span>{position.standardPay.toLocaleString()}원</span>
           </Flex>
@@ -138,38 +138,9 @@ export const getColumns = ({
       },
     },
     {
-      key: 'incentive',
-      dataIndex: 'incentive',
-      title: '인센티브',
-      width: 100,
-      align: 'center',
-      render: (_, { attendance }) => {
-        if (attendance === undefined) return '-';
-        const { id, incentive } = attendance;
-
-        return (
-          <InputPopover
-            columnKey="incentive"
-            title="인센티브"
-            inputType="number"
-            trigger="contextMenu"
-            placeholder={incentive}
-            onSubmit={(key, value) => {
-              console.log(key);
-              onChangeValue?.({ key: key as keyof AttendanceUpdateBody, id: id, value: value });
-            }}
-          >
-            <Button size="small" type="text" style={{ color: '#2DD329' }}>
-              + {incentive.toLocaleString()}
-            </Button>
-          </InputPopover>
-        );
-      },
-    },
-    {
       key: 'deduct',
       dataIndex: 'deduct',
-      title: '공제',
+      title: '선지급',
       width: 100,
       align: 'center',
       render: (_, { attendance }) => {
@@ -227,13 +198,33 @@ export const getColumns = ({
     {
       key: 'total',
       dataIndex: 'total',
-      title: '결정 수당',
+      title: '지급액',
       width: 110,
       align: 'center',
       render: (_, { attendance }) => {
-        if (attendance === undefined) return <Tag style={{ marginInlineEnd: 0 }}>미출근</Tag>;
+        if (attendance === undefined) return '-';
+
         const { pay } = attendance;
         return <b style={{ color: '#5855F5' }}>{pay.toLocaleString()}원</b>;
+      },
+    },
+    {
+      key: 'state',
+      dataIndex: 'state',
+      title: '상태',
+      width: 80,
+      align: 'center',
+      render: (_, { attendance }) => {
+        if (attendance === undefined)
+          return (
+            <Tag style={{ width: '100%', textAlign: 'center', marginInlineEnd: 0 }}>미출근</Tag>
+          );
+        const { pay } = attendance;
+        return (
+          <Tag color="#5855F5" style={{ width: '100%', textAlign: 'center', marginInlineEnd: 0 }}>
+            출근
+          </Tag>
+        );
       },
     },
   ];

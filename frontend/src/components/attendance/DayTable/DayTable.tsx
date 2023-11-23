@@ -13,7 +13,6 @@ import {
 import { useDragScroll } from '~/hooks/useDragScroll';
 import { teamStore } from '~/stores/team';
 import { EmployeeData } from '~/types/employee';
-import { TeamData } from '~/types/team';
 
 import { ChangeValueType, getColumns, DayTableData } from './config';
 import { DayTableStyled } from './styled';

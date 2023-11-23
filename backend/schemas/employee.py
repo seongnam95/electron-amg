@@ -1,8 +1,6 @@
-from typing import List, Optional
+from typing import Optional
 from pydantic import BaseModel, model_validator
-from schemas.attendance import Attendance
-from schemas.position import Position
-from schemas.team import Team
+from schemas.position import PositionResponse
 from schemas.common import check_update_fields
 from datetime import datetime, date
 
@@ -33,6 +31,7 @@ class EmployeeUpdate(BaseModel):
     bank_num: Optional[str] = None
     bank_book: Optional[str] = None
     id_card: Optional[str] = None
+    position_id: Optional[str] = None
 
     @model_validator(mode="before")
     def check_fields(cls, values: dict):
@@ -62,7 +61,7 @@ class EncryptEmployee(BaseModel):
     sign_base64: str
     position_id: str
     create_date: datetime
-    position: Position
+    position: PositionResponse
 
     class Config:
         from_attributes = True
@@ -98,7 +97,7 @@ class EmployeeResponse(BaseModel):
     start_period: date
     end_period: date
     create_date: datetime
-    position: Position
+    position: PositionResponse
 
     class Config:
         from_attributes = True

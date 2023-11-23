@@ -3,21 +3,26 @@ from typing import List, Optional
 from datetime import datetime
 
 from schemas.common import check_update_fields
-from schemas.team import Team
+from schemas.team import TeamResponse
 
 
 class UserCreate(BaseModel):
     name: str
     username: str
     password: str
+    incentive_pay: Optional[int] = None
     is_admin: Optional[bool] = None
+    is_superuser: Optional[bool] = None
     is_approved: Optional[bool] = None
+    employee_id: Optional[str] = None
 
 
 class UserUpdate(BaseModel):
     password: Optional[str] = None
     is_admin: Optional[bool] = None
+    is_superuser: Optional[bool] = None
     is_approved: Optional[bool] = None
+    employee_id: Optional[str] = None
 
     @model_validator(mode="before")
     def check_fields(cls, values: dict):
@@ -29,7 +34,9 @@ class User(BaseModel):
     name: str
     username: str
     hashed_password: str
+    incentive_pay: int
     is_admin: bool
+    is_superuser: bool
     is_approved: bool
     create_date: datetime
 
@@ -42,7 +49,7 @@ class UserResponse(BaseModel):
     username: str
     is_admin: bool
     is_approved: bool
-    teams: List[Team]
+    teams: List[TeamResponse]
 
     class Config:
         from_attributes = True

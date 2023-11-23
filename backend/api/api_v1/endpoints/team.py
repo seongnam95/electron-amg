@@ -51,7 +51,7 @@ def delete_team(
 
 
 # 팀
-@router.get("/user/{user_id}/team", response_model=ListResponse[schemas.Team])
+@router.get("/user/{user_id}/team", response_model=ListResponse[schemas.TeamResponse])
 def read_all_team(
     user_id: str,
     db: Session = Depends(deps.get_db),
@@ -71,7 +71,7 @@ def read_all_team(
 
 
 # # 팀 생성
-@router.post("/user/{user_id}/team", response_model=DataResponse[schemas.Team])
+@router.post("/user/{user_id}/team", response_model=DataResponse[schemas.TeamResponse])
 def create_team(
     user_id: str, team_in: schemas.TeamCreate, db: Session = Depends(deps.get_db)
 ):
@@ -84,7 +84,9 @@ def create_team(
 
 
 # [ Position ] 직위 생성
-@router.post("/team/{team_id}/position", response_model=DataResponse[schemas.Position])
+@router.post(
+    "/team/{team_id}/position", response_model=DataResponse[schemas.PositionResponse]
+)
 def create_position_by_team(
     team_id: str,
     position_in: schemas.PositionCreate,

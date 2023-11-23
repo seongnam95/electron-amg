@@ -13,7 +13,7 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/login")
 
 
 # 직위 불러오기
-@router.get("/{position_id}", response_model=DataResponse[schemas.Position])
+@router.get("/{position_id}", response_model=DataResponse[schemas.PositionResponse])
 def delete_position(
     position_id: str,
     db: Session = Depends(deps.get_db),
@@ -26,7 +26,7 @@ def delete_position(
 
 
 # 모든 직위 불러오기
-@router.get("/", response_model=ListResponse[schemas.Position])
+@router.get("/", response_model=ListResponse[schemas.PositionResponse])
 def read_all_position(
     db: Session = Depends(deps.get_db),
     page: int = 1,

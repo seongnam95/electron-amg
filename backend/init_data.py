@@ -10,18 +10,22 @@ px_img = "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEAwADAAAD/2wBDAAIBAQIBAQICAgI
 
 # Create User / Login
 def login():
-    create_user_body = {
-        "name": "관리자",
+    create_admin_body = {
+        "name": "곽승재",
         "username": "test",
         "password": "test",
+        "incentive_pay": 5000,
         "is_admin": True,
+        "is_superuser": True,
         "is_approved": True,
         "access_ip": "122.24.12.34",
     }
+    session.post(f"{base_url}/user", json=create_admin_body)
 
-    session.post(f"{base_url}/user", json=create_user_body)
-    user_id = session.post(f"{base_url}/auth/login", json=create_user_body).json()["id"]
-
+    user_id = session.post(f"{base_url}/auth/login", json=create_admin_body).json()[
+        "id"
+    ]
+    print("계정 생성")
     return user_id
 
 
@@ -33,18 +37,55 @@ def create_team(user_id: str):
     team_res = session.post(f"{base_url}/user/{user_id}/team", json=create_team_body)
 
     if team_res.status_code == 200:
+        print("팀 생성")
         return team_res.json()["result"]["id"]
 
 
 # Create Position
 def create_positions(team_id: str):
     create_position_bodys = [
-        {"name": "팀장", "salary_code": 1, "color": "#F35F4A", "standard_pay": 100000},
-        {"name": "부팀장", "salary_code": 1, "color": "#FC8B39", "standard_pay": 100000},
-        {"name": "알바", "salary_code": 1, "color": "#57ABF8", "standard_pay": 80000},
-        {"name": "기사", "salary_code": 1, "color": "#A075FD", "standard_pay": 100000},
-        {"name": "홍보단", "salary_code": 2, "color": "#2ADA90", "standard_pay": 450000},
-        {"name": "사무보조", "salary_code": 3, "color": "#6764FF", "standard_pay": 2500000},
+        {
+            "name": "팀장",
+            "salary_code": 1,
+            "color": "#F35F4A",
+            "standard_pay": 100000,
+            "is_included": False,
+        },
+        {
+            "name": "부팀장",
+            "salary_code": 1,
+            "color": "#FC8B39",
+            "standard_pay": 100000,
+            "is_included": False,
+        },
+        {
+            "name": "알바",
+            "salary_code": 1,
+            "color": "#57ABF8",
+            "standard_pay": 80000,
+            "is_included": True,
+        },
+        {
+            "name": "기사",
+            "salary_code": 1,
+            "color": "#A075FD",
+            "standard_pay": 92000,
+            "is_included": True,
+        },
+        {
+            "name": "홍보단",
+            "salary_code": 2,
+            "color": "#2ADA90",
+            "standard_pay": 92000,
+            "is_included": False,
+        },
+        {
+            "name": "사무보조",
+            "salary_code": 3,
+            "color": "#6764FF",
+            "standard_pay": 100000,
+            "is_included": False,
+        },
     ]
 
     positions = []
@@ -66,21 +107,57 @@ def get_employees():
         reader = csv.reader(inp)
         for rows in reader:
             employee = {
-                "name": rows[0],
-                "ssn": rows[1],
-                "phone": rows[2],
-                "bank": rows[3],
-                "bank_num": rows[4],
+                "name": rows[0].strip(),
+                "ssn": rows[1].strip(),
+                "phone": rows[2].strip(),
+                "bank": rows[3].strip(),
+                "bank_num": rows[4].strip(),
             }
             employees.append(employee)
 
         return employees
 
 
-def create_employees(*, team_id, positions, employees):
+def create_employees(*, team_id, admin_id, positions, employees):
     crate_employee_res = []
+
+    create_admin_body = {
+        "name": "곽승재",
+        "ssn": "9501011111111",
+        "phone": "01012341234",
+        "address": "서울 마포구 토정로 53",
+        "bank": "카카오뱅크",
+        "bank_num": "33303131215",
+        "start_period": "2023-11-01",
+        "end_period": "2023-11-30",
+        "id_card": px_img,
+        "bank_book": px_img,
+        "sign_base64": px_img,
+        "position_id": positions[0]["id"],
+        "user_id": admin_id,
+    }
+
+    session.post(f"{base_url}/team/{team_id}/employee", json=create_admin_body)
+
     for employee in employees:
-        position = random.choice(positions)
+        if employee["name"] == "정하성":
+            position = positions[0]
+        elif employee["name"] == "김인태":
+            position = positions[1]
+        elif employee["name"] == "나유은":
+            position = positions[5]
+        elif employee["name"] == "원민호":
+            position = positions[4]
+        elif employee["name"] == "남기건":
+            position = positions[4]
+        elif employee["name"] == "원민호":
+            position = positions[3]
+        elif employee["name"] == "이철호":
+            position = positions[3]
+        elif employee["name"] == "윤주호":
+            position = positions[3]
+        else:
+            position = positions[2]
 
         create_employee_body = {
             "name": employee["name"],
@@ -102,12 +179,22 @@ def create_employees(*, team_id, positions, employees):
 
         crate_employee_res.append(res)
 
+    print("근로자 생성")
     return crate_employee_res
 
 
-user_id = login()
-team_id = create_team(user_id)
+# user_id = login()
+# team_id = create_team(user_id)
+team_id = "MX9fB3CzRa2YRW4OE27GJQ"
 positions = create_positions(team_id)
 
 # print(positions)
-print(create_employees(team_id=team_id, positions=positions, employees=get_employees()))
+admin_id = "0y3dIt6AT0-N-tko0SrRPw"
+print(
+    create_employees(
+        team_id=team_id,
+        admin_id=admin_id,
+        positions=positions,
+        employees=get_employees(),
+    )
+)

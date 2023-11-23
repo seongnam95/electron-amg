@@ -1,6 +1,7 @@
 import { useState } from 'react';
 
 import { Flex, Segmented } from 'antd';
+import { SegmentedValue } from 'antd/es/segmented';
 import { useRecoilValue } from 'recoil';
 
 import DraftCreateDrawer from '~/components/employee/DraftCreateDrawer';
@@ -21,22 +22,23 @@ import { userStore } from '~/stores/user';
 import { EmployeePageStyled } from '~/styles/pageStyled/employeePageStyled';
 
 type ViewType = 'all' | 'valid' | 'invalid';
+
 const EmployeePage = () => {
   // ---- State
   const { user } = useRecoilValue(userStore);
-
   const team = useRecoilValue(teamStore);
+
   const [employeeId, setEmployeeId] = useState<string>();
   const [viewType, setViewType] = useState<ViewType>('all');
-  const { soundMessage } = useSoundApp();
 
   const [openEmployeeInfoDrawer, setOpenEmployeeInfoDrawer] = useState<boolean>(false);
   const [openDraftDrawer, setOpenDraftDrawer] = useState<boolean>(false);
   const [openHistoryDrawer, setOpenHistoryDrawer] = useState<boolean>(false);
 
   // ---- Hook
-  const scrollRef = useDragScroll();
+  const tableWrapRef = useDragScroll();
   const { copyText } = useCopyText();
+  const { soundMessage } = useSoundApp();
 
   const { teams } = useTeamQuery({ userId: user.id });
   const { employees, isLoading, refetch } = useEmployeeQuery({
@@ -53,17 +55,24 @@ const EmployeePage = () => {
   });
 
   // ---- Handler
+  const handleChangeView = (view: SegmentedValue) => {
+    setViewType(view as ViewType);
+    if (tableWrapRef.current) tableWrapRef.current.scrollTo({ top: 0 });
+  };
+
   const handleClickName = (id: string) => {
     setEmployeeId(id);
     setOpenEmployeeInfoDrawer(true);
   };
 
   const handleRefetch = () => {
-    refetch().then(() => soundMessage.info('새로고침 되었습니다.'));
+    refetch().then(() => {
+      soundMessage.info('새로고침 되었습니다.');
+      if (tableWrapRef.current) tableWrapRef.current.scrollTo({ top: 0 });
+    });
   };
 
   const selectedEmployee = employees.find(employee => employee.id === employeeId);
-
   return (
     <EmployeePageStyled className="EmployeePage">
       <Header>
@@ -76,7 +85,7 @@ const EmployeePage = () => {
               { label: '계약중', value: 'valid' },
               { label: '계약종료', value: 'invalid' },
             ]}
-            onChange={value => setViewType(value as ViewType)}
+            onChange={handleChangeView}
           />
           <EmployeeMenu onDraft={() => setOpenDraftDrawer(true)} onRefetch={handleRefetch} />
         </Flex>
@@ -86,7 +95,7 @@ const EmployeePage = () => {
       <EmployeeTable
         isLoading={isLoading}
         employees={employees}
-        tableWrapRef={scrollRef}
+        tableWrapRef={tableWrapRef}
         onCopy={copyText}
         onRemove={removeEmployee}
         onClickName={handleClickName}

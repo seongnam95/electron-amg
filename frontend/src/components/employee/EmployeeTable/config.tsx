@@ -95,7 +95,7 @@ export const getColumns = ({
       width: 140,
       align: 'center',
       render: (_, { phone }) => (
-        <Button size="small" type="text" onDoubleClick={() => onCopy?.(phone)}>
+        <Button size="small" type="text" onContextMenu={() => onCopy?.(phone)}>
           {formatPhoneNumber(phone)}
         </Button>
       ),
@@ -107,7 +107,7 @@ export const getColumns = ({
       width: 150,
       align: 'center',
       render: (_, { ssn }) => (
-        <Button size="small" type="text" onDoubleClick={() => onCopy?.(ssn)}>
+        <Button size="small" type="text" onContextMenu={() => onCopy?.(ssn)}>
           {formatSSN(ssn)}
         </Button>
       ),
@@ -121,7 +121,7 @@ export const getColumns = ({
       filters: bankFilters,
       onFilter: (value, record) => record.bank === value,
       render: (_, { bank, bankNum }) => (
-        <Button size="small" type="text" onDoubleClick={() => onCopy?.(`${bank} ${bankNum}`)}>
+        <Button size="small" type="text" onContextMenu={() => onCopy?.(`${bank} ${bankNum}`)}>
           <Flex justify="space-between" style={{ width: 180, maxWidth: 180 }}>
             <Tag style={{ width: 50, textAlign: 'center' }}>{bank}</Tag>
             <span>{bankNum}</span>

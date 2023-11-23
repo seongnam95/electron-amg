@@ -5,7 +5,6 @@ import { ImFileExcel } from 'react-icons/im';
 import { Button, Table, Tooltip } from 'antd';
 
 import Dock from '~/components/common/Dock';
-import { useEmployeeQuery } from '~/hooks/queryHooks/useEmployeeQuery';
 import { EmployeeData } from '~/types/employee';
 
 import { EmployeeTableDataType, getColumns } from './config';
@@ -65,6 +64,7 @@ const EmployeeTable = ({
   return (
     <EmployeeTableWrapStyled ref={tableWrapRef} className="EmployeeTable">
       <Table
+        showHeader
         tableLayout="fixed"
         loading={isLoading}
         pagination={false}

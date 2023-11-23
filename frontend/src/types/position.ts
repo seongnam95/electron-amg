@@ -11,6 +11,9 @@ export interface PositionData {
   color: string;
   salaryCode: SalaryType;
   standardPay: number;
+  incentivePay: number;
+  isTeamLeader: boolean;
+  isChild: boolean;
 }
 
 /** 근로자 생성 API 바디 */

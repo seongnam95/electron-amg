@@ -1,9 +1,6 @@
-from datetime import datetime
 from typing import List
 from fastapi import HTTPException
 from fastapi.encoders import jsonable_encoder
-
-from sqlalchemy import func
 from crud.base import CRUDBase
 from models import Attendance, Employee
 from schemas import AttendanceCreate, AttendanceUpdate
@@ -24,6 +21,7 @@ class CRUDAttendance(CRUDBase[Attendance, AttendanceCreate, AttendanceUpdate]):
             attendance_in.working_date if attendance_in.working_date else today
         )
 
+        # 해당 날짜의 Attendance 조회
         attendance = (
             db.query(Attendance)
             .filter(Attendance.employee_id == employee.id)
@@ -34,14 +32,17 @@ class CRUDAttendance(CRUDBase[Attendance, AttendanceCreate, AttendanceUpdate]):
         if attendance:
             raise HTTPException(status_code=404, detail="이미 출근처리 되었습니다.")
 
-        standard_pay = employee.position.standard_pay
-        incentive = attendance_in.incentive if attendance_in.incentive else 0
-        deduct = attendance_in.deduct if attendance_in.deduct else 0
+        # 수당 계산 [단가 - 공제 (+ 식대)]
+        pay = employee.position.standard_pay
+        pay -= attendance_in.deduct if attendance_in.deduct else 0
+        pay += (
+            attendance.employee.team.meal_cost if attendance_in.is_meal_included else 0
+        )
 
         obj_in_data = jsonable_encoder(attendance_in)
         obj_in_data["employee_id"] = employee.id
         obj_in_data["working_date"] = working_date
-        obj_in_data["pay"] = standard_pay + incentive - deduct
+        obj_in_data["pay"] = pay
         db_obj = self.model(**obj_in_data)
 
         db.add(db_obj)

@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Boolean, String, DateTime
+from sqlalchemy import Column, Boolean, ForeignKey, Integer, String, DateTime
 from db.base_class import Base
 from datetime import datetime
 from sqlalchemy.orm import relationship
@@ -23,9 +23,15 @@ class User(Base):
     username = Column(String, unique=True, nullable=False)  # 계정
     hashed_password = Column(String, nullable=False)  # 비밀번호
 
-    is_admin = Column(Boolean, default=False, nullable=False)  # 어드민 여부
-    is_approved = Column(Boolean, default=False, nullable=False)  # 계정 활성화/비활성화
+    incentive_pay = Column(Integer, nullable=False, default=2000)  # 팀장 인센
+
+    is_admin = Column(Boolean, nullable=False, default=False)  # 어드민 여부 (팀장)
+    is_superuser = Column(Boolean, nullable=False, default=False)  # 슈퍼유저 여부
+    is_approved = Column(Boolean, nullable=False, default=True)  # 계정 활성화/비활성화
 
     create_date = Column(DateTime(timezone=True), nullable=False, default=datetime.now)
 
     teams = relationship("Team", secondary=user_team, back_populates="users")
+
+    employee = relationship("Employee", uselist=False, back_populates="user")
+    employee_id = Column(String, ForeignKey("employee.id"), nullable=True)
