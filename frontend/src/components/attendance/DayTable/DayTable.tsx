@@ -71,7 +71,7 @@ const DayTable = ({ date, employees, onClickName }: DayTableProps) => {
 
   const hasSelected = selectedRowKeys.length > 0;
   return (
-    <DayTableStyled ref={scrollRef} className="AttendanceTable">
+    <DayTableStyled className="AttendanceTable" ref={scrollRef}>
       <Table
         pagination={false}
         columns={columns}

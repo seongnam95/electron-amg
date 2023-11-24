@@ -75,7 +75,7 @@ const EmployeePage = () => {
   const selectedEmployee = employees.find(employee => employee.id === employeeId);
   return (
     <EmployeePageStyled className="EmployeePage">
-      <Header>
+      <Flex className="tool-bar" align="center" justify="space-between">
         <TeamSelector teams={teams} />
         <Flex gap={14}>
           <Segmented
@@ -89,17 +89,19 @@ const EmployeePage = () => {
           />
           <EmployeeMenu onDraft={() => setOpenDraftDrawer(true)} onRefetch={handleRefetch} />
         </Flex>
-      </Header>
+      </Flex>
 
       {/* 근무자 테이블 */}
-      <EmployeeTable
-        isLoading={isLoading}
-        employees={employees}
-        tableWrapRef={tableWrapRef}
-        onCopy={copyText}
-        onRemove={removeEmployee}
-        onClickName={handleClickName}
-      />
+      <Flex className="table-container">
+        <EmployeeTable
+          isLoading={isLoading}
+          employees={employees}
+          tableWrapRef={tableWrapRef}
+          onCopy={copyText}
+          onRemove={removeEmployee}
+          onClickName={handleClickName}
+        />
+      </Flex>
 
       {/* 근로자 정보 Drawer */}
       <EmployeeInfoDrawer

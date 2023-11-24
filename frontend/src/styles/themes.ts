@@ -10,9 +10,8 @@ export const sizes = {
   iconMedium: '20px',
   iconLarge: '22px',
 
-  headerHeight: '7rem',
+  headerHeight: '4.6rem',
   titleBarHeight: '4rem',
-  navBarWidth: '8rem',
 };
 
 const _colors = {
@@ -25,6 +24,7 @@ const _colors = {
 
   sidebarBG: '#F5F5F5',
   sidebarSelected: '',
+  sidebarIconActive: '#333333',
 
   selectedBg: '#F6F9FF',
   selectedHoverBg: '#F1F5FF',

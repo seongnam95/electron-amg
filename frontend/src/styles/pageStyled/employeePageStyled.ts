@@ -1,25 +1,26 @@
 import styled from 'styled-components';
 
 export const EmployeePageStyled = styled.div`
+  --toolbar-height: 3rem;
+
   position: relative;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
   height: 100%;
 
-  .Header {
-    .control-btn-wrap {
-      display: flex;
-      align-items: center;
+  .tool-bar {
+    height: var(--toolbar-height);
+    margin-bottom: 1.4rem;
+  }
 
-      > button {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 0.7rem;
-        padding: 0.2rem 1rem 0;
-      }
-    }
+  .table-container {
+    overflow: hidden;
+    height: calc(100% - var(--toolbar-height));
   }
 
   .EmployeeTable {
-    height: calc(100% - ${p => p.theme.sizes.headerHeight});
+    height: 100%;
+    overflow: auto;
   }
 `;

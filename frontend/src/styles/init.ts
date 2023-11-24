@@ -16,7 +16,6 @@ export const InitGlobalStyled = memo(createGlobalStyle`
     height: 0;
   }
 
-
   *::-webkit-scrollbar-track {
     background: transparent;
     border-radius: 4px;

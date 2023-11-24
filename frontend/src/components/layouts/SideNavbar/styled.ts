@@ -1,8 +1,6 @@
 import styled from 'styled-components';
 
 export const SideNavbarStyled = styled.div`
-  width: ${p => p.theme.sizes.navBarWidth};
-
   background-color: ${props => props.theme.colors.sidebarBG};
   border-right: 1px solid ${p => p.theme.colors.borderColor};
 
@@ -20,21 +18,21 @@ export const SideNavbarStyled = styled.div`
     width: 100%;
     height: 6rem;
 
-    transition: all 200ms;
+    transition: all 140ms;
 
-    &.active {
-      color: ${props => props.theme.colors.textColor1};
-    }
-
+    &.active,
     &:hover {
-      color: ${props => props.theme.colors.textColor1};
+      color: ${props => props.theme.colors.sidebarIconActive};
+      .menu-icon {
+        transform: scale(1.06);
+      }
     }
 
-    .bx {
+    .menu-icon {
       position: relative;
       z-index: 1;
-      font-size: 2.6rem;
-      transition: 200ms color;
+      font-size: 2.4rem;
+      transition: all 140ms;
     }
 
     .menuActiveBG {

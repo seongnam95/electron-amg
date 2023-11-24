@@ -1,4 +1,7 @@
 import { useMemo } from 'react';
+import { BsFillPeopleFill } from 'react-icons/bs';
+import { FaBusinessTime } from 'react-icons/fa';
+import { GoHomeFill } from 'react-icons/go';
 import { Link, useLocation } from 'react-router-dom';
 
 import clsx from 'clsx';
@@ -12,12 +15,17 @@ const SideNavbar = () => {
   const menus = useMemo(
     () => [
       {
-        icon: 'bx-user',
+        icon: <GoHomeFill className="menu-icon" />,
+        link: '/',
+        text: '홈',
+      },
+      {
+        icon: <BsFillPeopleFill className="menu-icon" />,
         link: '/manager/employee',
         text: '직원 관리',
       },
       {
-        icon: 'bx-time',
+        icon: <FaBusinessTime className="menu-icon" />,
         link: '/manager/attendance',
         text: '근태',
       },
@@ -57,7 +65,7 @@ const SideNavbar = () => {
                         }}
                       />
                     )}
-                    <i className={`bx ${item.icon}`} />
+                    {item.icon}
                   </Link>
                 </motion.div>
               );

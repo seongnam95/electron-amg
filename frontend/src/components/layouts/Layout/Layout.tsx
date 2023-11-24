@@ -1,24 +1,28 @@
 import { ForwardedRef } from 'react';
+import { useLocation } from 'react-router-dom';
 
-import { App as AntApp } from 'antd';
+import { App as AntApp, Flex } from 'antd';
 import { ConfigOptions } from 'antd/es/message/interface';
 import clsx from 'clsx';
 
 import Content from '../Content';
+import Header from '../Header';
 import SideNavbar from '../SideNavbar';
 import { LayoutStyled } from './styled';
 
 export interface LayoutProps {
   className?: string;
   children: React.ReactNode;
-  layoutRef?: ForwardedRef<HTMLDivElement>;
 }
 
-const Layout = ({ className, children, layoutRef }: LayoutProps) => {
+const Layout = ({ className, children }: LayoutProps) => {
   return (
-    <LayoutStyled ref={layoutRef} id="layout" className={clsx('Layout', className)}>
+    <LayoutStyled id="layout" className={clsx('Layout', className)}>
       <SideNavbar />
-      <Content>{children}</Content>
+      <Flex vertical>
+        <Header />
+        <Content>{children}</Content>
+      </Flex>
     </LayoutStyled>
   );
 };

@@ -6,11 +6,9 @@ import { useRecoilValue } from 'recoil';
 
 import DayTable from '~/components/attendance/DayTable';
 import MonthTable from '~/components/attendance/MonthTable';
-import MonthTable2 from '~/components/attendance/MonthTable2';
 import AntDatePicker from '~/components/common/DatePicker';
 import EmployeeInfoDrawer from '~/components/employee/EmployeeInfoDrawer';
 import TeamSelector from '~/components/employee/TeamSelector';
-import Header from '~/components/layouts/Header';
 import { useAttendanceUpdateMutation } from '~/hooks/queryHooks/useAttendanceQuery';
 import { useEmployeeQuery } from '~/hooks/queryHooks/useEmployeeQuery';
 import { useTeamQuery } from '~/hooks/queryHooks/useTeamQuery';
@@ -64,29 +62,41 @@ const Attendance = () => {
   const selectedEmployee = employees.find(employee => employee.id === employeeId);
   return (
     <AttendancePageStyled>
-      <Header>
-        <TeamSelector teams={teams} />
-        <Flex gap={14}>
-          <Segmented
-            options={[
-              { label: '일간', value: 'daily' },
-              { label: '월간', value: 'monthly' },
-            ]}
-            onChange={v => setViewType(v as ViewType)}
-          />
-          <AntDatePicker
-            picker={viewType === 'monthly' ? 'month' : 'date'}
-            defaultValue={selectedDay}
-            onChange={handleChangeDate}
-          />
+      <Flex className="page-content" vertical>
+        {/* 컨트롤 바 */}
+        <Flex className="tool-bar" align="center" justify="space-between">
+          <TeamSelector teams={teams} />
+          <Flex gap={14}>
+            <Segmented
+              options={[
+                { label: '일간', value: 'daily' },
+                { label: '월간', value: 'monthly' },
+              ]}
+              onChange={v => setViewType(v as ViewType)}
+            />
+            <AntDatePicker
+              picker={viewType === 'monthly' ? 'month' : 'date'}
+              defaultValue={selectedDay}
+              onChange={handleChangeDate}
+            />
+          </Flex>
         </Flex>
-      </Header>
 
-      {viewType === 'daily' ? (
-        <DayTable date={date} employees={employees} onClickName={handleClickName} />
-      ) : (
-        <MonthTable date={date} employees={employees} />
-      )}
+        {/* 테이블 Wrap */}
+        <Flex className="table-container">
+          {viewType === 'daily' ? (
+            <DayTable date={date} employees={employees} onClickName={handleClickName} />
+          ) : (
+            <MonthTable date={date} employees={employees} />
+          )}
+        </Flex>
+      </Flex>
+
+      <Flex className="page-footer">
+        <Flex className="leader-state" flex={1} align="center">
+          팀장: 1000
+        </Flex>
+      </Flex>
 
       {/* 근로자 정보 Drawer */}
       <EmployeeInfoDrawer
