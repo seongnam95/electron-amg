@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 
 import { Flex, Segmented } from 'antd';
 import dayjs, { Dayjs } from 'dayjs';
@@ -58,7 +58,7 @@ const Attendance = () => {
     setEmployeeId(id);
     setOpenEmployeeInfo(true);
   };
-
+  const testRef = useRef<HTMLDivElement>(null);
   const selectedEmployee = employees.find(employee => employee.id === employeeId);
   return (
     <AttendancePageStyled>

@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
 export const EmployeePageStyled = styled.div`
-  --toolbar-height: 3rem;
+  --toolbar-height: 3.8rem;
 
   position: relative;
   display: flex;

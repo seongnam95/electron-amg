@@ -1,10 +1,9 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { BiSolidIdCard } from 'react-icons/bi';
 import { FaSignature, FaTrashAlt } from 'react-icons/fa';
 import { RiBankCard2Fill } from 'react-icons/ri';
 
-import { Button, Descriptions, Divider, Drawer, Flex, Skeleton, Tag } from 'antd';
-import { DrawerProps } from 'antd';
+import { Button, Descriptions, Divider, Drawer, Flex, Skeleton, Tag, DrawerProps } from 'antd';
 import { useRecoilValue } from 'recoil';
 
 import ImagePreview from '~/components/common/ImagePreview';
@@ -23,6 +22,8 @@ export interface EmployeeInfoDrawerProps extends DrawerProps {
 
 const EmployeeInfoDrawer = ({ employee, onRemove, ...props }: EmployeeInfoDrawerProps) => {
   const team = useRecoilValue(teamStore);
+  const layoutEl = document.getElementById('layout');
+  const ref = useRef<HTMLDivElement>(null);
 
   const { employeeDocument, isLoading: isQueryLoading } = useEmployeeDocumentQuery({
     employeeId: employee?.id,
@@ -30,22 +31,6 @@ const EmployeeInfoDrawer = ({ employee, onRemove, ...props }: EmployeeInfoDrawer
   });
 
   const isLoading = employee === undefined || !employeeDocument || isQueryLoading;
-
-  const [showIdCard, setShowIdCard] = useState<boolean>(false);
-  const [showBankBook, setShowBankBook] = useState<boolean>(false);
-  const [showContract, setShowContract] = useState<boolean>(false);
-
-  // 신분증 버튼 핸들러
-  const handleIdCardClick = () => setShowIdCard(true);
-  const handleIdCardClose = () => setShowIdCard(false);
-
-  // 통장사본 버튼 핸들러
-  const handleBankBookClick = () => setShowBankBook(true);
-  const handleBankBookClose = () => setShowBankBook(false);
-
-  // 계약서 버튼 핸들러
-  const handleContractClick = () => setShowContract(true);
-  const handleContractClose = () => setShowContract(false);
 
   const handleRemove = () => {
     if (employee?.id) onRemove?.(employee.id);
@@ -58,9 +43,9 @@ const EmployeeInfoDrawer = ({ employee, onRemove, ...props }: EmployeeInfoDrawer
   return (
     <Drawer
       title="근무자 정보"
+      getContainer={false}
       extra={RenderExtra}
       closable={false}
-      getContainer={false}
       {...props}
     >
       {!isLoading ? (

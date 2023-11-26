@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
 export const AttendancePageStyled = styled.div`
-  --toolbar-height: 3rem;
+  --toolbar-height: 3.8rem;
   --footer-height: 10rem;
 
   display: flex;
