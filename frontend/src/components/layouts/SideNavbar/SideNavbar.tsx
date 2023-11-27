@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { BsFillPeopleFill } from 'react-icons/bs';
 import { FaBusinessTime } from 'react-icons/fa';
 import { GoHomeFill } from 'react-icons/go';
@@ -6,27 +6,39 @@ import { Link, useLocation } from 'react-router-dom';
 
 import clsx from 'clsx';
 import { motion, LayoutGroup, AnimatePresence } from 'framer-motion';
+import { useSetRecoilState } from 'recoil';
+
+import { BreadcrumbData, breadcrumbStore } from '~/stores/breadcrumb';
 
 import { SideNavbarStyled } from './styled';
 
 const SideNavbar = () => {
   const { pathname } = useLocation();
+  const setBreadcrumb = useSetRecoilState(breadcrumbStore);
 
-  const menus = useMemo(
+  useEffect(() => {
+    const menu = menus.find(menu => menu.path === pathname);
+    if (menu) setBreadcrumb([menu]);
+  }, [pathname]);
+
+  const menus: BreadcrumbData[] = useMemo(
     () => [
       {
+        key: 'dashboard',
         icon: <GoHomeFill className="menu-icon" />,
-        link: '/',
-        text: '홈',
+        path: '/',
+        text: '대시보드',
       },
       {
+        key: 'employee',
         icon: <BsFillPeopleFill className="menu-icon" />,
-        link: '/manager/employee',
+        path: '/employee',
         text: '직원 관리',
       },
       {
+        key: 'attendance',
         icon: <FaBusinessTime className="menu-icon" />,
-        link: '/manager/attendance',
+        path: '/attendance',
         text: '근태',
       },
     ],
@@ -39,18 +51,18 @@ const SideNavbar = () => {
         <div className="items">
           <AnimatePresence>
             {menus.map(item => {
-              const isActive = pathname === item.link;
+              const isActive = pathname === item.path;
 
               return (
                 <motion.div
-                  key={item.text}
+                  key={item.key}
                   initial={{ opacity: 0, y: -5 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -5 }}
                 >
                   <Link
-                    key={item.text}
-                    to={item.link}
+                    key={item.key}
+                    to={item.path}
                     className={clsx('item', isActive && 'active')}
                   >
                     {isActive && (

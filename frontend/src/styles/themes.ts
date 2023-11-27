@@ -10,7 +10,7 @@ export const sizes = {
   iconMedium: '20px',
   iconLarge: '22px',
 
-  headerHeight: '4.6rem',
+  headerHeight: '6.2rem',
   titleBarHeight: '4rem',
 };
 

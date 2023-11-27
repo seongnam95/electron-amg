@@ -7,7 +7,7 @@ import { useAttendanceUpdateMutation } from './queryHooks/useAttendanceQuery';
 interface FormData {
   isMealIncluded?: boolean;
   incentive?: number;
-  deduct?: number;
+  prePay?: number;
   memo?: string;
 }
 
@@ -57,7 +57,7 @@ export const useAttendanceUpdateModal = (teamId?: string, date?: string) => {
         colon={false}
         autoComplete="off"
         style={{ marginTop: 24 }}
-        initialValues={{ isMealIncluded: false, incentive: 0, deduct: 0 }}
+        initialValues={{ isMealIncluded: false, incentive: 0, prePay: 0 }}
         onFinish={handleFinish}
       >
         <Form.Item label="식대 포함" name="isMealIncluded" valuePropName="checked">
@@ -74,7 +74,7 @@ export const useAttendanceUpdateModal = (teamId?: string, date?: string) => {
           />
         </Form.Item>
 
-        <Form.Item label="공제" name="deduct">
+        <Form.Item label="공제" name="prePay">
           <InputNumber
             min={0}
             style={{ width: '100%' }}

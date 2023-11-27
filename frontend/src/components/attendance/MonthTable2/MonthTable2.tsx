@@ -106,7 +106,7 @@ const MonthTableBody = ({
           firstCell.appendChild(barElement);
         }
       });
-      data.deducts.forEach(dates => {
+      data.prePays.forEach(dates => {
         const day = dayjs(dates[0].workingDate, 'YY-MM-DD').date();
         const firstCell = document.getElementById(`${data.employeeId}-${day}`);
         let barElement, divWidth;
@@ -116,7 +116,7 @@ const MonthTableBody = ({
 
           barElement = document.createElement('div');
           barElement.style.width = `${divWidth}px`;
-          barElement.className = 'attendance-bar deduct';
+          barElement.className = 'attendance-bar prePay';
 
           firstCell.appendChild(barElement);
         }

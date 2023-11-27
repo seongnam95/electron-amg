@@ -1,32 +1,35 @@
 from pydantic import BaseModel
 from typing import Optional
 
+from schemas.position import PositionResponse
 
-class AttendanceBase(BaseModel):
-    pay: Optional[int] = None
-    incentive: Optional[int] = None
-    deduct: Optional[int] = None
-    memo: Optional[str] = None
+
+class AttendanceCreate(BaseModel):
+    position_id: str
     is_meal_included: bool
-
-
-class AttendanceCreate(AttendanceBase):
+    pay: Optional[int] = None
+    pre_pay: Optional[int] = None
+    memo: Optional[str] = None
     working_date: Optional[str] = None
 
 
-class AttendanceUpdate(AttendanceBase):
-    pass
+class AttendanceUpdate(BaseModel):
+    pay: Optional[int] = None
+    pre_pay: Optional[int] = None
+    memo: Optional[str] = None
+    is_meal_included: Optional[bool] = None
 
 
-class AttendanceResponse(AttendanceBase):
+class AttendanceResponse(BaseModel):
     id: str
     pay: int
-    is_meal_included: bool
-    incentive: int
-    deduct: int
+    pre_pay: int
     memo: str
+    is_meal_included: bool
     working_date: str
     employee_id: str
+    position_id: str
+    position: PositionResponse
 
     class Config:
         from_attributes = True

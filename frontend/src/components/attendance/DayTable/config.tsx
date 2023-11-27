@@ -138,28 +138,28 @@ export const getColumns = ({
       },
     },
     {
-      key: 'deduct',
-      dataIndex: 'deduct',
+      key: 'prePay',
+      dataIndex: 'prePay',
       title: '선지급',
       width: 100,
       align: 'center',
       render: (_, { attendance }) => {
         if (attendance === undefined) return '-';
-        const { id, deduct } = attendance;
+        const { id, prePay: prePay } = attendance;
 
         return (
           <InputPopover
-            columnKey="deduct"
+            columnKey="prePay"
             title="공제"
             inputType="number"
             trigger="contextMenu"
-            placeholder={deduct}
+            placeholder={prePay}
             onSubmit={(key, value) =>
               onChangeValue?.({ key: key as keyof AttendanceUpdateBody, id: id, value: value })
             }
           >
             <Button type="text" size="small" style={{ color: '#EA3B3B' }}>
-              - {deduct.toLocaleString()}
+              - {prePay.toLocaleString()}
             </Button>
           </InputPopover>
         );

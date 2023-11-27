@@ -18,7 +18,7 @@ class Position(Base):
         default=lambda: str(B64UUID(uuid4())),
     )  # PK
 
-    name = Column(String, nullable=False, unique=True)  # 이름
+    name = Column(String, nullable=False)  # 이름
     color = Column(String, nullable=False)  # 색상
     salary_code = Column(Integer, nullable=False)  # 급여 종류
     standard_pay = Column(Integer, nullable=False)  # 기준 단가
@@ -27,6 +27,7 @@ class Position(Base):
 
     employee = relationship("Employee", back_populates="position")
     draft = relationship("Draft", back_populates="position")
+    attendances = relationship("Attendance", back_populates="position")
 
     # 소속 (팀)
     team_id = Column(String, ForeignKey("team.id"), nullable=False)

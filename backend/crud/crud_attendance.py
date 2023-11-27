@@ -34,7 +34,7 @@ class CRUDAttendance(CRUDBase[Attendance, AttendanceCreate, AttendanceUpdate]):
 
         # 수당 계산 [단가 - 공제 (+ 식대)]
         pay = employee.position.standard_pay
-        pay -= attendance_in.deduct if attendance_in.deduct else 0
+        pay -= attendance_in.pre_pay if attendance_in.pre_pay else 0
         pay += (
             attendance.employee.team.meal_cost if attendance_in.is_meal_included else 0
         )
@@ -70,10 +70,8 @@ class CRUDAttendance(CRUDBase[Attendance, AttendanceCreate, AttendanceUpdate]):
     ):
         update_data = attendance_in.model_dump(exclude_unset=True)
 
-        attendance.pay = (
-            attendance.employee.position.standard_pay
-            + update_data.get("incentive", attendance.incentive)
-            - update_data.get("deduct", attendance.deduct)
+        attendance.pay = attendance.employee.position.standard_pay - update_data.get(
+            "pre_pay", attendance.pre_pay
         )
 
         meal_cost = attendance.employee.team.meal_cost

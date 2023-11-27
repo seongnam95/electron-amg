@@ -54,7 +54,7 @@ export const groupByEmployeeIdAndDate = (attendances: AttendanceData[]): Grouped
             result.incentives = [[{ workingDate: curr.workingDate }]];
           }
         }
-        if (curr.deduct !== 0) {
+        if (curr.prePay !== 0) {
           if (result.deducts.length > 0) {
             result.deducts[result.deducts.length - 1] = [
               ...result.deducts[result.deducts.length - 1],

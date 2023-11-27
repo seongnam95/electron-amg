@@ -173,4 +173,9 @@ export const InitGlobalStyled = memo(createGlobalStyle`
   .ant-tabs-nav-wrap {
     padding: 0 14px;
   }
+
+  .ant-breadcrumb-separator {
+    display: flex;
+    align-items: center;
+  }
 `);

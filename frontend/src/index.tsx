@@ -12,7 +12,7 @@ import moment from 'moment';
 import 'moment/locale/ko';
 import { RecoilRoot } from 'recoil';
 
-import FileSystemRoutes from '~/components/common/FileSystemRoutes';
+import FileSystemRoutes from '~/components/layouts/FileSystemRoutes';
 
 moment.locale('ko');
 

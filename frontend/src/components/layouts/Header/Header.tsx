@@ -5,41 +5,44 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { Breadcrumb, Flex } from 'antd';
 import { BreadcrumbItemType } from 'antd/es/breadcrumb/Breadcrumb';
 import { motion } from 'framer-motion';
+import { useRecoilValue } from 'recoil';
+
+import TeamSelector from '~/components/common/TeamSelector';
+import { breadcrumbStore } from '~/stores/breadcrumb';
 
 import { HeaderStyled } from './styled';
 
 interface HeaderProps extends HTMLAttributes<HTMLDivElement> {}
 
 const Header = ({ children, ...props }: HeaderProps) => {
-  const { pathname } = useLocation();
+  const breadcrumb = useRecoilValue(breadcrumbStore);
 
-  const items: BreadcrumbItemType[] = [
-    {
-      path: pathname,
+  const items: BreadcrumbItemType[] = breadcrumb.map((bread, idx) => {
+    return {
+      key: bread.key,
       title: (
-        <Flex align="center" gap={8}>
-          <GoHomeFill color="#767676#" />
-          근태 관리
+        <Flex align="center" gap={8} style={{ fontSize: 17 }}>
+          {idx === 0 ? <span style={{ color: '#767676' }}>#</span> : null}
+          {bread.text}
         </Flex>
       ),
-    },
-    {
-      title: '일간',
-    },
-  ];
+    };
+  });
 
+  const crumbKey = items.map(item => item.key).join('/');
   return (
     <HeaderStyled className="Header" {...props}>
       <motion.div
-        key={pathname}
+        key={crumbKey}
         initial={{ opacity: 0, x: -8 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.3, ease: 'easeInOut' }}
       >
-        <Breadcrumb items={items} />
+        <Flex align="center" justify="space-between">
+          <Breadcrumb items={items} />
+          <TeamSelector />
+        </Flex>
       </motion.div>
-
-      {children}
     </HeaderStyled>
   );
 };

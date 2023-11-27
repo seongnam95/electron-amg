@@ -3,72 +3,57 @@ import { Doughnut } from 'react-chartjs-2';
 
 import { Typography, Flex } from 'antd';
 import 'chart.js/auto';
+import dayjs from 'dayjs';
 import { useRecoilValue } from 'recoil';
 
 import { useAttendanceQuery } from '~/hooks/queryHooks/useAttendanceQuery';
 import { useEmployeeQuery } from '~/hooks/queryHooks/useEmployeeQuery';
 import { teamStore } from '~/stores/team';
-import { AttendanceData } from '~/types/attendance';
-import { EmployeeData } from '~/types/employee';
-import { PositionData } from '~/types/position';
 
 import { AttendanceStatusStyled } from './styled';
 
 export interface AttendanceStatusProps {
+  date?: string;
   className?: string;
   children?: ReactNode;
 }
 
 const { Text } = Typography;
-const AttendanceStatus = ({}: AttendanceStatusProps) => {
+const AttendanceStatus = ({ date }: AttendanceStatusProps) => {
   const team = useRecoilValue(teamStore);
 
   const { employees } = useEmployeeQuery({ teamId: team.id, enabled: team.id !== '' });
   const { attendances } = useAttendanceQuery({
     teamId: team.id,
-    date: '23-11-27',
+    date: date ? date : dayjs().format('YY-MM-DD'),
     enabled: team.id !== '',
   });
 
-  const countAttendanceByPosition = (
-    employees: EmployeeData[],
-    attendances: AttendanceData[],
-    positions: PositionData[],
-  ) => {
-    // 포지션별 출근 횟수를 초기화합니다.
-    const attendanceCounts = positions.map(position => ({
+  // 직위별 출근 카운팅
+  const countAttendanceByPosition = () => {
+    const positionCounts = team.positions.map(position => ({
       positionId: position.id,
-      position: position.name,
+      name: position.name,
       count: 0,
     }));
 
-    // 직원별 포지션 ID를 매핑합니다.
-    const positionIdMap = employees.reduce((acc, employee) => {
-      acc[employee.id] = employee.position.id;
-      return acc;
-    }, {} as { [employeeId: string]: string });
-
-    // 출근 데이터를 순회하며 포지션별 출근 횟수를 계산합니다.
     attendances.forEach(attendance => {
-      const positionId = positionIdMap[attendance.employeeId];
-      if (positionId) {
-        const positionCount = attendanceCounts.find(count => count.position === positionId);
-        if (positionCount) {
-          positionCount.count += 1;
-        }
-      }
+      const { positionId } = attendance;
+      const positionCount = positionCounts.find(count => count.positionId === positionId);
+      if (positionCount) positionCount.count += 1;
     });
 
-    return attendanceCounts;
+    return positionCounts;
   };
 
-  console.log(countAttendanceByPosition(employees, attendances, team.positions));
+  const counts = countAttendanceByPosition();
+  const nonAttendanceCount = employees.length - attendances.length;
+
   const dataSource = {
-    labels: [...team.positions.map(position => position.name), '미출근'],
+    labels: [...counts.map(position => position.name), '미출근'],
     datasets: [
       {
-        label: '',
-        data: [1, 2, 20, 5, 1, 3, 14],
+        data: [...counts.map(pos => pos.count), nonAttendanceCount],
         backgroundColor: [...team.positions.map(position => position.color), '#e8e8e8'],
         borderWidth: 0,
       },
@@ -77,14 +62,15 @@ const AttendanceStatus = ({}: AttendanceStatusProps) => {
 
   return (
     <AttendanceStatusStyled className="AttendanceStatus">
-      <Doughnut
-        className="chart"
-        data={dataSource}
-        options={{
-          cutout: '50%',
-          plugins: { legend: { display: false } },
-        }}
-      />
+      <Flex className="chart-wrap">
+        <Doughnut
+          data={dataSource}
+          options={{
+            cutout: '50%',
+            plugins: { legend: { display: false } },
+          }}
+        />
+      </Flex>
 
       <Flex vertical gap={4} style={{ width: '100%' }}>
         <Flex flex={1} justify="space-between">
