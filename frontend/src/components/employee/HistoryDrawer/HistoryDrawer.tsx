@@ -32,11 +32,14 @@ const HistoryDrawer = ({ onCopy, onClose, ...props }: HistoryDrawerProps) => {
 
   return (
     <Drawer
-      getContainer={false}
       title="히스토리"
       closable={false}
       extra={RenderExtra}
       onClose={onClose}
+      rootClassName="ant-drawer-inline"
+      getContainer={() => {
+        return document.getElementById('layout') || document.body;
+      }}
       {...props}
     >
       <List

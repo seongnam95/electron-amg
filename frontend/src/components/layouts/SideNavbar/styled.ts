@@ -5,7 +5,7 @@ export const SideNavbarStyled = styled.div`
   border-right: 1px solid ${p => p.theme.colors.borderColor};
 
   padding: 1.4rem 0;
-  z-index: 9999;
+  z-index: 10;
 
   a {
     position: relative;

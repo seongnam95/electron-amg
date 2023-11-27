@@ -5,9 +5,9 @@ export const LayoutStyled = styled.div`
   --header-height: 4.6rem;
 
   position: relative;
+  overflow: hidden;
 
   display: flex;
-  overflow: hidden;
   width: 100vw;
   height: calc(100% - ${p => p.theme.sizes.titleBarHeight});
 

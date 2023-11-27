@@ -3,7 +3,7 @@ import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { AxiosError } from 'axios';
 
 import { fetchEmployeeDocument, fetchEmployees, removeEmployees } from '~/api/employee';
-import { BaseResponse } from '~/api/response';
+import { BaseResponse, FetchListResponse } from '~/api/response';
 import { EmployeeData, EmployeeDocument } from '~/types/employee';
 import { QueryBaseOptions } from '~/types/query';
 
@@ -16,7 +16,7 @@ export const useEmployeeQuery = ({
   teamId,
   valid,
   ...baseOptions
-}: EmployeeQueryOptions<EmployeeData[]>) => {
+}: EmployeeQueryOptions<FetchListResponse<EmployeeData>>) => {
   const queryKey: string[] = [
     import.meta.env.VITE_EMPLOYEE_QUERY_KEY,
     teamId,
@@ -29,12 +29,15 @@ export const useEmployeeQuery = ({
     { ...baseOptions },
   );
 
-  const teamLeader = data?.find(employees => employees.position.isTeamLeader);
-  const employees = data
-    ? data.filter(employees => !employees.position.isTeamLeader).toReversed()
+  const dataList = data?.result.list;
+
+  const total = data?.result.total;
+  const teamLeader = dataList?.find(employees => employees.position.isTeamLeader);
+  const employees = dataList
+    ? dataList.filter(employees => !employees.position.isTeamLeader).toReversed()
     : [];
 
-  return { teamLeader, employees, isLoading, isError, refetch };
+  return { teamLeader, employees, total, isLoading, isError, refetch };
 };
 
 /**

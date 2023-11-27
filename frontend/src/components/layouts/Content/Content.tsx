@@ -12,7 +12,7 @@ const Content = ({ children }: ContentProps) => {
   const { pathname } = useLocation();
 
   return (
-    <ContentStyled className="Content">
+    <ContentStyled id="contentWrap" className="Content">
       <motion.div
         key={pathname}
         initial={{ opacity: 0, x: -12, y: -12 }}

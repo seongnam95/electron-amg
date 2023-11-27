@@ -42,7 +42,9 @@ def create_init_attendances(db: Session = Depends(deps.get_db)):
             day = str(day)
 
             attendance_in = AttendanceCreate(
-                pay=employee.position.standard_pay, working_date=f"23-11-{day.zfill(2)}"
+                pay=employee.position.standard_pay,
+                is_meal_included=False,
+                working_date=f"23-11-{day.zfill(2)}",
             )
             crud.attendance.create_attendance(
                 db=db, attendance_in=attendance_in, employee=employee

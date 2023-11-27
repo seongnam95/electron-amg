@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useRef } from 'react';
 import { BiSolidIdCard } from 'react-icons/bi';
 import { FaSignature, FaTrashAlt } from 'react-icons/fa';
 import { RiBankCard2Fill } from 'react-icons/ri';
@@ -6,7 +6,6 @@ import { RiBankCard2Fill } from 'react-icons/ri';
 import { Button, Descriptions, Divider, Drawer, Flex, Skeleton, Tag, DrawerProps } from 'antd';
 import { useRecoilValue } from 'recoil';
 
-import ImagePreview from '~/components/common/ImagePreview';
 import { useEmployeeDocumentQuery } from '~/hooks/queryHooks/useEmployeeQuery';
 import { teamStore } from '~/stores/team';
 import { EmployeeData } from '~/types/employee';
@@ -22,15 +21,11 @@ export interface EmployeeInfoDrawerProps extends DrawerProps {
 
 const EmployeeInfoDrawer = ({ employee, onRemove, ...props }: EmployeeInfoDrawerProps) => {
   const team = useRecoilValue(teamStore);
-  const layoutEl = document.getElementById('layout');
-  const ref = useRef<HTMLDivElement>(null);
 
   const { employeeDocument, isLoading: isQueryLoading } = useEmployeeDocumentQuery({
     employeeId: employee?.id,
     enabled: !!employee?.id,
   });
-
-  const isLoading = employee === undefined || !employeeDocument || isQueryLoading;
 
   const handleRemove = () => {
     if (employee?.id) onRemove?.(employee.id);
@@ -40,12 +35,16 @@ const EmployeeInfoDrawer = ({ employee, onRemove, ...props }: EmployeeInfoDrawer
     <Button type="text" danger icon={<FaTrashAlt size="1.6rem" onClick={handleRemove} />} />
   );
 
+  const isLoading = employee === undefined || !employeeDocument || isQueryLoading;
   return (
     <Drawer
       title="근무자 정보"
-      getContainer={false}
       extra={RenderExtra}
       closable={false}
+      rootClassName="ant-drawer-inline"
+      getContainer={() => {
+        return document.getElementById('layout') || document.body;
+      }}
       {...props}
     >
       {!isLoading ? (

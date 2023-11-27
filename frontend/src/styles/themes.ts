@@ -4,7 +4,7 @@ import { darken, lighten, rgba } from 'polished';
 export const sizes = {
   textSmall: '13px',
   textMedium: '14px',
-  textLarge: '15px',
+  textLarge: '16px',
 
   iconSmall: '18px',
   iconMedium: '20px',

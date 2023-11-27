@@ -1,8 +1,7 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo } from 'react';
 import { Outlet } from 'react-router-dom';
 
 import { ConfigProvider, theme, App } from 'antd';
-import { ConfigOptions } from 'antd/es/message/interface';
 import locale from 'antd/lib/locale/ko_KR';
 import 'dayjs/locale/ko';
 import { useRecoilState, useRecoilValue } from 'recoil';
@@ -10,6 +9,7 @@ import styled, { ThemeProvider } from 'styled-components';
 
 import Layout from '~/components/layouts/Layout';
 import Titlebar from '~/components/layouts/Titlebar';
+import { useTeamQuery } from '~/hooks/queryHooks/useTeamQuery';
 import { updateStore } from '~/stores/update';
 import { userStore } from '~/stores/user';
 import { InitGlobalStyled } from '~/styles/init';
@@ -29,8 +29,9 @@ declare module 'styled-components' {
 
 const AppWrap = () => {
   const antdToken = theme.useToken();
-  const { isLogin } = useRecoilValue(userStore);
+  const { user, isLogin } = useRecoilValue(userStore);
   const [update, setUpdate] = useRecoilState(updateStore);
+  const _ = useTeamQuery({ userId: user.id, enabled: isLogin });
 
   const bootstrap = async () => {
     window.electron.onUpdate((event, data) => {

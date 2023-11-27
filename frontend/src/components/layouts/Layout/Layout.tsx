@@ -1,8 +1,7 @@
 import { ForwardedRef } from 'react';
 import { useLocation } from 'react-router-dom';
 
-import { App as AntApp, Flex } from 'antd';
-import { ConfigOptions } from 'antd/es/message/interface';
+import { Drawer, Flex } from 'antd';
 import clsx from 'clsx';
 
 import Content from '../Content';
@@ -23,6 +22,7 @@ const Layout = ({ className, children }: LayoutProps) => {
         <Header />
         <Content>{children}</Content>
       </Flex>
+      {/* <Drawer getContainer={false} open /> */}
     </LayoutStyled>
   );
 };

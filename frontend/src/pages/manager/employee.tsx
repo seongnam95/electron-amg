@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import { Flex, Segmented } from 'antd';
+import { Flex, Pagination, Segmented, Tag } from 'antd';
 import { SegmentedValue } from 'antd/es/segmented';
 import { useRecoilValue } from 'recoil';
 
@@ -10,7 +10,6 @@ import EmployeeMenu from '~/components/employee/EmployeeMenu';
 import EmployeeTable from '~/components/employee/EmployeeTable';
 import HistoryDrawer from '~/components/employee/HistoryDrawer';
 import TeamSelector from '~/components/employee/TeamSelector';
-import Header from '~/components/layouts/Header';
 import { useEmployeeQuery } from '~/hooks/queryHooks/useEmployeeQuery';
 import { useTeamQuery } from '~/hooks/queryHooks/useTeamQuery';
 import { useCopyText } from '~/hooks/useCopyText';
@@ -75,9 +74,9 @@ const EmployeePage = () => {
   const selectedEmployee = employees.find(employee => employee.id === employeeId);
   return (
     <EmployeePageStyled className="EmployeePage">
-      <Flex className="tool-bar" align="center" justify="space-between">
+      <Flex align="center" justify="space-between" style={{ padding: '2rem' }}>
         <TeamSelector teams={teams} />
-        <Flex gap={14}>
+        <Flex gap={14} align="center">
           <Segmented
             defaultValue={viewType}
             options={[
@@ -92,7 +91,7 @@ const EmployeePage = () => {
       </Flex>
 
       {/* 근무자 테이블 */}
-      <Flex className="table-container">
+      <Flex className="table-container" flex={1} vertical>
         <EmployeeTable
           isLoading={isLoading}
           employees={employees}
@@ -101,6 +100,10 @@ const EmployeePage = () => {
           onRemove={removeEmployee}
           onClickName={handleClickName}
         />
+      </Flex>
+
+      <Flex justify="center" style={{ padding: '1.2rem 0' }}>
+        <Pagination current={0} />
       </Flex>
 
       {/* 근로자 정보 Drawer */}

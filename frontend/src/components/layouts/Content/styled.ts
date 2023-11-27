@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
 export const ContentStyled = styled.div`
-  padding: 2.4rem 3rem;
+  position: relative;
 
   > div {
     height: 100%;

@@ -14,7 +14,7 @@ interface FetchEmployeesParams {
 
 export const fetchEmployees =
   ({ teamId, ...params }: FetchEmployeesParams) =>
-  async (): Promise<EmployeeData[]> => {
+  async (): Promise<FetchListResponse<EmployeeData>> => {
     const teamEndpoint = import.meta.env.VITE_TEAM_ENDPOINT;
     const endpoint = import.meta.env.VITE_EMPLOYEE_ENDPOINT;
 
@@ -23,7 +23,7 @@ export const fetchEmployees =
       { params },
     );
 
-    return data.result.list;
+    return data;
   };
 
 export const fetchEmployeeDocument =

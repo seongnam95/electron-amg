@@ -65,12 +65,11 @@ const EmployeeTable = ({
     <EmployeeTableWrapStyled ref={tableWrapRef} className="EmployeeTable">
       <Table
         showHeader
-        tableLayout="fixed"
         loading={isLoading}
-        pagination={false}
         columns={columns}
         dataSource={dataSource}
         rowSelection={rowSelection}
+        pagination={false}
       />
 
       <Dock open={isSelected}>

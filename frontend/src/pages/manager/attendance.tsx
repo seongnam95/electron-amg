@@ -1,6 +1,6 @@
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 
-import { Flex, Segmented } from 'antd';
+import { Flex, Segmented, Row, Col } from 'antd';
 import dayjs, { Dayjs } from 'dayjs';
 import { useRecoilValue } from 'recoil';
 
@@ -58,44 +58,40 @@ const Attendance = () => {
     setEmployeeId(id);
     setOpenEmployeeInfo(true);
   };
-  const testRef = useRef<HTMLDivElement>(null);
+
   const selectedEmployee = employees.find(employee => employee.id === employeeId);
   return (
     <AttendancePageStyled>
-      <Flex className="page-content" vertical>
-        {/* 컨트롤 바 */}
-        <Flex className="tool-bar" align="center" justify="space-between">
-          <TeamSelector teams={teams} />
-          <Flex gap={14}>
-            <Segmented
-              options={[
-                { label: '일간', value: 'daily' },
-                { label: '월간', value: 'monthly' },
-              ]}
-              onChange={v => setViewType(v as ViewType)}
-            />
-            <AntDatePicker
-              picker={viewType === 'monthly' ? 'month' : 'date'}
-              defaultValue={selectedDay}
-              onChange={handleChangeDate}
-            />
-          </Flex>
-        </Flex>
-
-        {/* 테이블 Wrap */}
-        <Flex className="table-container">
-          {viewType === 'daily' ? (
-            <DayTable date={date} employees={employees} onClickName={handleClickName} />
-          ) : (
-            <MonthTable date={date} employees={employees} />
-          )}
+      {/* 컨트롤 바 */}
+      <Flex align="center" justify="space-between" style={{ padding: '2rem' }}>
+        <TeamSelector teams={teams} />
+        <Flex gap={14}>
+          <Segmented
+            options={[
+              { label: '일간', value: 'daily' },
+              { label: '월간', value: 'monthly' },
+            ]}
+            onChange={v => setViewType(v as ViewType)}
+          />
+          <AntDatePicker
+            picker={viewType === 'monthly' ? 'month' : 'date'}
+            defaultValue={selectedDay}
+            onChange={handleChangeDate}
+          />
         </Flex>
       </Flex>
 
-      <Flex className="page-footer">
-        <Flex className="leader-state" flex={1} align="center">
-          팀장: 1000
-        </Flex>
+      {/* 테이블 Wrap */}
+      <Flex className="table-container" flex={1}>
+        {viewType === 'daily' ? (
+          <DayTable date={date} employees={employees} onClickName={handleClickName} />
+        ) : (
+          <MonthTable date={date} employees={employees} />
+        )}
+      </Flex>
+
+      <Flex className="attendance-footer" align="center">
+        팀장: 1000
       </Flex>
 
       {/* 근로자 정보 Drawer */}

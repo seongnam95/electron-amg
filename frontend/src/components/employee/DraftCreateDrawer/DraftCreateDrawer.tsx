@@ -107,11 +107,14 @@ const DraftCreateDrawer = ({ onCopy, onClose, onHistory, ...props }: DraftCreate
   const { Option } = Select;
   return (
     <Drawer
-      getContainer={false}
       extra={RenderExtra}
       title={RenderTitle}
       closable={false}
       onClose={handleClose}
+      rootClassName="ant-drawer-inline"
+      getContainer={() => {
+        return document.getElementById('layout') || document.body;
+      }}
       {...props}
     >
       {existTeam ? (
