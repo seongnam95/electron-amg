@@ -78,7 +78,7 @@ const Login = () => {
           };
 
           setUser(user);
-          navigate('/manager/employee');
+          navigate('/auth/dashboard');
         })
         .catch(err => {
           passwordInputRef.current?.focus();
@@ -88,7 +88,7 @@ const Login = () => {
   };
 
   return (
-    <LoginPageStyled>
+    <LoginPageStyled className="LoginPage">
       <p className="title">LOGIN</p>
       <form className="login-form" onSubmit={handleOnSubmit}>
         <Input onChange={handleOnChange} id="username" icon={<BsFillPersonFill />} />

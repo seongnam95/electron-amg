@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { Outlet, useNavigate } from 'react-router-dom';
 
 import { ConfigProvider, theme, App as AntApp } from 'antd';
@@ -28,10 +28,7 @@ declare module 'styled-components' {
 
 const AppWrap = () => {
   const antdToken = theme.useToken();
-  const { user, isLogin } = useRecoilValue(userStore);
-  const { teams } = useTeamQuery({ userId: user.id, enabled: isLogin });
-  const hasTeam = teams.length > 0;
-
+  console.log('s');
   const styledTheme = useMemo(
     () => ({
       sizes: sizes,
@@ -50,12 +47,8 @@ const AppWrap = () => {
           <Titlebar />
 
           <AntApp message={{ maxCount: 1 }} style={{ height: '100%' }}>
-            <PrivateRoute authenticated={isLogin}>
-              <InitSetting hasTeam={hasTeam}>
-                <Layout>
-                  <Outlet />
-                </Layout>
-              </InitSetting>
+            <PrivateRoute>
+              <Outlet />
             </PrivateRoute>
           </AntApp>
         </AppStyled>

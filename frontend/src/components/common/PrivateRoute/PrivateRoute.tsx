@@ -1,14 +1,20 @@
-import { ReactElement } from 'react';
+import { ReactNode } from 'react';
+import { Navigate, useLocation } from 'react-router-dom';
 
-import Login from '~/pages/login';
+import { useRecoilValue } from 'recoil';
+
+import { userStore } from '~/stores/user';
 
 export interface PrivateRouteProps {
-  authenticated: boolean;
-  children: ReactElement;
+  children?: ReactNode;
 }
 
-const PrivateRoute = ({ authenticated, children }: PrivateRouteProps) => {
-  return authenticated ? <>{children}</> : <Login />;
+const PrivateRoute = ({ children }: PrivateRouteProps) => {
+  const { isLogin } = useRecoilValue(userStore);
+  const location = useLocation();
+
+  // if (!isLogin) return <Navigate to="/login" state={{ from: location }} />;
+  return <>{children}</>;
 };
 
 export default PrivateRoute;

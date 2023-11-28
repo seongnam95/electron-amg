@@ -1,12 +1,11 @@
-import { ReactNode, useEffect, useRef, useState } from 'react';
+import { ReactNode, useEffect, useRef } from 'react';
 
-import { InputRef, Form, InputNumber, Input, FormInstance, Button, Space, Flex } from 'antd';
-import { useRecoilValue } from 'recoil';
+import { InputRef, Form, InputNumber, Input, Button, Flex, FormProps } from 'antd';
 
 import ColorSelector from '~/components/common/ColorSelector';
-import { useTeamCreateMutation, useTeamUpdateMutation } from '~/hooks/queryHooks/useTeamQuery';
-import { userStore } from '~/stores/user';
-import { TeamCreateBody, TeamData } from '~/types/team';
+import { TeamData } from '~/types/team';
+
+export type TeamFormData = Partial<Omit<TeamData, 'createDate' | 'positions'>>;
 
 const formRules = {
   name: [
@@ -34,53 +33,20 @@ const formRules = {
   ],
 };
 
-const defaultValues: Partial<TeamData> = {
+const defaultValues: TeamFormData = {
   name: '',
   color: '#4C53FF',
   mealCost: 7000,
 };
 
-export interface TeamFormProps {
-  values?: Partial<TeamData>;
+export interface TeamFormProps extends FormProps {
+  values?: TeamFormData;
   footer?: ReactNode;
-  onSubmit?: (data: Partial<TeamData>) => void;
 }
 
-const TeamForm = ({ values, footer, onSubmit }: TeamFormProps) => {
+const TeamForm = ({ values, footer, ...props }: TeamFormProps) => {
   const inputRef = useRef<InputRef>(null);
-  const { user } = useRecoilValue(userStore);
-  const [form] = Form.useForm();
-
-  useEffect(() => {
-    inputRef.current?.focus();
-    if (values) {
-      const { name, mealCost, color } = values;
-      form.setFieldsValue({
-        name: name,
-        mealCost: mealCost,
-        color: color,
-      });
-    }
-  }, [values]);
-
-  const { createTeamMutate, isCreateTeamLoading } = useTeamCreateMutation({
-    userId: user.id,
-    onSuccess: onSubmit,
-  });
-
-  const { updateTeamMutate, isUpdateTeamLoading } = useTeamUpdateMutation({
-    userId: user.id,
-    teamId: values?.id,
-    enabled: !!values,
-    onSuccess: onSubmit,
-  });
-
-  const handleFinish = (data: TeamCreateBody) => {
-    if (values) updateTeamMutate(data);
-    else createTeamMutate(data);
-
-    // form.resetFields();
-  };
+  useEffect(() => inputRef.current?.focus(), []);
 
   const formItems = [
     {
@@ -110,40 +76,33 @@ const TeamForm = ({ values, footer, onSubmit }: TeamFormProps) => {
   ];
 
   return (
-    <Space>
-      <Form
-        form={form}
-        initialValues={defaultValues}
-        colon={false}
-        labelCol={{ span: 12 }}
-        labelAlign="left"
-        autoComplete="off"
-        onFinish={handleFinish}
-        style={{ minWidth: '34rem' }}
-      >
-        {/* 아이템 렌더링 */}
-        {formItems.map(item => (
-          <Form.Item key={item.name} label={item.label} name={item.name} rules={item.rules}>
-            {item.component}
-          </Form.Item>
-        ))}
+    <Form
+      initialValues={defaultValues}
+      colon={false}
+      labelCol={{ span: 12 }}
+      labelAlign="left"
+      autoComplete="off"
+      style={{ minWidth: '34rem' }}
+      {...props}
+    >
+      {/* 아이템 렌더링 */}
+      {formItems.map(item => (
+        <Form.Item key={item.name} label={item.label} name={item.name} rules={item.rules}>
+          {item.component}
+        </Form.Item>
+      ))}
 
-        {/* 서브밋 버튼 */}
-        <Flex justify="end" style={{ marginTop: '3rem' }}>
-          {footer ? (
-            footer
-          ) : (
-            <Button
-              type="primary"
-              htmlType="submit"
-              loading={isCreateTeamLoading || isUpdateTeamLoading}
-            >
-              팀 생성
-            </Button>
-          )}
-        </Flex>
-      </Form>
-    </Space>
+      {/* 서브밋 버튼 */}
+      <Flex justify="end" style={{ marginTop: '3rem' }}>
+        {footer ? (
+          footer
+        ) : (
+          <Button type="primary" htmlType="submit">
+            팀 생성
+          </Button>
+        )}
+      </Flex>
+    </Form>
   );
 };
 
