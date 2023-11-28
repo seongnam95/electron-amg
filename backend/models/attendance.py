@@ -22,7 +22,7 @@ class Attendance(Base):
     pay = Column(Integer, nullable=False, default=0)  # 페이
     pre_pay = Column(Integer, nullable=False, default=0)  # 선지급
     memo = Column(String, nullable=False, default="")  # 메모
-    is_meal_included = Column(Boolean, nullable=False, default=False)  # 식대 포함
+    meal_included = Column(Boolean, nullable=False, default=False)  # 식대 포함
     working_date = Column(
         String, nullable=False, default=date.today().strftime("%Y-%m-%d")
     )  # 근무일

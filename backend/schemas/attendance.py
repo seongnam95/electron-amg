@@ -6,7 +6,7 @@ from schemas.position import PositionResponse
 
 class AttendanceCreate(BaseModel):
     position_id: str
-    is_meal_included: bool
+    meal_included: bool
     pay: Optional[int] = None
     pre_pay: Optional[int] = None
     memo: Optional[str] = None
@@ -17,7 +17,7 @@ class AttendanceUpdate(BaseModel):
     pay: Optional[int] = None
     pre_pay: Optional[int] = None
     memo: Optional[str] = None
-    is_meal_included: Optional[bool] = None
+    meal_included: Optional[bool] = None
 
 
 class AttendanceResponse(BaseModel):
@@ -25,7 +25,7 @@ class AttendanceResponse(BaseModel):
     pay: int
     pre_pay: int
     memo: str
-    is_meal_included: bool
+    meal_included: bool
     working_date: str
     employee_id: str
     position_id: str

@@ -5,7 +5,7 @@ import { Modal, Form, Input, InputNumber, Switch, Flex, Button } from 'antd';
 import { useAttendanceUpdateMutation } from './queryHooks/useAttendanceQuery';
 
 interface FormData {
-  isMealIncluded?: boolean;
+  mealIncluded?: boolean;
   incentive?: number;
   prePay?: number;
   memo?: string;
@@ -57,10 +57,10 @@ export const useAttendanceUpdateModal = (teamId?: string, date?: string) => {
         colon={false}
         autoComplete="off"
         style={{ marginTop: 24 }}
-        initialValues={{ isMealIncluded: false, incentive: 0, prePay: 0 }}
+        initialValues={{ mealIncluded: false, incentive: 0, prePay: 0 }}
         onFinish={handleFinish}
       >
-        <Form.Item label="식대 포함" name="isMealIncluded" valuePropName="checked">
+        <Form.Item label="식대 포함" name="mealIncluded" valuePropName="checked">
           <Switch />
         </Form.Item>
 

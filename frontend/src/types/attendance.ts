@@ -5,7 +5,7 @@ export interface AttendanceData {
   pay: number;
   prePay: number;
   memo: string;
-  isMealIncluded: boolean;
+  mealIncluded: boolean;
   workingDate: string;
   employeeId: string;
   positionId: string;

@@ -1,11 +1,10 @@
 from fastapi import APIRouter, HTTPException, Depends
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.orm import Session
-from schemas import User
 from ... import deps
 
 import crud, schemas
-from response_model import BaseResponse, DataResponse, ListResponse
+from response_model import BaseResponse
 
 
 router = APIRouter()
@@ -13,7 +12,7 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/login")
 
 
 # 유저 생성
-@router.post("/", response_model=DataResponse[User])
+@router.post("/", response_model=BaseResponse)
 def create_user(user_in: schemas.UserCreate, db: Session = Depends(deps.get_db)):
     crud.user.create_user(db=db, obj_in=user_in)
     return BaseResponse(msg="정상 처리되었습니다.")

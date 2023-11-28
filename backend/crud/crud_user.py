@@ -26,7 +26,7 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
 
         except IntegrityError:
             db.rollback()
-            raise HTTPException(status_code=400, detail="이미 사용중인 아이디입니다.")
+            raise HTTPException(status_code=400, detail="이미 사용중인 계정입니다.")
 
         return db_obj
 

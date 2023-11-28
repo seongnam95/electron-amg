@@ -1,21 +1,20 @@
-import { useEffect, useMemo } from 'react';
-import { Outlet } from 'react-router-dom';
+import { useMemo } from 'react';
+import { Outlet, useNavigate } from 'react-router-dom';
 
-import { ConfigProvider, theme, App } from 'antd';
+import { ConfigProvider, theme, App as AntApp } from 'antd';
 import locale from 'antd/lib/locale/ko_KR';
 import 'dayjs/locale/ko';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilValue } from 'recoil';
 import styled, { ThemeProvider } from 'styled-components';
 
+import InitSetting from '~/components/common/InitSetting';
+import PrivateRoute from '~/components/common/PrivateRoute';
 import Layout from '~/components/layouts/Layout';
 import Titlebar from '~/components/layouts/Titlebar';
 import { useTeamQuery } from '~/hooks/queryHooks/useTeamQuery';
-import { updateStore } from '~/stores/update';
 import { userStore } from '~/stores/user';
 import { InitGlobalStyled } from '~/styles/init';
 import { antdTheme, colors, sizes } from '~/styles/themes';
-
-import Login from './login';
 
 type Sizes = typeof sizes;
 type Colors = typeof colors;
@@ -30,23 +29,8 @@ declare module 'styled-components' {
 const AppWrap = () => {
   const antdToken = theme.useToken();
   const { user, isLogin } = useRecoilValue(userStore);
-  const [update, setUpdate] = useRecoilState(updateStore);
-  const _ = useTeamQuery({ userId: user.id, enabled: isLogin });
-
-  const bootstrap = async () => {
-    window.electron.onUpdate((event, data) => {
-      setUpdate({
-        ...update,
-        status: {
-          event,
-          data,
-          time: new Date().getTime(),
-        },
-      });
-    });
-
-    window.electron.initlizeUpdater();
-  };
+  const { teams } = useTeamQuery({ userId: user.id, enabled: isLogin });
+  const hasTeam = teams.length > 0;
 
   const styledTheme = useMemo(
     () => ({
@@ -57,34 +41,30 @@ const AppWrap = () => {
     [],
   );
 
-  useEffect(() => {
-    bootstrap();
-  }, []);
-
   return (
     <ConfigProvider theme={antdTheme} locale={locale}>
       <ThemeProvider theme={styledTheme}>
         <InitGlobalStyled />
 
-        <div id="app">
-          <AntApp message={{ maxCount: 1 }}>
-            <Titlebar />
+        <AppStyled id="app">
+          <Titlebar />
 
-            {isLogin ? (
-              <Layout>
-                <Outlet />
-              </Layout>
-            ) : (
-              <Login />
-            )}
+          <AntApp message={{ maxCount: 1 }} style={{ height: '100%' }}>
+            <PrivateRoute authenticated={isLogin}>
+              <InitSetting hasTeam={hasTeam}>
+                <Layout>
+                  <Outlet />
+                </Layout>
+              </InitSetting>
+            </PrivateRoute>
           </AntApp>
-        </div>
+        </AppStyled>
       </ThemeProvider>
     </ConfigProvider>
   );
 };
 
-const AntApp = styled(App)`
+const AppStyled = styled.div`
   width: 100vw;
   height: 100vh;
 `;

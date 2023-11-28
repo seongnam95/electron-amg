@@ -11,8 +11,6 @@ export interface PositionData {
   color: string;
   salaryCode: SalaryType;
   standardPay: number;
-  incentivePay: number;
-  isTeamLeader: boolean;
   isChild: boolean;
 }
 

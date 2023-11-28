@@ -105,23 +105,23 @@ export const getColumns = ({
       ),
     },
     {
-      key: 'isMealIncluded',
-      dataIndex: 'isMealIncluded',
+      key: 'mealIncluded',
+      dataIndex: 'mealIncluded',
       title: '식대 포함',
       width: 84,
       align: 'center',
       render: (_, { attendance }) => {
         if (attendance === undefined) return '-';
-        const { id, isMealIncluded } = attendance;
+        const { id, mealIncluded } = attendance;
 
-        const color = isMealIncluded ? '#71B3F0' : '#F87B6A';
-        const label = isMealIncluded ? 'Y' : 'N';
+        const color = mealIncluded ? '#71B3F0' : '#F87B6A';
+        const label = mealIncluded ? 'Y' : 'N';
 
         const handleDoubleClick = () => {
           onChangeValue?.({
-            key: 'isMealIncluded',
+            key: 'mealIncluded',
             id: id,
-            value: !isMealIncluded,
+            value: !mealIncluded,
           });
         };
 

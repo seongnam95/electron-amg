@@ -1,8 +1,8 @@
-"""init
+"""init_table
 
-Revision ID: be5f7b75bb98
+Revision ID: 70b2e5d7c029
 Revises: 
-Create Date: 2023-11-27 17:24:43.230415
+Create Date: 2023-11-28 10:37:15.105165
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = 'be5f7b75bb98'
+revision: str = '70b2e5d7c029'
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -38,8 +38,7 @@ def upgrade() -> None:
     sa.Column('is_included', sa.Boolean(), nullable=False),
     sa.Column('team_id', sa.String(), nullable=False),
     sa.ForeignKeyConstraint(['team_id'], ['team.id'], ),
-    sa.PrimaryKeyConstraint('id'),
-    sa.UniqueConstraint('name')
+    sa.PrimaryKeyConstraint('id')
     )
     op.create_index(op.f('ix_position_id'), 'position', ['id'], unique=True)
     op.create_table('draft',
@@ -80,7 +79,7 @@ def upgrade() -> None:
     sa.Column('pay', sa.Integer(), nullable=False),
     sa.Column('pre_pay', sa.Integer(), nullable=False),
     sa.Column('memo', sa.String(), nullable=False),
-    sa.Column('is_meal_included', sa.Boolean(), nullable=False),
+    sa.Column('meal_included', sa.Boolean(), nullable=False),
     sa.Column('working_date', sa.String(), nullable=False),
     sa.Column('position_id', sa.String(), nullable=False),
     sa.Column('employee_id', sa.String(), nullable=False),

@@ -35,9 +35,7 @@ class CRUDAttendance(CRUDBase[Attendance, AttendanceCreate, AttendanceUpdate]):
         # 수당 계산 [단가 - 공제 (+ 식대)]
         pay = employee.position.standard_pay
         pay -= attendance_in.pre_pay if attendance_in.pre_pay else 0
-        pay += (
-            attendance.employee.team.meal_cost if attendance_in.is_meal_included else 0
-        )
+        pay += attendance.employee.team.meal_cost if attendance_in.meal_included else 0
 
         obj_in_data = jsonable_encoder(attendance_in)
         obj_in_data["employee_id"] = employee.id
@@ -75,7 +73,7 @@ class CRUDAttendance(CRUDBase[Attendance, AttendanceCreate, AttendanceUpdate]):
         )
 
         meal_cost = attendance.employee.team.meal_cost
-        if update_data.get("is_meal_included", attendance.is_meal_included):
+        if update_data.get("meal_included", attendance.meal_included):
             attendance.pay += meal_cost
 
         for field, value in update_data.items():
