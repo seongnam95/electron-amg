@@ -5,19 +5,17 @@ export const InitSettingStyled = styled.div`
 
   display: flex;
   flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
 
   height: 100%;
   background-color: ${p => p.theme.colors.innerBg};
 
-  .form-wrap {
-    width: 38rem;
-    position: absolute;
-    top: 15%;
-    left: 50%;
-    transform: translateX(-50%);
-  }
-
   .form-card {
+    display: flex;
+    flex-direction: column;
+
     border-radius: 8px;
     padding: 3rem;
     background-color: ${p => p.theme.colors.contentBG};

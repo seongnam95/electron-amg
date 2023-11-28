@@ -9,7 +9,7 @@ interface Module {
 
 const PRESERVED = import.meta.glob<Module>('/src/pages/(_app|404).tsx', { eager: true });
 const ROUTES = import.meta.glob<Module>('/src/pages/**/[a-z[]*.tsx', { eager: true });
-console.log(ROUTES);
+
 const preservedRoutes: Partial<Record<string, Element>> = Object.keys(PRESERVED).reduce(
   (routes, key) => {
     const path = key.replace(/\/src\/pages\/|\.tsx$/g, '');

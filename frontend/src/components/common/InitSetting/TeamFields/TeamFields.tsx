@@ -68,7 +68,7 @@ const TeamFields = ({ form }: { form: FormInstance }) => {
       {/* 팀 구분 색상 */}
       <Form.Item
         label="팀 구분 색상"
-        name="teamColor"
+        name="color"
         rules={[
           {
             required: true,

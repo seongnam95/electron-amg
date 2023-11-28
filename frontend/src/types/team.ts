@@ -11,9 +11,7 @@ export interface TeamData {
 }
 
 /** 그룹 생성 API 바디 */
-export type TeamCreateBody = {
-  mealCost?: number;
-} & Pick<TeamData, 'name' | 'color'>;
+export type TeamCreateBody = Pick<TeamData, 'name' | 'color' | 'mealCost'>;
 
 /** 그룹 업데이트 API 바디 */
 export type TeamUpdateBody = Partial<TeamCreateBody>;

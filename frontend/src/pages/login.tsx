@@ -82,7 +82,7 @@ const Login = () => {
         })
         .catch(err => {
           passwordInputRef.current?.focus();
-          soundMessage.error('아이디 또는 패스워드가 일치하지 않습니다.');
+          soundMessage.error('잠시 후 다시 시도해주세요.');
         });
     }
   };

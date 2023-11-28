@@ -9,10 +9,11 @@ import { PositionListStyled } from './styled';
 
 export interface PositionListProps {
   positions?: Omit<PositionData, 'id'>[];
-  onRemove: (key: React.Key) => void;
+  onDoubleClick?: (position: Omit<PositionData, 'id'>) => void;
+  onRemove?: (position: Omit<PositionData, 'id'>) => void;
 }
 
-const PositionList = ({ positions, onRemove }: PositionListProps) => {
+const PositionList = ({ positions, onDoubleClick, onRemove }: PositionListProps) => {
   const listRef = useRef<HTMLUListElement>(null);
 
   useEffect(() => {
@@ -27,10 +28,17 @@ const PositionList = ({ positions, onRemove }: PositionListProps) => {
 
   return (
     <PositionListStyled className="PositionList">
-      {positions ? (
+      {positions && positions.length > 0 ? (
         <ul ref={listRef} className="position-list">
-          {positions.map(position => {
-            return <PositionItem {...{ position }} onRemove={onRemove} />;
+          {positions.map((position, idx) => {
+            return (
+              <PositionItem
+                key={`${position.name}/${idx}`}
+                {...{ position }}
+                onDoubleClick={onDoubleClick}
+                onRemove={onRemove}
+              />
+            );
           })}
         </ul>
       ) : (

@@ -30,6 +30,12 @@ class TeamUpdate(BaseModel):
 class TeamResponse(TeamBase):
     id: str
     create_date: datetime
+
+    class Config:
+        from_attributes = True
+
+
+class TeamWithPositionResponse(TeamResponse):
     positions: List[PositionResponse]
 
     class Config:

@@ -23,7 +23,7 @@ class Position(Base):
     salary_code = Column(Integer, nullable=False)  # 급여 종류
     standard_pay = Column(Integer, nullable=False)  # 기준 단가
 
-    is_child = Column(Boolean, nullable=False, default=True)  # 팀장 인센티브 추가 여부
+    is_child = Column(Boolean, nullable=False)  # 팀장 인센티브 추가 여부
 
     employee = relationship("Employee", back_populates="position")
     draft = relationship("Draft", back_populates="position")

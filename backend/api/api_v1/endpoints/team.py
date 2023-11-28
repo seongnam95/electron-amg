@@ -70,16 +70,17 @@ def read_all_team(
     return ListResponse(msg="정상 처리되었습니다.", result=response)
 
 
-# # 팀 생성
+# 팀 생성 (유저)
 @router.post("/user/{user_id}/team", response_model=DataResponse[schemas.TeamResponse])
-def create_team(
+def create_team_by_user(
     user_id: str, team_in: schemas.TeamCreate, db: Session = Depends(deps.get_db)
 ):
-    user = crud.user.get(db, id=user_id)
-    if not user:
-        raise HTTPException(status_code=404, detail="존재하지 않는 계정입니다.")
+    if user_id:
+        user = crud.user.get(db, id=user_id)
+        if not user:
+            raise HTTPException(status_code=404, detail="존재하지 않는 계정입니다.")
 
-    team = crud.team.create_team_for_user(db=db, obj_in=team_in, user_id=user_id)
+    team = crud.team.create_team(db=db, obj_in=team_in, user_id=user_id)
     return DataResponse(msg="정상 처리되었습니다.", result=team)
 
 

@@ -1,13 +1,14 @@
-import { useQuery } from 'react-query';
+import { useMutation, useQuery, useQueryClient } from 'react-query';
 
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 
-import { fetchTeams } from '~/api/team';
+import { createTeam, fetchTeams, updateTeam } from '~/api/team';
 import { teamStore } from '~/stores/team';
 import { QueryBaseOptions } from '~/types/query';
 import { TeamData } from '~/types/team';
 
 interface TeamQueryOptions<T> extends QueryBaseOptions<T> {
+  teamId?: string;
   userId?: string;
 }
 
@@ -27,4 +28,44 @@ export const useTeamQuery = ({ userId, ...baseOptions }: TeamQueryOptions<TeamDa
 
   const teams = data ? data : [];
   return { teams, isLoading, isError };
+};
+
+/**
+ * Create Team
+ */
+export const useTeamCreateMutation = ({ userId, ...baseOptions }: TeamQueryOptions<TeamData>) => {
+  const queryKey: string[] = [import.meta.env.VITE_TEAM_QUERY_KEY, userId];
+  const queryClient = useQueryClient();
+
+  const onSettled = () => queryClient.invalidateQueries(queryKey);
+
+  const { mutate: createTeamMutate, isLoading: isCreateTeamLoading } = useMutation(
+    queryKey,
+    createTeam(userId),
+    { onSettled, ...baseOptions },
+  );
+
+  return { createTeamMutate, isCreateTeamLoading };
+};
+
+/**
+ * Update Team
+ */
+export const useTeamUpdateMutation = ({
+  teamId,
+  userId,
+  ...baseOptions
+}: TeamQueryOptions<TeamData>) => {
+  const queryKey: string[] = [import.meta.env.VITE_TEAM_QUERY_KEY, userId];
+  const queryClient = useQueryClient();
+
+  const onSettled = () => queryClient.invalidateQueries(queryKey);
+
+  const { mutate: updateTeamMutate, isLoading: isUpdateTeamLoading } = useMutation(
+    queryKey,
+    updateTeam(teamId),
+    { onSettled, ...baseOptions },
+  );
+
+  return { updateTeamMutate, isUpdateTeamLoading };
 };

@@ -18,11 +18,9 @@ class CRUDTeam(CRUDBase[Team, TeamCreate, TeamUpdate]):
             .all()
         )
 
-    def create_team_for_user(
-        self, db: Session, *, user_id: str, obj_in: TeamCreate
-    ) -> Team:
+    def create_team(self, db: Session, *, user_id: str, obj_in: TeamCreate) -> Team:
         team_dict = obj_in.model_dump()
-        team_obj = Team(**team_dict)  # type: ignore
+        team_obj = Team(**team_dict)
 
         db.add(team_obj)
         db.commit()

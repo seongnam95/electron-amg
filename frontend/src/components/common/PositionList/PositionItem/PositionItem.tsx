@@ -7,16 +7,16 @@ import styled from 'styled-components';
 import { PositionData, SALARY } from '~/types/position';
 
 interface PositionItemProps {
-  key: React.Key;
   position: Omit<PositionData, 'id'>;
-  onRemove: (key: React.Key) => void;
+  onDoubleClick?: (position: Omit<PositionData, 'id'>) => void;
+  onRemove?: (position: Omit<PositionData, 'id'>) => void;
 }
 
-const PositionItem = ({ key, position, onRemove }: PositionItemProps) => {
+const PositionItem = ({ position, onDoubleClick, onRemove }: PositionItemProps) => {
   const { name, color, salaryCode, standardPay, isChild } = position;
 
   return (
-    <PositionItemStyled>
+    <PositionItemStyled onDoubleClick={() => onDoubleClick?.(position)}>
       <Flex align="center">
         <Tag color={color} className="position-tag">
           {name}
@@ -34,7 +34,7 @@ const PositionItem = ({ key, position, onRemove }: PositionItemProps) => {
           align="center"
           justify="center"
           className="remove-btn-wrap"
-          onClick={() => onRemove(key)}
+          onClick={() => onRemove?.(position)}
         >
           <IoMdRemoveCircle color="#fe6968" />
         </Flex>
