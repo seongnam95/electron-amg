@@ -2,15 +2,15 @@ import { useEffect, useRef } from 'react';
 
 import { Empty } from 'antd';
 
-import { PositionData } from '~/types/position';
+import { PositionData, PositionUpdateBody } from '~/types/position';
 
 import PositionItem from './PositionItem';
 import { PositionListStyled } from './styled';
 
 export interface PositionListProps {
-  positions?: Omit<PositionData, 'id'>[];
-  onDoubleClick?: (position: Omit<PositionData, 'id'>) => void;
-  onRemove?: (position: Omit<PositionData, 'id'>) => void;
+  positions?: PositionUpdateBody[];
+  onDoubleClick?: (position: PositionUpdateBody) => void;
+  onRemove?: (position: PositionUpdateBody) => void;
 }
 
 const PositionList = ({ positions, onDoubleClick, onRemove }: PositionListProps) => {

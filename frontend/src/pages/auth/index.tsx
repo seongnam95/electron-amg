@@ -3,7 +3,7 @@ import { Outlet, useNavigate } from 'react-router-dom';
 
 import { useRecoilValue } from 'recoil';
 
-import Layout from '~/components/layouts/Layout';
+import ManagementLayout from '~/components/layouts/Layout';
 import { userStore } from '~/stores/user';
 
 const AuthPage = () => {
@@ -16,9 +16,9 @@ const AuthPage = () => {
   }, [isLogin]);
 
   return (
-    <Layout>
+    <ManagementLayout>
       <Outlet />
-    </Layout>
+    </ManagementLayout>
   );
 };
 

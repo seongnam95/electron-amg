@@ -11,7 +11,6 @@ import AntDatePicker from '~/components/common/DatePicker';
 import EmployeeInfoDrawer from '~/components/drawer/EmployeeInfoDrawer';
 import { useAttendanceUpdateMutation } from '~/hooks/queryHooks/useAttendanceQuery';
 import { useEmployeeQuery } from '~/hooks/queryHooks/useEmployeeQuery';
-import { useTeamQuery } from '~/hooks/queryHooks/useTeamQuery';
 import { useAttendanceUpdateModal } from '~/hooks/useAttendanceUpdateModal';
 import { useRemoveEmployee } from '~/hooks/useRemoveEmployee';
 import { breadcrumbStore } from '~/stores/breadcrumb';
@@ -21,10 +20,9 @@ import { AttendancePageStyled } from '~/styles/pageStyled/attendancePageStyled';
 
 type ViewType = 'monthly' | 'daily';
 
-const Attendance = () => {
+const AttendancePage = () => {
   const navigate = useNavigate();
   // state
-  const { user } = useRecoilValue(userStore);
   const team = useRecoilValue(teamStore);
   const [breadcrumb, setBreadcrumb] = useRecoilState(breadcrumbStore);
 
@@ -37,7 +35,6 @@ const Attendance = () => {
   const date = selectedDay.format(viewType === 'daily' ? 'YY-MM-DD' : 'YY-MM');
 
   // hook
-  const { teams } = useTeamQuery({ userId: user.id });
   const { employees } = useEmployeeQuery({ teamId: team?.id, enabled: team.id !== '' });
   const { openModal, AttendanceUpdateModal } = useAttendanceUpdateModal(team?.id, date);
 
@@ -108,4 +105,4 @@ const Attendance = () => {
   );
 };
 
-export default Attendance;
+export default AttendancePage;

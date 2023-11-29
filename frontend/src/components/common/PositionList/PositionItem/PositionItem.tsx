@@ -1,15 +1,15 @@
 import { BiChild } from 'react-icons/bi';
 import { IoMdRemoveCircle } from 'react-icons/io';
 
-import { Flex, Space, Tag } from 'antd';
+import { Flex, Tag } from 'antd';
 import styled from 'styled-components';
 
-import { PositionData, SALARY } from '~/types/position';
+import { PositionUpdateBody, SALARY } from '~/types/position';
 
 interface PositionItemProps {
-  position: Omit<PositionData, 'id'>;
-  onDoubleClick?: (position: Omit<PositionData, 'id'>) => void;
-  onRemove?: (position: Omit<PositionData, 'id'>) => void;
+  position: PositionUpdateBody;
+  onDoubleClick?: (position: PositionUpdateBody) => void;
+  onRemove?: (position: PositionUpdateBody) => void;
 }
 
 const PositionItem = ({ position, onDoubleClick, onRemove }: PositionItemProps) => {
@@ -26,8 +26,8 @@ const PositionItem = ({ position, onDoubleClick, onRemove }: PositionItemProps) 
 
       <Flex align="center">
         <Flex gap={8}>
-          <span className="pay-text">{standardPay.toLocaleString()}원</span>
-          <Tag>{SALARY[salaryCode]}</Tag>
+          <span className="pay-text">{standardPay ? standardPay.toLocaleString() : 0}원</span>
+          <Tag>{salaryCode ? SALARY[salaryCode] : '빈 값'}</Tag>
         </Flex>
 
         <Flex

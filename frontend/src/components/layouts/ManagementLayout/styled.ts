@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-export const LayoutStyled = styled.div`
+export const ManagementLayoutStyled = styled.div`
   --navbar-width: 8rem;
   --header-height: 4.6rem;
 

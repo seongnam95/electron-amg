@@ -1,18 +1,14 @@
 import { useEffect, useMemo } from 'react';
-import { Outlet, useNavigate } from 'react-router-dom';
+import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 
 import { ConfigProvider, theme, App as AntApp } from 'antd';
 import locale from 'antd/lib/locale/ko_KR';
 import 'dayjs/locale/ko';
-import { useRecoilValue } from 'recoil';
 import styled, { ThemeProvider } from 'styled-components';
 
-import InitSetting from '~/components/common/InitSetting';
 import PrivateRoute from '~/components/common/PrivateRoute';
-import Layout from '~/components/layouts/Layout';
+import RouterWrap from '~/components/layouts/RouterWrap';
 import Titlebar from '~/components/layouts/Titlebar';
-import { useTeamQuery } from '~/hooks/queryHooks/useTeamQuery';
-import { userStore } from '~/stores/user';
 import { InitGlobalStyled } from '~/styles/init';
 import { antdTheme, colors, sizes } from '~/styles/themes';
 
@@ -26,9 +22,17 @@ declare module 'styled-components' {
   }
 }
 
-const AppWrap = () => {
+const App = () => {
   const antdToken = theme.useToken();
-  console.log('s');
+  const { pathname } = useLocation();
+  useEffect(() => {
+    console.log(pathname);
+  }, [pathname]);
+  // const nav = useNavigate();
+  // useEffect(() => {
+  //   nav('/login');
+  // }, []);
+
   const styledTheme = useMemo(
     () => ({
       sizes: sizes,
@@ -45,11 +49,8 @@ const AppWrap = () => {
 
         <AppStyled id="app">
           <Titlebar />
-
           <AntApp message={{ maxCount: 1 }} style={{ height: '100%' }}>
-            <PrivateRoute>
-              <Outlet />
-            </PrivateRoute>
+            <RouterWrap />
           </AntApp>
         </AppStyled>
       </ThemeProvider>
@@ -62,4 +63,4 @@ const AppStyled = styled.div`
   height: 100vh;
 `;
 
-export default AppWrap;
+export default App;

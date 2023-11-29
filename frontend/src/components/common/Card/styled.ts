@@ -6,7 +6,7 @@ export const CardStyled = styled.div`
   gap: 3rem;
 
   border-radius: 1.2rem;
-  padding: 2.4rem;
+  padding: 4rem 3.4rem;
   background-color: ${p => p.theme.colors.contentBG};
   box-shadow: rgba(160, 160, 160, 0.2) 0 8px 32px;
 

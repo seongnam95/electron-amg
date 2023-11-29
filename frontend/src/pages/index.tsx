@@ -1,8 +1,20 @@
 import { Navigate, useLocation } from 'react-router-dom';
 
-const Index = () => {
+import { useRecoilValue } from 'recoil';
+
+import { userStore } from '~/stores/user';
+
+const IndexPage = () => {
+  const { isLogin } = useRecoilValue(userStore);
   const location = useLocation();
-  return <Navigate to="/login" state={{ from: location }} replace />;
+  console.log('index');
+  if (isLogin && location.pathname !== '/management/dashboard') {
+    return <Navigate to="/management/dashboard" />;
+  } else if (!isLogin && location.pathname !== '/login') {
+    return <Navigate to="/login" />;
+  }
+
+  return null;
 };
 
-export default Index;
+export default IndexPage;

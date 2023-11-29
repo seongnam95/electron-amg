@@ -1,6 +1,7 @@
 import { Suspense } from 'react';
 import { createRoot } from 'react-dom/client';
 import { QueryClient, QueryClientProvider } from 'react-query';
+import { BrowserRouter } from 'react-router-dom';
 
 import { ElectronRendererContext } from '@app/types/preload';
 
@@ -13,6 +14,8 @@ import 'moment/locale/ko';
 import { RecoilRoot } from 'recoil';
 
 import FileSystemRoutes from '~/components/layouts/FileSystemRoutes';
+
+import App from './pages/app';
 
 moment.locale('ko');
 
@@ -38,9 +41,11 @@ const queryClient = new QueryClient({
 createRoot(document.getElementById('root') as HTMLElement).render(
   <QueryClientProvider client={queryClient}>
     <RecoilRoot>
-      <Suspense>
-        <FileSystemRoutes />
-      </Suspense>
+      <BrowserRouter>
+        <Suspense>
+          <App />
+        </Suspense>
+      </BrowserRouter>
     </RecoilRoot>
   </QueryClientProvider>,
 );

@@ -1,8 +1,8 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
-import { Flex, Pagination, Segmented, Tag } from 'antd';
+import { Flex, Pagination, Segmented } from 'antd';
 import { SegmentedValue } from 'antd/es/segmented';
-import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilValue } from 'recoil';
 
 import DraftCreateDrawer from '~/components/drawer/DraftCreateDrawer';
 import EmployeeInfoDrawer from '~/components/drawer/EmployeeInfoDrawer';
@@ -10,12 +10,10 @@ import HistoryDrawer from '~/components/drawer/HistoryDrawer';
 import EmployeeMenu from '~/components/employee/EmployeeMenu';
 import EmployeeTable from '~/components/employee/EmployeeTable';
 import { useEmployeeQuery } from '~/hooks/queryHooks/useEmployeeQuery';
-import { useTeamQuery } from '~/hooks/queryHooks/useTeamQuery';
 import { useCopyText } from '~/hooks/useCopyText';
 import { useDragScroll } from '~/hooks/useDragScroll';
 import { useRemoveEmployee } from '~/hooks/useRemoveEmployee';
 import { useSoundApp } from '~/hooks/useSoundApp';
-import { breadcrumbStore } from '~/stores/breadcrumb';
 import { teamStore } from '~/stores/team';
 import { EmployeePageStyled } from '~/styles/pageStyled/employeePageStyled';
 

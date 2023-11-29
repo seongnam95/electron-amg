@@ -3,7 +3,7 @@ import AttendanceStatus from '~/components/dashboard/AttendanceStatus';
 import PayStats from '~/components/dashboard/PayStats';
 import { DashboardPageStyled } from '~/styles/pageStyled/dashboardPageStyled';
 
-const Dashboard = () => {
+const DashboardPage = () => {
   return (
     <DashboardPageStyled>
       <Card icon="💶" title="통계" width="80rem" maxWidth="90rem" height="36rem">
@@ -16,4 +16,4 @@ const Dashboard = () => {
   );
 };
 
-export default Dashboard;
+export default DashboardPage;

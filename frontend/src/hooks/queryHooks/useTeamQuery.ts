@@ -27,7 +27,8 @@ export const useTeamQuery = ({ userId, ...baseOptions }: TeamQueryOptions<TeamDa
   });
 
   const teams = data ? data : [];
-  return { teams, isLoading, isError };
+  const isEmptyTeam = teams.length === 0;
+  return { teams, isEmptyTeam, isLoading, isError };
 };
 
 /**

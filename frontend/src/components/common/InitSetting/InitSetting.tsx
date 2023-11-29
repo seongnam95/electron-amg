@@ -25,7 +25,7 @@ const InitSetting = ({ hasTeam, children }: InitSettingProps) => {
       key: 'team',
       title: '업체',
       subTitle: '업체 추가하기',
-      component: <TeamForm onSubmit={handleNextClick} />,
+      component: <TeamForm />,
     },
     {
       key: 'position',

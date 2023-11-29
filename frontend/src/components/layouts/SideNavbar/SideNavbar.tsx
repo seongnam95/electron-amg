@@ -26,19 +26,19 @@ const SideNavbar = () => {
       {
         key: 'dashboard',
         icon: <GoHomeFill className="menu-icon" />,
-        path: '/',
+        path: '/management/dashboard',
         text: '대시보드',
       },
       {
         key: 'employee',
         icon: <BsFillPeopleFill className="menu-icon" />,
-        path: '/employee',
+        path: '/management/employee',
         text: '직원 관리',
       },
       {
         key: 'attendance',
         icon: <FaBusinessTime className="menu-icon" />,
-        path: '/attendance',
+        path: '/management/attendance',
         text: '근태',
       },
     ],

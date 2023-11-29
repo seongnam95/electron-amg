@@ -1,45 +1,15 @@
-import { useEffect, useRef } from 'react';
+import { ReactElement, ReactNode, cloneElement, useEffect, useRef, useState } from 'react';
 import { MdOutlineAdd } from 'react-icons/md';
 
-import { Button, Form, Input, InputNumber, InputRef, Select, Switch } from 'antd';
-import { FormInstance } from 'antd/lib';
+import { Button, Divider, Flex, Form, InputRef, Space } from 'antd';
 
-import ColorSelector from '~/components/common/ColorSelector';
-import { PositionCreateBody } from '~/types/position';
+import PositionList from '~/components/common/PositionList';
+import { useSoundApp } from '~/hooks/useSoundApp';
+import { PositionUpdateBody } from '~/types/position';
 
-const formRules = {
-  name: [
-    {
-      required: true,
-      message: '직위명은 필수입니다',
-    },
-    {
-      min: 2,
-      max: 5,
-      message: '2-5글자 사이어야 합니다',
-    },
-  ],
-  salary: [
-    {
-      required: true,
-      message: '급여 선택은 필수입니다',
-    },
-  ],
-  pay: [
-    {
-      required: true,
-      message: '단가 입력은 필수입니다',
-    },
-  ],
-  color: [
-    {
-      required: true,
-      message: '색상 선택은 필수입니다',
-    },
-  ],
-};
+import { formItems } from './positionFormConfig';
 
-const defaultValues: PositionCreateBody = {
+const defaultValues: PositionUpdateBody = {
   name: '',
   color: '#4C53FF',
   salaryCode: 1,
@@ -48,77 +18,95 @@ const defaultValues: PositionCreateBody = {
 };
 
 export interface PositionFormProps {
-  form?: FormInstance;
-  initialValues?: Partial<PositionCreateBody>;
-  onSubmit?: (data: PositionCreateBody) => void;
+  values?: PositionUpdateBody;
+  subBtn?: ReactNode;
+  submitBtnText?: string;
+  vertical?: boolean;
+  onSubmit?: (positions: PositionUpdateBody[]) => void;
 }
 
-const PositionForm = ({ form, initialValues, onSubmit }: PositionFormProps) => {
+const PositionForm = ({
+  values = defaultValues,
+  subBtn,
+  submitBtnText,
+  vertical,
+  onSubmit,
+}: PositionFormProps) => {
+  const [positions, setPositions] = useState<PositionUpdateBody[]>([]);
+  const [selectedPosition, setSelectedPosition] = useState<PositionUpdateBody>();
+  const { soundMessage } = useSoundApp();
   const inputRef = useRef<InputRef>(null);
+  const [form] = Form.useForm<PositionUpdateBody>();
 
-  useEffect(() => {
-    console.log(initialValues);
-    if (initialValues) {
-      console.log(initialValues);
-      form?.setFieldsValue(['name', 'test']);
-    }
-    focusNameInput();
-  }, [initialValues]);
+  useEffect(() => inputFocus(), []);
 
-  const focusNameInput = () => inputRef.current?.focus();
+  const inputFocus = () => inputRef.current?.focus();
 
-  const handleFinish = (data: PositionCreateBody) => {
-    form?.resetFields();
-    onSubmit?.(data);
-    setTimeout(() => focusNameInput(), 0);
+  const handleFinish = (data: PositionUpdateBody) => {
+    setPositions(prev => [...prev, { ...data }]);
+    setSelectedPosition(undefined);
+
+    form.resetFields();
+    setTimeout(() => inputFocus(), 0);
+  };
+
+  const handleRemove = (position: PositionUpdateBody) => {
+    setPositions(prev => prev.filter(pos => pos !== position));
+  };
+
+  const handleSubmit = () => {
+    if (positions.length === 0) {
+      soundMessage.warning('하나 이상의 직위를 생성해주세요.');
+    } else onSubmit?.(positions);
   };
 
   return (
-    <Form
-      form={form}
-      initialValues={initialValues}
-      colon={false}
-      labelCol={{ span: 12 }}
-      labelAlign="left"
-      autoComplete="off"
-      onFinish={handleFinish}
-      style={{ minWidth: '30rem' }}
-    >
-      {/* 직위 명칭 */}
-      <Form.Item label="직위 명칭" name="name" rules={formRules.name}>
-        <Input ref={inputRef} placeholder="(직위명)" />
-      </Form.Item>
-
-      {/* 급여 */}
-      <Form.Item label="급여" name="salaryCode" rules={formRules.salary}>
-        <Select
-          options={[
-            { label: '일급', value: 1 },
-            { label: '주급', value: 2 },
-            { label: '월급', value: 3 },
-          ]}
+    <Space direction="vertical" size={24}>
+      <Flex gap={34} style={{ height: '32rem' }} vertical={vertical}>
+        <PositionList
+          positions={positions}
+          // onDoubleClick={handleDoubleClick}
+          onRemove={handleRemove}
         />
-      </Form.Item>
+        <Form
+          form={form}
+          initialValues={values}
+          colon={false}
+          labelCol={{ span: 12 }}
+          labelAlign="left"
+          autoComplete="off"
+          onFinish={handleFinish}
+          style={{ minWidth: '30rem', maxHeight: '32rem' }}
+        >
+          {/* 아이템 렌더링 */}
+          {formItems.map((item, idx) => (
+            <Form.Item
+              key={item.name}
+              label={item.label}
+              name={item.name}
+              rules={item.rules}
+              valuePropName={item.valuePropName}
+            >
+              {cloneElement(item.component, {
+                ref: idx === 0 ? inputRef : null,
+              })}
+            </Form.Item>
+          ))}
 
-      {/* 단가 */}
-      <Form.Item label="단가" name="standardPay" rules={formRules.pay}>
-        <InputNumber style={{ width: '100%' }} min={0} />
-      </Form.Item>
+          <Button htmlType="submit" style={{ width: '100%', color: '#326CF9' }}>
+            <MdOutlineAdd style={{ marginRight: '1rem' }} />
+            추가하기
+          </Button>
+        </Form>
+      </Flex>
 
-      {/* 팀 구분 색상 */}
-      <Form.Item label="직위 구분 색상" name="color" rules={formRules.color}>
-        <ColorSelector onChange={color => form?.setFieldValue('color', color)} />
-      </Form.Item>
-
-      {/* 팀장 인센 포함 */}
-      <Form.Item label="팀장 인센티브 포함" name="isChild" required>
-        <Switch />
-      </Form.Item>
-
-      <Button type="text" htmlType="submit" style={{ width: '100%', color: '#326CF9' }}>
-        추가 <MdOutlineAdd />
-      </Button>
-    </Form>
+      <Flex justify="end" gap={8}>
+        {subBtn}
+        <Button type="primary" onClick={handleSubmit} style={{ width: '8rem' }}>
+          {submitBtnText ? submitBtnText : '저장'}
+        </Button>
+      </Flex>
+    </Space>
   );
 };
 

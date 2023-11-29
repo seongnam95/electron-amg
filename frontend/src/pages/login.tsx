@@ -1,8 +1,7 @@
 import { ChangeEvent, FormEvent, useEffect, useRef, useState } from 'react';
 import { BsFillPersonFill, BsLockFill } from 'react-icons/bs';
-import { useNavigate, useRoutes } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
-import { App } from 'antd';
 import axios from 'axios';
 import { useSetRecoilState } from 'recoil';
 
@@ -21,7 +20,7 @@ interface GeoLocationI {
   countryName: string;
 }
 
-const Login = () => {
+const LoginPage = () => {
   const passwordInputRef = useRef<HTMLInputElement>(null);
   const setUser = useSetRecoilState(userStore);
   const navigate = useNavigate();
@@ -78,7 +77,7 @@ const Login = () => {
           };
 
           setUser(user);
-          navigate('/auth/dashboard');
+          navigate('/management/dashboard');
         })
         .catch(err => {
           passwordInputRef.current?.focus();
@@ -107,4 +106,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default LoginPage;
