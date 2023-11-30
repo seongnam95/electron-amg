@@ -1,6 +1,5 @@
 import { Route, Routes } from 'react-router-dom';
 
-import InitSetting from '~/components/common/InitSetting';
 import PrivateRoute from '~/components/common/PrivateRoute';
 import IndexPage from '~/pages';
 import NotFoundPage from '~/pages/404';

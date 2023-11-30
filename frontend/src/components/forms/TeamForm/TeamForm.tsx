@@ -1,31 +1,31 @@
-import { ReactNode, useEffect, useRef, cloneElement, FormEventHandler } from 'react';
+import { useEffect, useRef, cloneElement } from 'react';
 
 import { InputRef, Form, Button, Flex, Space } from 'antd';
 
-import { TeamUpdateBody } from '~/types/team';
+import { TeamCreateBody } from '~/types/team';
 
-import { formItems } from './teamFormConfig';
+import { formItems } from './formConfig';
 
-const defaultValues: TeamUpdateBody = {
+const defaultValues = {
   name: '',
   color: '#4C53FF',
   mealCost: 7000,
 };
 
 export interface TeamFormProps {
-  values?: TeamUpdateBody;
+  values?: TeamCreateBody;
   submitBtnText?: string;
-  onSubmit?: (data: TeamUpdateBody) => void;
+  onSubmit?: (data: TeamCreateBody) => void;
 }
 
 const TeamForm = ({ values = defaultValues, submitBtnText, onSubmit }: TeamFormProps) => {
   const inputRef = useRef<InputRef>(null);
-  const [form] = Form.useForm<TeamUpdateBody>();
+  const [form] = Form.useForm<TeamCreateBody>();
 
   useEffect(() => inputFocus(), []);
   const inputFocus = () => inputRef.current?.focus();
 
-  const handleFinish = (data: TeamUpdateBody) => {
+  const handleFinish = (data: TeamCreateBody) => {
     onSubmit?.(data);
     form.resetFields();
     setTimeout(() => inputFocus(), 0);

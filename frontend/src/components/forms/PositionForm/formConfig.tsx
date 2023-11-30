@@ -1,8 +1,8 @@
-import { Input, InputNumber, Select, Switch } from 'antd';
+import { Input, InputNumber, Select, Switch, FormRule } from 'antd';
 
 import ColorSelector from '~/components/common/ColorSelector';
 
-const formRules = {
+const formRules: { [key: string]: FormRule[] } = {
   name: [
     {
       required: true,
@@ -22,6 +22,12 @@ const formRules = {
   ],
   pay: [
     {
+      type: 'number',
+      min: 30000,
+      max: 200000,
+      message: '3만원 ~ 20만원 입력',
+    },
+    {
       required: true,
       message: '단가 입력은 필수입니다',
     },
@@ -39,7 +45,7 @@ export const formItems = [
     name: 'name',
     label: '명칭',
     rules: formRules.name,
-    component: <Input placeholder="(직위 명칭)" />,
+    component: <Input spellCheck={false} placeholder="(직위 명칭)" />,
   },
   {
     name: 'salaryCode',
@@ -62,6 +68,7 @@ export const formItems = [
     component: (
       <InputNumber
         min={0}
+        max={200000}
         style={{ width: '100%' }}
         formatter={value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
       />

@@ -33,7 +33,7 @@ export const formItems = [
     name: 'name',
     label: '명칭',
     rules: formRules.name,
-    component: <Input placeholder="(팀 이름)" />,
+    component: <Input spellCheck={false} placeholder="(팀 이름)" />,
   },
   {
     name: 'mealCost',

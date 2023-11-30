@@ -4,6 +4,7 @@ import { Flex } from 'antd';
 import { useRecoilValue } from 'recoil';
 
 import { useTeamQuery } from '~/hooks/queryHooks/useTeamQuery';
+import { teamStore } from '~/stores/team';
 import { userStore } from '~/stores/user';
 
 import Content from '../Content';
@@ -12,9 +13,10 @@ import SideNavbar from '../SideNavbar';
 import { ManagementLayoutStyled } from './styled';
 
 const ManagementLayout = () => {
-  const { user } = useRecoilValue(userStore);
-  const { isEmptyTeam } = useTeamQuery({ userId: user.id });
-
+  const { user, isLogin } = useRecoilValue(userStore);
+  const team = useRecoilValue(teamStore);
+  const { isEmptyTeam } = useTeamQuery({ userId: user.id, enabled: isLogin });
+  console.log('team', team);
   if (isEmptyTeam) return <Navigate to="/init" />;
   return (
     <ManagementLayoutStyled id="layout" className="ManagementLayout">

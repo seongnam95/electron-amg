@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 
-import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilState } from 'recoil';
 
 import { createTeam, fetchTeams, updateTeam } from '~/api/team';
 import { teamStore } from '~/stores/team';
@@ -38,7 +38,10 @@ export const useTeamCreateMutation = ({ userId, ...baseOptions }: TeamQueryOptio
   const queryKey: string[] = [import.meta.env.VITE_TEAM_QUERY_KEY, userId];
   const queryClient = useQueryClient();
 
-  const onSettled = () => queryClient.invalidateQueries(queryKey);
+  const onSettled = () => {
+    console.log(queryKey);
+    queryClient.invalidateQueries(queryKey);
+  };
 
   const { mutate: createTeamMutate, isLoading: isCreateTeamLoading } = useMutation(
     queryKey,

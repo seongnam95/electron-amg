@@ -1,19 +1,20 @@
 import { useEffect, useRef } from 'react';
 
 import { Empty } from 'antd';
+import clsx from 'clsx';
 
-import { PositionData, PositionUpdateBody } from '~/types/position';
+import { PositionCreateBody } from '~/types/position';
 
 import PositionItem from './PositionItem';
 import { PositionListStyled } from './styled';
 
 export interface PositionListProps {
-  positions?: PositionUpdateBody[];
-  onDoubleClick?: (position: PositionUpdateBody) => void;
-  onRemove?: (position: PositionUpdateBody) => void;
+  positions?: PositionCreateBody[];
+  selectedPosition?: PositionCreateBody;
+  onDoubleClick?: (position: PositionCreateBody) => void;
 }
 
-const PositionList = ({ positions, onDoubleClick, onRemove }: PositionListProps) => {
+const PositionList = ({ positions, selectedPosition, onDoubleClick }: PositionListProps) => {
   const listRef = useRef<HTMLUListElement>(null);
 
   useEffect(() => {
@@ -31,12 +32,15 @@ const PositionList = ({ positions, onDoubleClick, onRemove }: PositionListProps)
       {positions && positions.length > 0 ? (
         <ul ref={listRef} className="position-list">
           {positions.map((position, idx) => {
+            const isEditing = !!selectedPosition;
+            const isSelected = position === selectedPosition;
+
             return (
               <PositionItem
+                className={clsx('position-item', isEditing && 'editing', isSelected && 'selected')}
                 key={`${position.name}/${idx}`}
                 {...{ position }}
                 onDoubleClick={onDoubleClick}
-                onRemove={onRemove}
               />
             );
           })}

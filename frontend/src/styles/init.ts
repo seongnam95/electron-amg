@@ -75,6 +75,11 @@ export const InitGlobalStyled = memo(createGlobalStyle`
     margin: 0;
   }
 
+  ul {
+    list-style-type: none;
+    list-style: none;
+  }
+
   .toolbar-wrapper {
     display: flex;
     gap: 2.6rem;

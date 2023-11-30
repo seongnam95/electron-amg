@@ -3,7 +3,7 @@ from pydantic import BaseModel, model_validator
 from datetime import datetime
 
 from schemas.common import check_update_fields
-from schemas.position import PositionResponse
+from schemas.position import PositionResponse, PositionCreate
 
 
 class TeamBase(BaseModel):
@@ -13,7 +13,7 @@ class TeamBase(BaseModel):
 
 
 class TeamCreate(TeamBase):
-    pass
+    positions: Optional[List[PositionCreate]]
 
 
 class TeamUpdate(BaseModel):

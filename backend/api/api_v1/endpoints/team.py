@@ -51,7 +51,10 @@ def delete_team(
 
 
 # 팀
-@router.get("/user/{user_id}/team", response_model=ListResponse[schemas.TeamResponse])
+@router.get(
+    "/user/{user_id}/team",
+    response_model=ListResponse[schemas.TeamWithPositionResponse],
+)
 def read_all_team(
     user_id: str,
     db: Session = Depends(deps.get_db),
@@ -61,8 +64,6 @@ def read_all_team(
     total = crud.employee.get_count(db)
 
     teams = crud.team.get_team_for_user(db, user_id=user_id)
-    if not teams:
-        raise HTTPException(status_code=404, detail="생성된 팀이 없습니다.")
 
     response = deps.create_list_response(
         data=teams, total=total, limit=limit, page=page
