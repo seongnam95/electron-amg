@@ -10,7 +10,8 @@ export const fetchTeams = (userId?: string) => async (): Promise<TeamData[]> => 
   const { data } = await axiosPrivate.get<FetchListResponse<TeamData>>(
     `${userEndpoint}/${userId}/${teamEndpoint}`,
   );
-  console.log('fetch', data.result.list);
+
+  console.log('fetchTeams, data', data.result.list);
   return data.result.list;
 };
 

@@ -8,7 +8,8 @@ import { useRecoilValue } from 'recoil';
 import Card from '~/components/common/Card';
 import PositionForm from '~/components/forms/PositionForm';
 import TeamForm from '~/components/forms/TeamForm';
-import { useTeamCreateMutation } from '~/hooks/queryHooks/useTeamQuery';
+import { useTeamCreateMutation, useTeamQuery } from '~/hooks/queryHooks/useTeamQuery';
+import { teamStore } from '~/stores/team';
 import { userStore } from '~/stores/user';
 import { InitPageStyled } from '~/styles/pageStyled/initPageStyled';
 import { PositionCreateBody } from '~/types/position';
@@ -29,7 +30,6 @@ const InitPage = () => {
   const navigate = useNavigate();
 
   useEffect(() => setPrevStep(step), [step]);
-
   const { createTeamMutate, isCreateTeamLoading } = useTeamCreateMutation({ userId: user.id });
 
   const handlePrevClick = () => {

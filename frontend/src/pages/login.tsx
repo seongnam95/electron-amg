@@ -1,13 +1,14 @@
-import { ChangeEvent, FormEvent, useEffect, useRef, useState } from 'react';
-import { BsFillPersonFill, BsLockFill } from 'react-icons/bs';
+import { useEffect, useRef, useState } from 'react';
+import { GoLock } from 'react-icons/go';
+import { LuUser2 } from 'react-icons/lu';
+import { useMutation } from 'react-query';
 import { useNavigate } from 'react-router-dom';
 
+import { Button, Flex, Form, Input, InputRef } from 'antd';
 import axios from 'axios';
 import { useSetRecoilState } from 'recoil';
 
 import { loginUser } from '~/api/auth';
-import Button from '~/components/common/Button';
-import Input from '~/components/common/Input';
 import { useSoundApp } from '~/hooks/useSoundApp';
 import { userStore } from '~/stores/user';
 import { LoginPageStyled } from '~/styles/pageStyled/loginPageStyled';
@@ -20,16 +21,19 @@ interface GeoLocationI {
   countryName: string;
 }
 
+interface LoginFormData {
+  username: string;
+  password: string;
+}
+
 const LoginPage = () => {
-  const passwordInputRef = useRef<HTMLInputElement>(null);
+  const usernameInputRef = useRef<InputRef>(null);
+
   const setUser = useSetRecoilState(userStore);
+  const [geoData, setGeoData] = useState<GeoLocationI>();
+
   const navigate = useNavigate();
   const { soundMessage } = useSoundApp();
-
-  const [geoData, setGeoData] = useState<GeoLocationI>();
-  const [account, setAccount] = useState({ username: '', password: '' });
-
-  const isValid = account.username.trim() !== '' && account.password.trim() !== '';
 
   // 유저 위치 정보 수집
   useEffect(() => {
@@ -49,59 +53,57 @@ const LoginPage = () => {
         });
     };
     fetchGeoData();
+    inputFocusing();
   }, []);
 
-  const handleOnChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const { id, value } = e.target;
-    setAccount(account => ({ ...account, [id]: value }));
-  };
+  const inputFocusing = () => usernameInputRef.current?.focus();
 
-  const handleOnSubmit = (e: FormEvent) => {
-    e.preventDefault();
+  const { mutate, isLoading } = useMutation(['auth'], loginUser, {
+    onSuccess: response => {
+      const accessToken = response.headers['authorization'];
+      sessionStorage.setItem('authorization', accessToken);
 
-    if (isValid) {
-      const body = {
-        username: account.password,
-        password: account.password,
-        access_ip: geoData?.ip,
+      const user: CurrentUser = {
+        isLogin: true,
+        user: response.data,
       };
 
-      loginUser(body)
-        .then(res => {
-          const accessToken = res.headers['authorization'];
-          sessionStorage.setItem('authorization', accessToken);
+      setUser(user);
+      navigate('/management/dashboard');
+    },
 
-          const user: CurrentUser = {
-            isLogin: true,
-            user: res.data,
-          };
+    onError: () => {
+      inputFocusing();
+      soundMessage.error('잠시 후 다시 시도해주세요.');
+    },
+  });
 
-          setUser(user);
-          navigate('/management/dashboard');
-        })
-        .catch(() => {
-          passwordInputRef.current?.focus();
-          soundMessage.error('잠시 후 다시 시도해주세요.');
-        });
-    }
+  const handleSubmit = (data: LoginFormData) => {
+    mutate({ ...data, accessIp: geoData?.ip });
   };
 
   return (
     <LoginPageStyled className="LoginPage">
       <p className="title">LOGIN</p>
-      <form className="login-form" onSubmit={handleOnSubmit}>
-        <Input onChange={handleOnChange} id="username" icon={<BsFillPersonFill />} />
-        <Input
-          inputRef={passwordInputRef}
-          onChange={handleOnChange}
-          id="password"
-          icon={<BsLockFill />}
-          type="password"
-        />
-        <Button type="submit" disabled={!isValid} $primary $btnSize="large">
-          로그인
+      <Form onFinish={handleSubmit}>
+        <Flex vertical>
+          <Form.Item
+            name="username"
+            rules={[{ required: true, message: '아이디를 입력해주세요.' }]}
+          >
+            <Input prefix={<LuUser2 />} size="large" ref={usernameInputRef} />
+          </Form.Item>
+          <Form.Item
+            name="password"
+            rules={[{ required: true, message: '패스워드를 입력해주세요.' }]}
+          >
+            <Input.Password size="large" prefix={<GoLock />} />
+          </Form.Item>
+        </Flex>
+        <Button type="primary" size="large" htmlType="submit" loading={isLoading}>
+          LOGIN
         </Button>
-      </form>
+      </Form>
     </LoginPageStyled>
   );
 };

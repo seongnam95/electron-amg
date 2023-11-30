@@ -6,6 +6,7 @@ import { useRecoilValue } from 'recoil';
 import logo from '~/assets/images/logo@256.png';
 import { useLogout } from '~/hooks/useLogout';
 import { configStore } from '~/stores/config';
+import { userStore } from '~/stores/user';
 
 import { TitlebarStyled } from './styled';
 
@@ -15,9 +16,7 @@ export interface TitlebarProps {
 
 const Titlebar = ({ className }: TitlebarProps) => {
   const logout = useLogout();
-  const {
-    general: { developerMode },
-  } = useRecoilValue(configStore);
+  const { isLogin } = useRecoilValue(userStore);
 
   const appControl = (action: AppControlAction) => {
     window.electron.appControl(action);
@@ -31,9 +30,11 @@ const Titlebar = ({ className }: TitlebarProps) => {
       </div>
       <div className="control-wrap">
         <div className="controls">
-          <div onClick={logout}>
-            <i className="bx bx-log-out" style={{ fontSize: '1.8rem', paddingTop: '0.1rem' }} />
-          </div>
+          {isLogin && (
+            <div onClick={logout}>
+              <i className="bx bx-log-out" style={{ fontSize: '1.8rem', paddingTop: '0.1rem' }} />
+            </div>
+          )}
 
           <div>
             <i className="bx bx-cog" style={{ fontSize: '1.8rem' }} />
