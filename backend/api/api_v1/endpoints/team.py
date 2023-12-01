@@ -43,7 +43,7 @@ def delete_team(
     if not team:
         raise HTTPException(status_code=404, detail="존재하지 팀 입니다.")
 
-    crud.team.remove(db=db, id=team.id)
+    crud.team.delete(db=db, id=team.id)
     return BaseResponse(msg="정상 처리되었습니다.")
 
 
@@ -82,6 +82,7 @@ def create_team_by_user(
             raise HTTPException(status_code=404, detail="존재하지 않는 계정입니다.")
 
     team = crud.team.create_team(db=db, obj_in=team_in, user_id=user_id)
+
     return DataResponse(msg="정상 처리되었습니다.", result=team)
 
 

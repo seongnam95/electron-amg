@@ -143,5 +143,5 @@ def delete_attendance(
     if not attendance:
         raise HTTPException(status_code=404, detail="존재하지 않는 로그입니다.")
 
-    crud.attendance.remove(db=db, id=attendance.id)
+    crud.attendance.delete(db=db, id=attendance.id)
     return BaseResponse(msg="정상 처리되었습니다.")

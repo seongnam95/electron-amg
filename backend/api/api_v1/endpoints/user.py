@@ -43,5 +43,5 @@ def delete_user(
     if not user:
         raise HTTPException(status_code=404, detail="존재하지 않는 계정입니다.")
 
-    crud.user.remove(db=db, id=user.id)
+    crud.user.delete(db=db, id=user.id)
     return BaseResponse(msg="정상 처리되었습니다.")

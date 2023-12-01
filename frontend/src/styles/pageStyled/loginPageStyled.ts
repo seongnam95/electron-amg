@@ -15,15 +15,4 @@ export const LoginPageStyled = styled.div`
     font-weight: bold;
     color: ${p => p.theme.colors.primary};
   }
-
-  .login-form {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    width: 30%;
-
-    > .Button {
-      margin-top: 2rem;
-    }
-  }
 `;

@@ -1,17 +1,16 @@
 import { atom } from 'recoil';
 import { recoilPersist } from 'recoil-persist';
 
-import { CurrentUser } from '~/types/user';
+import { UserData } from '~/types/user';
 
-export const initUser: CurrentUser = {
+export const initUser: UserData = {
+  id: '',
+  name: '',
+  username: '',
   isLogin: false,
-  user: {
-    id: '',
-    name: '',
-    username: '',
-    isAdmin: false,
-    isApproved: false,
-  },
+  isAdmin: false,
+  isApproved: false,
+  hasTeam: false,
 };
 
 const sessionStorage = typeof window !== 'undefined' ? window.sessionStorage : undefined;
@@ -21,7 +20,7 @@ const { persistAtom } = recoilPersist({
   storage: sessionStorage,
 });
 
-export const userStore = atom<CurrentUser>({
+export const userStore = atom<UserData>({
   key: 'userState',
   default: initUser,
   effects_UNSTABLE: [persistAtom],

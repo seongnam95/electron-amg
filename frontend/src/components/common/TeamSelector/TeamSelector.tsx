@@ -15,9 +15,9 @@ import { TeamSelectorStyled } from './styled';
  * 팀 선택 드롭다운 Selector
  */
 const TeamSelector = () => {
-  const { user, isLogin } = useRecoilValue(userStore);
+  const { id, isLogin } = useRecoilValue(userStore);
   const [team, setTeam] = useRecoilState(teamStore);
-  const { teams } = useTeamQuery({ userId: user.id, enabled: isLogin });
+  const { teams } = useTeamQuery({ userId: id, enabled: isLogin });
 
   const isLoading = team.id === '' || teams === undefined;
   if (isLoading) return <Skeleton.Button active size="small" style={{ width: '16rem' }} />;

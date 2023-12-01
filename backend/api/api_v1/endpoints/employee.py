@@ -27,10 +27,10 @@ def delete_all_employee(db: Session = Depends(deps.get_db)):
     employees = crud.employee.get_multi(db=db, offset=0, limit=100)
     positions = crud.position.get_multi(db=db, offset=0, limit=100)
     for employee in employees:
-        crud.employee.remove(db=db, id=employee.id)
+        crud.employee.delete(db=db, id=employee.id)
 
     for position in positions:
-        crud.position.remove(db=db, id=position.id)
+        crud.position.delete(db=db, id=position.id)
     return BaseResponse(msg="정상")
 
 

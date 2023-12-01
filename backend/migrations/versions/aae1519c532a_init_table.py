@@ -1,8 +1,8 @@
-"""init
+"""init table
 
-Revision ID: 0b1b0daa7aff
+Revision ID: aae1519c532a
 Revises: 
-Create Date: 2023-11-28 22:31:43.679075
+Create Date: 2023-12-01 13:30:14.175087
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = '0b1b0daa7aff'
+revision: str = 'aae1519c532a'
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -36,6 +36,7 @@ def upgrade() -> None:
     sa.Column('salary_code', sa.Integer(), nullable=False),
     sa.Column('standard_pay', sa.Integer(), nullable=False),
     sa.Column('is_child', sa.Boolean(), nullable=False),
+    sa.Column('is_active', sa.Boolean(), nullable=False),
     sa.Column('team_id', sa.String(), nullable=False),
     sa.ForeignKeyConstraint(['team_id'], ['team.id'], ),
     sa.PrimaryKeyConstraint('id')
@@ -97,6 +98,7 @@ def upgrade() -> None:
     sa.Column('is_admin', sa.Boolean(), nullable=False),
     sa.Column('is_superuser', sa.Boolean(), nullable=False),
     sa.Column('is_approved', sa.Boolean(), nullable=False),
+    sa.Column('has_team', sa.Boolean(), nullable=False),
     sa.Column('create_date', sa.DateTime(timezone=True), nullable=False),
     sa.Column('employee_id', sa.String(), nullable=True),
     sa.ForeignKeyConstraint(['employee_id'], ['employee.id'], ),

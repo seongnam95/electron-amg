@@ -49,7 +49,7 @@ class UserResponse(BaseModel):
     username: str
     is_admin: bool
     is_approved: bool
-    teams: List[TeamResponse]
+    has_team: bool
 
     class Config:
         from_attributes = True

@@ -86,5 +86,5 @@ def delete_draft(
     if not draft:
         raise HTTPException(status_code=404, detail="존재하지 않는 폼 입니다.")
 
-    crud.draft.remove(db=db, id=draft.id)
+    crud.draft.delete(db=db, id=draft.id)
     return BaseResponse(msg="정상 처리되었습니다.")

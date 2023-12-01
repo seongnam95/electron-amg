@@ -97,6 +97,7 @@ export const InitGlobalStyled = memo(createGlobalStyle`
     }
   }
 
+  /* Drawer */
   .ant-drawer-header {
     height: 6.4rem;
     min-height: 6.4rem;
@@ -104,6 +105,7 @@ export const InitGlobalStyled = memo(createGlobalStyle`
     padding: 0.3rem 2.4rem 0 !important;
   }
 
+  /* Message */
   .ant-message {
     overflow: hidden;
     top: ${p => p.theme.sizes.titleBarHeight} !important;
@@ -113,6 +115,7 @@ export const InitGlobalStyled = memo(createGlobalStyle`
     }
   }
 
+  /* Button */
   .ant-btn {
     display: inline-flex;
     align-items: center;
@@ -123,6 +126,7 @@ export const InitGlobalStyled = memo(createGlobalStyle`
     }
   }
   
+  /* Table */
   .ant-table-content {
     white-space: nowrap;
     
@@ -179,8 +183,20 @@ export const InitGlobalStyled = memo(createGlobalStyle`
     padding: 0 14px;
   }
 
+  /* Breadcrumb */
   .ant-breadcrumb-separator {
     display: flex;
     align-items: center;
+  }
+
+  /* Input */
+  .ant-input-affix-wrapper {
+    .ant-input-prefix {
+      margin-inline-end: 12px;
+    }
+    
+    svg {
+      color: #909090;
+    }
   }
 `);

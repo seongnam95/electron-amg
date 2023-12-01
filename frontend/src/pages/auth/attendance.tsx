@@ -15,7 +15,6 @@ import { useAttendanceUpdateModal } from '~/hooks/useAttendanceUpdateModal';
 import { useRemoveEmployee } from '~/hooks/useRemoveEmployee';
 import { breadcrumbStore } from '~/stores/breadcrumb';
 import { teamStore } from '~/stores/team';
-import { userStore } from '~/stores/user';
 import { AttendancePageStyled } from '~/styles/pageStyled/attendancePageStyled';
 
 type ViewType = 'monthly' | 'daily';

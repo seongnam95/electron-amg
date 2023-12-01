@@ -31,11 +31,20 @@ class LoginForm(BaseModel):
 def login(form_data: LoginForm, db: Session = Depends(deps.get_db)):
     user = crud.user.get_user(db=db, username=form_data.username)
 
-    if not user or not pwd_context.verify(form_data.password, user.hashed_password):
+    if not user:
+        raise HTTPException(
+            status_code=401,
+            detail="존재하지 않는 계정입니다.",
+        )
+
+    if not pwd_context.verify(form_data.password, user.hashed_password):
         raise HTTPException(
             status_code=401,
             detail="아이디 또는 패스워드가 일치하지 않습니다.",
         )
+
+    team_count = crud.team.get_team_count_by_user(db=db, user_id=user.id)
+    user.has_team = True if team_count > 0 else False
 
     user_json = jsonable_encoder(schemas.UserResponse.model_validate(user))
 

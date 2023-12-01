@@ -1,18 +1,18 @@
 import { useEffect, useRef, useState } from 'react';
-import { GoLock } from 'react-icons/go';
-import { LuUser2 } from 'react-icons/lu';
+import { LuUser2, LuLock } from 'react-icons/lu';
 import { useMutation } from 'react-query';
 import { useNavigate } from 'react-router-dom';
 
 import { Button, Flex, Form, Input, InputRef } from 'antd';
-import axios from 'axios';
-import { useSetRecoilState } from 'recoil';
+import axios, { AxiosError } from 'axios';
+import { useRecoilState, useSetRecoilState } from 'recoil';
 
 import { loginUser } from '~/api/auth';
+import { useTeamQuery } from '~/hooks/queryHooks/useTeamQuery';
 import { useSoundApp } from '~/hooks/useSoundApp';
 import { userStore } from '~/stores/user';
 import { LoginPageStyled } from '~/styles/pageStyled/loginPageStyled';
-import { CurrentUser } from '~/types/user';
+import { UserData } from '~/types/user';
 
 interface GeoLocationI {
   ip: string;
@@ -31,6 +31,7 @@ const LoginPage = () => {
 
   const setUser = useSetRecoilState(userStore);
   const [geoData, setGeoData] = useState<GeoLocationI>();
+  const [form] = Form.useForm();
 
   const navigate = useNavigate();
   const { soundMessage } = useSoundApp();
@@ -63,45 +64,57 @@ const LoginPage = () => {
       const accessToken = response.headers['authorization'];
       sessionStorage.setItem('authorization', accessToken);
 
-      const user: CurrentUser = {
-        isLogin: true,
-        user: response.data,
-      };
-
+      const user: UserData = { isLogin: true, ...response.data };
       setUser(user);
-      navigate('/management/dashboard');
-    },
 
-    onError: () => {
+      if (user.hasTeam) navigate('/management/dashboard');
+      else navigate('/init');
+    },
+    onError: ({ response }: AxiosError<{ msg: string }>) => {
+      const msg = response?.data.msg || '';
+      soundMessage.error(msg);
       inputFocusing();
-      soundMessage.error('잠시 후 다시 시도해주세요.');
     },
   });
 
   const handleSubmit = (data: LoginFormData) => {
+    if (!data.username || !data.password) {
+      soundMessage.error('아이디와 패스워드를 입력해주세요');
+      return;
+    }
+
     mutate({ ...data, accessIp: geoData?.ip });
   };
 
   return (
     <LoginPageStyled className="LoginPage">
-      <p className="title">LOGIN</p>
-      <Form onFinish={handleSubmit}>
-        <Flex vertical>
+      <p className="title">AMG</p>
+      <Form
+        form={form}
+        onFinish={handleSubmit}
+        onFinishFailed={() => soundMessage.error('아이디와 패스워드를 입력해주세요')}
+      >
+        <Flex vertical style={{ width: 250 }}>
           <Form.Item
             name="username"
-            rules={[{ required: true, message: '아이디를 입력해주세요.' }]}
+            rules={[{ required: true, message: '' }]}
+            style={{ marginBottom: 12 }}
           >
-            <Input prefix={<LuUser2 />} size="large" ref={usernameInputRef} />
+            <Input className="login-input" prefix={<LuUser2 />} ref={usernameInputRef} />
           </Form.Item>
-          <Form.Item
-            name="password"
-            rules={[{ required: true, message: '패스워드를 입력해주세요.' }]}
-          >
-            <Input.Password size="large" prefix={<GoLock />} />
+          <Form.Item name="password" rules={[{ required: true, message: '' }]}>
+            <Input.Password className="login-input" prefix={<LuLock />} />
           </Form.Item>
         </Flex>
-        <Button type="primary" size="large" htmlType="submit" loading={isLoading}>
-          LOGIN
+
+        <Button
+          type="primary"
+          size="large"
+          htmlType="submit"
+          loading={isLoading}
+          style={{ width: '100%' }}
+        >
+          로그인
         </Button>
       </Form>
     </LoginPageStyled>

@@ -49,7 +49,7 @@ const _colors = {
   textColorWhite3: '',
 
   iconColor1: '#767676',
-  iconColor2: '#4E5058',
+  iconColor2: '#909090',
   iconColor3: '#313338',
 
   blue: '#1677FF',
