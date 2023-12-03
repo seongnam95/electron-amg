@@ -21,7 +21,7 @@ export interface DraftCreateDrawerProps extends DrawerProps {
 
 const DraftCreateDrawer = ({ onCopy, onClose, onHistory, ...props }: DraftCreateDrawerProps) => {
   const team = useRecoilValue(teamStore);
-  const existTeam = team.id !== '';
+  const existTeam = team.existTeam;
 
   const [draft, setDraft] = useState<DraftData | undefined>();
   const [showResultBox, setShowResultBox] = useState<boolean>(false);
@@ -79,11 +79,7 @@ const DraftCreateDrawer = ({ onCopy, onClose, onHistory, ...props }: DraftCreate
   const handleCloseResult = () => setShowResultBox(false);
 
   const RenderExtra = existTeam ? (
-    <Button
-      type="text"
-      icon={<BsClockHistory size="1.8rem" style={{ marginTop: 2 }} />}
-      onClick={onHistory}
-    />
+    <Button type="text" icon={<BsClockHistory size="1.8rem" />} onClick={onHistory} />
   ) : (
     <Skeleton.Button active size="small" />
   );

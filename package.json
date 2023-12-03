@@ -1,5 +1,6 @@
 {
   "dependencies": {
-    "@types/howler": "^2.2.11"
+    "@types/howler": "^2.2.11",
+    "react-container-query": "^0.13.0"
   }
 }

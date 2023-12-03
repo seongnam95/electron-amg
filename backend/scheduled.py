@@ -6,7 +6,7 @@ from datetime import datetime, timedelta
 from sqlalchemy.orm import Session
 
 
-# 180일 경과 된 직원 삭제
+# 180일(6개월) 경과 된 직원 삭제
 def delete_old_employees():
     db = SessionLocal()
 

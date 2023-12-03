@@ -34,7 +34,7 @@ const AttendancePage = () => {
   const date = selectedDay.format(viewType === 'daily' ? 'YY-MM-DD' : 'YY-MM');
 
   // hook
-  const { employees } = useEmployeeQuery({ teamId: team?.id, enabled: team.id !== '' });
+  const { employees } = useEmployeeQuery({ teamId: team?.id, enabled: team.existTeam });
   const { openModal, AttendanceUpdateModal } = useAttendanceUpdateModal(team?.id, date);
 
   const { updateAttendanceMutate } = useAttendanceUpdateMutation({

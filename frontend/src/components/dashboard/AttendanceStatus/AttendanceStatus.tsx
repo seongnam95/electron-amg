@@ -11,6 +11,7 @@ import { useEmployeeQuery } from '~/hooks/queryHooks/useEmployeeQuery';
 import { teamStore } from '~/stores/team';
 
 import { AttendanceStatusStyled } from './styled';
+import { countAttendanceByPosition } from './util';
 
 export interface AttendanceStatusProps {
   date?: string;
@@ -22,32 +23,16 @@ const { Text } = Typography;
 const AttendanceStatus = ({ date }: AttendanceStatusProps) => {
   const team = useRecoilValue(teamStore);
 
-  const { employees } = useEmployeeQuery({ teamId: team.id, enabled: team.id !== '' });
+  const { employees } = useEmployeeQuery({ teamId: team.id, enabled: team.existTeam });
   const { attendances } = useAttendanceQuery({
     teamId: team.id,
     date: date ? date : dayjs().format('YY-MM-DD'),
-    enabled: team.id !== '',
+    enabled: team.existTeam,
   });
 
-  // 직위별 출근 카운팅
-  const countAttendanceByPosition = () => {
-    const positionCounts = team.positions.map(position => ({
-      positionId: position.id,
-      name: position.name,
-      count: 0,
-    }));
-
-    attendances.forEach(attendance => {
-      const { positionId } = attendance;
-      const positionCount = positionCounts.find(count => count.positionId === positionId);
-      if (positionCount) positionCount.count += 1;
-    });
-
-    return positionCounts;
-  };
-
-  const counts = countAttendanceByPosition();
+  const counts = countAttendanceByPosition(team, attendances);
   const nonAttendanceCount = employees.length - attendances.length;
+  const isEmpty = counts.reduce((sum, item) => sum + item.count, 0) === 0;
 
   const dataSource = {
     labels: [...counts.map(position => position.name), '미출근'],
@@ -60,13 +45,25 @@ const AttendanceStatus = ({ date }: AttendanceStatusProps) => {
     ],
   };
 
+  const EmptyDoughnutData = {
+    labels: ['데이터 없음'],
+    datasets: [
+      {
+        data: [100],
+        backgroundColor: ['#e8e8e8'],
+        borderWidth: 0,
+      },
+    ],
+  };
+
   return (
     <AttendanceStatusStyled className="AttendanceStatus">
       <Flex className="chart-wrap">
         <Doughnut
-          data={dataSource}
+          data={isEmpty ? EmptyDoughnutData : dataSource}
           options={{
             cutout: '50%',
+
             plugins: { legend: { display: false } },
           }}
         />

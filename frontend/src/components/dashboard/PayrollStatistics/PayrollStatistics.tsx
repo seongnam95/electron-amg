@@ -1,32 +1,35 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Bar } from 'react-chartjs-2';
 
-import { Flex, Descriptions } from 'antd';
+import { Empty, Flex } from 'antd';
 import 'chart.js/auto';
 import dayjs, { Dayjs } from 'dayjs';
 import { useRecoilValue } from 'recoil';
 
+import DescriptionsBox from '~/components/common/DescriptionsBox';
 import { useAttendanceQuery } from '~/hooks/queryHooks/useAttendanceQuery';
 import { teamStore } from '~/stores/team';
 import { AttendanceData } from '~/types/attendance';
-import { generateDays } from '~/utils/commuteRange';
 
-import { PayStatsStyled } from './styled';
+import { PayrollStatisticsStyled } from './styled';
 
-export interface PayStatsProps {}
 interface PaySumByDay {
   day: number;
   paySum: number;
   prePaySum: number;
 }
-const PayStats = ({}: PayStatsProps) => {
+
+export interface PayrollStatisticsProps {}
+
+const PayrollStatistics = ({}: PayrollStatisticsProps) => {
   const team = useRecoilValue(teamStore);
+  const wrapRef = useRef<HTMLDivElement>(null);
   const [date, setDate] = useState<Dayjs>(dayjs());
 
-  const { attendances } = useAttendanceQuery({
+  const { attendances, isLoading, isEmpty } = useAttendanceQuery({
     teamId: team.id,
     date: date ? date.format('YY-MM') : dayjs().format('YY-MM'),
-    enabled: team.id !== '',
+    enabled: team.existTeam,
   });
 
   const sumPayByDay = (attendances: AttendanceData[]): PaySumByDay[] => {
@@ -64,49 +67,53 @@ const PayStats = ({}: PayStatsProps) => {
   const pay = paySum - prePaySum - taxSum;
 
   return (
-    <PayStatsStyled className="PayStats">
-      <Flex style={{ height: '16rem' }}>
+    <PayrollStatisticsStyled className="PayStats" ref={wrapRef}>
+      <Flex className="bar-wrap">
         <Bar
           data={chartData}
           options={{
             maintainAspectRatio: false,
             scales: {
-              x: {
-                grid: { display: false },
-              },
-              y: {
-                beginAtZero: true,
-                grid: { display: false },
-              },
+              x: { grid: { display: false } },
+              y: { beginAtZero: true, grid: { display: false } },
             },
-            plugins: {
-              legend: {
-                display: false,
-              },
-            },
+            plugins: { legend: { display: false } },
           }}
         />
+        {isEmpty && (
+          <div className="empty-attendance">
+            <Empty description={false} />
+          </div>
+        )}
       </Flex>
       <Flex gap={8} justify="center">
-        <Flex className="description-wrap">
-          <p className="description-title">일당 합계</p>
-          <p className="description-label">{paySum.toLocaleString()}원</p>
-        </Flex>
-        <Flex className="description-wrap">
-          <p className="description-title">선지급</p>
-          <p className="description-label">{prePaySum.toLocaleString()}원</p>
-        </Flex>
-        <Flex className="description-wrap">
-          <p className="description-title">소득세 (3.3%)</p>
-          <p className="description-label">{taxSum.toLocaleString()}원</p>
-        </Flex>
-        <Flex className="description-wrap">
-          <p className="description-title">총 지급액</p>
-          <p className="description-label">{pay.toLocaleString()}원</p>
-        </Flex>
+        <DescriptionsBox
+          fullWidth
+          justify="center"
+          title="일당 합계"
+          children={`${paySum.toLocaleString()}원`}
+        />
+        <DescriptionsBox
+          fullWidth
+          justify="center"
+          title="소득세 (3.3%)"
+          children={`${prePaySum.toLocaleString()}원`}
+        />
+        <DescriptionsBox
+          fullWidth
+          justify="center"
+          title="일당 합계"
+          children={`${taxSum.toLocaleString()}원`}
+        />
+        <DescriptionsBox
+          fullWidth
+          justify="center"
+          title="총 지급액"
+          children={`${pay.toLocaleString()}원`}
+        />
       </Flex>
-    </PayStatsStyled>
+    </PayrollStatisticsStyled>
   );
 };
 
-export default PayStats;
+export default PayrollStatistics;

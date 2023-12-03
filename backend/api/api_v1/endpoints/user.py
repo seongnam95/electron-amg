@@ -8,7 +8,6 @@ from response_model import BaseResponse
 
 
 router = APIRouter()
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/login")
 
 
 # 유저 생성

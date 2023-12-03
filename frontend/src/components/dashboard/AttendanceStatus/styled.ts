@@ -5,6 +5,7 @@ export const AttendanceStatusStyled = styled.div`
 
   display: flex;
   flex-direction: column;
+  gap: 2.4rem;
   align-items: center;
   justify-content: space-between;
 

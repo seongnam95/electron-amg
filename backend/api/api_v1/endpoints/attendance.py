@@ -3,7 +3,7 @@ from fastapi import APIRouter, HTTPException, Depends
 from sqlalchemy.orm import Session
 from ... import deps
 from schemas import AttendanceResponse, AttendanceCreate, AttendanceUpdate
-import crud, schemas, models
+import crud, models
 from response_model import BaseResponse, DataResponse, ListResponse
 
 

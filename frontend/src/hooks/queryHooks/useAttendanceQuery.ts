@@ -26,7 +26,8 @@ export const useAttendanceQuery = ({
   );
 
   const attendances = data ? data.toReversed() : [];
-  return { attendances, isLoading, isError };
+  const isEmpty = !attendances.length;
+  return { attendances, isEmpty, isLoading, isError };
 };
 
 export const useAttendanceUpdateMutation = ({

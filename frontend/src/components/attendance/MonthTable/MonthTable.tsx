@@ -27,7 +27,7 @@ const MonthTable = ({ date, employees }: MonthTableProps) => {
   const { attendances } = useAttendanceQuery({
     date: date,
     teamId: team.id,
-    enabled: team.id !== '',
+    enabled: team.existTeam,
   });
 
   const rowSelection: TableRowSelection<MonthTableData> = {

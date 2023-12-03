@@ -14,7 +14,7 @@ interface HistoryDrawerProps extends DrawerProps {
 
 const HistoryDrawer = ({ onCopy, onClose, ...props }: HistoryDrawerProps) => {
   const team = useRecoilValue(teamStore);
-  const existTeam = team.id !== '';
+  const existTeam = team.existTeam;
 
   const { drafts, isLoading } = useDraftQuery({ teamId: team.id, enabled: existTeam });
   const { removeDraftMutate } = useDraftRemoveMutation({ teamId: team.id });
@@ -23,11 +23,7 @@ const HistoryDrawer = ({ onCopy, onClose, ...props }: HistoryDrawerProps) => {
   const handleRemoveClick = (id: string) => removeDraftMutate(id);
 
   const RenderExtra = (
-    <Button
-      type="text"
-      icon={<AiOutlineClose size="1.8rem" style={{ marginTop: 2 }} />}
-      onClick={onClose}
-    />
+    <Button type="text" icon={<AiOutlineClose size="1.8rem" />} onClick={onClose} />
   );
 
   return (

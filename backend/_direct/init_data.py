@@ -3,6 +3,15 @@ import csv
 import os
 import random
 
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+
+from config import get_secret
+
+engine = create_engine(get_secret("SQL_DB_URL"), pool_pre_ping=True)
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+
+
 base_url = "http://localhost:8001/api/v1"
 session = requests.Session()
 px_img = "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEAwADAAAD/2wBDAAIBAQIBAQICAgICAgICAwUDAwMDAwYEBAMFBwYHBwcGBwcICQsJCAgKCAcHCg0KCgsMDAwMBwkODw0MDgsMDAz/2wBDAQICAgMDAwYDAwYMCAcIDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAz/wAARCAABAAEDASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwD9/KKKKAP/2Q=="
@@ -185,16 +194,15 @@ def create_employees(*, team_id, admin_id, positions, employees):
 
 # user_id = login()
 # team_id = create_team(user_id)
-team_id = "08v5k4fbTEa1XnMAREsWAw"
-positions = create_positions(team_id)
+team_id = "Eng8D4rySeugVfZG0BYGpA"
+# positions = create_positions(team_id)
 
 # print(positions)
 admin_id = "0y3dIt6AT0-N-tko0SrRPw"
-print(
-    create_employees(
-        team_id=team_id,
-        admin_id=admin_id,
-        positions=positions,
-        employees=get_employees(),
-    )
+create_employees(
+    team_id=team_id,
+    admin_id=admin_id,
+    positions=positions,
+    employees=get_employees(),
 )
+print("완료")

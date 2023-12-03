@@ -17,7 +17,7 @@ export const useTeamQuery = ({ userId, ...baseOptions }: TeamQueryOptions<TeamDa
   const [team, setTeam] = useRecoilState(teamStore);
 
   const onSuccess = (teams: TeamData[]) => {
-    if (team.id === '') setTeam(teams[0]);
+    if (team.id === '') setTeam({ ...teams[0], existTeam: true });
     baseOptions.onSuccess?.(teams);
   };
 

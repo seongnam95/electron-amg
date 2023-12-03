@@ -38,7 +38,7 @@ const EmployeePage = () => {
   const { employees, isLoading, refetch } = useEmployeeQuery({
     teamId: team.id,
     valid: viewType === 'valid' ? true : viewType === 'invalid' ? false : undefined,
-    enabled: team.id !== '',
+    enabled: team.existTeam,
   });
 
   const { removeEmployee } = useRemoveEmployee({

@@ -31,7 +31,7 @@ const DayTable = ({ date, employees, onClickName }: DayTableProps) => {
   const { attendances } = useAttendanceQuery({
     date: date,
     teamId: team.id,
-    enabled: team.id !== '',
+    enabled: team.existTeam,
   });
 
   const { updateAttendanceMutate } = useAttendanceUpdateMutation({

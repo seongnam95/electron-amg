@@ -9,7 +9,6 @@ from response_model import ListResponse, BaseResponse, DataResponse
 
 
 router = APIRouter()
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/login")
 
 
 # ! 사용  X

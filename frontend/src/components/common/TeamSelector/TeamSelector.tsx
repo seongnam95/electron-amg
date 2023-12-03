@@ -26,7 +26,7 @@ const TeamSelector = () => {
 
   const handleChangeTeam = (item: ItemType) => {
     const selectedTeam = teams.find(t => t.id === item?.key?.toString());
-    if (selectedTeam) setTeam(selectedTeam);
+    if (selectedTeam) setTeam(prev => ({ ...prev, selectedTeam }));
   };
 
   const items: Array<ItemType> | undefined = teams?.map(item => {
