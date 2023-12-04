@@ -74,7 +74,7 @@ export const useAttendanceUpdateModal = (teamId?: string, date?: string) => {
           />
         </Form.Item>
 
-        <Form.Item label="공제" name="prePay">
+        <Form.Item label="선지급" name="prePay">
           <InputNumber
             min={0}
             style={{ width: '100%' }}

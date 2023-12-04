@@ -32,7 +32,7 @@ class CRUDAttendance(CRUDBase[Attendance, AttendanceCreate, AttendanceUpdate]):
         if attendance:
             raise HTTPException(status_code=404, detail="이미 출근처리 되었습니다.")
 
-        # 수당 계산 [단가 - 공제 (+ 식대)]
+        # 수당 계산 [단가 - 선지급 (+ 식대)]
         pay = employee.position.standard_pay
         pay -= attendance_in.pre_pay if attendance_in.pre_pay else 0
         pay += attendance.employee.team.meal_cost if attendance_in.meal_included else 0

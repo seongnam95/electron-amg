@@ -20,11 +20,8 @@ import { AttendancePageStyled } from '~/styles/pageStyled/attendancePageStyled';
 type ViewType = 'monthly' | 'daily';
 
 const AttendancePage = () => {
-  const navigate = useNavigate();
   // state
   const team = useRecoilValue(teamStore);
-  const [breadcrumb, setBreadcrumb] = useRecoilState(breadcrumbStore);
-
   const [viewType, setViewType] = useState<ViewType>('daily');
 
   const [employeeId, setEmployeeId] = useState<string>();

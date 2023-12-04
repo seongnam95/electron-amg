@@ -17,6 +17,7 @@ class EmployeeBase(BaseModel):
     bank_book: str
     id_card: str
     sign_base64: str
+    team_id: str
     position_id: str
 
 
@@ -32,6 +33,7 @@ class EmployeeUpdate(BaseModel):
     bank_book: Optional[str] = None
     id_card: Optional[str] = None
     position_id: Optional[str] = None
+    team_id: Optional[str] = None
 
     @model_validator(mode="before")
     def check_fields(cls, values: dict):

@@ -1,6 +1,8 @@
+import { HTMLAttributes } from 'react';
+
 import styled from 'styled-components';
 
-export interface CardStyledProps {
+export interface CardStyledProps extends HTMLAttributes<HTMLDivElement> {
   width?: string | number;
   height?: string | number;
   maxHeight?: string | number;
@@ -13,7 +15,7 @@ export const CardStyled = styled.div`
   box-shadow: rgba(160, 160, 160, 0.2) 0 8px 32px;
 
   .card-header {
-    padding: 2rem 3rem 0;
+    padding: 2.4rem 3rem 0;
 
     .card-title {
       display: flex;
@@ -26,6 +28,6 @@ export const CardStyled = styled.div`
 
   .card-content {
     flex: 1;
-    padding: 2rem 3rem;
+    padding: 2.4rem 3rem;
   }
 `;

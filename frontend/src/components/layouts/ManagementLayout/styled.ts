@@ -1,7 +1,6 @@
 import styled from 'styled-components';
 
 export const ManagementLayoutStyled = styled.div`
-  --navbar-width: 8rem;
   --header-height: 4.6rem;
 
   position: relative;
@@ -10,10 +9,6 @@ export const ManagementLayoutStyled = styled.div`
   display: flex;
   width: 100vw;
   height: calc(100% - ${p => p.theme.sizes.titleBarHeight});
-
-  .SideNavbar {
-    width: var(--navbar-width);
-  }
 
   .Header {
     height: var(--header-height);

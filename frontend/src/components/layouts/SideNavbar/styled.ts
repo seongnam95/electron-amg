@@ -7,6 +7,8 @@ export const SideNavbarStyled = styled.div`
   padding: 1.4rem 0;
   z-index: 10;
 
+  width: 40rem;
+
   a {
     position: relative;
 

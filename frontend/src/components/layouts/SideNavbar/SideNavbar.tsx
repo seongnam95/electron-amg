@@ -1,52 +1,55 @@
-import { useEffect, useMemo } from 'react';
+import { ReactNode, useMemo } from 'react';
 import { BsFillPeopleFill } from 'react-icons/bs';
 import { FaBusinessTime } from 'react-icons/fa';
 import { GoHomeFill } from 'react-icons/go';
 import { Link, useLocation } from 'react-router-dom';
 
+import { Flex } from 'antd';
 import clsx from 'clsx';
 import { motion, LayoutGroup, AnimatePresence } from 'framer-motion';
-import { useSetRecoilState } from 'recoil';
+import { useRecoilValue } from 'recoil';
 
-import { BreadcrumbData, breadcrumbStore } from '~/stores/breadcrumb';
+import { layoutStore } from '~/stores/layoutConfig';
 
 import { SideNavbarStyled } from './styled';
 
+export interface MenuItemData {
+  key: string;
+  text: string;
+  path: string;
+  icon?: JSX.Element | ReactNode;
+}
+
 const SideNavbar = () => {
   const { pathname } = useLocation();
-  const setBreadcrumb = useSetRecoilState(breadcrumbStore);
+  const { sideBarMode } = useRecoilValue(layoutStore);
 
-  useEffect(() => {
-    const menu = menus.find(menu => menu.path === pathname);
-    if (menu) setBreadcrumb([menu]);
-  }, [pathname]);
-
-  const menus: BreadcrumbData[] = useMemo(
+  const menus: MenuItemData[] = useMemo(
     () => [
       {
         key: 'dashboard',
+        text: '대시보드',
         icon: <GoHomeFill className="menu-icon" />,
         path: '/management/dashboard',
-        text: '대시보드',
       },
       {
         key: 'employee',
+        text: '직원 관리',
         icon: <BsFillPeopleFill className="menu-icon" />,
         path: '/management/employee',
-        text: '직원 관리',
       },
       {
         key: 'attendance',
+        text: '근태',
         icon: <FaBusinessTime className="menu-icon" />,
         path: '/management/attendance',
-        text: '근태',
       },
     ],
     [],
   );
 
   return (
-    <SideNavbarStyled className="SideNavbar">
+    <SideNavbarStyled className={clsx('SideNavbar', sideBarMode === 'mini' && 'mini')}>
       <LayoutGroup>
         <div className="items">
           <AnimatePresence>
@@ -77,7 +80,10 @@ const SideNavbar = () => {
                         }}
                       />
                     )}
-                    {item.icon}
+                    <Flex>
+                      {item.icon}
+                      {item.text}
+                    </Flex>
                   </Link>
                 </motion.div>
               );

@@ -150,7 +150,7 @@ export const getColumns = ({
         return (
           <InputPopover
             columnKey="prePay"
-            title="공제"
+            title="선지급"
             inputType="number"
             trigger="contextMenu"
             placeholder={prePay}

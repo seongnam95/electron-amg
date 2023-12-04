@@ -22,18 +22,6 @@ router = APIRouter()
 SchemaType = TypeVar("SchemaType", bound=BaseModel)
 
 
-@router.delete("/employee/all", response_model=BaseResponse)
-def delete_all_employee(db: Session = Depends(deps.get_db)):
-    employees = crud.employee.get_multi(db=db, offset=0, limit=100)
-    positions = crud.position.get_multi(db=db, offset=0, limit=100)
-    for employee in employees:
-        crud.employee.delete(db=db, id=employee.id)
-
-    for position in positions:
-        crud.position.delete(db=db, id=position.id)
-    return BaseResponse(msg="정상")
-
-
 # 개인정보로 근로자 불러오기
 @router.get("/employee/search/", response_model=DataResponse[EmployeeCoveringResponse])
 def search_employee(name: str, ssn: str, db: Session = Depends(deps.get_db)):
