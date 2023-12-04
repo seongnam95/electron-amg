@@ -7,10 +7,8 @@ import AttendanceDoughnut from '../AttendanceDoughnut';
 export interface AttendanceCardProps {}
 
 const AttendanceCard = ({}: AttendanceCardProps) => {
-  const cardRef = useRef<HTMLDivElement>(null);
-
   return (
-    <Card ref={cardRef} title="🙋‍♂️ 오늘 출근 현황">
+    <Card title="🙋‍♂️ 오늘 출근 현황" style={{ width: '28rem' }}>
       <AttendanceDoughnut />
     </Card>
   );

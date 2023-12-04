@@ -1,9 +1,9 @@
 import { AxiosResponse } from 'axios';
 
-import { AttendanceData, AttendanceUpdateBody } from '~/types/attendance';
+import { AttendanceCreateBody, AttendanceData, AttendanceUpdateBody } from '~/types/attendance';
 
 import axiosPrivate from './axios';
-import { BaseResponse, FetchListResponse, FetchResponse } from './response';
+import { BaseResponse, DataListResponse, DataResponse } from './response';
 
 interface FetchAttendancesProps {
   id?: string;
@@ -16,7 +16,7 @@ export const fetchAttendances =
     const teamEndpoint = import.meta.env.VITE_TEAM_ENDPOINT;
     const attendanceEndpoint = import.meta.env.VITE_ATTENDANCE_ENDPOINT;
 
-    const { data } = await axiosPrivate.get<FetchListResponse<AttendanceData>>(
+    const { data } = await axiosPrivate.get<DataListResponse<AttendanceData>>(
       `${teamEndpoint}/${id}/${attendanceEndpoint}`,
       { params: { date: date } },
     );
@@ -36,19 +36,38 @@ export const updateAttendance = async ({
   const attendanceEndpoint = import.meta.env.VITE_ATTENDANCE_ENDPOINT;
 
   const updatePromises = ids.map(id =>
-    axiosPrivate.put<FetchResponse<AttendanceData>>(`${attendanceEndpoint}/${id}`, body),
+    axiosPrivate.put<DataResponse<AttendanceData>>(`${attendanceEndpoint}/${id}`, body),
   );
 
   const responses = await Promise.all(updatePromises);
   return responses.map(res => res.data.result);
 };
 
-export const removeAttendanceRequest =
-  (endpoint: string) =>
-  async (id: string): Promise<BaseResponse> => {
-    const { data } = await axiosPrivate.delete<BaseResponse>(`${endpoint}/${id}`);
-    return data;
-  };
+export const createAttendance = async (
+  bodys: AttendanceCreateBody[],
+): Promise<AttendanceData[]> => {
+  const employeeEndpoint = import.meta.env.VITE_EMPLOYEE_ENDPOINT;
+  const attendanceEndpoint = import.meta.env.VITE_ATTENDANCE_ENDPOINT;
+
+  const updatePromises = bodys.map(body => {
+    const url = `${employeeEndpoint}/${body.employeeId}/${attendanceEndpoint}`;
+    return axiosPrivate.post<DataResponse<AttendanceData>>(url, body);
+  });
+
+  const responses = await Promise.all(updatePromises);
+  return responses.map(res => res.data.result);
+};
+
+export const removeAttendance = async (ids: string[]): Promise<AttendanceData[]> => {
+  const attendanceEndpoint = import.meta.env.VITE_ATTENDANCE_ENDPOINT;
+
+  const removePromises = ids.map(id => {
+    return axiosPrivate.delete<DataResponse<AttendanceData>>(`${attendanceEndpoint}/${id}`);
+  });
+
+  const responses = await Promise.all(removePromises);
+  return responses.map(res => res.data.result);
+};
 
 // export const createAttendanceRequest =
 //   (parentEndpoint: string, endpoint: string) =>

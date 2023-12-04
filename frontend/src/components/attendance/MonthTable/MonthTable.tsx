@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { HTMLAttributes, useMemo } from 'react';
 
 import { Table } from 'antd';
 import { TableRowSelection } from 'antd/es/table/interface';
@@ -21,9 +21,9 @@ export interface MonthTableProps {
 }
 
 const MonthTable = ({ date, employees }: MonthTableProps) => {
+  const team = useRecoilValue(teamStore);
   const scrollRef = useDragScroll();
 
-  const team = useRecoilValue(teamStore);
   const { attendances } = useAttendanceQuery({
     date: date,
     teamId: team.id,
@@ -77,29 +77,28 @@ const MonthTable = ({ date, employees }: MonthTableProps) => {
         columns={columns}
         dataSource={dataSource}
         rowSelection={rowSelection}
-        // onRow={data => {
-        //   return {
-
-        //     onContextMenu: () => console.log(data),
-        //   };
-        // }}
       />
     </MonthTableStyled>
   );
 };
 
-interface AttendanceBarProps {
+interface AttendanceBarProps extends HTMLAttributes<HTMLDivElement> {
   employee: EmployeeData;
   attendances: AttendanceData[];
   cellWidth: number;
 }
 
-export const AttendanceBar = ({ employee, attendances, cellWidth }: AttendanceBarProps) => {
+export const AttendanceBar = ({
+  employee,
+  attendances,
+  cellWidth,
+  ...props
+}: AttendanceBarProps) => {
   const width = attendances.length * cellWidth;
   const color = employee.position.color;
 
   return (
-    <AttendanceBarStyled style={{ width: width }}>
+    <AttendanceBarStyled style={{ width: width }} {...props}>
       <div className="attendance-bar" style={{ backgroundColor: color }} />
     </AttendanceBarStyled>
   );

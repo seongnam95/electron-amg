@@ -19,8 +19,8 @@ const MonthPayrollCard = ({}: MonthPayrollCardProps) => {
   return (
     <Card
       title="📊 월 수당 통계"
-      maxWidth="90rem"
       extra={<AntDatePicker picker="month" defaultValue={date} onChange={handleChangeMonth} />}
+      style={{ maxWidth: '90rem' }}
     >
       <MonthPayrollBar date={date} />
     </Card>

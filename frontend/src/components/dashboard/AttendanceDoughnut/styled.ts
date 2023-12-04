@@ -11,7 +11,7 @@ export const AttendanceDoughnutStyled = styled.div`
 
   .chart-wrap {
     position: relative;
-    max-width: 14rem;
-    max-height: 14rem;
+    max-width: 16rem;
+    max-height: 16rem;
   }
 `;

@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 
 export const ManagementLayoutStyled = styled.div`
+  --navbar-width: 7.8rem;
   --header-height: 4.6rem;
 
   position: relative;
@@ -10,6 +11,10 @@ export const ManagementLayoutStyled = styled.div`
   width: 100vw;
   height: calc(100% - ${p => p.theme.sizes.titleBarHeight});
 
+  .SideNavbar {
+    width: var(--navbar-width);
+  }
+
   .Header {
     height: var(--header-height);
     width: calc(100vw - var(--navbar-width));
@@ -17,7 +22,6 @@ export const ManagementLayoutStyled = styled.div`
 
   .Content {
     overflow: hidden;
-
     height: calc(100% - var(--header-height));
     width: calc(100vw - var(--navbar-width));
   }

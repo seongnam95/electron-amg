@@ -2,7 +2,7 @@ import { useState } from 'react';
 
 import { Modal, Form, Input, InputNumber, Switch, Flex, Button } from 'antd';
 
-import { useAttendanceUpdateMutation } from './queryHooks/useAttendanceQuery';
+import { useAttendanceUpdate } from './queryHooks/useAttendanceQuery';
 
 interface FormData {
   mealIncluded?: boolean;
@@ -24,7 +24,7 @@ export const useAttendanceUpdateModal = (teamId?: string, date?: string) => {
     updateAttendanceMutate({ ids: attendanceIds, body: data });
   };
 
-  const { updateAttendanceMutate, isUpdateAttendanceLoading } = useAttendanceUpdateMutation({
+  const { updateAttendanceMutate, isUpdateAttendanceLoading } = useAttendanceUpdate({
     teamId: teamId,
     date: date,
     onSuccess: handleCancel,

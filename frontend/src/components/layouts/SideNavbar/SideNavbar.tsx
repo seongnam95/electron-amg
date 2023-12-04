@@ -4,25 +4,17 @@ import { FaBusinessTime } from 'react-icons/fa';
 import { GoHomeFill } from 'react-icons/go';
 import { Link, useLocation } from 'react-router-dom';
 
-import { Flex } from 'antd';
 import clsx from 'clsx';
 import { motion, LayoutGroup, AnimatePresence } from 'framer-motion';
-import { useRecoilValue } from 'recoil';
+import { useSetRecoilState } from 'recoil';
 
-import { layoutStore } from '~/stores/layoutConfig';
+import { MenuItemData, breadcrumbStore } from '~/stores/breadcrumb';
 
 import { SideNavbarStyled } from './styled';
 
-export interface MenuItemData {
-  key: string;
-  text: string;
-  path: string;
-  icon?: JSX.Element | ReactNode;
-}
-
 const SideNavbar = () => {
   const { pathname } = useLocation();
-  const { sideBarMode } = useRecoilValue(layoutStore);
+  const setBreadcrumb = useSetRecoilState(breadcrumbStore);
 
   const menus: MenuItemData[] = useMemo(
     () => [
@@ -49,13 +41,13 @@ const SideNavbar = () => {
   );
 
   return (
-    <SideNavbarStyled className={clsx('SideNavbar', sideBarMode === 'mini' && 'mini')}>
+    <SideNavbarStyled className="SideNavbar">
       <LayoutGroup>
         <div className="items">
           <AnimatePresence>
             {menus.map(item => {
               const isActive = pathname === item.path;
-
+              if (isActive) setBreadcrumb([item]);
               return (
                 <motion.div
                   key={item.key}
@@ -80,10 +72,7 @@ const SideNavbar = () => {
                         }}
                       />
                     )}
-                    <Flex>
-                      {item.icon}
-                      {item.text}
-                    </Flex>
+                    {item.icon}
                   </Link>
                 </motion.div>
               );

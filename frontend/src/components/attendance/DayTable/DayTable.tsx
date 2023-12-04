@@ -6,10 +6,7 @@ import { TableRowSelection } from 'antd/es/table/interface';
 import { useRecoilValue } from 'recoil';
 
 import Dock from '~/components/common/Dock';
-import {
-  useAttendanceQuery,
-  useAttendanceUpdateMutation,
-} from '~/hooks/queryHooks/useAttendanceQuery';
+import { useAttendanceQuery, useAttendanceUpdate } from '~/hooks/queryHooks/useAttendanceQuery';
 import { useDragScroll } from '~/hooks/useDragScroll';
 import { teamStore } from '~/stores/team';
 import { EmployeeData } from '~/types/employee';
@@ -18,12 +15,14 @@ import { ChangeValueType, getColumns, DayTableData } from './config';
 import { DayTableStyled } from './styled';
 
 export interface DayTableProps {
-  date?: string;
   employees: EmployeeData[];
-  onClickName: (id: string) => void;
+  date?: string;
+  onClick?: (id: string) => void;
+  onCreate?: (ids: string[]) => void;
+  onCancel?: (ids: string[]) => void;
 }
 
-const DayTable = ({ date, employees, onClickName }: DayTableProps) => {
+const DayTable = ({ date, employees, onClick, onCreate, onCancel }: DayTableProps) => {
   const team = useRecoilValue(teamStore);
   const scrollRef = useDragScroll();
   const [selectedRowKeys, setSelectedRowKeys] = useState<Key[]>([]);
@@ -34,7 +33,7 @@ const DayTable = ({ date, employees, onClickName }: DayTableProps) => {
     enabled: team.existTeam,
   });
 
-  const { updateAttendanceMutate } = useAttendanceUpdateMutation({
+  const { updateAttendanceMutate } = useAttendanceUpdate({
     teamId: team.id,
     date: date,
     onSuccess: data => console.log(data),
@@ -45,6 +44,9 @@ const DayTable = ({ date, employees, onClickName }: DayTableProps) => {
     updateAttendanceMutate({ ids: [id], body: { [key]: value } });
   };
 
+  const handleCreate = (id: string) => onCreate?.([id]);
+  const handleCancel = (id: string) => onCancel?.([id]);
+
   // Row 체크 핸들러
   const rowSelection: TableRowSelection<DayTableData> = {
     selectedRowKeys,
@@ -54,8 +56,10 @@ const DayTable = ({ date, employees, onClickName }: DayTableProps) => {
   // 테이블 컬럼 불러오기, 핸들러
   const columns = getColumns({
     employees: employees,
-    onClickName: onClickName,
-    onChangeValue: handleChangeValue,
+    onClick: onClick,
+    onChange: handleChangeValue,
+    onCreate: handleCreate,
+    onCancel: handleCancel,
   });
 
   // 테이블 데이터 맵핑
@@ -84,8 +88,6 @@ const DayTable = ({ date, employees, onClickName }: DayTableProps) => {
           <Button type="text" size="large" icon={<RiExchangeFundsLine size="2.1rem" />} />
         </Tooltip>
       </Dock>
-
-      {/* <DayTableFooter employees={employees} /> */}
     </DayTableStyled>
   );
 };

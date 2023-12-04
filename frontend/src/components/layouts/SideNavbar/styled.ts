@@ -3,11 +3,8 @@ import styled from 'styled-components';
 export const SideNavbarStyled = styled.div`
   background-color: ${props => props.theme.colors.sidebarBG};
   border-right: 1px solid ${p => p.theme.colors.borderColor};
-
   padding: 1.4rem 0;
   z-index: 10;
-
-  width: 40rem;
 
   a {
     position: relative;
@@ -15,6 +12,8 @@ export const SideNavbarStyled = styled.div`
     display: flex;
     align-items: center;
     justify-content: center;
+    white-space: nowrap;
+    gap: 1.6rem;
 
     color: ${props => props.theme.colors.textColor3};
     width: 100%;

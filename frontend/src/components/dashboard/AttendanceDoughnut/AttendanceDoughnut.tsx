@@ -27,15 +27,15 @@ const AttendanceDoughnut = ({ date = dayjs() }: AttendanceDoughnutProps) => {
     enabled: team.existTeam,
   });
 
-  const counts = countAttendanceByPosition(team, attendances);
+  const positions = countAttendanceByPosition(team, attendances);
   const nonAttendanceCount = employees.length - attendances.length;
-  const isEmpty = counts.reduce((sum, item) => sum + item.count, 0) === 0;
+  const isEmpty = positions.reduce((sum, item) => sum + item.count.total, 0) === 0;
 
   const dataSource = {
-    labels: [...counts.map(position => position.name), '미출근'],
+    labels: [...positions.map(position => position.name), '미출근'],
     datasets: [
       {
-        data: [...counts.map(pos => pos.count), nonAttendanceCount],
+        data: [...positions.map(position => position.count.total), nonAttendanceCount],
         backgroundColor: [...team.positions.map(position => position.color), '#e8e8e8'],
         borderWidth: 0,
       },
@@ -55,7 +55,7 @@ const AttendanceDoughnut = ({ date = dayjs() }: AttendanceDoughnutProps) => {
 
   return (
     <AttendanceDoughnutStyled className="AttendanceDoughnut">
-      <Flex className="chart-wrap">
+      <Flex className="chart-wrap" justify="space-between">
         <Doughnut
           data={isEmpty ? EmptyDoughnutData : dataSource}
           options={{

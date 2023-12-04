@@ -3,7 +3,7 @@ import { AxiosResponse } from 'axios';
 import { EmployeeData, EmployeeDocument } from '~/types/employee';
 
 import axiosPrivate from './axios';
-import { BaseResponse, FetchListResponse, FetchResponse } from './response';
+import { BaseResponse, DataListResponse, DataResponse } from './response';
 
 export type FetchEmployeeFilter = 'all' | 'valid' | 'invalid';
 
@@ -14,11 +14,11 @@ interface FetchEmployeesParams {
 
 export const fetchEmployees =
   ({ teamId, ...params }: FetchEmployeesParams) =>
-  async (): Promise<FetchListResponse<EmployeeData>> => {
+  async (): Promise<DataListResponse<EmployeeData>> => {
     const teamEndpoint = import.meta.env.VITE_TEAM_ENDPOINT;
     const endpoint = import.meta.env.VITE_EMPLOYEE_ENDPOINT;
 
-    const { data } = await axiosPrivate.get<FetchListResponse<EmployeeData>>(
+    const { data } = await axiosPrivate.get<DataListResponse<EmployeeData>>(
       `${teamEndpoint}/${teamId}/${endpoint}`,
       { params },
     );
@@ -30,7 +30,7 @@ export const fetchEmployeeDocument =
   (employeeId?: string) => async (): Promise<EmployeeDocument> => {
     const endpoint = import.meta.env.VITE_EMPLOYEE_ENDPOINT;
 
-    const { data } = await axiosPrivate.get<FetchResponse<EmployeeDocument>>(
+    const { data } = await axiosPrivate.get<DataResponse<EmployeeDocument>>(
       `${endpoint}/${employeeId}/document`,
     );
 

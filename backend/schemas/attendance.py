@@ -5,8 +5,8 @@ from schemas.position import PositionResponse
 
 
 class AttendanceCreate(BaseModel):
-    position_id: str
-    meal_included: bool
+    position_id: Optional[str] = None
+    meal_included: Optional[bool] = None
     pay: Optional[int] = None
     pre_pay: Optional[int] = None
     memo: Optional[str] = None

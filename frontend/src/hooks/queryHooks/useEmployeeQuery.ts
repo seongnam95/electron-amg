@@ -3,7 +3,7 @@ import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { AxiosError } from 'axios';
 
 import { fetchEmployeeDocument, fetchEmployees, removeEmployees } from '~/api/employee';
-import { BaseResponse, FetchListResponse } from '~/api/response';
+import { BaseResponse, DataListResponse } from '~/api/response';
 import { EmployeeData, EmployeeDocument } from '~/types/employee';
 import { QueryBaseOptions } from '~/types/query';
 
@@ -16,7 +16,7 @@ export const useEmployeeQuery = ({
   teamId,
   valid,
   ...baseOptions
-}: EmployeeQueryOptions<FetchListResponse<EmployeeData>>) => {
+}: EmployeeQueryOptions<DataListResponse<EmployeeData>>) => {
   const queryKey: string[] = [
     import.meta.env.VITE_EMPLOYEE_QUERY_KEY,
     teamId,

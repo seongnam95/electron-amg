@@ -1,11 +1,11 @@
-import { ReactNode, forwardRef } from 'react';
+import { HTMLAttributes, ReactNode, forwardRef } from 'react';
 
 import { Flex } from 'antd';
 import clsx from 'clsx';
 
-import { CardStyled, CardStyledProps } from './styled';
+import { CardStyled } from './styled';
 
-export interface CardProps extends CardStyledProps {
+export interface CardProps extends HTMLAttributes<HTMLDivElement> {
   className?: string;
   title?: string;
   children?: ReactNode;
@@ -15,11 +15,9 @@ export interface CardProps extends CardStyledProps {
 }
 
 const Card = forwardRef<HTMLDivElement, CardProps>(
-  ({ title, className, suffix, extra, width, height, maxHeight, maxWidth, children }, cardRef) => {
-    const style = { width, maxWidth, height, maxHeight };
-
+  ({ title, className, suffix, extra, children, ...props }, cardRef) => {
     return (
-      <CardStyled ref={cardRef} className={clsx('Card', className)} style={style}>
+      <CardStyled ref={cardRef} className={clsx('Card', className)} {...props}>
         <Flex className="card-header" align="center" justify={extra ? 'space-between' : 'left'}>
           <Flex gap={12}>
             <span className="card-title">{title}</span>

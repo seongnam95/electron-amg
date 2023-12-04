@@ -1,7 +1,7 @@
 import { PositionData } from '~/types/position';
 
 import axiosPrivate from './axios';
-import { FetchListResponse } from './response';
+import { DataListResponse } from './response';
 
 interface FetchPositionsParams {
   teamId?: string;
@@ -10,11 +10,11 @@ interface FetchPositionsParams {
 
 export const fetchPositions =
   ({ teamId, ...params }: FetchPositionsParams) =>
-  async (): Promise<FetchListResponse<PositionData>> => {
+  async (): Promise<DataListResponse<PositionData>> => {
     const teamEndpoint = import.meta.env.VITE_TEAM_ENDPOINT;
     const endpoint = import.meta.env.VITE_POSITION_ENDPOINT;
 
-    const { data } = await axiosPrivate.get<FetchListResponse<PositionData>>(
+    const { data } = await axiosPrivate.get<DataListResponse<PositionData>>(
       `${teamEndpoint}/${teamId}/${endpoint}`,
       { params },
     );

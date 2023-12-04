@@ -1,13 +1,13 @@
 import { TeamCreateBody, TeamData, TeamUpdateBody } from '~/types/team';
 
 import axiosPrivate from './axios';
-import { FetchListResponse, FetchResponse } from './response';
+import { DataListResponse, DataResponse } from './response';
 
 export const fetchTeams = (userId?: string) => async (): Promise<TeamData[]> => {
   const userEndpoint = import.meta.env.VITE_USER_ENDPOINT;
   const teamEndpoint = import.meta.env.VITE_TEAM_ENDPOINT;
 
-  const { data } = await axiosPrivate.get<FetchListResponse<TeamData>>(
+  const { data } = await axiosPrivate.get<DataListResponse<TeamData>>(
     `${userEndpoint}/${userId}/${teamEndpoint}`,
   );
 
@@ -21,7 +21,7 @@ export const createTeam =
     const userEndpoint = import.meta.env.VITE_USER_ENDPOINT;
     const teamEndpoint = import.meta.env.VITE_TEAM_ENDPOINT;
 
-    const { data } = await axiosPrivate.post<FetchResponse<TeamData>>(
+    const { data } = await axiosPrivate.post<DataResponse<TeamData>>(
       `${userEndpoint}/${userId}/${teamEndpoint}`,
       body,
     );
@@ -33,7 +33,7 @@ export const updateTeam =
   (teamId?: string) =>
   async (body: TeamUpdateBody): Promise<TeamData> => {
     const teamEndpoint = import.meta.env.VITE_TEAM_ENDPOINT;
-    const { data } = await axiosPrivate.put<FetchResponse<TeamData>>(
+    const { data } = await axiosPrivate.put<DataResponse<TeamData>>(
       `${teamEndpoint}/${teamId}`,
       body,
     );

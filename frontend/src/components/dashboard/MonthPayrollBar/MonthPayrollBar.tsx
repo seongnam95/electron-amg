@@ -55,6 +55,7 @@ const MonthPayrollBar = ({ date = dayjs() }: MonthPayrollBarProps) => {
                 grid: { display: false },
                 ticks: { display: false },
                 border: { display: false },
+                stacked: true,
               },
             },
             plugins: {

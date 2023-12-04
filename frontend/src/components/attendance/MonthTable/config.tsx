@@ -41,11 +41,9 @@ export const getColumns = ({
       title: day.dayNum,
       width: 40,
       align: 'center',
-      onCell: data => {
-        return {
-          onContextMenu: () => onCellContextMenu?.(day.day, data),
-        };
-      },
+      onCell: data => ({
+        onContextMenu: () => onCellContextMenu?.(day.day, data),
+      }),
       render: (attendances, { employee }) => {
         if (attendances) {
           return <AttendanceBar employee={employee} attendances={attendances} cellWidth={40} />;

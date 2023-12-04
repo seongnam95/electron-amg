@@ -41,6 +41,7 @@ class CRUDAttendance(CRUDBase[Attendance, AttendanceCreate, AttendanceUpdate]):
         obj_in_data["employee_id"] = employee.id
         obj_in_data["working_date"] = working_date
         obj_in_data["pay"] = pay
+        obj_in_data["position_id"] = employee.position_id
         db_obj = self.model(**obj_in_data)
 
         db.add(db_obj)

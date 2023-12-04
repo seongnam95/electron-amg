@@ -1,21 +1,24 @@
 import { useState } from 'react';
-import { Link, Outlet, useNavigate } from 'react-router-dom';
 
 import { Flex, Segmented } from 'antd';
 import dayjs, { Dayjs } from 'dayjs';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilValue } from 'recoil';
 
 import DayTable from '~/components/attendance/DayTable';
 import MonthTable from '~/components/attendance/MonthTable';
 import AntDatePicker from '~/components/common/DatePicker';
 import EmployeeInfoDrawer from '~/components/drawer/EmployeeInfoDrawer';
-import { useAttendanceUpdateMutation } from '~/hooks/queryHooks/useAttendanceQuery';
+import {
+  useAttendanceCreate,
+  useAttendanceRemove,
+  useAttendanceUpdate,
+} from '~/hooks/queryHooks/useAttendanceQuery';
 import { useEmployeeQuery } from '~/hooks/queryHooks/useEmployeeQuery';
 import { useAttendanceUpdateModal } from '~/hooks/useAttendanceUpdateModal';
 import { useRemoveEmployee } from '~/hooks/useRemoveEmployee';
-import { breadcrumbStore } from '~/stores/breadcrumb';
 import { teamStore } from '~/stores/team';
 import { AttendancePageStyled } from '~/styles/pageStyled/attendancePageStyled';
+import { AttendanceCreateBody } from '~/types/attendance';
 
 type ViewType = 'monthly' | 'daily';
 
@@ -34,25 +37,38 @@ const AttendancePage = () => {
   const { employees } = useEmployeeQuery({ teamId: team?.id, enabled: team.existTeam });
   const { openModal, AttendanceUpdateModal } = useAttendanceUpdateModal(team?.id, date);
 
-  const { updateAttendanceMutate } = useAttendanceUpdateMutation({
-    teamId: team.id,
-    date: date,
-    onSuccess: data => console.log(data),
-  });
+  // 출근 업데이트
+  const { createAttendanceCreate } = useAttendanceCreate({ teamId: team.id, date: date });
+  const { removeAttendanceMutate } = useAttendanceRemove({ teamId: team.id, date: date });
+  const { updateAttendanceMutate } = useAttendanceUpdate({ teamId: team.id, date: date });
 
+  // 근로자 삭제
   const { removeEmployee } = useRemoveEmployee({
     teamId: team.id,
     onSuccess: () => setOpenEmployeeInfo(false),
   });
 
-  // handler
+  // 날짜 변경 핸들러
   const handleChangeDate = (date: Dayjs | null) => {
     if (date) setSelectedDay(date);
   };
 
+  // 이름 클릭 핸들러
   const handleClickName = (id: string) => {
     setEmployeeId(id);
     setOpenEmployeeInfo(true);
+  };
+
+  const handleCreateAttendance = (ids: string[]) => {
+    const bodys: AttendanceCreateBody[] = ids.map(id => ({
+      employeeId: id,
+      workingDate: date,
+    }));
+    createAttendanceCreate(bodys);
+  };
+
+  const handleRemoveAttendance = (ids: string[]) => {
+    removeAttendanceMutate(ids);
   };
 
   const selectedEmployee = employees.find(employee => employee.id === employeeId);
@@ -77,14 +93,16 @@ const AttendancePage = () => {
       {/* 테이블 Wrap */}
       <Flex className="table-container" flex={1}>
         {viewType === 'daily' ? (
-          <DayTable date={date} employees={employees} onClickName={handleClickName} />
+          <DayTable
+            date={date}
+            employees={employees}
+            onClick={handleClickName}
+            onCreate={handleCreateAttendance}
+            onCancel={handleRemoveAttendance}
+          />
         ) : (
           <MonthTable date={date} employees={employees} />
         )}
-      </Flex>
-
-      <Flex className="attendance-footer" align="center">
-        팀장: 1000
       </Flex>
 
       {/* 근로자 정보 Drawer */}

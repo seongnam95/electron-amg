@@ -23,14 +23,18 @@ export type ChangeValueType = {
 
 interface ColumnProps {
   employees?: EmployeeData[];
-  onClickName?: (id: string) => void;
-  onChangeValue?: (v: ChangeValueType) => void;
+  onClick?: (id: string) => void;
+  onCreate?: (id: string) => void;
+  onCancel?: (id: string) => void;
+  onChange?: (v: ChangeValueType) => void;
 }
 
 export const getColumns = ({
   employees,
-  onClickName,
-  onChangeValue,
+  onClick,
+  onChange,
+  onCreate,
+  onCancel,
 }: ColumnProps): ColumnsType<DayTableData> => {
   const positionFilters = [...new Set(employees?.map(employee => employee.position.name))].map(
     position => {
@@ -59,7 +63,7 @@ export const getColumns = ({
       ellipsis: true,
       sorter: (a, b) => a.name.localeCompare(b.name),
       render: (_, { key, name }) => {
-        const handleClick = () => onClickName?.(key.toString());
+        const handleClick = () => onClick?.(key.toString());
 
         return (
           <Button size="small" type="text" onClick={handleClick}>
@@ -118,7 +122,7 @@ export const getColumns = ({
         const label = mealIncluded ? 'Y' : 'N';
 
         const handleDoubleClick = () => {
-          onChangeValue?.({
+          onChange?.({
             key: 'mealIncluded',
             id: id,
             value: !mealIncluded,
@@ -155,7 +159,7 @@ export const getColumns = ({
             trigger="contextMenu"
             placeholder={prePay}
             onSubmit={(key, value) =>
-              onChangeValue?.({ key: key as keyof AttendanceUpdateBody, id: id, value: value })
+              onChange?.({ key: key as keyof AttendanceUpdateBody, id: id, value: value })
             }
           >
             <Button type="text" size="small" style={{ color: '#EA3B3B' }}>
@@ -183,7 +187,7 @@ export const getColumns = ({
             trigger="contextMenu"
             placeholder={memo}
             onSubmit={(key, value) =>
-              onChangeValue?.({ key: key as keyof AttendanceUpdateBody, id: id, value: value })
+              onChange?.({ key: key as keyof AttendanceUpdateBody, id: id, value: value })
             }
           >
             <Flex justify="center">
@@ -214,14 +218,23 @@ export const getColumns = ({
       title: '상태',
       width: 80,
       align: 'center',
-      render: (_, { attendance }) => {
+      render: (_, { key, attendance }) => {
         if (attendance === undefined)
           return (
-            <Tag style={{ width: '100%', textAlign: 'center', marginInlineEnd: 0 }}>미출근</Tag>
+            <Tag
+              onContextMenu={() => onCreate?.(key.toString())}
+              style={{ width: '100%', textAlign: 'center', marginInlineEnd: 0 }}
+            >
+              미출근
+            </Tag>
           );
-        const { pay } = attendance;
+
         return (
-          <Tag color="#5855F5" style={{ width: '100%', textAlign: 'center', marginInlineEnd: 0 }}>
+          <Tag
+            color="#5855F5"
+            onContextMenu={() => onCancel?.(attendance.id)}
+            style={{ width: '100%', textAlign: 'center', marginInlineEnd: 0 }}
+          >
             출근
           </Tag>
         );

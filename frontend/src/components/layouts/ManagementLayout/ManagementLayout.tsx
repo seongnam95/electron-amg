@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react';
 import { Outlet } from 'react-router-dom';
 
 import { Flex } from 'antd';
@@ -8,8 +9,10 @@ import SideNavbar from '../SideNavbar';
 import { ManagementLayoutStyled } from './styled';
 
 const ManagementLayout = () => {
+  const layoutRef = useRef<HTMLDivElement>(null);
+
   return (
-    <ManagementLayoutStyled id="layout" className="ManagementLayout">
+    <ManagementLayoutStyled ref={layoutRef} id="layout" className="ManagementLayout">
       <SideNavbar />
       <Flex vertical>
         <Header />

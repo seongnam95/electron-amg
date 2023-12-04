@@ -2,11 +2,11 @@ export interface BaseResponse {
   msg: string;
 }
 
-export interface FetchResponse<T> extends BaseResponse {
+export interface DataResponse<T> extends BaseResponse {
   result: T;
 }
 
-export interface ListResponseData<T> {
+export interface ListResponseResult<T> {
   total: number;
   offset: number;
   page: number;
@@ -15,11 +15,11 @@ export interface ListResponseData<T> {
   list: Array<T>;
 }
 
-export interface FetchListResponse<T> extends BaseResponse {
-  result: ListResponseData<T>;
+export interface DataListResponse<T> extends BaseResponse {
+  result: ListResponseResult<T>;
 }
 
-export interface FetchListParams {
+export interface DataListParams {
   page?: number;
   limit?: number;
 }

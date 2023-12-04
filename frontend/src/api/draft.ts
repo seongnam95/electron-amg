@@ -1,11 +1,11 @@
 import { DraftCreateBody, DraftData } from '~/types/draft';
 
 import axiosPrivate from './axios';
-import { FetchListResponse, FetchResponse } from './response';
+import { DataListResponse, DataResponse } from './response';
 
 export const fetchDrafts =
   (teamId?: string) =>
-  async <T extends FetchListResponse<DraftData>>(): Promise<DraftData[]> => {
+  async <T extends DataListResponse<DraftData>>(): Promise<DraftData[]> => {
     const teamEndpoint = import.meta.env.VITE_TEAM_ENDPOINT;
     const draftEndpoint = import.meta.env.VITE_DRAFT_ENDPOINT;
 
@@ -20,7 +20,7 @@ export const createDraft =
     const teamEndpoint = import.meta.env.VITE_TEAM_ENDPOINT;
     const draftEndpoint = import.meta.env.VITE_DRAFT_ENDPOINT;
 
-    const { data } = await axiosPrivate.post<FetchResponse<DraftData>>(
+    const { data } = await axiosPrivate.post<DataResponse<DraftData>>(
       `${teamEndpoint}/${teamId}/${draftEndpoint}`,
       body,
     );
@@ -31,7 +31,7 @@ export const createDraft =
 export const removeDraft = async (draftId?: string): Promise<DraftData> => {
   const endpoint = import.meta.env.VITE_DRAFT_ENDPOINT;
 
-  const { data } = await axiosPrivate.delete<FetchResponse<DraftData>>(`${endpoint}/${draftId}`);
+  const { data } = await axiosPrivate.delete<DataResponse<DraftData>>(`${endpoint}/${draftId}`);
 
   return data.result;
 };
