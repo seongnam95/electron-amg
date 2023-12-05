@@ -10,6 +10,7 @@ export const MonthAttendanceStyled = styled.div`
     position: relative;
     width: 100%;
     white-space: nowrap;
+    border-collapse: collapse;
 
     thead {
       > tr {
@@ -28,7 +29,7 @@ export const MonthAttendanceStyled = styled.div`
         }
 
         th {
-          padding: 0.4rem 1.6rem;
+          padding: 0.6rem 1.6rem;
         }
       }
     }
@@ -47,5 +48,12 @@ export const MonthAttendanceStyled = styled.div`
     width: 1.6rem;
     height: 1.4rem;
     border-radius: 0.3rem;
+  }
+
+  .hint-text {
+    font-size: ${p => p.theme.sizes.textSmall};
+    color: ${p => p.theme.colors.textColor3};
+    margin-left: 3px;
+    font-weight: normal;
   }
 `;

@@ -15,11 +15,11 @@ const DashboardPage = () => {
   return (
     <DashboardPageStyled>
       <MonthPayrollCard />
+      <Card title="월별 출근 합계" style={{ flex: 1, height: '36rem' }}>
+        <MonthAttendance />
+      </Card>
       <Flex gap="2rem">
         <AttendanceCard />
-        <Card title="월별 출근 합계" style={{ flex: 1, height: '36rem' }}>
-          <MonthAttendance />
-        </Card>
       </Flex>
     </DashboardPageStyled>
   );

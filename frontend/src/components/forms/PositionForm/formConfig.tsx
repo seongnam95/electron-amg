@@ -74,6 +74,19 @@ export const formItems = [
       />
     ),
   },
+  // {
+  //   name: 'preset',
+  //   label: '프리셋',
+  //   rules: formRules.pay,
+  //   component: (
+  //     <InputNumber
+  //       min={1}
+  //       max={30}
+  //       style={{ width: '100%' }}
+  //       formatter={value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+  //     />
+  //   ),
+  // },
   {
     name: 'color',
     label: '구분 색상',

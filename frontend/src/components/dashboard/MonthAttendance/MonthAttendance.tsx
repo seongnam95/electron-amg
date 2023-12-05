@@ -7,7 +7,7 @@ import { useRecoilValue } from 'recoil';
 import { useAttendanceQuery } from '~/hooks/queryHooks/useAttendanceQuery';
 import { teamStore } from '~/stores/team';
 
-import { countAttendanceByPosition } from '../AttendanceDoughnut/util';
+import { countAttendanceByPosition, transformAttendanceData } from '../AttendanceDoughnut/util';
 import { MonthAttendanceStyled } from './styled';
 
 export interface MonthAttendanceProps {
@@ -16,24 +16,14 @@ export interface MonthAttendanceProps {
 
 const MonthAttendance = ({ date = dayjs() }: MonthAttendanceProps) => {
   const team = useRecoilValue(teamStore);
+
   const { attendances, isEmpty } = useAttendanceQuery({
     teamId: team.id,
     date: date.format('YY-MM'),
     enabled: team.existTeam,
   });
 
-  const datas = countAttendanceByPosition(team, attendances);
-
-  const chartData = {
-    labels: datas.map(data => data.name),
-    datasets: [
-      {
-        data: datas.map(data => data.count),
-        backgroundColor: team.positions.map(position => position.color),
-        borderWidth: 0,
-      },
-    ],
-  };
+  const positions = transformAttendanceData(team, attendances);
 
   return (
     <MonthAttendanceStyled className="MonthAttendance">
@@ -43,33 +33,61 @@ const MonthAttendance = ({ date = dayjs() }: MonthAttendanceProps) => {
             <th rowSpan={2} align="left">
               직위
             </th>
-            <th colSpan={2}>식대</th>
+            <th colSpan={4} align="center">
+              식대
+            </th>
             <th rowSpan={2} align="right">
-              합계
+              총 출근일
+            </th>
+            <th rowSpan={2} align="right">
+              총 합계액
             </th>
           </tr>
           <tr>
-            <th>포함</th>
-            <th>미포함</th>
+            <th align="right">포함</th>
+            <th align="right">합계</th>
+            <th align="right">미포함</th>
+            <th align="right">합계</th>
           </tr>
         </thead>
         <tbody>
-          {datas.map(data => {
+          {positions?.map(data => {
             const {
-              count: { includeMeal, excludeMeal, total },
+              position,
+              stats: { mealIncluded, mealExcluded, total },
             } = data;
+
             return (
-              <tr key={data.name}>
+              <tr key={position.name}>
                 <td width={30}>
                   <Flex align="center" gap={6}>
-                    <div className="color-box" style={{ background: data.color }} />
-                    {data.name}
+                    <div className="color-box" style={{ background: position.color }} />
+                    {position.name}
                   </Flex>
                 </td>
-                <td align="center">{includeMeal}</td>
-                <td align="center"> {excludeMeal}</td>
+                <td align="right">
+                  {mealIncluded.count}
+                  <span className="hint-text">일</span>
+                </td>
+                <td align="right">
+                  {mealIncluded.sumPay.toLocaleString()}
+                  <span className="hint-text">원</span>
+                </td>
+                <td align="right">
+                  {mealExcluded.count}
+                  <span className="hint-text">일</span>
+                </td>
+                <td align="right">
+                  {mealExcluded.sumPay.toLocaleString()}
+                  <span className="hint-text">원</span>
+                </td>
+                <td align="right">
+                  {total.count}
+                  <span className="hint-text">일</span>
+                </td>
                 <td align="right" className="total-cell">
-                  {total}
+                  {total.sumPay.toLocaleString()}
+                  <span className="hint-text">원</span>
                 </td>
               </tr>
             );

@@ -1,4 +1,4 @@
-import { ReactNode, useMemo } from 'react';
+import { ReactNode, useEffect, useMemo } from 'react';
 import { BsFillPeopleFill } from 'react-icons/bs';
 import { FaBusinessTime } from 'react-icons/fa';
 import { GoHomeFill } from 'react-icons/go';
@@ -15,6 +15,11 @@ import { SideNavbarStyled } from './styled';
 const SideNavbar = () => {
   const { pathname } = useLocation();
   const setBreadcrumb = useSetRecoilState(breadcrumbStore);
+
+  useEffect(() => {
+    const activeMenu = menus.find(menu => menu.path === pathname);
+    if (activeMenu) setBreadcrumb([activeMenu]);
+  }, [pathname]);
 
   const menus: MenuItemData[] = useMemo(
     () => [
@@ -47,7 +52,7 @@ const SideNavbar = () => {
           <AnimatePresence>
             {menus.map(item => {
               const isActive = pathname === item.path;
-              if (isActive) setBreadcrumb([item]);
+
               return (
                 <motion.div
                   key={item.key}
