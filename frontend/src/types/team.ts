@@ -6,6 +6,7 @@ export interface TeamData {
   name: string;
   color: string;
   mealCost: number;
+  otPay: number;
   createDate: string;
   positions: PositionData[];
 }
@@ -13,7 +14,7 @@ export interface TeamData {
 /** 그룹 생성 API 바디 */
 export type TeamCreateBody = {
   positions?: PositionCreateBody[];
-} & Pick<TeamData, 'name' | 'color' | 'mealCost'>;
+} & Pick<TeamData, 'name' | 'color' | 'otPay' | 'mealCost'>;
 
 /** 그룹 업데이트 API 바디 */
 export type TeamUpdateBody = Partial<TeamCreateBody>;

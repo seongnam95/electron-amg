@@ -52,7 +52,7 @@ def delete_team(
 # 팀
 @router.get(
     "/user/{user_id}/team",
-    response_model=ListResponse[schemas.TeamWithPositionResponse],
+    response_model=ListResponse[schemas.TeamResponse],
 )
 def read_all_team(
     user_id: str,
@@ -71,7 +71,7 @@ def read_all_team(
 
 
 # 팀 생성 (유저)
-@router.post("/user/{user_id}/team", response_model=DataResponse[schemas.TeamResponse])
+@router.post("/user/{user_id}/team", response_model=DataResponse[schemas.Team])
 def create_team_by_user(
     user_id: str, team_in: schemas.TeamCreate, db: Session = Depends(deps.get_db)
 ):
@@ -83,23 +83,6 @@ def create_team_by_user(
     team = crud.team.create_team(db=db, obj_in=team_in, user_id=user_id)
 
     return DataResponse(msg="정상 처리되었습니다.", result=team)
-
-
-# [ Position ] 직위 생성
-@router.post(
-    "/team/{team_id}/position", response_model=DataResponse[schemas.PositionResponse]
-)
-def create_position_by_team(
-    team_id: str,
-    position_in: schemas.PositionCreate,
-    db: Session = Depends(deps.get_db),
-):
-    team = crud.team.get(db, id=team_id)
-    if not team:
-        raise HTTPException(status_code=404, detail="존재하지 않는 팀입니다.")
-
-    position = crud.position.create_position(db=db, obj_in=position_in, team_id=team_id)
-    return DataResponse(msg="정상 처리되었습니다.", result=position)
 
 
 # [ Draft ]계약 초안 생성

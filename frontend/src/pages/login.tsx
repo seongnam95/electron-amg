@@ -5,10 +5,9 @@ import { useNavigate } from 'react-router-dom';
 
 import { Button, Flex, Form, Input, InputRef } from 'antd';
 import axios, { AxiosError } from 'axios';
-import { useRecoilState, useSetRecoilState } from 'recoil';
+import { useSetRecoilState } from 'recoil';
 
 import { loginUser } from '~/api/auth';
-import { useTeamQuery } from '~/hooks/queryHooks/useTeamQuery';
 import { useSoundApp } from '~/hooks/useSoundApp';
 import { userStore } from '~/stores/user';
 import { LoginPageStyled } from '~/styles/pageStyled/loginPageStyled';

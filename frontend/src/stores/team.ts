@@ -14,6 +14,7 @@ const initTeam: SelectTeamData = {
   createDate: '',
   positions: [],
   existTeam: false,
+  otPay: 15000,
 };
 
 export const teamStore = atom<SelectTeamData>({

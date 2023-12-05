@@ -22,7 +22,9 @@ class Position(Base):
     color = Column(String, nullable=False)  # 색상
     salary_code = Column(Integer, nullable=False)  # 급여 종류
     standard_pay = Column(Integer, nullable=False)  # 기준 단가
+    sorting_index = Column(Integer, nullable=False)  # 순서
 
+    is_leader = Column(Boolean, nullable=False)  # 팀장 여부
     is_child = Column(Boolean, nullable=False)  # 팀장 인센티브 추가 여부
     is_active = Column(Boolean, nullable=False, default=False)  # 활성화 여부
 
@@ -33,3 +35,6 @@ class Position(Base):
     # 소속 (팀)
     team_id = Column(String, ForeignKey("team.id"), nullable=False)
     team = relationship("Team", uselist=False, back_populates="positions")
+
+    # 대행사 단가
+    unit_id = Column(String, ForeignKey("unit.id"), nullable=False)

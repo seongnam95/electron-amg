@@ -23,12 +23,11 @@ class Team(Base):
     name = Column(String, nullable=False)  # 이름
     color = Column(String, nullable=False)  # 색상
     meal_cost = Column(Integer, nullable=False)  # 식대 금액
+    ot_pay = Column(Integer, nullable=False, default=0)  # OT 시급
 
     create_date = Column(DateTime(timezone=True), nullable=False, default=datetime.now)
 
     users = relationship("User", secondary=user_team, back_populates="teams")
     drafts = relationship("Draft", back_populates="team")
     employees = relationship("Employee", back_populates="team")
-    positions = relationship(
-        "Position", back_populates="team", cascade="all, delete-orphan"
-    )
+    positions = relationship("Position", back_populates="team")

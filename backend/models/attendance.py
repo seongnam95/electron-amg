@@ -19,10 +19,12 @@ class Attendance(Base):
         default=lambda: str(B64UUID(uuid4())),
     )  # PK
 
-    pay = Column(Integer, nullable=False, default=0)  # 페이
-    pre_pay = Column(Integer, nullable=False, default=0)  # 선지급
     memo = Column(String, nullable=False, default="")  # 메모
-    meal_included = Column(Boolean, nullable=False, default=False)  # 식대 포함
+
+    is_paid = Column(Boolean, nullable=False, default=False)  # 선지급
+    include_meal_cost = Column(Boolean, nullable=False, default=False)  # 식대 포함
+    ot_count = Column(Integer, nullable=False, default=0)  # OT
+
     working_date = Column(
         String, nullable=False, default=date.today().strftime("%Y-%m-%d")
     )  # 근무일

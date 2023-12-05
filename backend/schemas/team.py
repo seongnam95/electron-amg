@@ -3,17 +3,19 @@ from pydantic import BaseModel, model_validator
 from datetime import datetime
 
 from schemas.common import check_update_fields
-from schemas.position import PositionResponse, PositionCreate
+from schemas.position import PositionResponse
+from schemas.unit import UnitCreate
 
 
 class TeamBase(BaseModel):
     name: str
     color: str
     meal_cost: int
+    ot_pay: int
 
 
 class TeamCreate(TeamBase):
-    positions: Optional[List[PositionCreate]]
+    units: List[UnitCreate]
 
 
 class TeamUpdate(BaseModel):
@@ -27,7 +29,7 @@ class TeamUpdate(BaseModel):
         return check_update_fields(cls, values)
 
 
-class TeamResponse(TeamBase):
+class Team(TeamBase):
     id: str
     create_date: datetime
 
@@ -35,7 +37,7 @@ class TeamResponse(TeamBase):
         from_attributes = True
 
 
-class TeamWithPositionResponse(TeamResponse):
+class TeamResponse(Team):
     positions: List[PositionResponse]
 
     class Config:

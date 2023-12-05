@@ -6,10 +6,11 @@ import { TeamCreateBody } from '~/types/team';
 
 import { formItems } from './formConfig';
 
-const defaultValues = {
+const defaultValues: TeamCreateBody = {
   name: '',
   color: '#4C53FF',
   mealCost: 7000,
+  otPay: 15000,
 };
 
 export interface TeamFormProps {

@@ -2,11 +2,11 @@ import { PositionData } from './position';
 
 export interface AttendanceData {
   id: string;
-  pay: number;
-  prePay: number;
   memo: string;
-  mealIncluded: boolean;
+  otCount: number;
   workingDate: string;
+  isPaid: boolean;
+  includeMealCost: boolean;
   employeeId: string;
   positionId: string;
   position: PositionData;

@@ -8,6 +8,7 @@ import { useRecoilValue } from 'recoil';
 import Card from '~/components/common/Card';
 import PositionForm from '~/components/forms/PositionForm';
 import TeamForm from '~/components/forms/TeamForm';
+import UnitForm from '~/components/forms/UnitForm';
 import { useTeamCreateMutation } from '~/hooks/queryHooks/useTeamQuery';
 import { userStore } from '~/stores/user';
 import { InitPageStyled } from '~/styles/pageStyled/initPageStyled';
@@ -18,6 +19,7 @@ const defaultValues: TeamCreateBody = {
   name: '',
   color: '#4C53FF',
   mealCost: 7000,
+  otPay: 15000,
   positions: [],
 };
 
@@ -36,6 +38,7 @@ const InitPage = () => {
   };
 
   const handleNextClick = () => {
+    console.log(steps.length);
     if (steps.length - 1 !== step) setStep(prev => prev + 1);
   };
 
@@ -69,6 +72,12 @@ const InitPage = () => {
       component: (
         <TeamForm values={formData} submitBtnText="다음" onSubmit={handleTeamFormSubmit} />
       ),
+    },
+    {
+      key: 'position',
+      title: '단가 설정',
+      subTitle: '직위 추가하기',
+      component: <UnitForm submitBtnText="다음" onSubmit={handleNextClick} />,
     },
     {
       key: 'position',

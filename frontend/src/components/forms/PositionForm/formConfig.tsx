@@ -23,9 +23,9 @@ const formRules: { [key: string]: FormRule[] } = {
   pay: [
     {
       type: 'number',
-      min: 30000,
-      max: 200000,
-      message: '3만원 ~ 20만원 입력',
+      min: 0,
+      max: 500000,
+      message: '최대 50만원 입력 가능',
     },
     {
       required: true,

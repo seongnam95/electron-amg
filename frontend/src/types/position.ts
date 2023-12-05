@@ -11,6 +11,8 @@ export interface PositionData {
   color: string;
   salaryCode: SalaryType;
   standardPay: number;
+  sortingIndex: number;
+  isLeader: boolean;
   isChild: boolean;
 }
 

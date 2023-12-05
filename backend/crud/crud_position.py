@@ -6,12 +6,11 @@ from sqlalchemy.orm import Session
 
 class CRUDPosition(CRUDBase[Position, PositionCreate, PositionUpdate]):
     def create_position(
-        self, db: Session, *, obj_in: PositionCreate, team_id: str
+        self, db: Session, *, obj_in: PositionCreate, unit_id: str
     ) -> Position:
         position_dict = obj_in.model_dump()
-        position_dict["team_id"] = team_id
-        db_obj = Position(**position_dict)  # type: ignore
-
+        position_dict["unit_id"] = unit_id
+        db_obj = Position(**position_dict)
         db.add(db_obj)
         db.commit()
         db.refresh(db_obj)

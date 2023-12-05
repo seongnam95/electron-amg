@@ -2,7 +2,7 @@ from typing import List
 
 from fastapi.encoders import jsonable_encoder
 from crud.base import CRUDBase
-from models import Team, Position, User
+from models import Team, Unit, User
 from schemas import TeamCreate, TeamUpdate
 from sqlalchemy.orm import Session
 from models.associations import user_team
@@ -21,15 +21,15 @@ class CRUDTeam(CRUDBase[Team, TeamCreate, TeamUpdate]):
         )
 
     def create_team(self, db: Session, *, user_id: str, obj_in: TeamCreate) -> Team:
-        # 'positions'를 제외한 나머지 팀 데이터 처리
-        team_data = obj_in.model_dump(exclude={"positions"})
+        # 'units'를 제외한 나머지 팀 데이터 처리
+        team_data = obj_in.model_dump(exclude={"units"})
         team_obj = Team(**team_data)
 
-        # 'positions' 처리
-        if obj_in.positions:
-            for position_data in obj_in.positions:
-                position_obj = Position(**position_data.model_dump(), team=team_obj)
-                db.add(position_obj)
+        # 'units' 처리
+        if obj_in.units:
+            for unit_data in obj_in.units:
+                unit_obj = Unit(**unit_data.model_dump(), team=team_obj)
+                db.add(unit_obj)
 
         # 팀 데이터 저장
         db.add(team_obj)

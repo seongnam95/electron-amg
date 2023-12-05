@@ -14,6 +14,12 @@ const formRules = {
       message: '2-12글자 사이어야 합니다',
     },
   ],
+  otPay: [
+    {
+      required: true,
+      message: 'OT 시급 필수입니다.',
+    },
+  ],
   mealCost: [
     {
       required: true,
@@ -39,6 +45,18 @@ export const formItems = [
     name: 'mealCost',
     label: '식대',
     rules: formRules.mealCost,
+    component: (
+      <InputNumber
+        min={0}
+        style={{ width: '100%' }}
+        formatter={value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+      />
+    ),
+  },
+  {
+    name: 'otPay',
+    label: 'OT (시급)',
+    rules: formRules.otPay,
     component: (
       <InputNumber
         min={0}

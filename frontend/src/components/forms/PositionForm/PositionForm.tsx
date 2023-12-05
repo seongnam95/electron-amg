@@ -17,6 +17,8 @@ const defaultValues: PositionCreateBody = {
   salaryCode: 1,
   isChild: false,
   standardPay: 0,
+  isLeader: false,
+  sortingIndex: 0,
 };
 
 export interface PositionFormProps {

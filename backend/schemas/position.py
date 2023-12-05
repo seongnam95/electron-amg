@@ -8,19 +8,25 @@ class PositionBase(BaseModel):
     color: str
     salary_code: int
     standard_pay: int
+    sorting_index: int
+    is_leader: bool
     is_child: bool
+    unit_id: str
 
 
 class PositionCreate(PositionBase):
     pass
 
 
-class PositionUpdate(PositionBase):
+class PositionUpdate(BaseModel):
     name: Optional[str] = None
     color: Optional[str] = None
     salary_code: Optional[int] = None
     standard_pay: Optional[int] = None
+    is_leader: Optional[bool] = None
     is_child: Optional[bool] = None
+    is_active: Optional[bool] = None
+    unit_id: Optional[str] = None
 
     @model_validator(mode="before")
     def check_fields(cls, values: dict):
@@ -29,6 +35,9 @@ class PositionUpdate(PositionBase):
 
 class PositionResponse(PositionBase):
     id: str
+    is_active: bool
+    team_id: str
+    unit_id: str
 
     class Config:
         from_attributes = True

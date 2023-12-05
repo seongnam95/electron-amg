@@ -118,7 +118,7 @@ def create_init_attendances(db: Session = Depends(deps.get_db)):
             attendance_in = schemas.AttendanceCreate(
                 position_id=employee.position_id,
                 pay=employee.position.standard_pay,
-                meal_included=False,
+                include_meal_cost=False,
                 working_date=f"23-12-{day.zfill(2)}",
             )
             crud.attendance.create_attendance(

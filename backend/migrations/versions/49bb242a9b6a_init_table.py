@@ -1,8 +1,8 @@
 """init table
 
-Revision ID: aae1519c532a
+Revision ID: 49bb242a9b6a
 Revises: 
-Create Date: 2023-12-01 13:30:14.175087
+Create Date: 2023-12-05 19:39:43.138522
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = 'aae1519c532a'
+revision: str = '49bb242a9b6a'
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -25,20 +25,34 @@ def upgrade() -> None:
     sa.Column('name', sa.String(), nullable=False),
     sa.Column('color', sa.String(), nullable=False),
     sa.Column('meal_cost', sa.Integer(), nullable=False),
+    sa.Column('ot_pay', sa.Integer(), nullable=False),
     sa.Column('create_date', sa.DateTime(timezone=True), nullable=False),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_index(op.f('ix_team_id'), 'team', ['id'], unique=True)
+    op.create_table('unit',
+    sa.Column('id', sa.String(), nullable=False),
+    sa.Column('name', sa.String(), nullable=False),
+    sa.Column('unit_pay', sa.Integer(), nullable=False),
+    sa.Column('team_id', sa.String(), nullable=False),
+    sa.ForeignKeyConstraint(['team_id'], ['team.id'], ),
+    sa.PrimaryKeyConstraint('id')
+    )
+    op.create_index(op.f('ix_unit_id'), 'unit', ['id'], unique=True)
     op.create_table('position',
     sa.Column('id', sa.String(), nullable=False),
     sa.Column('name', sa.String(), nullable=False),
     sa.Column('color', sa.String(), nullable=False),
     sa.Column('salary_code', sa.Integer(), nullable=False),
     sa.Column('standard_pay', sa.Integer(), nullable=False),
+    sa.Column('sorting_index', sa.Integer(), nullable=False),
+    sa.Column('is_leader', sa.Boolean(), nullable=False),
     sa.Column('is_child', sa.Boolean(), nullable=False),
     sa.Column('is_active', sa.Boolean(), nullable=False),
     sa.Column('team_id', sa.String(), nullable=False),
+    sa.Column('unit_id', sa.String(), nullable=False),
     sa.ForeignKeyConstraint(['team_id'], ['team.id'], ),
+    sa.ForeignKeyConstraint(['unit_id'], ['unit.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_index(op.f('ix_position_id'), 'position', ['id'], unique=True)
@@ -77,10 +91,10 @@ def upgrade() -> None:
     op.create_index(op.f('ix_employee_id'), 'employee', ['id'], unique=True)
     op.create_table('attendance',
     sa.Column('id', sa.String(), nullable=False),
-    sa.Column('pay', sa.Integer(), nullable=False),
-    sa.Column('pre_pay', sa.Integer(), nullable=False),
     sa.Column('memo', sa.String(), nullable=False),
-    sa.Column('meal_included', sa.Boolean(), nullable=False),
+    sa.Column('is_paid', sa.Boolean(), nullable=False),
+    sa.Column('include_meal_cost', sa.Boolean(), nullable=False),
+    sa.Column('ot_count', sa.Integer(), nullable=False),
     sa.Column('working_date', sa.String(), nullable=False),
     sa.Column('position_id', sa.String(), nullable=False),
     sa.Column('employee_id', sa.String(), nullable=False),
@@ -129,6 +143,8 @@ def downgrade() -> None:
     op.drop_table('draft')
     op.drop_index(op.f('ix_position_id'), table_name='position')
     op.drop_table('position')
+    op.drop_index(op.f('ix_unit_id'), table_name='unit')
+    op.drop_table('unit')
     op.drop_index(op.f('ix_team_id'), table_name='team')
     op.drop_table('team')
     # ### end Alembic commands ###

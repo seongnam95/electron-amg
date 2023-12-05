@@ -32,15 +32,9 @@ class CRUDAttendance(CRUDBase[Attendance, AttendanceCreate, AttendanceUpdate]):
         if attendance:
             raise HTTPException(status_code=404, detail="이미 출근처리 되었습니다.")
 
-        # 수당 계산 [단가 - 선지급 (+ 식대)]
-        pay = employee.position.standard_pay
-        pay -= attendance_in.pre_pay if attendance_in.pre_pay else 0
-        pay += attendance.employee.team.meal_cost if attendance_in.meal_included else 0
-
         obj_in_data = jsonable_encoder(attendance_in)
-        obj_in_data["employee_id"] = employee.id
         obj_in_data["working_date"] = working_date
-        obj_in_data["pay"] = pay
+        obj_in_data["employee_id"] = employee.id
         obj_in_data["position_id"] = employee.position_id
         db_obj = self.model(**obj_in_data)
 
@@ -62,29 +56,6 @@ class CRUDAttendance(CRUDBase[Attendance, AttendanceCreate, AttendanceUpdate]):
             .filter(Attendance.working_date.startswith(date_str))
             .all()
         )
-
-    # Attendance 업데이트
-    def update_attendance(
-        self, db: Session, attendance: Attendance, attendance_in: AttendanceUpdate
-    ):
-        update_data = attendance_in.model_dump(exclude_unset=True)
-
-        attendance.pay = attendance.employee.position.standard_pay - update_data.get(
-            "pre_pay", attendance.pre_pay
-        )
-
-        meal_cost = attendance.employee.team.meal_cost
-        if update_data.get("meal_included", attendance.meal_included):
-            attendance.pay += meal_cost
-
-        for field, value in update_data.items():
-            if field != "pay":
-                setattr(attendance, field, value)
-
-        db.add(attendance)
-        db.commit()
-        db.refresh(attendance)
-        return attendance
 
 
 attendance = CRUDAttendance(Attendance)

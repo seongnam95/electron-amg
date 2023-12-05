@@ -3,7 +3,6 @@ from typing import List, Optional
 from datetime import datetime
 
 from schemas.common import check_update_fields
-from schemas.team import TeamResponse
 
 
 class UserCreate(BaseModel):

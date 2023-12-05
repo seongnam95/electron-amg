@@ -5,27 +5,26 @@ from schemas.position import PositionResponse
 
 
 class AttendanceCreate(BaseModel):
-    position_id: Optional[str] = None
-    meal_included: Optional[bool] = None
-    pay: Optional[int] = None
-    pre_pay: Optional[int] = None
-    memo: Optional[str] = None
+    include_meal_cost: Optional[bool] = None
     working_date: Optional[str] = None
+    position_id: Optional[str] = None
 
 
-class AttendanceUpdate(BaseModel):
+class AttendanceUpdate(AttendanceCreate):
     pay: Optional[int] = None
-    pre_pay: Optional[int] = None
+    is_paid: Optional[bool] = None
     memo: Optional[str] = None
-    meal_included: Optional[bool] = None
+    include_meal_cost: Optional[bool] = None
+    ot_count: Optional[int] = None
+    position_id: Optional[str] = None
 
 
 class AttendanceResponse(BaseModel):
     id: str
     pay: int
-    pre_pay: int
+    is_paid: bool
     memo: str
-    meal_included: bool
+    include_meal_cost: bool
     working_date: str
     employee_id: str
     position_id: str

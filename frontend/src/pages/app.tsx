@@ -1,12 +1,11 @@
 import { useEffect, useMemo } from 'react';
-import { Outlet, useLocation, useNavigate } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 
 import { ConfigProvider, theme, App as AntApp } from 'antd';
 import locale from 'antd/lib/locale/ko_KR';
 import 'dayjs/locale/ko';
 import styled, { ThemeProvider } from 'styled-components';
 
-import PrivateRoute from '~/components/common/PrivateRoute';
 import RouterWrap from '~/components/layouts/RouterWrap';
 import Titlebar from '~/components/layouts/Titlebar';
 import { InitGlobalStyled } from '~/styles/init';

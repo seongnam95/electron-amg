@@ -72,9 +72,7 @@ def update_attendance(
     if not attendance:
         raise HTTPException(status_code=404, detail="존재하지 않는 로그입니다.")
 
-    attendance = crud.attendance.update_attendance(
-        db=db, attendance=attendance, attendance_in=attendance_in
-    )
+    attendance = crud.attendance.update(db=db, db_obj=attendance, obj_in=attendance_in)
     return DataResponse(msg="정상 처리되었습니다.", result=attendance)
 
 
