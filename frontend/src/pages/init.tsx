@@ -76,8 +76,18 @@ const InitPage = () => {
     {
       key: 'position',
       title: '단가 설정',
-      subTitle: '직위 추가하기',
-      component: <UnitForm submitBtnText="다음" onSubmit={handleNextClick} />,
+      subTitle: '대행사 단가 설정',
+      component: (
+        <UnitForm
+          submitBtnText="다음"
+          subBtn={
+            <Button type="text" onClick={handlePrevClick}>
+              이전
+            </Button>
+          }
+          onSubmit={handleNextClick}
+        />
+      ),
     },
     {
       key: 'position',

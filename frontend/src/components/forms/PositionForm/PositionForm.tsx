@@ -149,7 +149,7 @@ const PositionForm = ({
                   </Button>
                 </>
               ) : (
-                <Button htmlType="submit" style={{ flex: 1, color: '#326CF9' }}>
+                <Button htmlType="submit" type="dashed" block>
                   <MdOutlineAdd style={{ marginRight: 8 }} />
                   추가하기
                 </Button>
