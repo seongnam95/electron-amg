@@ -1,5 +1,3 @@
-import { Input, InputNumber } from 'antd';
-
 import { UnitCreateBody } from '~/types/unit';
 
 export const initUnits: UnitCreateBody[] = [

@@ -49,7 +49,7 @@ def delete_team(
 # ------------------------------------------------------------------------------------------------
 
 
-# 팀
+# 팀 불러오기
 @router.get(
     "/user/{user_id}/team",
     response_model=ListResponse[schemas.TeamResponse],
@@ -71,14 +71,15 @@ def read_all_team(
 
 
 # 팀 생성 (유저)
-@router.post("/user/{user_id}/team", response_model=DataResponse[schemas.Team])
+@router.post(
+    "/user/{user_id}/team", response_model=DataResponse[schemas.TeamUnitResponse]
+)
 def create_team_by_user(
     user_id: str, team_in: schemas.TeamCreate, db: Session = Depends(deps.get_db)
 ):
-    if user_id:
-        user = crud.user.get(db, id=user_id)
-        if not user:
-            raise HTTPException(status_code=404, detail="존재하지 않는 계정입니다.")
+    user = crud.user.get(db, id=user_id)
+    if not user:
+        raise HTTPException(status_code=404, detail="존재하지 않는 계정입니다.")
 
     team = crud.team.create_team(db=db, obj_in=team_in, user_id=user_id)
 

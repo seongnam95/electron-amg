@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { Button, Space, Steps } from 'antd';
+import { Space, Steps } from 'antd';
 import { motion } from 'framer-motion';
 import { useRecoilValue } from 'recoil';
 
@@ -9,17 +9,28 @@ import Card from '~/components/common/Card';
 import PositionForm from '~/components/forms/PositionForm';
 import TeamForm from '~/components/forms/TeamForm';
 import UnitForm from '~/components/forms/UnitForm';
+import { initUnits } from '~/components/forms/UnitForm/formConfig';
+import { usePositionCreateMutation } from '~/hooks/queryHooks/usePositionQuery';
 import { useTeamCreateMutation } from '~/hooks/queryHooks/useTeamQuery';
 import { userStore } from '~/stores/user';
 import { InitPageStyled } from '~/styles/pageStyled/initPageStyled';
 import { PositionCreateBody } from '~/types/position';
 import { TeamCreateBody } from '~/types/team';
+import { UnitCreateBody, UnitData } from '~/types/unit';
 
-const defaultValues: TeamCreateBody = {
-  name: '',
-  color: '#4C53FF',
-  mealCost: 7000,
-  otPay: 15000,
+interface FormData {
+  team: TeamCreateBody;
+  positions: PositionCreateBody[];
+}
+
+const defaultValues: FormData = {
+  team: {
+    name: '',
+    color: '#4C53FF',
+    mealCost: 7000,
+    otPay: 15000,
+    units: initUnits,
+  },
   positions: [],
 };
 
@@ -27,31 +38,59 @@ const InitPage = () => {
   const { id } = useRecoilValue(userStore);
   const [step, setStep] = useState<number>(0);
   const [prevStep, setPrevStep] = useState(0);
-  const [formData, setFormData] = useState<TeamCreateBody>(defaultValues);
+  const [formData, setFormData] = useState<FormData>(defaultValues);
+  const [units, setUnits] = useState<UnitData[]>([]);
+
   const navigate = useNavigate();
 
+  useEffect(() => console.log(formData), [formData]);
   useEffect(() => setPrevStep(step), [step]);
-  const { createTeamMutate, isCreateTeamLoading } = useTeamCreateMutation({ userId: id });
+
+  const { createTeamMutate, isCreateTeamLoading } = useTeamCreateMutation({
+    userId: id,
+    onSuccess: team => setUnits(team.units),
+  });
+
+  const { createPositionMutate, isCreatePositionLoading } = usePositionCreateMutation({
+    userId: id,
+  });
 
   const handlePrevClick = () => {
     if (step !== 0) setStep(prev => prev - 1);
   };
 
   const handleNextClick = () => {
-    console.log(steps.length);
     if (steps.length - 1 !== step) setStep(prev => prev + 1);
   };
 
+  // TeamForm 서브밋 핸들러
   const handleTeamFormSubmit = (team: TeamCreateBody) => {
     setFormData(prev => {
       return {
-        ...team,
+        team: {
+          ...team,
+          units: prev.team.units,
+        },
         positions: prev.positions,
       };
     });
     handleNextClick();
   };
 
+  // UnitForm 체인지 핸들러
+  const handleUnitFormChange = (units: UnitCreateBody[]) => {
+    setFormData(prev => {
+      return {
+        team: {
+          ...prev.team,
+          units: units,
+        },
+        positions: prev.positions,
+      };
+    });
+  };
+
+  // PositionForm 체인지 핸들러
   const handlePositionFormChange = (positions: PositionCreateBody[]) => {
     setFormData(prev => {
       return {
@@ -61,8 +100,23 @@ const InitPage = () => {
     });
   };
 
-  const createTeamWithPosition = () =>
-    createTeamMutate(formData, { onSuccess: () => navigate('/management/dashboard') });
+  // 팀 생성 서브밋
+  const createTeamSubmit = () =>
+    createTeamMutate(formData.team, {
+      onSuccess: handleNextClick,
+      onError: err => {
+        console.log('err', err);
+      },
+    });
+
+  // 직위 생성 서브밋
+  const createPositionSubmit = () =>
+    createPositionMutate(formData.positions, {
+      onSuccess: () => navigate('/management/dashboard'),
+      onError: err => {
+        console.log('err', err);
+      },
+    });
 
   const steps = [
     {
@@ -70,22 +124,22 @@ const InitPage = () => {
       title: '팀 추가',
       subTitle: '팀 정보',
       component: (
-        <TeamForm values={formData} submitBtnText="다음" onSubmit={handleTeamFormSubmit} />
+        <TeamForm values={formData.team} submitBtnText="다음" onSubmit={handleTeamFormSubmit} />
       ),
     },
     {
-      key: 'position',
+      key: 'unit',
       title: '단가 설정',
       subTitle: '대행사 단가 설정',
       component: (
         <UnitForm
-          submitBtnText="다음"
-          subBtn={
-            <Button type="text" onClick={handlePrevClick}>
-              이전
-            </Button>
-          }
-          onSubmit={handleNextClick}
+          values={formData.team.units}
+          submitBtnText="팀 생성하기"
+          cancelBtnText="이전"
+          isLoading={isCreateTeamLoading}
+          onCancel={handlePrevClick}
+          onChange={handleUnitFormChange}
+          onSubmit={createTeamSubmit}
         />
       ),
     },
@@ -95,16 +149,12 @@ const InitPage = () => {
       subTitle: '직위 추가하기',
       component: (
         <PositionForm
-          values={formData?.positions}
-          submitBtnText="완료"
-          subBtn={
-            <Button type="text" onClick={handlePrevClick}>
-              이전
-            </Button>
-          }
-          isBtnLoading={isCreateTeamLoading}
+          values={formData.positions}
+          unitValues={units}
+          submitBtnText="직위 생성"
+          isLoading={isCreatePositionLoading}
           onChange={handlePositionFormChange}
-          onSubmit={createTeamWithPosition}
+          onSubmit={createPositionSubmit}
         />
       ),
     },

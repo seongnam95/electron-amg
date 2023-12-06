@@ -3,8 +3,8 @@ from pydantic import BaseModel, model_validator
 from datetime import datetime
 
 from schemas.common import check_update_fields
-from schemas.position import PositionResponse
-from schemas.unit import UnitCreate
+from schemas.position import PositionCreate, PositionResponse
+from schemas.unit import UnitCreate, UnitResponse
 
 
 class TeamBase(BaseModel):
@@ -32,6 +32,13 @@ class TeamUpdate(BaseModel):
 class Team(TeamBase):
     id: str
     create_date: datetime
+
+    class Config:
+        from_attributes = True
+
+
+class TeamUnitResponse(Team):
+    units: List[UnitResponse]
 
     class Config:
         from_attributes = True

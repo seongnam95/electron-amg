@@ -7,6 +7,7 @@ class PositionBase(BaseModel):
     name: str
     color: str
     salary_code: int
+    preset: int
     standard_pay: int
     sorting_index: int
     is_leader: bool
@@ -22,6 +23,7 @@ class PositionUpdate(BaseModel):
     name: Optional[str] = None
     color: Optional[str] = None
     salary_code: Optional[int] = None
+    preset: Optional[int] = None
     standard_pay: Optional[int] = None
     is_leader: Optional[bool] = None
     is_child: Optional[bool] = None
@@ -35,7 +37,6 @@ class PositionUpdate(BaseModel):
 
 class PositionResponse(PositionBase):
     id: str
-    is_active: bool
     team_id: str
     unit_id: str
 

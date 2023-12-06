@@ -23,3 +23,4 @@ class Unit(Base):
 
     # 소속 (팀)
     team_id = Column(String, ForeignKey("team.id"), nullable=False)
+    team = relationship("Team", uselist=False, back_populates="units")

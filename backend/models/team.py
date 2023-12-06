@@ -30,4 +30,5 @@ class Team(Base):
     users = relationship("User", secondary=user_team, back_populates="teams")
     drafts = relationship("Draft", back_populates="team")
     employees = relationship("Employee", back_populates="team")
+    units = relationship("Unit", back_populates="team")
     positions = relationship("Position", back_populates="team")

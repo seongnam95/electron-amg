@@ -1,15 +1,17 @@
 from crud.base import CRUDBase
-from models import Position
+from models import Position, Unit
 from schemas import PositionCreate, PositionUpdate
 from sqlalchemy.orm import Session
 
 
 class CRUDPosition(CRUDBase[Position, PositionCreate, PositionUpdate]):
     def create_position(
-        self, db: Session, *, obj_in: PositionCreate, unit_id: str
+        self, db: Session, *, obj_in: PositionCreate, unit_obj: Unit
     ) -> Position:
         position_dict = obj_in.model_dump()
-        position_dict["unit_id"] = unit_id
+        position_dict["unit_id"] = unit_obj.id
+        position_dict["team_id"] = unit_obj.team_id
+
         db_obj = Position(**position_dict)
         db.add(db_obj)
         db.commit()

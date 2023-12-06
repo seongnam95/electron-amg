@@ -1,7 +1,9 @@
-import { PositionData } from '~/types/position';
+import { AxiosResponse } from 'axios';
+
+import { PositionCreateBody, PositionData } from '~/types/position';
 
 import axiosPrivate from './axios';
-import { DataListResponse } from './response';
+import { BaseResponse, DataListResponse, DataResponse } from './response';
 
 interface FetchPositionsParams {
   teamId?: string;
@@ -21,3 +23,18 @@ export const fetchPositions =
 
     return data;
   };
+
+export const createPosition = async (bodys: PositionCreateBody[]): Promise<PositionData[]> => {
+  const unitEndpoint = import.meta.env.VITE_UNIT_ENDPOINT;
+  const positionEndpoint = import.meta.env.VITE_POSITION_ENDPOINT;
+
+  const createPromises = bodys.map(({ unitId, ...body }: PositionCreateBody) =>
+    axiosPrivate.post<DataResponse<PositionData>, AxiosResponse<DataResponse<PositionData>>>(
+      `${unitEndpoint}/${unitId}/${positionEndpoint}`,
+      body,
+    ),
+  );
+
+  const responses = await Promise.all(createPromises);
+  return responses.map(response => response.data.result);
+};

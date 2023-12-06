@@ -4,7 +4,7 @@ export const PositionListStyled = styled.div`
   position: relative;
   width: 34rem;
   min-height: 30rem;
-  height: 100%;
+  max-height: 36rem;
   border: 1px solid ${p => p.theme.colors.borderColor};
   border-radius: 8px;
 

@@ -21,6 +21,7 @@ class Position(Base):
     name = Column(String, nullable=False)  # 이름
     color = Column(String, nullable=False)  # 색상
     salary_code = Column(Integer, nullable=False)  # 급여 종류
+    preset = Column(Integer, nullable=False, default=1)  # 급여별 프리셋
     standard_pay = Column(Integer, nullable=False)  # 기준 단가
     sorting_index = Column(Integer, nullable=False)  # 순서
 

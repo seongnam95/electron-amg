@@ -1,4 +1,4 @@
-import { BiChild } from 'react-icons/bi';
+import { BiChild, BiSolidCrown } from 'react-icons/bi';
 import { IoMdRemoveCircle } from 'react-icons/io';
 
 import { Flex, Tag } from 'antd';
@@ -14,7 +14,7 @@ interface PositionItemProps {
 }
 
 const PositionItem = ({ className, position, onDoubleClick }: PositionItemProps) => {
-  const { name, color, salaryCode, standardPay, isChild } = position;
+  const { name, color, salaryCode, standardPay, isLeader, isChild } = position;
 
   return (
     <AnimatePresence>
@@ -31,7 +31,12 @@ const PositionItem = ({ className, position, onDoubleClick }: PositionItemProps)
             </Tag>
             {isChild ? (
               <Flex className="child-tag">
-                <BiChild size={14} color="#767676" />
+                <BiChild color="#767676" />
+              </Flex>
+            ) : null}
+            {isLeader ? (
+              <Flex className="child-tag">
+                <BiSolidCrown size={9} color="#f15151" />
               </Flex>
             ) : null}
           </Flex>
@@ -72,9 +77,15 @@ const PositionItemStyled = styled.div<{ selected?: boolean }>`
   }
 
   .child-tag {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
     background-color: #e7e7e7;
     border-radius: 50%;
     padding: 2px 1px 1px;
+    width: 1.7rem;
+    height: 1.7rem;
   }
 
   .remove-btn-wrap {

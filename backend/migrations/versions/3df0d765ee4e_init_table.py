@@ -1,8 +1,8 @@
 """init table
 
-Revision ID: 49bb242a9b6a
+Revision ID: 3df0d765ee4e
 Revises: 
-Create Date: 2023-12-05 19:39:43.138522
+Create Date: 2023-12-06 12:42:36.889934
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = '49bb242a9b6a'
+revision: str = '3df0d765ee4e'
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -44,6 +44,7 @@ def upgrade() -> None:
     sa.Column('name', sa.String(), nullable=False),
     sa.Column('color', sa.String(), nullable=False),
     sa.Column('salary_code', sa.Integer(), nullable=False),
+    sa.Column('preset', sa.Integer(), nullable=False),
     sa.Column('standard_pay', sa.Integer(), nullable=False),
     sa.Column('sorting_index', sa.Integer(), nullable=False),
     sa.Column('is_leader', sa.Boolean(), nullable=False),

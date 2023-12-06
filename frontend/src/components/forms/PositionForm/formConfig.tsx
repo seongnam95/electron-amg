@@ -20,6 +20,12 @@ const formRules: { [key: string]: FormRule[] } = {
       message: '급여 선택은 필수입니다',
     },
   ],
+  preset: [
+    {
+      required: true,
+      message: '프리셋 입력은 필수입니다',
+    },
+  ],
   pay: [
     {
       type: 'number',
@@ -62,35 +68,40 @@ export const formItems = [
     ),
   },
   {
+    name: 'preset',
+    label: '프리셋',
+    rules: formRules.preset,
+    component: (
+      <InputNumber
+        min={0}
+        style={{ width: '100%' }}
+        formatter={value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+      />
+    ),
+  },
+  {
     name: 'standardPay',
     label: '단가',
     rules: formRules.pay,
     component: (
       <InputNumber
         min={0}
-        max={200000}
+        max={500000}
         style={{ width: '100%' }}
         formatter={value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
       />
     ),
   },
-  // {
-  //   name: 'preset',
-  //   label: '프리셋',
-  //   rules: formRules.pay,
-  //   component: (
-  //     <InputNumber
-  //       min={1}
-  //       max={30}
-  //       style={{ width: '100%' }}
-  //       formatter={value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
-  //     />
-  //   ),
-  // },
   {
     name: 'color',
     label: '구분 색상',
     component: <ColorSelector />,
+  },
+  {
+    name: 'isLeader',
+    label: '팀장',
+    valuePropName: 'checked',
+    component: <Switch />,
   },
   {
     name: 'isChild',

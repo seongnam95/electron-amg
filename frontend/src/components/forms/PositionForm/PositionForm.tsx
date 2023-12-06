@@ -2,12 +2,13 @@ import { ReactNode, cloneElement, useEffect, useRef, useState } from 'react';
 import { FaTrash } from 'react-icons/fa';
 import { MdOutlineAdd } from 'react-icons/md';
 
-import { Button, Flex, Form, InputRef, Space } from 'antd';
+import { Button, Flex, Form, InputRef, Select, Space } from 'antd';
 import { motion } from 'framer-motion';
 
 import PositionList from '~/components/common/PositionList';
 import { useSoundApp } from '~/hooks/useSoundApp';
-import { PositionCreateBody } from '~/types/position';
+import { PositionCreateBody, SalaryType } from '~/types/position';
+import { UnitData } from '~/types/unit';
 
 import { formItems } from './formConfig';
 
@@ -19,30 +20,39 @@ const defaultValues: PositionCreateBody = {
   standardPay: 0,
   isLeader: false,
   sortingIndex: 0,
+  preset: 1,
+  unitId: '',
 };
 
 export interface PositionFormProps {
   values?: PositionCreateBody[];
-  subBtn?: ReactNode;
+  unitValues?: UnitData[];
+  cancelBtnText?: ReactNode;
   submitBtnText?: string;
   vertical?: boolean;
-  isBtnLoading?: boolean;
+  isLoading?: boolean;
   onChange?: (positions: PositionCreateBody[]) => void;
   onSubmit?: (positions: PositionCreateBody[]) => void;
+  onCancel?: () => void;
 }
 
 const PositionForm = ({
   values,
-  subBtn,
+  unitValues,
+  cancelBtnText,
   submitBtnText,
   vertical,
-  isBtnLoading,
+  isLoading,
   onChange,
   onSubmit,
+  onCancel,
 }: PositionFormProps) => {
   const inputRef = useRef<InputRef>(null);
   const [positions, setPositions] = useState<PositionCreateBody[]>(values ?? []);
   const [selectedPosition, setSelectedPosition] = useState<PositionCreateBody>();
+  const [salaryCode, setSalaryCode] = useState<SalaryType>(1);
+  const [isLeader, setIsLeader] = useState<boolean>(false);
+
   const isEditing = !!selectedPosition;
 
   const { soundMessage } = useSoundApp();
@@ -50,11 +60,14 @@ const PositionForm = ({
 
   useEffect(() => onChange?.(positions), [positions]);
   useEffect(() => inputFocus(), []);
+
   const inputFocus = () => inputRef.current?.focus();
 
   const resetForm = () => {
     form.resetFields();
     setSelectedPosition(undefined);
+    setIsLeader(false);
+    setSalaryCode(1);
     setTimeout(() => inputFocus(), 0);
   };
 
@@ -66,6 +79,12 @@ const PositionForm = ({
       setPositions(prev => [...prev, { ...data }]);
     }
     resetForm();
+  };
+
+  const handleSalaryChange = (code: SalaryType) => setSalaryCode(code);
+  const handleLeaderChange = (value: boolean) => {
+    setIsLeader(value);
+    form.setFieldValue('isChild', false);
   };
 
   // 직위 삭제
@@ -88,9 +107,10 @@ const PositionForm = ({
     } else onSubmit?.(positions);
   };
 
+  const unitSelectOptions = unitValues?.map(unit => ({ label: unit.name, value: unit.id }));
   return (
     <Space direction="vertical" size={24}>
-      <Flex gap={34} style={{ height: '32rem' }} vertical={vertical}>
+      <Flex gap={34} vertical={vertical}>
         <PositionList
           positions={positions}
           selectedPosition={selectedPosition}
@@ -105,22 +125,54 @@ const PositionForm = ({
           labelAlign="left"
           autoComplete="off"
           onFinish={handleAddPosition}
-          style={{ minWidth: '30rem', maxHeight: '32rem' }}
+          style={{ minWidth: '32rem' }}
         >
+          <Form.Item
+            required
+            name="unitId"
+            label="대행사 단가"
+            rules={[{ required: true, message: '대행사 단가 선택은 필수입니다.' }]}
+          >
+            <Select placeholder="(대행사 단가 선택)" options={unitSelectOptions} />
+          </Form.Item>
+
           {/* 아이템 렌더링 */}
-          {formItems.map((item, idx) => (
-            <Form.Item
-              key={item.name}
-              label={item.label}
-              name={item.name}
-              rules={item.rules}
-              valuePropName={item.valuePropName}
-            >
-              {cloneElement(item.component, {
-                ref: idx === 0 ? inputRef : null,
-              })}
-            </Form.Item>
-          ))}
+          {formItems.map((item, idx) => {
+            const disabled = () => {
+              switch (item.name) {
+                case 'preset': {
+                  return salaryCode === 3 ? false : true;
+                }
+                case 'isChild': {
+                  return isLeader ? true : false;
+                }
+                default: {
+                  return false;
+                }
+              }
+            };
+
+            return (
+              <Form.Item
+                key={item.name}
+                label={item.label}
+                name={item.name}
+                rules={item.rules}
+                valuePropName={item.valuePropName}
+              >
+                {cloneElement(item.component, {
+                  ref: idx === 0 ? inputRef : null,
+                  disabled: disabled(),
+                  onChange:
+                    item.name === 'salaryCode'
+                      ? handleSalaryChange
+                      : item.name === 'isLeader'
+                      ? handleLeaderChange
+                      : null,
+                })}
+              </Form.Item>
+            );
+          })}
 
           <motion.div
             key={isEditing ? 'edit' : 'add'}
@@ -160,12 +212,16 @@ const PositionForm = ({
       </Flex>
 
       <Flex justify="end" gap={8}>
-        {subBtn}
+        {onCancel && (
+          <Button disabled={isLoading} type="text" onClick={onCancel}>
+            {cancelBtnText ? cancelBtnText : '취소'}
+          </Button>
+        )}
         <Button
-          loading={isBtnLoading}
+          loading={isLoading}
           type="primary"
           onClick={handleSubmit}
-          style={{ width: '8rem' }}
+          style={{ padding: '0 2.4rem' }}
         >
           {submitBtnText ? submitBtnText : '저장'}
         </Button>

@@ -7,6 +7,7 @@ export const UnitFormStyled = styled.div`
     padding: 1.4rem;
     border: 1px solid ${p => p.theme.colors.borderColor};
     border-radius: 8px;
+    min-width: 40.5rem;
 
     .item-wrap {
       padding: 1rem 1.2rem;

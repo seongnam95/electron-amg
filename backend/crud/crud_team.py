@@ -25,22 +25,20 @@ class CRUDTeam(CRUDBase[Team, TeamCreate, TeamUpdate]):
         team_data = obj_in.model_dump(exclude={"units"})
         team_obj = Team(**team_data)
 
+        db.add(team_obj)
+        db.commit()
+        db.refresh(team_obj)
+
         # 'units' 처리
         if obj_in.units:
             for unit_data in obj_in.units:
-                unit_obj = Unit(**unit_data.model_dump(), team=team_obj)
+                unit_obj = Unit(**unit_data.model_dump(), team_id=team_obj.id)
                 db.add(unit_obj)
-
-        # 팀 데이터 저장
-        db.add(team_obj)
-        db.commit()
-        db.flush()
 
         # 사용자와 팀 연결
         db.execute(user_team.insert().values(user_id=user_id, team_id=team_obj.id))
         db.commit()
 
-        db.refresh(team_obj)
         return team_obj
 
     def update_team(self, db: Session, *, team: Team, team_in: TeamUpdate) -> Team:

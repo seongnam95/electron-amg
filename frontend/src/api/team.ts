@@ -11,7 +11,6 @@ export const fetchTeams = (userId?: string) => async (): Promise<TeamData[]> => 
     `${userEndpoint}/${userId}/${teamEndpoint}`,
   );
 
-  console.log('fetchTeams, data', data.result.list);
   return data.result.list;
 };
 

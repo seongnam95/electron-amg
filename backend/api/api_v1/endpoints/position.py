@@ -23,7 +23,7 @@ def create_position_by_unit(
     if not unit:
         raise HTTPException(status_code=404, detail="존재하지 않는 데이터입니다.")
 
-    position = crud.position.create_position(db=db, obj_in=position_in, unit_id=unit_id)
+    position = crud.position.create_position(db=db, obj_in=position_in, unit_obj=unit)
     return DataResponse(msg="정상 처리되었습니다.", result=position)
 
 

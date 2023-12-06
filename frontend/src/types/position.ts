@@ -10,6 +10,7 @@ export interface PositionData {
   name: string;
   color: string;
   salaryCode: SalaryType;
+  preset: number;
   standardPay: number;
   sortingIndex: number;
   isLeader: boolean;
@@ -17,7 +18,9 @@ export interface PositionData {
 }
 
 /** 근로자 생성 API 바디 */
-export type PositionCreateBody = Omit<PositionData, 'id'>;
+export type PositionCreateBody = {
+  unitId: string;
+} & Omit<PositionData, 'id'>;
 
 /** 근로자 업데이트 API 바디 */
 export type PositionUpdateBody = Partial<PositionCreateBody>;

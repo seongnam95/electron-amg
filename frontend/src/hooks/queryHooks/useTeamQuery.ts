@@ -38,10 +38,7 @@ export const useTeamCreateMutation = ({ userId, ...baseOptions }: TeamQueryOptio
   const queryKey: string[] = [import.meta.env.VITE_TEAM_QUERY_KEY, userId];
   const queryClient = useQueryClient();
 
-  const onSettled = () => {
-    console.log(queryKey);
-    queryClient.invalidateQueries(queryKey);
-  };
+  const onSettled = () => queryClient.invalidateQueries(queryKey);
 
   const { mutate: createTeamMutate, isLoading: isCreateTeamLoading } = useMutation(
     queryKey,

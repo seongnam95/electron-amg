@@ -1,4 +1,5 @@
-import { PositionCreateBody, PositionData } from './position';
+import { PositionData } from './position';
+import { UnitCreateBody, UnitData } from './unit';
 
 /** 그룹 데이터 인터페이스 */
 export interface TeamData {
@@ -8,12 +9,13 @@ export interface TeamData {
   mealCost: number;
   otPay: number;
   createDate: string;
+  units: UnitData[];
   positions: PositionData[];
 }
 
 /** 그룹 생성 API 바디 */
 export type TeamCreateBody = {
-  positions?: PositionCreateBody[];
+  units?: UnitCreateBody[];
 } & Pick<TeamData, 'name' | 'color' | 'otPay' | 'mealCost'>;
 
 /** 그룹 업데이트 API 바디 */

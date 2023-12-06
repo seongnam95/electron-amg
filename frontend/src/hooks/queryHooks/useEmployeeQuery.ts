@@ -32,9 +32,9 @@ export const useEmployeeQuery = ({
   const dataList = data?.result.list;
 
   const total = data?.result.total;
-  const teamLeader = dataList?.find(employees => employees.position.isTeamLeader);
+  const teamLeader = dataList?.find(employees => employees.position.isLeader);
   const employees = dataList
-    ? dataList.filter(employees => !employees.position.isTeamLeader).toReversed()
+    ? dataList.filter(employees => !employees.position.isLeader).toReversed()
     : [];
 
   return { teamLeader, employees, total, isLoading, isError, refetch };
