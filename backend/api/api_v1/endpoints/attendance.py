@@ -30,7 +30,6 @@ def read_attendances(
         attendance_objs = crud.attendance.get_all_attendance_by_month(
             db, employee_id=employee.id, date_str=date
         )
-
         if attendance_objs:
             for attendance in attendance_objs:
                 attendances.append(attendance)

@@ -21,10 +21,10 @@ class AttendanceUpdate(AttendanceCreate):
 
 class AttendanceResponse(BaseModel):
     id: str
-    pay: int
-    is_paid: bool
     memo: str
+    is_paid: bool
     include_meal_cost: bool
+    ot_count: int
     working_date: str
     employee_id: str
     position_id: str

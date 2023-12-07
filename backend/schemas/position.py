@@ -12,7 +12,6 @@ class PositionBase(BaseModel):
     sorting_index: int
     is_leader: bool
     is_child: bool
-    unit_id: str
 
 
 class PositionCreate(PositionBase):

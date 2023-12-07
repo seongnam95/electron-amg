@@ -110,13 +110,15 @@ const InitPage = () => {
     });
 
   // 직위 생성 서브밋
-  const createPositionSubmit = () =>
+  const createPositionSubmit = () => {
+    console.log(formData.positions);
     createPositionMutate(formData.positions, {
       onSuccess: () => navigate('/management/dashboard'),
       onError: err => {
         console.log('err', err);
       },
     });
+  };
 
   const steps = [
     {

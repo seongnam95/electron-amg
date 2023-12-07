@@ -1,3 +1,5 @@
+import { UnitData } from './unit';
+
 export const SALARY = {
   1: '일급',
   2: '주급',
@@ -15,6 +17,7 @@ export interface PositionData {
   sortingIndex: number;
   isLeader: boolean;
   isChild: boolean;
+  unitId: string;
 }
 
 /** 근로자 생성 API 바디 */

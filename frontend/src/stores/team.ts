@@ -2,22 +2,19 @@ import { atom } from 'recoil';
 
 import { TeamData } from '~/types/team';
 
-interface SelectTeamData extends TeamData {
-  existTeam: boolean;
-}
-
-const initTeam: SelectTeamData = {
+export const initTeamValue: TeamData = {
   id: '',
   name: '',
   mealCost: 0,
   color: '',
   createDate: '',
+  otPay: 0,
   positions: [],
+  units: [],
   existTeam: false,
-  otPay: 15000,
 };
 
-export const teamStore = atom<SelectTeamData>({
+export const teamStore = atom<TeamData>({
   key: 'teamState',
-  default: initTeam,
+  default: initTeamValue,
 });

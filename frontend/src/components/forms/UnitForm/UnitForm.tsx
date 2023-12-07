@@ -4,7 +4,6 @@ import { MdOutlineAdd } from 'react-icons/md';
 
 import { InputRef, Form, Button, Flex, Space, Input, InputNumber } from 'antd';
 
-import { useSoundApp } from '~/hooks/useSoundApp';
 import { UnitCreateBody } from '~/types/unit';
 
 import { initUnits } from './formConfig';
@@ -95,11 +94,17 @@ const UnitForm = ({
                         />
                       </Flex>
                     ))}
+                    <Button
+                      type="dashed"
+                      onClick={handleAdd}
+                      disabled={isLoading}
+                      block
+                      style={{ marginTop: 8 }}
+                    >
+                      <MdOutlineAdd style={{ marginRight: 8 }} />
+                      추가하기
+                    </Button>
                   </div>
-                  <Button type="dashed" onClick={handleAdd} disabled={isLoading} block>
-                    <MdOutlineAdd style={{ marginRight: 8 }} />
-                    추가하기
-                  </Button>
                 </Space>
               );
             }}

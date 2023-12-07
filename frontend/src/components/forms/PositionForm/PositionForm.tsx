@@ -58,7 +58,13 @@ const PositionForm = ({
   const { soundMessage } = useSoundApp();
   const [form] = Form.useForm<PositionCreateBody>();
 
-  useEffect(() => onChange?.(positions), [positions]);
+  useEffect(() => {
+    const sortedPositions = positions.map((position, idx) => ({
+      ...position,
+      sortingIndex: idx,
+    }));
+    onChange?.(sortedPositions);
+  }, [positions]);
   useEffect(() => inputFocus(), []);
 
   const inputFocus = () => inputRef.current?.focus();
@@ -104,7 +110,20 @@ const PositionForm = ({
   const handleSubmit = () => {
     if (positions.length === 0) {
       soundMessage.warning('하나 이상의 직위를 생성해주세요.');
-    } else onSubmit?.(positions);
+    } else {
+      onSubmit?.(positions);
+    }
+  };
+
+  const determineDisabled = (itemName: string) => {
+    switch (itemName) {
+      case 'preset':
+        return salaryCode !== 3;
+      case 'isChild':
+        return isLeader;
+      default:
+        return false;
+    }
   };
 
   const unitSelectOptions = unitValues?.map(unit => ({ label: unit.name, value: unit.id }));
@@ -114,6 +133,7 @@ const PositionForm = ({
         <PositionList
           positions={positions}
           selectedPosition={selectedPosition}
+          onReorder={setPositions}
           onDoubleClick={handlePositionDoubleClick}
         />
 
@@ -131,48 +151,33 @@ const PositionForm = ({
             required
             name="unitId"
             label="대행사 단가"
-            rules={[{ required: true, message: '대행사 단가 선택은 필수입니다.' }]}
+            rules={[{ required: true, message: '' }]}
           >
             <Select placeholder="(대행사 단가 선택)" options={unitSelectOptions} />
           </Form.Item>
 
           {/* 아이템 렌더링 */}
-          {formItems.map((item, idx) => {
-            const disabled = () => {
-              switch (item.name) {
-                case 'preset': {
-                  return salaryCode === 3 ? false : true;
-                }
-                case 'isChild': {
-                  return isLeader ? true : false;
-                }
-                default: {
-                  return false;
-                }
-              }
-            };
-
-            return (
-              <Form.Item
-                key={item.name}
-                label={item.label}
-                name={item.name}
-                rules={item.rules}
-                valuePropName={item.valuePropName}
-              >
-                {cloneElement(item.component, {
-                  ref: idx === 0 ? inputRef : null,
-                  disabled: disabled(),
-                  onChange:
-                    item.name === 'salaryCode'
-                      ? handleSalaryChange
-                      : item.name === 'isLeader'
-                      ? handleLeaderChange
-                      : null,
-                })}
-              </Form.Item>
-            );
-          })}
+          {formItems.map((item, idx) => (
+            <Form.Item
+              key={item.name}
+              label={item.label}
+              name={item.name}
+              rules={item.rules}
+              tooltip={item.tooltip}
+              valuePropName={item.valuePropName}
+            >
+              {cloneElement(item.component, {
+                ref: idx === 0 ? inputRef : null,
+                disabled: determineDisabled(item.name),
+                onChange:
+                  item.name === 'salaryCode'
+                    ? handleSalaryChange
+                    : item.name === 'isLeader'
+                    ? handleLeaderChange
+                    : null,
+              })}
+            </Form.Item>
+          ))}
 
           <motion.div
             key={isEditing ? 'edit' : 'add'}

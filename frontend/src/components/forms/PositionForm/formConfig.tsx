@@ -6,7 +6,7 @@ const formRules: { [key: string]: FormRule[] } = {
   name: [
     {
       required: true,
-      message: '직위명은 필수입니다',
+      message: '',
     },
     {
       min: 2,
@@ -17,13 +17,13 @@ const formRules: { [key: string]: FormRule[] } = {
   salary: [
     {
       required: true,
-      message: '급여 선택은 필수입니다',
+      message: '',
     },
   ],
   preset: [
     {
       required: true,
-      message: '프리셋 입력은 필수입니다',
+      message: '',
     },
   ],
   pay: [
@@ -35,13 +35,13 @@ const formRules: { [key: string]: FormRule[] } = {
     },
     {
       required: true,
-      message: '단가 입력은 필수입니다',
+      message: '',
     },
   ],
   color: [
     {
       required: true,
-      message: '색상 선택은 필수입니다',
+      message: '',
     },
   ],
 };
@@ -70,6 +70,7 @@ export const formItems = [
   {
     name: 'preset',
     label: '프리셋',
+    tooltip: '"일일 수당 x 프리셋" 으로 계산',
     rules: formRules.preset,
     component: (
       <InputNumber
@@ -81,7 +82,8 @@ export const formItems = [
   },
   {
     name: 'standardPay',
-    label: '단가',
+    label: '일일 수당',
+    tooltip: '직원에게 지급할 일일 수당',
     rules: formRules.pay,
     component: (
       <InputNumber
@@ -106,6 +108,7 @@ export const formItems = [
   {
     name: 'isChild',
     label: '팀장 인센티브 포함',
+    tooltip: '출근 시 팀장 인센티브 추가 여부',
     valuePropName: 'checked',
     component: <Switch />,
   },

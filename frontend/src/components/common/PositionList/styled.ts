@@ -27,14 +27,15 @@ export const PositionListStyled = styled.div`
     transform: translate(-50%, -50%);
   }
 
-  .position-item.editing {
-    opacity: 0.5;
+  .position-item {
+    &.editing {
+      opacity: 0.7;
 
-    &.selected {
-      opacity: 1;
-      scale: 1.06;
-      border: 1px solid ${p => p.theme.colors.borderColor};
-      box-shadow: 0 4px 14px rgba(160, 160, 160, 0.2);
+      &.selected {
+        opacity: 1;
+        scale: 1.04;
+        box-shadow: 0 4px 14px rgba(160, 160, 160, 0.2);
+      }
     }
   }
 `;

@@ -3,7 +3,7 @@ import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { useRecoilState } from 'recoil';
 
 import { createTeam, fetchTeams, updateTeam } from '~/api/team';
-import { teamStore } from '~/stores/team';
+import { initTeamValue, teamStore } from '~/stores/team';
 import { QueryBaseOptions } from '~/types/query';
 import { TeamData } from '~/types/team';
 
@@ -17,7 +17,8 @@ export const useTeamQuery = ({ userId, ...baseOptions }: TeamQueryOptions<TeamDa
   const [team, setTeam] = useRecoilState(teamStore);
 
   const onSuccess = (teams: TeamData[]) => {
-    if (team.id === '') setTeam({ ...teams[0], existTeam: true });
+    if (teams.length === 0) setTeam({ ...initTeamValue, existTeam: false });
+    else if (team.id === '') setTeam({ ...teams[0], existTeam: true });
     baseOptions.onSuccess?.(teams);
   };
 

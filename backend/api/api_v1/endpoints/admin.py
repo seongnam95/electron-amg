@@ -16,9 +16,9 @@ px_img = "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEAwADAAAD/2wBDAAIBAQIBAQICAgI
 
 @router.delete("/clear")
 def delete_all_data(db: Session = Depends(deps.get_db)):
-    db.query(models.Team).delete()
-    db.query(models.user_team).delete()
-    db.query(models.Unit).delete()
+    # db.query(models.Team).delete()
+    # db.query(models.user_team).delete()
+    # db.query(models.Unit).delete()
     db.query(models.Employee).delete()
     db.query(models.Attendance).delete()
     db.query(models.Draft).delete()
@@ -60,12 +60,12 @@ def init_data(db: Session = Depends(deps.get_db)):
             1: positions[3],
             2: positions[3],
             3: positions[3],
-            4: positions[4],
-            5: positions[4],
-            6: positions[4],
-            7: positions[4],
-            8: positions[4],
-        }.get(idx, positions[2])
+            4: positions[2],
+            5: positions[2],
+            6: positions[2],
+            7: positions[2],
+            8: positions[2],
+        }.get(idx, positions[4])
 
         body = schemas.EmployeeCreate(
             name=employee["name"],

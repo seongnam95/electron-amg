@@ -1,8 +1,8 @@
+import { forwardRef } from 'react';
 import { BiChild, BiSolidCrown } from 'react-icons/bi';
-import { IoMdRemoveCircle } from 'react-icons/io';
 
 import { Flex, Tag } from 'antd';
-import { AnimatePresence, motion } from 'framer-motion';
+import { motion } from 'framer-motion';
 import styled from 'styled-components';
 
 import { PositionCreateBody, SALARY } from '~/types/position';
@@ -13,16 +13,18 @@ interface PositionItemProps {
   onDoubleClick?: (position: PositionCreateBody) => void;
 }
 
-const PositionItem = ({ className, position, onDoubleClick }: PositionItemProps) => {
-  const { name, color, salaryCode, standardPay, isLeader, isChild } = position;
+const PositionItem = forwardRef<HTMLLIElement, PositionItemProps>(
+  ({ className, position, onDoubleClick, ...dragHandleProps }, itemRef) => {
+    const { name, color, salaryCode, standardPay, isLeader, isChild } = position;
 
-  return (
-    <AnimatePresence>
+    return (
       <motion.li
+        ref={itemRef}
         key={position.name}
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: 20 }}
+        {...dragHandleProps}
       >
         <PositionItemStyled className={className} onDoubleClick={() => onDoubleClick?.(position)}>
           <Flex align="center">
@@ -49,11 +51,11 @@ const PositionItem = ({ className, position, onDoubleClick }: PositionItemProps)
           </Flex>
         </PositionItemStyled>
       </motion.li>
-    </AnimatePresence>
-  );
-};
+    );
+  },
+);
 
-const PositionItemStyled = styled.div<{ selected?: boolean }>`
+const PositionItemStyled = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -62,7 +64,6 @@ const PositionItemStyled = styled.div<{ selected?: boolean }>`
   background-color: ${p => p.theme.colors.innerBg};
   border-radius: 8px;
 
-  opacity: ${p => (p.selected ? 0.8 : 1)};
   transition: all 140ms ease-in-out;
 
   .position-tag {
@@ -86,22 +87,6 @@ const PositionItemStyled = styled.div<{ selected?: boolean }>`
     padding: 2px 1px 1px;
     width: 1.7rem;
     height: 1.7rem;
-  }
-
-  .remove-btn-wrap {
-    width: 3rem;
-    height: 3rem;
-    cursor: pointer;
-
-    svg {
-      transition: all 140ms;
-    }
-
-    :hover {
-      svg {
-        transform: scale(1.1);
-      }
-    }
   }
 `;
 

@@ -1,5 +1,3 @@
-import { Bar } from 'react-chartjs-2';
-
 import { Flex } from 'antd';
 import dayjs, { Dayjs } from 'dayjs';
 import { useRecoilValue } from 'recoil';
@@ -7,13 +5,14 @@ import { useRecoilValue } from 'recoil';
 import { useAttendanceQuery } from '~/hooks/queryHooks/useAttendanceQuery';
 import { teamStore } from '~/stores/team';
 
-import { countAttendanceByPosition, transformAttendanceData } from '../AttendanceDoughnut/util';
+import { transformAttendanceData } from '../AttendanceDoughnut/util';
 import { MonthAttendanceStyled } from './styled';
 
 export interface MonthAttendanceProps {
   date?: Dayjs;
 }
 
+// 월 출근 통계
 const MonthAttendance = ({ date = dayjs() }: MonthAttendanceProps) => {
   const team = useRecoilValue(teamStore);
 
@@ -54,7 +53,7 @@ const MonthAttendance = ({ date = dayjs() }: MonthAttendanceProps) => {
           {positions?.map(data => {
             const {
               position,
-              stats: { mealIncluded, mealExcluded, total },
+              stats: { includeMealCost, mealExcluded, total },
             } = data;
 
             return (
@@ -66,11 +65,11 @@ const MonthAttendance = ({ date = dayjs() }: MonthAttendanceProps) => {
                   </Flex>
                 </td>
                 <td align="right">
-                  {mealIncluded.count}
+                  {includeMealCost.count}
                   <span className="hint-text">일</span>
                 </td>
                 <td align="right">
-                  {mealIncluded.sumPay.toLocaleString()}
+                  {includeMealCost.sumPay.toLocaleString()}
                   <span className="hint-text">원</span>
                 </td>
                 <td align="right">

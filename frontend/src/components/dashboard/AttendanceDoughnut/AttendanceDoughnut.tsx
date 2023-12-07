@@ -27,7 +27,7 @@ const AttendanceDoughnut = ({ date = dayjs() }: AttendanceDoughnutProps) => {
     enabled: team.existTeam,
   });
 
-  const positions = countAttendanceByPosition(team, attendances);
+  const positions = team.existTeam ? countAttendanceByPosition(team, attendances) : [];
   const nonAttendanceCount = employees.length - attendances.length;
   const isEmpty = positions.reduce((sum, item) => sum + item.count.total, 0) === 0;
 

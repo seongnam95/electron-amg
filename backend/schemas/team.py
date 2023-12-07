@@ -45,6 +45,7 @@ class TeamUnitResponse(Team):
 
 
 class TeamResponse(Team):
+    units: List[UnitResponse]
     positions: List[PositionResponse]
 
     class Config:

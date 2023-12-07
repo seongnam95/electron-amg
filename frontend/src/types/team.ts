@@ -11,6 +11,7 @@ export interface TeamData {
   createDate: string;
   units: UnitData[];
   positions: PositionData[];
+  existTeam?: boolean;
 }
 
 /** 그룹 생성 API 바디 */
