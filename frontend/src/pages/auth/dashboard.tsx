@@ -11,8 +11,6 @@ import UnitTable from '~/components/dashboard/UnitTable';
 import { DashboardPageStyled } from '~/styles/pageStyled/dashboardPageStyled';
 
 const DashboardPage = () => {
-  const [] = useState<Dayjs>(dayjs());
-
   return (
     <DashboardPageStyled>
       <Flex gap={20}>

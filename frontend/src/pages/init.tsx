@@ -37,14 +37,10 @@ const defaultValues: FormData = {
 const InitPage = () => {
   const { id } = useRecoilValue(userStore);
   const [step, setStep] = useState<number>(0);
-  const [prevStep, setPrevStep] = useState(0);
   const [formData, setFormData] = useState<FormData>(defaultValues);
   const [units, setUnits] = useState<UnitData[]>([]);
 
   const navigate = useNavigate();
-
-  useEffect(() => console.log(formData), [formData]);
-  useEffect(() => setPrevStep(step), [step]);
 
   const { createTeamMutate, isCreateTeamLoading } = useTeamCreateMutation({
     userId: id,
@@ -111,7 +107,6 @@ const InitPage = () => {
 
   // 직위 생성 서브밋
   const createPositionSubmit = () => {
-    console.log(formData.positions);
     createPositionMutate(formData.positions, {
       onSuccess: () => navigate('/management/dashboard'),
       onError: err => {
@@ -174,9 +169,9 @@ const InitPage = () => {
         />
         <motion.div
           key={step}
-          initial={{ opacity: 0, x: step > prevStep ? 140 : -140 }}
+          initial={{ opacity: 0, x: -140 }}
           animate={{ opacity: 1, x: 0 }}
-          exit={{ opacity: 0, x: step > prevStep ? -140 : 140 }}
+          exit={{ opacity: 0, x: 140 }}
         >
           <Card className="form-card" title={steps[step].subTitle}>
             {steps[step].component}

@@ -5,6 +5,7 @@ from typing import List
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 from response_model import BaseResponse
+from collections import defaultdict
 
 import models, schemas, crud
 from ... import deps
@@ -54,18 +55,26 @@ def init_data(db: Session = Depends(deps.get_db)):
     employee_bodys = []
     employee_bodys.append(admin_body)
 
-    for idx, employee in enumerate(employees):
-        position = {
-            0: positions[1],
-            1: positions[3],
-            2: positions[3],
-            3: positions[3],
-            4: positions[2],
-            5: positions[2],
-            6: positions[2],
-            7: positions[2],
-            8: positions[2],
-        }.get(idx, positions[4])
+    position_ids = defaultdict(list)
+    for position in positions:
+        position_ids[position.name].append(position.id)
+
+    assigned_counts = defaultdict(int)
+    position_counts = {"팀장": 1, "부팀장": 1, "기사": 2, "사무보조": 1}
+
+    for employee in employees:
+        assigned_position = None
+
+        # 남은 position 중에서 랜덤 선택
+        # while not assigned_position:
+        #     random_position_name = random.choice(list(position_counts.keys()))
+        #     if (
+        #         assigned_counts[random_position_name]
+        #         < position_counts[random_position_name]
+        #     ):
+        #         assigned_position = random.choice(position_ids[random_position_name])
+        #         assigned_counts[random_position_name] += 1
+        #         break
 
         body = schemas.EmployeeCreate(
             name=employee["name"],
@@ -80,14 +89,13 @@ def init_data(db: Session = Depends(deps.get_db)):
             bank_book=px_img,
             sign_base64=px_img,
             team_id=team.id,
-            position_id=position.id,
+            position_id=assigned_position,
         )
 
         employee_bodys.append(body)
 
     for obj in employee_bodys:
         crud.employee.create_employee(db=db, employee_in=obj)
-    # print(len(employee_bodys))
 
 
 def csv_to_employees():
@@ -111,7 +119,6 @@ def csv_to_employees():
 @router.post("/init/attendance", response_model=BaseResponse)
 def create_init_attendances(db: Session = Depends(deps.get_db)):
     employees = db.query(models.Employee).all()
-
     for employee in employees:
         random_days = generate_random_days()
 
