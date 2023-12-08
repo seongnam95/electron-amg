@@ -1,5 +1,7 @@
 import { useState, Key } from 'react';
+import { FiPlus } from 'react-icons/fi';
 import { RiExchangeFundsLine } from 'react-icons/ri';
+import { VscRefresh } from 'react-icons/vsc';
 
 import { Button, Table, Tooltip } from 'antd';
 import { TableRowSelection } from 'antd/es/table/interface';
@@ -20,6 +22,7 @@ export interface DayTableProps {
   onClick?: (id: string) => void;
   onCreate?: (ids: string[]) => void;
   onCancel?: (ids: string[]) => void;
+  onSelect?: (ids: string[]) => void;
 }
 
 const DayTable = ({ date, employees, onClick, onCreate, onCancel }: DayTableProps) => {
@@ -33,18 +36,8 @@ const DayTable = ({ date, employees, onClick, onCreate, onCancel }: DayTableProp
     enabled: team.existTeam,
   });
 
-  const { updateAttendanceMutate } = useAttendanceUpdate({
-    teamId: team.id,
-    date: date,
-    onSuccess: data => console.log(data),
-  });
-
-  const handleChangeValue = ({ key, id, value }: ChangeValueType) => {
-    if (value === undefined) return;
-    updateAttendanceMutate({ ids: [id], body: { [key]: value } });
-  };
-
   const handleCreate = (id: string) => onCreate?.([id]);
+  const handleUpdate = (id: string) => onCreate?.([id]);
   const handleCancel = (id: string) => onCancel?.([id]);
 
   // Row 체크 핸들러
@@ -57,7 +50,6 @@ const DayTable = ({ date, employees, onClick, onCreate, onCancel }: DayTableProp
   const columns = getColumns({
     employees: employees,
     onClick: onClick,
-    onChange: handleChangeValue,
     onCreate: handleCreate,
     onCancel: handleCancel,
   });
@@ -81,6 +73,11 @@ const DayTable = ({ date, employees, onClick, onCreate, onCancel }: DayTableProp
         columns={columns}
         dataSource={dataSource}
         rowSelection={rowSelection}
+        onRow={row => {
+          return {
+            onContextMenu: () => handleUpdate(row.key),
+          };
+        }}
       />
 
       <Dock open={hasSelected}>

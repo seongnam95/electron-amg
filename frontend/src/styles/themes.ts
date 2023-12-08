@@ -56,7 +56,7 @@ const _colors = {
   green: '#2DD329',
   red: '#EA3B3B',
 
-  success: '#4caf50',
+  success: '#23D160',
   error: '#fe6968',
   relic: '#ff6000',
   accent: '#1e41d0',

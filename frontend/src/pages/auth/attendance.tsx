@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import { Flex, Segmented } from 'antd';
+import { Flex, Modal, Segmented } from 'antd';
 import dayjs, { Dayjs } from 'dayjs';
 import { useRecoilValue } from 'recoil';
 
@@ -8,17 +8,16 @@ import DayTable from '~/components/attendance/DayTable';
 import MonthTable from '~/components/attendance/MonthTable';
 import AntDatePicker from '~/components/common/DatePicker';
 import EmployeeInfoDrawer from '~/components/drawer/EmployeeInfoDrawer';
+import AttendanceForm from '~/components/forms/AttendanceForm';
 import {
   useAttendanceCreate,
   useAttendanceRemove,
   useAttendanceUpdate,
 } from '~/hooks/queryHooks/useAttendanceQuery';
 import { useEmployeeQuery } from '~/hooks/queryHooks/useEmployeeQuery';
-import { useAttendanceUpdateModal } from '~/hooks/useAttendanceUpdateModal';
 import { useRemoveEmployee } from '~/hooks/useRemoveEmployee';
 import { teamStore } from '~/stores/team';
 import { AttendancePageStyled } from '~/styles/pageStyled/attendancePageStyled';
-import { AttendanceCreateBody } from '~/types/attendance';
 
 type ViewType = 'monthly' | 'daily';
 
@@ -29,13 +28,13 @@ const AttendancePage = () => {
 
   const [employeeId, setEmployeeId] = useState<string>();
   const [openEmployeeInfo, setOpenEmployeeInfo] = useState<boolean>(false);
+  const [openAttendanceModal, setOpenAttendanceModal] = useState<boolean>(false);
 
   const [selectedDay, setSelectedDay] = useState<Dayjs>(dayjs());
   const date = selectedDay.format(viewType === 'daily' ? 'YY-MM-DD' : 'YY-MM');
 
   // hook
   const { employees } = useEmployeeQuery({ teamId: team?.id, enabled: team.existTeam });
-  const { openModal, AttendanceUpdateModal } = useAttendanceUpdateModal(team?.id, date);
 
   // 출근 업데이트
   const { createAttendanceCreate } = useAttendanceCreate({ teamId: team.id, date: date });
@@ -59,14 +58,13 @@ const AttendancePage = () => {
     setOpenEmployeeInfo(true);
   };
 
+  // 출근 기록 생성 핸들러
   const handleCreateAttendance = (ids: string[]) => {
-    const bodys: AttendanceCreateBody[] = ids.map(id => ({
-      employeeId: id,
-      workingDate: date,
-    }));
-    createAttendanceCreate(bodys);
+    console.log(ids);
+    setOpenAttendanceModal(true);
   };
 
+  // 출근 기록 삭제
   const handleRemoveAttendance = (ids: string[]) => {
     removeAttendanceMutate(ids);
   };
@@ -113,8 +111,16 @@ const AttendancePage = () => {
         onClose={() => setOpenEmployeeInfo(false)}
       />
 
-      {/* 일괄 업데이트 Modal */}
-      <AttendanceUpdateModal />
+      <Modal
+        title="근무 로그 변경"
+        open={openAttendanceModal}
+        centered
+        width={340}
+        footer={false}
+        onCancel={() => setOpenAttendanceModal(false)}
+      >
+        <AttendanceForm onCancel={() => setOpenAttendanceModal(false)} />
+      </Modal>
     </AttendancePageStyled>
   );
 };

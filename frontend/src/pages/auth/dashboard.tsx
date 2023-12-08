@@ -5,7 +5,7 @@ import dayjs, { Dayjs } from 'dayjs';
 
 import Card from '~/components/common/Card';
 import AttendanceCard from '~/components/dashboard/AttendanceCard';
-import MonthAttendance from '~/components/dashboard/MonthAttendance';
+import MonthAttendanceTable from '~/components/dashboard/MonthAttendanceTable';
 import MonthPayrollCard from '~/components/dashboard/MonthPayrollCard';
 import UnitTable from '~/components/dashboard/UnitTable';
 import { DashboardPageStyled } from '~/styles/pageStyled/dashboardPageStyled';
@@ -20,7 +20,7 @@ const DashboardPage = () => {
         </Card>
       </Flex>
       <Card title="월별 출근 합계" style={{ flex: 1, height: '36rem' }}>
-        <MonthAttendance />
+        <MonthAttendanceTable />
       </Card>
       <Flex gap="2rem">
         <AttendanceCard />

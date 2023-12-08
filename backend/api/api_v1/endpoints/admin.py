@@ -55,27 +55,8 @@ def init_data(db: Session = Depends(deps.get_db)):
     employee_bodys = []
     employee_bodys.append(admin_body)
 
-    position_ids = defaultdict(list)
-    for position in positions:
-        position_ids[position.name].append(position.id)
-
-    assigned_counts = defaultdict(int)
-    position_counts = {"팀장": 1, "부팀장": 1, "기사": 2, "사무보조": 1}
-
     for employee in employees:
-        assigned_position = None
-
-        # 남은 position 중에서 랜덤 선택
-        # while not assigned_position:
-        #     random_position_name = random.choice(list(position_counts.keys()))
-        #     if (
-        #         assigned_counts[random_position_name]
-        #         < position_counts[random_position_name]
-        #     ):
-        #         assigned_position = random.choice(position_ids[random_position_name])
-        #         assigned_counts[random_position_name] += 1
-        #         break
-
+        position = random.choice(positions)
         body = schemas.EmployeeCreate(
             name=employee["name"],
             ssn=employee["ssn"],
@@ -89,7 +70,7 @@ def init_data(db: Session = Depends(deps.get_db)):
             bank_book=px_img,
             sign_base64=px_img,
             team_id=team.id,
-            position_id=assigned_position,
+            position_id=position.id,
         )
 
         employee_bodys.append(body)

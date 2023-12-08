@@ -5,9 +5,9 @@ import { Modal, Form, Input, InputNumber, Switch, Flex, Button } from 'antd';
 import { useAttendanceUpdate } from './queryHooks/useAttendanceQuery';
 
 interface FormData {
-  mealIncluded?: boolean;
-  incentive?: number;
-  prePay?: number;
+  includeMealCost?: boolean;
+  isPaid?: boolean;
+  otCount?: number;
   memo?: string;
 }
 
@@ -43,7 +43,7 @@ export const useAttendanceUpdateModal = (teamId?: string, date?: string) => {
 
   const AttendanceUpdateModal = () => (
     <Modal
-      title="수당 변경"
+      title="출근"
       width={340}
       centered
       open={open}
@@ -52,7 +52,7 @@ export const useAttendanceUpdateModal = (teamId?: string, date?: string) => {
     >
       <Form
         form={form}
-        labelCol={{ span: 7 }}
+        labelCol={{ span: 10 }}
         labelAlign="left"
         colon={false}
         autoComplete="off"
@@ -60,28 +60,16 @@ export const useAttendanceUpdateModal = (teamId?: string, date?: string) => {
         initialValues={{ mealIncluded: false, incentive: 0, prePay: 0 }}
         onFinish={handleFinish}
       >
-        <Form.Item label="식대 포함" name="mealIncluded" valuePropName="checked">
+        <Form.Item label="식대 포함" name="includeMealCost" valuePropName="checked">
           <Switch />
         </Form.Item>
 
-        <Form.Item label="인센티브" name="incentive">
-          <InputNumber
-            min={0}
-            style={{ width: '100%' }}
-            addonBefore="+"
-            addonAfter="원"
-            formatter={value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
-          />
+        <Form.Item label="선지급" name="isPaid" valuePropName="checked">
+          <Switch />
         </Form.Item>
 
-        <Form.Item label="선지급" name="prePay">
-          <InputNumber
-            min={0}
-            style={{ width: '100%' }}
-            addonBefore="-"
-            addonAfter="원"
-            formatter={value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
-          />
+        <Form.Item label="OT" name="otCount">
+          <InputNumber min={0} max={12} style={{ width: '100%' }} addonAfter="시간" />
         </Form.Item>
 
         <Form.Item label="한줄 메모" name="memo">

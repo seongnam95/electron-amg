@@ -10,8 +10,9 @@ import DescriptionsBox from '~/components/common/DescriptionsBox';
 import { useAttendanceQuery } from '~/hooks/queryHooks/useAttendanceQuery';
 import { teamStore } from '~/stores/team';
 
+import { mappingAttendances } from '../AttendanceDoughnut/util';
 import { MonthPayrollBarStyled } from './styled';
-import { calculateSum, sumPayByDay } from './utils';
+import { sumPayByDay } from './utils';
 
 export interface MonthPayrollBarProps {
   date?: Dayjs;
@@ -27,8 +28,24 @@ const MonthPayrollBar = ({ date = dayjs() }: MonthPayrollBarProps) => {
     enabled: team.existTeam,
   });
 
+  const transformAttendances = mappingAttendances(team, attendances);
+
+  const { dailyPaySum, prePaySum, taxSum, totalPaySum } = transformAttendances.reduce(
+    (record, value) => ({
+      dailyPaySum: record.dailyPaySum + value.dailyPay,
+      prePaySum: record.prePaySum + value.prepay,
+      taxSum: record.taxSum + value.taxAmount,
+      totalPaySum: record.totalPaySum + value.finalPay,
+    }),
+    {
+      dailyPaySum: 0,
+      prePaySum: 0,
+      taxSum: 0,
+      totalPaySum: 0,
+    },
+  );
+
   const sumPayDays = sumPayByDay(attendances);
-  const { paySum, prePaySum, taxSum, pay } = calculateSum(sumPayDays);
 
   const chartData = {
     labels: sumPayDays.map(day => day.day),
@@ -80,7 +97,7 @@ const MonthPayrollBar = ({ date = dayjs() }: MonthPayrollBarProps) => {
           fullWidth
           justify="center"
           title="일당 합계"
-          children={`${paySum.toLocaleString()}원`}
+          children={`${dailyPaySum.toLocaleString()}원`}
         />
         <DescriptionsBox
           fullWidth
@@ -98,7 +115,7 @@ const MonthPayrollBar = ({ date = dayjs() }: MonthPayrollBarProps) => {
           fullWidth
           justify="center"
           title="총 지급액"
-          children={`${pay.toLocaleString()}원`}
+          children={`${totalPaySum.toLocaleString()}원`}
         />
       </Flex>
     </MonthPayrollBarStyled>

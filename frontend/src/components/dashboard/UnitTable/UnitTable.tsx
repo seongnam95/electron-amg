@@ -25,8 +25,6 @@ const UnitTable = ({ date = dayjs() }: UnitTableProps) => {
     };
   });
 
-  console.log(mapping);
-
   return (
     <UnitTableStyled className="UnitTable">
       {mapping &&

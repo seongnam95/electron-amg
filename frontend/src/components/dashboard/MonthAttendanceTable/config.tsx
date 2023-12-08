@@ -1,0 +1,109 @@
+import { Flex, TableColumnsType } from 'antd';
+
+import { AttendanceData } from '~/types/attendance';
+import { PositionData } from '~/types/position';
+import { TeamData } from '~/types/team';
+
+import { MappingAttendanceData } from '../AttendanceDoughnut/util';
+import { HintText, PositionColorBox } from './styled';
+
+export interface MonthAttendanceTableData extends MappingAttendanceData {
+  key: string;
+  team: TeamData;
+}
+
+export const getColumns = (): TableColumnsType<MonthAttendanceTableData> => {
+  return [
+    {
+      key: 'positionName',
+      dataIndex: 'positionName',
+      title: '직위',
+      width: 100,
+      align: 'left',
+      render: (_, { position: { name, color } }) => (
+        <Flex gap={8} align="center">
+          <PositionColorBox color={color} />
+          {name}
+        </Flex>
+      ),
+    },
+    {
+      key: 'standardPay',
+      dataIndex: 'standardPay',
+      title: '일일 수당',
+      width: 100,
+      align: 'right',
+      render: (_, { position: { standardPay } }) => (
+        <>
+          {standardPay.toLocaleString()}
+          <HintText>원</HintText>
+        </>
+      ),
+    },
+    {
+      key: 'mealCostCount',
+      dataIndex: 'mealCostCount',
+      title: '식대',
+      width: 100,
+      align: 'right',
+      render: (_, { mealCostCount }) => (
+        <>
+          {mealCostCount}
+          <HintText>개</HintText>
+        </>
+      ),
+    },
+    {
+      key: 'overtimeCount',
+      dataIndex: 'overtimeCount',
+      title: 'OT',
+      width: 100,
+      align: 'right',
+      render: (_, { otCount }) => (
+        <>
+          {otCount}
+          <HintText>개</HintText>
+        </>
+      ),
+    },
+    {
+      key: 'paidCount',
+      dataIndex: 'paidCount',
+      title: '선지급액',
+      width: 100,
+      align: 'right',
+      render: (_, { prepay }) => (
+        <>
+          {prepay.toLocaleString()}
+          <HintText>원</HintText>
+        </>
+      ),
+    },
+    {
+      key: 'totalAttendance',
+      dataIndex: 'totalAttendance',
+      title: '총 출근일',
+      width: 100,
+      align: 'right',
+      render: (_, { attendanceCount }) => (
+        <>
+          {attendanceCount}
+          <HintText>일</HintText>
+        </>
+      ),
+    },
+    {
+      key: 'totalSumPay',
+      dataIndex: 'totalSumPay',
+      title: '총 합계액',
+      width: 100,
+      align: 'right',
+      render: (_, { finalPay }) => (
+        <>
+          {finalPay.toLocaleString()}
+          <HintText>원</HintText>
+        </>
+      ),
+    },
+  ];
+};

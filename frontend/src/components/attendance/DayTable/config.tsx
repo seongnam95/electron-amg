@@ -1,9 +1,13 @@
+import { FaCircleCheck } from 'react-icons/fa6';
+import { HiOutlineDotsVertical } from 'react-icons/hi';
 import { MdEditNote } from 'react-icons/md';
 
-import { Button, Flex, Tag, Tooltip } from 'antd';
+import { Button, Dropdown, Flex, Tag, Tooltip } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 
-import InputPopover from '~/components/common/InputPopover';
+import DropdownItem from '~/components/common/DropdownItem';
+import { HintText } from '~/components/dashboard/MonthAttendanceTable/styled';
+import { colors } from '~/styles/themes';
 import { AttendanceData, AttendanceUpdateBody } from '~/types/attendance';
 import { EmployeeData } from '~/types/employee';
 import { PositionData, SALARY } from '~/types/position';
@@ -26,13 +30,11 @@ interface ColumnProps {
   onClick?: (id: string) => void;
   onCreate?: (id: string) => void;
   onCancel?: (id: string) => void;
-  onChange?: (v: ChangeValueType) => void;
 }
 
 export const getColumns = ({
   employees,
   onClick,
-  onChange,
   onCreate,
   onCancel,
 }: ColumnProps): ColumnsType<DayTableData> => {
@@ -94,7 +96,7 @@ export const getColumns = ({
     {
       key: 'salary',
       dataIndex: 'salary',
-      title: '기준 수당',
+      title: '일일 수당',
       width: 160,
       align: 'center',
       filters: salaryFilters,
@@ -112,32 +114,14 @@ export const getColumns = ({
       key: 'mealIncluded',
       dataIndex: 'mealIncluded',
       title: '식대 포함',
-      width: 84,
+      width: 80,
       align: 'center',
       render: (_, { attendance }) => {
-        if (attendance === undefined) return '-';
-        const { id, mealIncluded } = attendance;
-
-        const color = mealIncluded ? '#71B3F0' : '#F87B6A';
-        const label = mealIncluded ? 'Y' : 'N';
-
-        const handleDoubleClick = () => {
-          onChange?.({
-            key: 'mealIncluded',
-            id: id,
-            value: !mealIncluded,
-          });
-        };
-
+        if (attendance === undefined || !attendance.includeMealCost) return null;
         return (
-          <Button
-            size="small"
-            type="text"
-            style={{ color: color }}
-            onDoubleClick={handleDoubleClick}
-          >
-            {label}
-          </Button>
+          <Flex align="center" justify="center">
+            <FaCircleCheck color={colors.success} />
+          </Flex>
         );
       },
     },
@@ -145,27 +129,30 @@ export const getColumns = ({
       key: 'prePay',
       dataIndex: 'prePay',
       title: '선지급',
-      width: 100,
+      width: 70,
       align: 'center',
       render: (_, { attendance }) => {
-        if (attendance === undefined) return '-';
-        const { id, prePay: prePay } = attendance;
-
+        if (attendance === undefined || !attendance.isPaid) return null;
         return (
-          <InputPopover
-            columnKey="prePay"
-            title="선지급"
-            inputType="number"
-            trigger="contextMenu"
-            placeholder={prePay}
-            onSubmit={(key, value) =>
-              onChange?.({ key: key as keyof AttendanceUpdateBody, id: id, value: value })
-            }
-          >
-            <Button type="text" size="small" style={{ color: '#EA3B3B' }}>
-              - {prePay.toLocaleString()}
-            </Button>
-          </InputPopover>
+          <Flex align="center" justify="center">
+            <FaCircleCheck color={colors.success} />
+          </Flex>
+        );
+      },
+    },
+    {
+      key: 'otCount',
+      dataIndex: 'otCount',
+      title: 'OT',
+      width: 90,
+      align: 'center',
+      render: (_, { attendance }) => {
+        if (attendance === undefined || attendance.otCount === 0) return null;
+        return (
+          <Flex align="center" justify="center">
+            {attendance.otCount}
+            <HintText>T</HintText>
+          </Flex>
         );
       },
     },
@@ -176,26 +163,13 @@ export const getColumns = ({
       width: 50,
       align: 'center',
       render: (_, { attendance }) => {
-        if (attendance === undefined) return '-';
-        const { id, memo } = attendance;
-
+        if (attendance === undefined || !attendance.memo) return null;
         return (
-          <InputPopover
-            columnKey="memo"
-            title="메모"
-            inputType="text"
-            trigger="contextMenu"
-            placeholder={memo}
-            onSubmit={(key, value) =>
-              onChange?.({ key: key as keyof AttendanceUpdateBody, id: id, value: value })
-            }
-          >
-            <Flex justify="center">
-              <Tooltip title={memo}>
-                <Button type="text" size="small" icon={<MdEditNote size={20} color="#767676" />} />
-              </Tooltip>
-            </Flex>
-          </InputPopover>
+          <Flex justify="center">
+            <Tooltip title={attendance.memo}>
+              <Button type="text" size="small" icon={<MdEditNote size={20} color="#767676" />} />
+            </Tooltip>
+          </Flex>
         );
       },
     },
@@ -205,11 +179,11 @@ export const getColumns = ({
       title: '지급액',
       width: 110,
       align: 'center',
-      render: (_, { attendance }) => {
-        if (attendance === undefined) return '-';
+      render: (_, { attendance, position }) => {
+        if (attendance === undefined) return null;
 
-        const { pay } = attendance;
-        return <b style={{ color: '#5855F5' }}>{pay.toLocaleString()}원</b>;
+        const {} = attendance;
+        return <b style={{ color: '#5855F5' }}>{position.standardPay.toLocaleString()}원</b>;
       },
     },
     {
@@ -237,6 +211,42 @@ export const getColumns = ({
           >
             출근
           </Tag>
+        );
+      },
+    },
+    {
+      key: 'menu',
+      dataIndex: 'menu',
+      title: '',
+      width: 42,
+      align: 'center',
+      render: (_, { attendance, position }) => {
+        const menuItems = [
+          {
+            key: 'create-draft',
+            label: <DropdownItem label="출근 처리" icon={<div />} color="#1677FF" />,
+            onClick: () => {},
+          },
+          {
+            key: 'refetch',
+            label: <DropdownItem label="식대 포함" icon={<div />} />,
+            onClick: () => {},
+          },
+          {
+            key: 'refetch',
+            label: <DropdownItem label="선지급" icon={<div />} />,
+            onClick: () => {},
+          },
+          {
+            key: 'refetch',
+            label: <DropdownItem label="OT 추가" icon={<div />} />,
+            onClick: () => {},
+          },
+        ];
+        return (
+          <Dropdown placement="bottomRight" trigger={['click']} arrow menu={{ items: menuItems }}>
+            <Button size="small" type="text" icon={<HiOutlineDotsVertical />} />
+          </Dropdown>
         );
       },
     },

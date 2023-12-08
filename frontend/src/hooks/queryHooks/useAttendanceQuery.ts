@@ -28,7 +28,7 @@ export const useAttendanceQuery = ({
     { ...baseOptions },
   );
 
-  const attendances = data ? data.toReversed() : [];
+  const attendances = data ? data : [];
   const isEmpty = !attendances.length;
   return { attendances, isEmpty, isLoading, isError };
 };

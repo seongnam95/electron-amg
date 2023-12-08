@@ -1,13 +1,16 @@
 import { useState } from 'react';
+import { FiPlus } from 'react-icons/fi';
+import { HiOutlineDotsVertical } from 'react-icons/hi';
+import { VscRefresh } from 'react-icons/vsc';
 
-import { Flex, Pagination, Segmented } from 'antd';
+import { Flex, Pagination, Segmented, DropdownProps, Dropdown, Button } from 'antd';
 import { SegmentedValue } from 'antd/es/segmented';
 import { useRecoilValue } from 'recoil';
 
+import DropdownItem from '~/components/common/DropdownItem';
 import DraftCreateDrawer from '~/components/drawer/DraftCreateDrawer';
 import EmployeeInfoDrawer from '~/components/drawer/EmployeeInfoDrawer';
 import HistoryDrawer from '~/components/drawer/HistoryDrawer';
-import EmployeeMenu from '~/components/employee/EmployeeMenu';
 import EmployeeTable from '~/components/employee/EmployeeTable';
 import { useEmployeeQuery } from '~/hooks/queryHooks/useEmployeeQuery';
 import { useCopyText } from '~/hooks/useCopyText';
@@ -72,12 +75,31 @@ const EmployeePage = () => {
     { label: '계약종료', value: 'invalid' },
   ];
 
+  const menuItems = [
+    {
+      key: 'create-draft',
+      label: <DropdownItem label="계약서 초안 생성" icon={<FiPlus size={18} />} color="#1677FF" />,
+      onClick: () => setOpenDraftDrawer(true),
+    },
+    {
+      key: 'refetch',
+      label: <DropdownItem label="새로고침" icon={<VscRefresh size={17} />} />,
+      onClick: handleRefetch,
+    },
+  ];
+
   const selectedEmployee = employees.find(employee => employee.id === employeeId);
   return (
     <EmployeePageStyled className="EmployeePage">
       <Flex gap={14} align="center" justify="space-between" style={{ padding: '2rem' }}>
         <Segmented defaultValue={viewType} options={segmentedOptions} onChange={handleChangeView} />
-        <EmployeeMenu onDraft={() => setOpenDraftDrawer(true)} onRefetch={handleRefetch} />
+        <Dropdown placement="bottomRight" trigger={['click']} arrow menu={{ items: menuItems }}>
+          <Button
+            type="text"
+            shape="circle"
+            icon={<HiOutlineDotsVertical size={18} style={{ marginBottom: 1 }} />}
+          />
+        </Dropdown>
       </Flex>
 
       {/* 근무자 테이블 */}

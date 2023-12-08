@@ -36,8 +36,10 @@ export const useEmployeeQuery = ({
   const employees = dataList
     ? dataList.filter(employees => !employees.position.isLeader).toReversed()
     : [];
-
-  return { teamLeader, employees, total, isLoading, isError, refetch };
+  const sortedEmployees = employees.sort(
+    (a, b) => a.position.sortingIndex - b.position.sortingIndex,
+  );
+  return { teamLeader, employees: sortedEmployees, total, isLoading, isError, refetch };
 };
 
 /**

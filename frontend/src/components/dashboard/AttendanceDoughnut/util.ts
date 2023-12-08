@@ -20,6 +20,67 @@ interface TransformAttendance {
   };
 }
 
+export interface MappingAttendanceData {
+  position: PositionData;
+  mealCostCount: number;
+  prepaidCount: number;
+  otCount: number;
+  attendanceCount: number;
+  dailyPay: number;
+  otPay: number;
+  prepay: number;
+  taxAmount: number;
+  totalPaySum: number;
+  finalPay: number;
+}
+
+export const mappingAttendances = (
+  team: TeamData,
+  attendances: AttendanceData[],
+): MappingAttendanceData[] => {
+  const { positions } = team;
+
+  return positions.map(position => {
+    const positionAttendances = attendances.filter(
+      attendance => attendance.positionId === position.id,
+    );
+
+    // includeMealCost가 True인 데이터의 수
+    const mealCostCount = positionAttendances.filter(
+      attendance => attendance.includeMealCost,
+    ).length;
+
+    // OT 총 합계
+    const otCount = positionAttendances
+      .map(attendance => attendance.otCount)
+      .reduce((total, value) => (total += value), 0);
+
+    // isPaid True인 데이터의 수
+    const paidCount = positionAttendances.filter(attendance => attendance.isPaid).length;
+
+    const mealCostSum = team.mealCost * mealCostCount;
+    const totalPaySum = positionAttendances.length * position.standardPay + mealCostSum;
+
+    const taxSum = totalPaySum * 0.033;
+
+    return {
+      position: position,
+      mealCostCount: mealCostCount,
+      otCount: otCount,
+      prepaidCount: paidCount,
+      attendanceCount: positionAttendances.length,
+
+      dailyPay: positionAttendances.length * position.standardPay,
+      otPay: otCount * team.otPay,
+      prepay: paidCount * position.standardPay,
+
+      totalPaySum: totalPaySum,
+      taxAmount: taxSum,
+      finalPay: totalPaySum - taxSum,
+    };
+  });
+};
+
 export const transformAttendanceData = (
   team: TeamData,
   attendances: AttendanceData[],
