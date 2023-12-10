@@ -20,6 +20,7 @@ export const DockStyled = styled.div`
     padding: 1rem 1.8rem;
 
     border-radius: 0.8rem;
+    z-index: 9999;
   }
 
   .excel-btn {

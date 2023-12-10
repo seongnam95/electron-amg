@@ -1,8 +1,5 @@
 import ReactDOM from 'react-dom';
-import { FaTrashAlt } from 'react-icons/fa';
-import { ImFileExcel } from 'react-icons/im';
 
-import { Button, Tooltip } from 'antd';
 import { motion, AnimatePresence } from 'framer-motion';
 
 import { DockStyled } from './styled';

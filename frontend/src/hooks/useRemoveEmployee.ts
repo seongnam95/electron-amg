@@ -9,6 +9,7 @@ interface RemoveEmployeeOptions {
 
 export const useRemoveEmployee = ({ teamId, onSuccess, onCancel }: RemoveEmployeeOptions) => {
   const { soundMessage, soundModal } = useSoundApp();
+
   const { removeEmployeeMutate } = useEmployeeRemoveMutation({
     teamId: teamId,
     onError: msg => soundMessage.error(msg),

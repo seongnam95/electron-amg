@@ -18,17 +18,11 @@ import { groupedAttendanceByDay } from './util';
 export interface MonthTableProps {
   date: string;
   employees: EmployeeData[];
+  attendances: AttendanceData[];
 }
 
-const MonthTable = ({ date, employees }: MonthTableProps) => {
-  const team = useRecoilValue(teamStore);
+const MonthTable = ({ date, employees, attendances }: MonthTableProps) => {
   const scrollRef = useDragScroll();
-
-  const { attendances } = useAttendanceQuery({
-    date: date,
-    teamId: team.id,
-    enabled: team.existTeam,
-  });
 
   const rowSelection: TableRowSelection<MonthTableData> = {
     onChange: (keys: React.Key[]) => console.log(keys),
@@ -53,7 +47,10 @@ const MonthTable = ({ date, employees }: MonthTableProps) => {
       });
 
       // 합계액
-      const paySum = targetAttendances.reduce((total, value) => total + value.pay, 0);
+      const paySum = targetAttendances.reduce(
+        (total, value) => total + value.position.standardPay,
+        0,
+      );
       const incomeTax = paySum * 0.033;
       const totalPay = paySum - incomeTax;
 

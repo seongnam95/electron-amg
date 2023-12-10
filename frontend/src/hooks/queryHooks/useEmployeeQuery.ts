@@ -78,15 +78,24 @@ export const useEmployeeRemoveMutation = ({
 
   // 삭제 Mutate 핸들러
   const handleRemoveMutate = async (employeeIds: string[]) => {
-    const oldEmployeeData = queryClient.getQueryData<Array<EmployeeData>>(queryKey);
+    const oldEmployeeData = queryClient.getQueryData<DataListResponse<EmployeeData>>(queryKey);
 
     if (oldEmployeeData) {
-      // 쿼리 취소
       queryClient.cancelQueries(queryKey);
 
       // 대상 Employee를 제외한 리스트를 쿼리 데이터에 저장
-      queryClient.setQueryData(queryKey, (employees: EmployeeData[] | undefined) => {
-        return employees?.filter(employee => !employeeIds.includes(employee.id.toString())) ?? [];
+      queryClient.setQueryData(queryKey, () => {
+        const newEmployees = oldEmployeeData.result.list.filter(
+          employee => !employeeIds.includes(employee.id.toString()),
+        );
+
+        return {
+          ...oldEmployeeData,
+          result: {
+            ...oldEmployeeData.result,
+            list: newEmployees,
+          },
+        };
       });
 
       // 에러 시, 롤백 할 함수

@@ -1,43 +1,27 @@
 import { FaCircleCheck } from 'react-icons/fa6';
-import { HiOutlineDotsVertical } from 'react-icons/hi';
 import { MdEditNote } from 'react-icons/md';
 
-import { Button, Dropdown, Flex, Tag, Tooltip } from 'antd';
+import { Button, Flex, Tag, Tooltip } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 
-import DropdownItem from '~/components/common/DropdownItem';
 import { HintText } from '~/components/dashboard/MonthAttendanceTable/styled';
 import { colors } from '~/styles/themes';
-import { AttendanceData, AttendanceUpdateBody } from '~/types/attendance';
+import { AttendanceData } from '~/types/attendance';
 import { EmployeeData } from '~/types/employee';
-import { PositionData, SALARY } from '~/types/position';
+import { SALARY } from '~/types/position';
 
 export interface DayTableData {
   key: string;
-  name: string;
-  position: PositionData;
+  employee: EmployeeData;
   attendance?: AttendanceData;
 }
 
-export type ChangeValueType = {
-  key: keyof AttendanceUpdateBody;
-  id: string;
-  value: any;
-};
-
 interface ColumnProps {
   employees?: EmployeeData[];
-  onClick?: (id: string) => void;
-  onCreate?: (id: string) => void;
-  onCancel?: (id: string) => void;
+  onClickName?: (employee: EmployeeData) => void;
 }
 
-export const getColumns = ({
-  employees,
-  onClick,
-  onCreate,
-  onCancel,
-}: ColumnProps): ColumnsType<DayTableData> => {
+export const getColumns = ({ employees, onClickName }: ColumnProps): ColumnsType<DayTableData> => {
   const positionFilters = [...new Set(employees?.map(employee => employee.position.name))].map(
     position => {
       return {
@@ -63,16 +47,12 @@ export const getColumns = ({
       title: '이름',
       width: 90,
       ellipsis: true,
-      sorter: (a, b) => a.name.localeCompare(b.name),
-      render: (_, { key, name }) => {
-        const handleClick = () => onClick?.(key.toString());
-
-        return (
-          <Button size="small" type="text" onClick={handleClick}>
-            <b>{name}</b>
-          </Button>
-        );
-      },
+      sorter: (a, b) => a.employee.name.localeCompare(b.employee.name),
+      render: (_, { employee }) => (
+        <Button size="small" type="text" onClick={() => onClickName?.(employee)}>
+          <b>{employee.name}</b>
+        </Button>
+      ),
     },
     {
       key: 'position',
@@ -81,8 +61,8 @@ export const getColumns = ({
       width: 90,
       align: 'center',
       filters: positionFilters,
-      onFilter: (value, record) => record.position.name === value,
-      render: (_, { position }) => {
+      onFilter: (value, record) => record.employee.position.name === value,
+      render: (_, { employee: { position } }) => {
         return (
           <Tag
             style={{ width: 64, textAlign: 'center', marginInlineEnd: 0 }}
@@ -100,8 +80,8 @@ export const getColumns = ({
       width: 160,
       align: 'center',
       filters: salaryFilters,
-      onFilter: (value, record) => record.position.salaryCode === value,
-      render: (_, { position }) => (
+      onFilter: (value, record) => record.employee.position.salaryCode === value,
+      render: (_, { employee: { position } }) => (
         <Flex justify="center">
           <Flex justify="space-between" style={{ width: 120, maxWidth: 120 }}>
             <Tag>{SALARY[position.salaryCode]}</Tag>
@@ -179,7 +159,7 @@ export const getColumns = ({
       title: '지급액',
       width: 110,
       align: 'center',
-      render: (_, { attendance, position }) => {
+      render: (_, { attendance, employee: { position } }) => {
         if (attendance === undefined) return null;
 
         const {} = attendance;
@@ -192,61 +172,15 @@ export const getColumns = ({
       title: '상태',
       width: 80,
       align: 'center',
-      render: (_, { key, attendance }) => {
+      render: (_, { attendance }) => {
         if (attendance === undefined)
           return (
-            <Tag
-              onContextMenu={() => onCreate?.(key.toString())}
-              style={{ width: '100%', textAlign: 'center', marginInlineEnd: 0 }}
-            >
-              미출근
-            </Tag>
+            <Tag style={{ width: '100%', textAlign: 'center', marginInlineEnd: 0 }}>미출근</Tag>
           );
-
         return (
-          <Tag
-            color="#5855F5"
-            onContextMenu={() => onCancel?.(attendance.id)}
-            style={{ width: '100%', textAlign: 'center', marginInlineEnd: 0 }}
-          >
+          <Tag color="#5855F5" style={{ width: '100%', textAlign: 'center', marginInlineEnd: 0 }}>
             출근
           </Tag>
-        );
-      },
-    },
-    {
-      key: 'menu',
-      dataIndex: 'menu',
-      title: '',
-      width: 42,
-      align: 'center',
-      render: (_, { attendance, position }) => {
-        const menuItems = [
-          {
-            key: 'create-draft',
-            label: <DropdownItem label="출근 처리" icon={<div />} color="#1677FF" />,
-            onClick: () => {},
-          },
-          {
-            key: 'refetch',
-            label: <DropdownItem label="식대 포함" icon={<div />} />,
-            onClick: () => {},
-          },
-          {
-            key: 'refetch',
-            label: <DropdownItem label="선지급" icon={<div />} />,
-            onClick: () => {},
-          },
-          {
-            key: 'refetch',
-            label: <DropdownItem label="OT 추가" icon={<div />} />,
-            onClick: () => {},
-          },
-        ];
-        return (
-          <Dropdown placement="bottomRight" trigger={['click']} arrow menu={{ items: menuItems }}>
-            <Button size="small" type="text" icon={<HiOutlineDotsVertical />} />
-          </Dropdown>
         );
       },
     },

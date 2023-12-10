@@ -16,7 +16,7 @@ import ImageViewButton from './ImageViewButton';
 
 export interface EmployeeInfoDrawerProps extends DrawerProps {
   employee?: EmployeeData;
-  onRemove?: (ids: string) => void;
+  onRemove?: (id: string) => void;
 }
 
 const EmployeeInfoDrawer = ({ employee, onRemove, ...props }: EmployeeInfoDrawerProps) => {

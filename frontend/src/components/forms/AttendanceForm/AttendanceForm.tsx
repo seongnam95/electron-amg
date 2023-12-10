@@ -1,9 +1,9 @@
 import { Button, Flex, Form, Input, InputNumber, Switch } from 'antd';
 
-import { AttendanceUpdateBody } from '~/types/attendance';
+import { AttendanceData, AttendanceUpdateBody } from '~/types/attendance';
 
 export interface AttendanceFormProps {
-  values?: AttendanceUpdateBody;
+  attendances?: AttendanceData[];
   cancelBtnText?: string;
   submitBtnText?: string;
   isLoading?: boolean;
@@ -19,7 +19,7 @@ const defaultValues: AttendanceUpdateBody = {
 };
 
 const AttendanceForm = ({
-  values,
+  attendances,
   cancelBtnText,
   submitBtnText,
   isLoading,
@@ -27,7 +27,7 @@ const AttendanceForm = ({
   onCancel,
 }: AttendanceFormProps) => {
   const [form] = Form.useForm();
-  const isEditing = !!values;
+  const isEditing = !!attendances?.length;
 
   return (
     <Form
@@ -37,7 +37,7 @@ const AttendanceForm = ({
       colon={false}
       autoComplete="off"
       style={{ marginTop: 24 }}
-      initialValues={values ? values : defaultValues}
+      initialValues={isEditing ? attendances[0] : defaultValues}
       onFinish={onSubmit}
     >
       <Form.Item label="식대 포함" name="includeMealCost" valuePropName="checked">
