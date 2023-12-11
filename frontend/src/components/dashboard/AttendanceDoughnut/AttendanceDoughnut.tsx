@@ -8,9 +8,9 @@ import { useRecoilValue } from 'recoil';
 import { useAttendanceQuery } from '~/hooks/queryHooks/useAttendanceQuery';
 import { useEmployeeQuery } from '~/hooks/queryHooks/useEmployeeQuery';
 import { teamStore } from '~/stores/team';
+import { attendanceReportByPosition } from '~/utils/statistics/attendanceReportByPosition';
 
 import { AttendanceDoughnutStyled } from './styled';
-import { countAttendanceByPosition } from './util';
 
 export interface AttendanceDoughnutProps {
   date?: Dayjs;
@@ -23,19 +23,19 @@ const AttendanceDoughnut = ({ date = dayjs() }: AttendanceDoughnutProps) => {
   const { employees } = useEmployeeQuery({ teamId: team.id, enabled: team.existTeam });
   const { attendances } = useAttendanceQuery({
     teamId: team.id,
-    dateStr: date.format('YY-MM-DD'),
+    date: date,
+    dateType: 'day',
     enabled: team.existTeam,
   });
 
-  const positions = team.existTeam ? countAttendanceByPosition(team, attendances) : [];
+  const attendanceReports = team.existTeam ? attendanceReportByPosition(team, attendances) : [];
   const nonAttendanceCount = employees.length - attendances.length;
-  const isEmpty = positions.reduce((sum, item) => sum + item.count.total, 0) === 0;
 
   const dataSource = {
-    labels: [...positions.map(position => position.name), '미출근'],
+    labels: [...attendanceReports.map(report => report.position.name), '미출근'],
     datasets: [
       {
-        data: [...positions.map(position => position.count.total), nonAttendanceCount],
+        data: [...attendanceReports.map(report => report.attendanceCount), nonAttendanceCount],
         backgroundColor: [...team.positions.map(position => position.color), '#e8e8e8'],
         borderWidth: 0,
       },
@@ -53,11 +53,14 @@ const AttendanceDoughnut = ({ date = dayjs() }: AttendanceDoughnutProps) => {
     ],
   };
 
+  const isEmptyAttendance =
+    attendanceReports.reduce((total, value) => (total += value.attendanceCount), 0) === 0;
+
   return (
     <AttendanceDoughnutStyled className="AttendanceDoughnut">
       <Flex className="chart-wrap" justify="space-between">
         <Doughnut
-          data={isEmpty ? EmptyDoughnutData : dataSource}
+          data={isEmptyAttendance ? EmptyDoughnutData : dataSource}
           options={{
             cutout: '50%',
             plugins: {

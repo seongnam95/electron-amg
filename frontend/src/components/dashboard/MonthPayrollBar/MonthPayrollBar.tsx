@@ -9,8 +9,8 @@ import { useRecoilValue } from 'recoil';
 import DescriptionsBox from '~/components/common/DescriptionsBox';
 import { useAttendanceQuery } from '~/hooks/queryHooks/useAttendanceQuery';
 import { teamStore } from '~/stores/team';
+import { attendanceReportByPosition } from '~/utils/statistics/attendanceReportByPosition';
 
-import { mappingAttendances } from '../AttendanceDoughnut/util';
 import { MonthPayrollBarStyled } from './styled';
 import { sumPayByDay } from './utils';
 
@@ -24,13 +24,14 @@ const MonthPayrollBar = ({ date = dayjs() }: MonthPayrollBarProps) => {
 
   const { attendances, isEmpty } = useAttendanceQuery({
     teamId: team.id,
-    dateStr: date.format('YY-MM'),
+    date: date,
+    dateType: 'month',
     enabled: team.existTeam,
   });
 
-  const transformAttendances = mappingAttendances(team, attendances);
+  const attendanceReports = attendanceReportByPosition(team, attendances);
 
-  const { dailyPaySum, prePaySum, taxSum, totalPaySum } = transformAttendances.reduce(
+  const { dailyPaySum, prePaySum, taxSum, totalPaySum } = attendanceReports.reduce(
     (record, value) => ({
       dailyPaySum: record.dailyPaySum + value.dailyPay,
       prePaySum: record.prePaySum + value.prepay,

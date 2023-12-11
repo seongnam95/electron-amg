@@ -1,3 +1,5 @@
+import { MouseEvent } from 'react';
+
 import { Table } from 'antd';
 import { TableRowSelection } from 'antd/es/table/interface';
 
@@ -13,7 +15,7 @@ export interface DayTableProps {
   attendances: AttendanceData[];
   onSelect?: (employeeIds: string[]) => void;
   onClickName?: (employee: EmployeeData) => void;
-  onContextMenu?: (employee: EmployeeData, attendance?: AttendanceData) => void;
+  onContextMenu?: (event: MouseEvent, employee: EmployeeData, attendance?: AttendanceData) => void;
 }
 
 const DayTable = ({
@@ -56,7 +58,7 @@ const DayTable = ({
         dataSource={dataSource}
         rowSelection={rowSelection}
         onRow={row => ({
-          onContextMenu: () => onContextMenu?.(row.employee, row.attendance),
+          onContextMenu: event => onContextMenu?.(event, row.employee, row.attendance),
         })}
       />
     </DayTableStyled>

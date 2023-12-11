@@ -1,8 +1,8 @@
-import { HTMLAttributes, useMemo } from 'react';
+import { HTMLAttributes, MouseEvent, useMemo } from 'react';
 
-import { Table } from 'antd';
+import { Table, Popover } from 'antd';
 import { TableRowSelection } from 'antd/es/table/interface';
-import dayjs from 'dayjs';
+import dayjs, { Dayjs } from 'dayjs';
 
 import { useDragScroll } from '~/hooks/useDragScroll';
 import { AttendanceData } from '~/types/attendance';
@@ -16,10 +16,25 @@ export interface MonthTableProps {
   dateStr: string;
   employees: EmployeeData[];
   attendances: AttendanceData[];
+  onContextMenu?: (
+    event: MouseEvent,
+    employee: EmployeeData,
+    attendance?: AttendanceData,
+    date?: Dayjs,
+  ) => void;
 }
 
-const MonthTable = ({ dateStr, employees, attendances }: MonthTableProps) => {
+const MonthTable = ({ dateStr, employees, attendances, onContextMenu }: MonthTableProps) => {
   const scrollRef = useDragScroll();
+
+  const handleContextMenu = (event: MouseEvent, day: Dayjs, data: MonthTableData) => {
+    const { employee, attendances } = data;
+    const attendance = attendances.find(
+      attendance => attendance.workingDate === day.format('YY-MM-DD'),
+    );
+
+    onContextMenu?.(event, employee, attendance, day);
+  };
 
   const rowSelection: TableRowSelection<MonthTableData> = {
     onChange: (keys: React.Key[]) => console.log(keys),
@@ -27,7 +42,7 @@ const MonthTable = ({ dateStr, employees, attendances }: MonthTableProps) => {
 
   const columns = getColumns({
     date: dayjs(dateStr, 'YY-MM'),
-    onCellContextMenu: (day, data) => console.log(data),
+    onCellContextMenu: handleContextMenu,
   });
 
   const dataSource: MonthTableData[] = useMemo(() => {

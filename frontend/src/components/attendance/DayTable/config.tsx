@@ -1,4 +1,4 @@
-import { FaCircleCheck } from 'react-icons/fa6';
+import { FaBowlFood, FaCircleCheck } from 'react-icons/fa6';
 import { MdEditNote } from 'react-icons/md';
 
 import { Button, Flex, Tag, Tooltip } from 'antd';
@@ -100,7 +100,7 @@ export const getColumns = ({ employees, onClickName }: ColumnProps): ColumnsType
         if (attendance === undefined || !attendance.includeMealCost) return null;
         return (
           <Flex align="center" justify="center">
-            <FaCircleCheck color={colors.success} />
+            <FaBowlFood color={colors.iconColor3} />
           </Flex>
         );
       },
@@ -151,19 +151,6 @@ export const getColumns = ({ employees, onClickName }: ColumnProps): ColumnsType
             </Tooltip>
           </Flex>
         );
-      },
-    },
-    {
-      key: 'total',
-      dataIndex: 'total',
-      title: '지급액',
-      width: 110,
-      align: 'center',
-      render: (_, { attendance, employee: { position } }) => {
-        if (attendance === undefined) return null;
-
-        const {} = attendance;
-        return <b style={{ color: '#5855F5' }}>{position.standardPay.toLocaleString()}원</b>;
       },
     },
     {

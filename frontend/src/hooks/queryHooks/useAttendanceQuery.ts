@@ -1,5 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 
+import { Dayjs } from 'dayjs';
+
 import {
   createAttendance,
   fetchAttendancesByTeam,
@@ -9,18 +11,32 @@ import {
 import { AttendanceData } from '~/types/attendance';
 import { QueryBaseOptions } from '~/types/query';
 
-interface AttendanceQueryOptions<T> extends QueryBaseOptions<T> {
+type DateType = 'month' | 'day';
+
+const createQueryKey = (teamId: string, date: Dayjs, dateType: DateType): string[] => {
+  const attendanceQueryKey = import.meta.env.VITE_ATTENDANCE_QUERY_KEY;
+  const dateStr = date.format(dateType === 'month' ? 'YY-MM' : 'YY-MM-DD');
+  return [attendanceQueryKey, teamId, ...dateStr.split('-')];
+};
+
+export interface AttendanceQueryOptions extends QueryBaseOptions<AttendanceData[]> {
   teamId: string;
-  dateStr: string;
+  dateType: 'day' | 'month';
+  date: Dayjs;
 }
 
+/**
+ * Attendance 쿼리
+ */
 export const useAttendanceQuery = ({
   teamId,
-  dateStr,
+  dateType,
+  date,
   ...baseOptions
-}: AttendanceQueryOptions<AttendanceData[]>) => {
-  const queryKey: Array<string> = [import.meta.env.VITE_ATTENDANCE_QUERY_KEY, teamId, dateStr];
+}: AttendanceQueryOptions) => {
+  const queryKey: Array<string> = createQueryKey(teamId, date, dateType);
 
+  const dateStr = date.format(dateType === 'month' ? 'YY-MM' : 'YY-MM-DD');
   const { data, isLoading, isError } = useQuery(
     queryKey,
     fetchAttendancesByTeam({ teamId: teamId, dateStr: dateStr }),
@@ -32,16 +48,22 @@ export const useAttendanceQuery = ({
   return { attendances, isEmpty, isLoading, isError };
 };
 
-// 생성
+/**
+ * Attendance 생성 Mutate
+ */
 export const useAttendanceCreate = ({
   teamId,
-  dateStr,
+  dateType,
+  date,
   ...baseOptions
-}: AttendanceQueryOptions<AttendanceData[]>) => {
-  const queryKey: string[] = [import.meta.env.VITE_ATTENDANCE_QUERY_KEY, teamId, dateStr];
+}: AttendanceQueryOptions) => {
   const queryClient = useQueryClient();
+  const queryKey: Array<string> = createQueryKey(teamId, date, dateType);
 
-  const onSettled = () => queryClient.invalidateQueries(queryKey);
+  const onSettled = () => {
+    const monthQueryKey = createQueryKey(teamId, date, 'month');
+    queryClient.invalidateQueries(monthQueryKey);
+  };
 
   const { mutate: createAttendanceMutate, isLoading: isCreateAttendanceLoading } = useMutation(
     queryKey,
@@ -52,16 +74,22 @@ export const useAttendanceCreate = ({
   return { createAttendanceMutate, isCreateAttendanceLoading };
 };
 
-// 업데이트
+/**
+ * Attendance 업데이트 Mutate
+ */
 export const useAttendanceUpdate = ({
   teamId,
-  dateStr,
+  dateType,
+  date,
   ...baseOptions
-}: AttendanceQueryOptions<AttendanceData[]>) => {
-  const queryKey: string[] = [import.meta.env.VITE_ATTENDANCE_QUERY_KEY, teamId, dateStr];
+}: AttendanceQueryOptions) => {
   const queryClient = useQueryClient();
+  const queryKey: Array<string> = createQueryKey(teamId, date, dateType);
 
-  const onSettled = () => queryClient.invalidateQueries(queryKey);
+  const onSettled = () => {
+    const monthQueryKey = createQueryKey(teamId, date, 'month');
+    queryClient.invalidateQueries(monthQueryKey);
+  };
 
   const { mutate: updateAttendanceMutate, isLoading: isUpdateAttendanceLoading } = useMutation(
     queryKey,
@@ -72,16 +100,22 @@ export const useAttendanceUpdate = ({
   return { updateAttendanceMutate, isUpdateAttendanceLoading };
 };
 
-// 삭제
+/**
+ * Attendance 삭제 Mutate
+ */
 export const useAttendanceRemove = ({
   teamId,
-  dateStr,
+  dateType,
+  date,
   ...baseOptions
-}: AttendanceQueryOptions<AttendanceData[]>) => {
-  const queryKey: string[] = [import.meta.env.VITE_ATTENDANCE_QUERY_KEY, teamId, dateStr];
+}: AttendanceQueryOptions) => {
   const queryClient = useQueryClient();
+  const queryKey: Array<string> = createQueryKey(teamId, date, dateType);
 
-  const onSettled = () => queryClient.invalidateQueries(queryKey);
+  const onSettled = () => {
+    const monthQueryKey = createQueryKey(teamId, date, 'month');
+    queryClient.invalidateQueries(monthQueryKey);
+  };
 
   const { mutate: removeAttendanceMutate, isLoading: isRemoveAttendanceLoading } = useMutation(
     queryKey,

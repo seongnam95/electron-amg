@@ -1,7 +1,7 @@
-import { useEffect, useState } from 'react';
+import { ReactNode, useRef, useState } from 'react';
 import { FaTrashAlt } from 'react-icons/fa';
 
-import { Button, Modal } from 'antd';
+import { Button, Popover } from 'antd';
 import dayjs, { Dayjs } from 'dayjs';
 import { useRecoilValue } from 'recoil';
 
@@ -17,24 +17,23 @@ import {
   useAttendanceUpdate,
 } from './queryHooks/useAttendanceQuery';
 
-interface AttendanceModalOptions {
-  onFinish?: () => void;
-}
-
-interface ModalOpenOptions {
+interface PopoverOpenOptions {
+  targetPos: { x: number; y: number };
   date: Dayjs;
   employeeIds: string | string[];
   initValues?: AttendanceUpdateBody;
 }
 
-/**
- * Attendance 추가/편집 Modal
- * @returns Modal Open Fn, JSX.Element
- */
-export const useAttendanceModal = ({ onFinish }: AttendanceModalOptions) => {
+interface AttendancePopoverOptions {
+  onFinish?: () => void;
+}
+
+export const useAttendancePopover = ({ onFinish }: AttendancePopoverOptions) => {
   const team = useRecoilValue(teamStore);
 
-  const [open, setOpen] = useState<boolean>(false);
+  const targetRef = useRef<HTMLElement>(null);
+  const [targetPos, setTargetPos] = useState<{ x: number; y: number }>();
+  const [visible, setVisible] = useState<boolean>(false);
   const [employeeIds, setEmployeeIds] = useState<string[]>([]);
   const [initValues, setInitValues] = useState<AttendanceUpdateBody>();
   const [date, setDate] = useState<Dayjs>(dayjs());
@@ -44,27 +43,27 @@ export const useAttendanceModal = ({ onFinish }: AttendanceModalOptions) => {
     dateType: 'day',
     date: date,
   };
-  const { attendances } = useAttendanceQuery(queryOptions);
 
-  const mutateOptions = { ...queryOptions, onSuccess: () => closeModal() };
+  const { attendances } = useAttendanceQuery(queryOptions);
+  const mutateOptions = { ...queryOptions, onSuccess: () => closePopover() };
   const { createAttendanceMutate, isCreateAttendanceLoading } = useAttendanceCreate(mutateOptions);
   const { updateAttendanceMutate, isUpdateAttendanceLoading } = useAttendanceUpdate(mutateOptions);
   const { removeAttendanceMutate, isRemoveAttendanceLoading } = useAttendanceRemove(mutateOptions);
 
-  useEffect(() => console.log(initValues), [initValues]);
-  const closeModal = () => {
-    setOpen(false);
+  const closePopover = () => {
+    setVisible(false);
     setEmployeeIds([]);
     setInitValues(undefined);
     onFinish?.();
   };
 
-  const openModal = ({ date, initValues, employeeIds }: ModalOpenOptions) => {
+  const openPopover = ({ targetPos, date, initValues, employeeIds }: PopoverOpenOptions) => {
+    setTargetPos(targetPos);
     setDate(date);
     setInitValues(initValues);
     const ids = Array.isArray(employeeIds) ? employeeIds : [employeeIds];
     setEmployeeIds(ids);
-    setOpen(true);
+    setVisible(true);
   };
 
   const handleSubmit = (formData: AttendanceUpdateBody) => {
@@ -106,26 +105,30 @@ export const useAttendanceModal = ({ onFinish }: AttendanceModalOptions) => {
 
   const isLoading =
     isCreateAttendanceLoading || isUpdateAttendanceLoading || isRemoveAttendanceLoading;
-  const renderModal = (
-    <Modal
+  const content = (
+    <AttendanceForm
+      initValues={initValues}
+      extraBtn={
+        <Button type="text" icon={<FaTrashAlt size="1.6rem" />} danger onClick={handleRemove} />
+      }
+      onCancel={closePopover}
+      onSubmit={handleSubmit}
+      loading={isLoading}
+    />
+  );
+  const renderPopover = (
+    <Popover
       title="근무 로그 추가/변경"
-      open={open}
-      centered
-      width={380}
-      footer={false}
-      onCancel={closeModal}
-    >
-      <AttendanceForm
-        initValues={initValues}
-        extraBtn={
-          <Button type="text" icon={<FaTrashAlt size="1.6rem" />} danger onClick={handleRemove} />
-        }
-        onCancel={closeModal}
-        onSubmit={handleSubmit}
-        loading={isLoading}
-      />
-    </Modal>
+      open={visible}
+      trigger={'click'}
+      style={{
+        position: 'fixed',
+        top: `${targetPos?.y}`,
+        left: `${targetPos?.x}`,
+      }}
+      content={content}
+    ></Popover>
   );
 
-  return { openModal, renderModal };
+  return { openPopover, renderPopover };
 };

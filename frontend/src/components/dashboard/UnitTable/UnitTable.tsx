@@ -14,7 +14,8 @@ const UnitTable = ({ date = dayjs() }: UnitTableProps) => {
   const team = useRecoilValue(teamStore);
   const { attendances } = useAttendanceQuery({
     teamId: team.id,
-    dateStr: date.format('YY-MM'),
+    date: date,
+    dateType: 'month',
     enabled: team.existTeam,
   });
 

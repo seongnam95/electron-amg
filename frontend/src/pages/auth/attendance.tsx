@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { MouseEvent, useState } from 'react';
 import { RiExchangeFundsLine } from 'react-icons/ri';
 
 import { Button, Flex, Segmented, Tooltip } from 'antd';
@@ -12,27 +12,28 @@ import Dock from '~/components/common/Dock';
 import { useAttendanceQuery } from '~/hooks/queryHooks/useAttendanceQuery';
 import { useEmployeeQuery } from '~/hooks/queryHooks/useEmployeeQuery';
 import { useAttendanceModal } from '~/hooks/useAttendanceModal';
+import { useAttendancePopover } from '~/hooks/useAttendancePopover';
 import { useEmployeeInfoDrawer } from '~/hooks/useEmployeeInfoDrawer';
 import { teamStore } from '~/stores/team';
 import { AttendancePageStyled } from '~/styles/pageStyled/attendancePageStyled';
 import { AttendanceData } from '~/types/attendance';
 import { EmployeeData } from '~/types/employee';
 
-type ViewType = 'monthly' | 'daily';
+type ViewType = 'month' | 'day';
 const AttendancePage = () => {
   // state
   const team = useRecoilValue(teamStore);
 
-  const [viewType, setViewType] = useState<ViewType>('daily');
+  const { openPopover, renderPopover } = useAttendancePopover({ onFinish: () => {} });
+  const [viewType, setViewType] = useState<ViewType>('day');
   const [selectedEmployeeIds, setSelectedEmployeeIds] = useState<string[]>([]);
   const [isWorking, setIsWorking] = useState<boolean>(false);
   const [selectedDay, setSelectedDay] = useState<Dayjs>(dayjs());
-  const dateStr = selectedDay.format(viewType === 'daily' ? 'YY-MM-DD' : 'YY-MM');
+  const dateStr = selectedDay.format(viewType === 'day' ? 'YY-MM-DD' : 'YY-MM');
 
   // hook
   const { openDrawer, renderDrawer } = useEmployeeInfoDrawer();
   const { openModal, renderModal } = useAttendanceModal({
-    date: selectedDay,
     onFinish: () => {
       setIsWorking(false);
     },
@@ -40,7 +41,8 @@ const AttendancePage = () => {
 
   const { employees } = useEmployeeQuery({ teamId: team?.id, enabled: team.existTeam });
   const { attendances } = useAttendanceQuery({
-    dateStr: dateStr,
+    date: selectedDay,
+    dateType: viewType,
     teamId: team.id,
     enabled: team.existTeam,
   });
@@ -53,11 +55,20 @@ const AttendancePage = () => {
   const handleSelect = (ids: string[]) => setSelectedEmployeeIds(ids);
   const handleCollectiveChange = () => {
     setIsWorking(true);
-    openModal({ employeeIds: selectedEmployeeIds });
+    openModal({ date: selectedDay, employeeIds: selectedEmployeeIds });
   };
-  const handleContextMenu = (employee: EmployeeData, attendance?: AttendanceData) => {
+
+  const handleContextMenu = (
+    event: MouseEvent,
+    employee: EmployeeData,
+    attendance?: AttendanceData,
+    date?: Dayjs,
+  ) => {
+    console.log(event);
     setIsWorking(true);
-    openModal({
+    openPopover({
+      targetPos: { x: event.clientX, y: event.clientY },
+      date: date ?? selectedDay,
       employeeIds: [employee.id],
       initValues: attendance ? attendance : undefined,
     });
@@ -70,13 +81,13 @@ const AttendancePage = () => {
       <Flex align="center" justify="space-between" style={{ padding: '2rem' }}>
         <Segmented
           options={[
-            { label: '일간', value: 'daily' },
-            { label: '월간', value: 'monthly' },
+            { label: '일간', value: 'day' },
+            { label: '월간', value: 'month' },
           ]}
           onChange={v => setViewType(v as ViewType)}
         />
         <AntDatePicker
-          picker={viewType === 'monthly' ? 'month' : 'date'}
+          picker={viewType === 'month' ? 'month' : 'date'}
           defaultValue={selectedDay}
           onChange={handleChangeDate}
         />
@@ -84,7 +95,7 @@ const AttendancePage = () => {
 
       {/* 테이블 Wrap */}
       <Flex className="table-container" flex={1}>
-        {viewType === 'daily' ? (
+        {viewType === 'day' ? (
           <DayTable
             employees={employees}
             attendances={attendances}
@@ -93,7 +104,12 @@ const AttendancePage = () => {
             onContextMenu={handleContextMenu}
           />
         ) : (
-          <MonthTable dateStr={dateStr} employees={employees} attendances={attendances} />
+          <MonthTable
+            dateStr={dateStr}
+            employees={employees}
+            attendances={attendances}
+            onContextMenu={handleContextMenu}
+          />
         )}
 
         <Dock open={showDock}>
@@ -110,6 +126,7 @@ const AttendancePage = () => {
 
       {renderDrawer}
       {renderModal}
+      {renderPopover}
     </AttendancePageStyled>
   );
 };

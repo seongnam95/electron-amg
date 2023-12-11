@@ -18,7 +18,7 @@ const LoginPage = () => {
   const [form] = Form.useForm();
   const { soundMessage } = useSoundApp();
 
-  const { loginMutate, isLoading } = useAuth({
+  const { loginMutate, isLoginLoading } = useAuth({
     onSuccess: user => {
       if (user.hasTeam) navigate('/management/dashboard');
       else navigate('/init');
@@ -72,7 +72,7 @@ const LoginPage = () => {
           type="primary"
           size="large"
           htmlType="submit"
-          loading={isLoading}
+          loading={isLoginLoading}
           style={{ width: '100%' }}
         >
           로그인

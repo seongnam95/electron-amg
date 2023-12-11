@@ -1,13 +1,12 @@
-import { Flex, TableColumnsType } from 'antd';
+import { Flex, TableColumnsType, Tooltip } from 'antd';
 
-import { AttendanceData } from '~/types/attendance';
-import { PositionData } from '~/types/position';
+import TooltipText from '~/components/common/TooltipText';
 import { TeamData } from '~/types/team';
+import { AttendanceReportData } from '~/utils/statistics/attendanceReportByPosition';
 
-import { MappingAttendanceData } from '../AttendanceDoughnut/util';
 import { HintText, PositionColorBox } from './styled';
 
-export interface MonthAttendanceTableData extends MappingAttendanceData {
+export interface MonthAttendanceTableData extends AttendanceReportData {
   key: string;
   team: TeamData;
 }
@@ -41,15 +40,28 @@ export const getColumns = (): TableColumnsType<MonthAttendanceTableData> => {
       ),
     },
     {
+      key: 'totalAttendance',
+      dataIndex: 'totalAttendance',
+      title: '총 출근일',
+      width: 100,
+      align: 'right',
+      render: (_, { attendanceCount }) => (
+        <>
+          {attendanceCount}
+          <HintText>일</HintText>
+        </>
+      ),
+    },
+    {
       key: 'mealCostCount',
       dataIndex: 'mealCostCount',
-      title: '식대',
+      title: '식대 포함',
       width: 100,
       align: 'right',
       render: (_, { mealCostCount }) => (
         <>
           {mealCostCount}
-          <HintText>개</HintText>
+          <HintText>회</HintText>
         </>
       ),
     },
@@ -62,7 +74,7 @@ export const getColumns = (): TableColumnsType<MonthAttendanceTableData> => {
       render: (_, { otCount }) => (
         <>
           {otCount}
-          <HintText>개</HintText>
+          <HintText>T</HintText>
         </>
       ),
     },
@@ -80,22 +92,39 @@ export const getColumns = (): TableColumnsType<MonthAttendanceTableData> => {
       ),
     },
     {
-      key: 'totalAttendance',
-      dataIndex: 'totalAttendance',
-      title: '총 출근일',
+      key: 'dailyPaySum',
+      dataIndex: 'dailyPaySum',
+      title: <TooltipText title="일일 수당 + 식대 + OT - 선지급">급여 합계</TooltipText>,
       width: 100,
       align: 'right',
-      render: (_, { attendanceCount }) => (
+      render: (_, { totalPaySum }) => (
         <>
-          {attendanceCount}
-          <HintText>일</HintText>
+          {totalPaySum.toLocaleString()}
+          <HintText>원</HintText>
+        </>
+      ),
+    },
+    {
+      key: 'tax',
+      dataIndex: 'tax',
+      title: <TooltipText title="급여 합계 * 3.3%">소득세</TooltipText>,
+      width: 100,
+      align: 'right',
+      render: (_, { taxAmount }) => (
+        <>
+          {taxAmount.toLocaleString()}
+          <HintText>원</HintText>
         </>
       ),
     },
     {
       key: 'totalSumPay',
       dataIndex: 'totalSumPay',
-      title: '총 합계액',
+      title: (
+        <TooltipText title="급여 합계 - 소득세" placement="topRight">
+          총 합계액
+        </TooltipText>
+      ),
       width: 100,
       align: 'right',
       render: (_, { finalPay }) => (

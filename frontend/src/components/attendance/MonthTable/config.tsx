@@ -1,3 +1,5 @@
+import { MouseEvent } from 'react';
+
 import { Button, Flex, Tag } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 import clsx from 'clsx';
@@ -20,7 +22,7 @@ export interface MonthTableData {
 
 interface ColumnProps {
   date: Dayjs;
-  onCellContextMenu?: (day: Dayjs, data: MonthTableData) => void;
+  onCellContextMenu?: (event: MouseEvent, day: Dayjs, data: MonthTableData) => void;
 }
 
 export const getColumns = ({
@@ -42,7 +44,8 @@ export const getColumns = ({
       width: 40,
       align: 'center',
       onCell: data => ({
-        onContextMenu: () => onCellContextMenu?.(day.day, data),
+        // onMouseOver: () => console.log('mouse'),
+        onContextMenu: event => onCellContextMenu?.(event, day.day, data),
       }),
       render: (attendances, { employee }) => {
         if (attendances) {

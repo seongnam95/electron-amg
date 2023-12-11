@@ -1,9 +1,12 @@
+import { useNavigate } from 'react-router-dom';
+
 import { AppControlAction } from '@app/modules/general';
 
 import clsx from 'clsx';
 import { useRecoilValue } from 'recoil';
 
 import logo from '~/assets/images/logo@256.png';
+import { useAuth } from '~/hooks/useAuth';
 import { useLogout } from '~/hooks/useLogout';
 import { userStore } from '~/stores/user';
 
@@ -14,7 +17,10 @@ export interface TitlebarProps {
 }
 
 const Titlebar = ({ className }: TitlebarProps) => {
-  const logout = useLogout();
+  const navigate = useNavigate();
+  const { logoutMutate } = useAuth({
+    onSuccess: () => navigate('/login'),
+  });
   const { isLogin } = useRecoilValue(userStore);
 
   const appControl = (action: AppControlAction) => {
@@ -30,7 +36,7 @@ const Titlebar = ({ className }: TitlebarProps) => {
       <div className="control-wrap">
         <div className="controls">
           {isLogin && (
-            <div onClick={logout}>
+            <div onClick={() => logoutMutate()}>
               <i className="bx bx-log-out" style={{ fontSize: '1.8rem', paddingTop: '0.1rem' }} />
             </div>
           )}
