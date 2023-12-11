@@ -3,11 +3,8 @@ import { HTMLAttributes, useMemo } from 'react';
 import { Table } from 'antd';
 import { TableRowSelection } from 'antd/es/table/interface';
 import dayjs from 'dayjs';
-import { useRecoilValue } from 'recoil';
 
-import { useAttendanceQuery } from '~/hooks/queryHooks/useAttendanceQuery';
 import { useDragScroll } from '~/hooks/useDragScroll';
-import { teamStore } from '~/stores/team';
 import { AttendanceData } from '~/types/attendance';
 import { EmployeeData } from '~/types/employee';
 
@@ -16,12 +13,12 @@ import { AttendanceBarStyled, MonthTableStyled } from './styled';
 import { groupedAttendanceByDay } from './util';
 
 export interface MonthTableProps {
-  date: string;
+  dateStr: string;
   employees: EmployeeData[];
   attendances: AttendanceData[];
 }
 
-const MonthTable = ({ date, employees, attendances }: MonthTableProps) => {
+const MonthTable = ({ dateStr, employees, attendances }: MonthTableProps) => {
   const scrollRef = useDragScroll();
 
   const rowSelection: TableRowSelection<MonthTableData> = {
@@ -29,7 +26,7 @@ const MonthTable = ({ date, employees, attendances }: MonthTableProps) => {
   };
 
   const columns = getColumns({
-    date: dayjs(date, 'YY-MM'),
+    date: dayjs(dateStr, 'YY-MM'),
     onCellContextMenu: (day, data) => console.log(data),
   });
 

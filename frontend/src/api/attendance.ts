@@ -1,56 +1,51 @@
-import { AxiosResponse } from 'axios';
-
 import { AttendanceCreateBody, AttendanceData, AttendanceUpdateBody } from '~/types/attendance';
 
 import axiosPrivate from './axios';
-import { BaseResponse, DataListResponse, DataResponse } from './response';
+import { DataListResponse, DataResponse } from './response';
 
-interface FetchAttendancesProps {
-  id?: string;
-  date?: string;
+interface AttendancesFetchProps {
+  teamId?: string;
+  dateStr?: string;
 }
 
-export const fetchAttendances =
-  ({ id, date }: FetchAttendancesProps) =>
+/**
+ * Attendance 불러오기 API (By Team)
+ * @param AttendancesFetchProps
+ * @returns Promise<AttendanceData[]>
+ */
+export const fetchAttendancesByTeam =
+  ({ teamId, dateStr }: AttendancesFetchProps) =>
   async (): Promise<AttendanceData[]> => {
     const teamEndpoint = import.meta.env.VITE_TEAM_ENDPOINT;
     const attendanceEndpoint = import.meta.env.VITE_ATTENDANCE_ENDPOINT;
 
     const { data } = await axiosPrivate.get<DataListResponse<AttendanceData>>(
-      `${teamEndpoint}/${id}/${attendanceEndpoint}`,
-      { params: { date: date } },
+      `${teamEndpoint}/${teamId}/${attendanceEndpoint}`,
+      { params: { date: dateStr } },
     );
 
     return data.result.list;
   };
 
-interface UpdateAttendanceProps {
-  ids: string[];
-  body: AttendanceUpdateBody;
+interface AttendanceAxiosProps<T> {
+  employeeIds: string[];
+  body: T;
 }
 
-export const updateAttendance = async ({
-  ids,
+/**
+ * Attendance 생성 API
+ * @param AttendanceAxiosProps
+ * @returns Promise<AttendanceData[]>
+ */
+export const createAttendance = async ({
+  employeeIds,
   body,
-}: UpdateAttendanceProps): Promise<AttendanceData[]> => {
-  const attendanceEndpoint = import.meta.env.VITE_ATTENDANCE_ENDPOINT;
-
-  const updatePromises = ids.map(id =>
-    axiosPrivate.put<DataResponse<AttendanceData>>(`${attendanceEndpoint}/${id}`, body),
-  );
-
-  const responses = await Promise.all(updatePromises);
-  return responses.map(res => res.data.result);
-};
-
-export const createAttendance = async (
-  bodys: AttendanceCreateBody[],
-): Promise<AttendanceData[]> => {
+}: AttendanceAxiosProps<AttendanceCreateBody>): Promise<AttendanceData[]> => {
   const employeeEndpoint = import.meta.env.VITE_EMPLOYEE_ENDPOINT;
   const attendanceEndpoint = import.meta.env.VITE_ATTENDANCE_ENDPOINT;
 
-  const updatePromises = bodys.map(body => {
-    const url = `${employeeEndpoint}/${body.employeeId}/${attendanceEndpoint}`;
+  const updatePromises = employeeIds.map(employeeId => {
+    const url = `${employeeEndpoint}/${employeeId}/${attendanceEndpoint}`;
     return axiosPrivate.post<DataResponse<AttendanceData>>(url, body);
   });
 
@@ -58,23 +53,37 @@ export const createAttendance = async (
   return responses.map(res => res.data.result);
 };
 
-export const removeAttendance = async (ids: string[]): Promise<AttendanceData[]> => {
+/**
+ * Attendance 업데이트 API
+ * @param AttendanceAxiosProps
+ * @returns Promise<AttendanceData[]>
+ */
+export const updateAttendance = async ({
+  employeeIds,
+  body,
+}: AttendanceAxiosProps<AttendanceUpdateBody>): Promise<AttendanceData[]> => {
   const attendanceEndpoint = import.meta.env.VITE_ATTENDANCE_ENDPOINT;
 
-  const removePromises = ids.map(id => {
+  const updatePromises = employeeIds.map(employeeId =>
+    axiosPrivate.put<DataResponse<AttendanceData>>(`${attendanceEndpoint}/${employeeId}`, body),
+  );
+
+  const responses = await Promise.all(updatePromises);
+  return responses.map(res => res.data.result);
+};
+
+/**
+ * Attendance 삭제 API
+ * @param attendanceIds
+ * @returns Promise<AttendanceData[]>
+ */
+export const removeAttendance = async (attendanceIds: string[]): Promise<AttendanceData[]> => {
+  const attendanceEndpoint = import.meta.env.VITE_ATTENDANCE_ENDPOINT;
+
+  const removePromises = attendanceIds.map(id => {
     return axiosPrivate.delete<DataResponse<AttendanceData>>(`${attendanceEndpoint}/${id}`);
   });
 
   const responses = await Promise.all(removePromises);
   return responses.map(res => res.data.result);
 };
-
-// export const createAttendanceRequest =
-//   (parentEndpoint: string, endpoint: string) =>
-//   async ({ employeeId, body }: CreateAttendanceProps): Promise<BaseResponse> => {
-//     const { data } = await axiosPrivate.post<BaseResponse>(
-//       `${parentEndpoint}/${employeeId}/${endpoint}`,
-//       body,
-//     );
-//     return data;
-//   };

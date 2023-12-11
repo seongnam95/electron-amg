@@ -2,31 +2,15 @@ import { AttendanceData } from '~/types/attendance';
 import { PositionData } from '~/types/position';
 import { TeamData } from '~/types/team';
 
-interface TransformAttendance {
-  position: PositionData;
-  stats: {
-    includeMealCost: {
-      count: number;
-      sumPay: number;
-    };
-    mealExcluded: {
-      count: number;
-      sumPay: number;
-    };
-    total: {
-      count: number;
-      sumPay: number;
-    };
-  };
-}
-
 export interface MappingAttendanceData {
   position: PositionData;
   mealCostCount: number;
   prepaidCount: number;
   otCount: number;
   attendanceCount: number;
+
   dailyPay: number;
+  mealCost: number;
   otPay: number;
   prepay: number;
   taxAmount: number;
@@ -45,6 +29,8 @@ export const mappingAttendances = (
       attendance => attendance.positionId === position.id,
     );
 
+    const attendanceCount = positionAttendances.length;
+
     // includeMealCost가 True인 데이터의 수
     const mealCostCount = positionAttendances.filter(
       attendance => attendance.includeMealCost,
@@ -58,66 +44,33 @@ export const mappingAttendances = (
     // isPaid True인 데이터의 수
     const paidCount = positionAttendances.filter(attendance => attendance.isPaid).length;
 
-    const mealCostSum = team.mealCost * mealCostCount;
-    const totalPaySum = positionAttendances.length * position.standardPay + mealCostSum;
+    // 합계액
+    const dailyPaySum = attendanceCount * position.standardPay;
+    const mealCostSum = mealCostCount * team.mealCost;
+    const otPaySum = otCount * team.otPay;
+    const prepaySum = paidCount * position.standardPay;
 
+    // 일일 수당 합계액 + 식대 합계액 + OT 합계액 - 선지급액
+    const totalPaySum = dailyPaySum + mealCostSum + otPaySum - prepaySum;
     const taxSum = totalPaySum * 0.033;
+    const finalPay = totalPaySum - taxSum;
 
     return {
       position: position,
+
+      attendanceCount: attendanceCount,
       mealCostCount: mealCostCount,
       otCount: otCount,
       prepaidCount: paidCount,
-      attendanceCount: positionAttendances.length,
 
-      dailyPay: positionAttendances.length * position.standardPay,
-      otPay: otCount * team.otPay,
-      prepay: paidCount * position.standardPay,
+      dailyPay: dailyPaySum,
+      mealCost: mealCostSum,
+      otPay: otPaySum,
+      prepay: prepaySum,
 
       totalPaySum: totalPaySum,
       taxAmount: taxSum,
-      finalPay: totalPaySum - taxSum,
-    };
-  });
-};
-
-export const transformAttendanceData = (
-  team: TeamData,
-  attendances: AttendanceData[],
-): TransformAttendance[] => {
-  const { positions, mealCost } = team;
-  if (!positions || positions.length === 0) return [];
-
-  return positions.map(position => {
-    const targetAttendance = attendances.filter(
-      attendance => attendance.positionId === position.id,
-    );
-
-    const stats = targetAttendance.reduce(
-      (acc, attendance) => {
-        if (attendance.includeMealCost) {
-          acc.includeMealCost.count += 1;
-          acc.includeMealCost.sumPay += position.standardPay + mealCost;
-          acc.total.count += 1;
-          acc.total.sumPay += position.standardPay + mealCost;
-        } else {
-          acc.mealExcluded.count += 1;
-          acc.mealExcluded.sumPay += position.standardPay;
-          acc.total.count += 1;
-          acc.total.sumPay += position.standardPay;
-        }
-        return acc;
-      },
-      {
-        includeMealCost: { count: 0, sumPay: 0 },
-        mealExcluded: { count: 0, sumPay: 0 },
-        total: { count: 0, sumPay: 0 },
-      },
-    );
-
-    return {
-      position: position,
-      stats: stats,
+      finalPay: finalPay,
     };
   });
 };

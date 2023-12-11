@@ -24,7 +24,7 @@ const MonthPayrollBar = ({ date = dayjs() }: MonthPayrollBarProps) => {
 
   const { attendances, isEmpty } = useAttendanceQuery({
     teamId: team.id,
-    date: date.format('YY-MM'),
+    dateStr: date.format('YY-MM'),
     enabled: team.existTeam,
   });
 

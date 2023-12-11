@@ -11,16 +11,16 @@ import { DayTableStyled } from './styled';
 export interface DayTableProps {
   employees: EmployeeData[];
   attendances: AttendanceData[];
+  onSelect?: (employeeIds: string[]) => void;
   onClickName?: (employee: EmployeeData) => void;
-  onSelect?: (ids: string[]) => void;
   onContextMenu?: (employee: EmployeeData, attendance?: AttendanceData) => void;
 }
 
 const DayTable = ({
   employees,
   attendances,
-  onClickName,
   onSelect,
+  onClickName,
   onContextMenu,
 }: DayTableProps) => {
   const scrollRef = useDragScroll();

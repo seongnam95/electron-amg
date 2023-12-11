@@ -5,7 +5,7 @@ import { useRecoilValue } from 'recoil';
 import { useAttendanceQuery } from '~/hooks/queryHooks/useAttendanceQuery';
 import { teamStore } from '~/stores/team';
 
-import { mappingAttendances, transformAttendanceData } from '../AttendanceDoughnut/util';
+import { mappingAttendances } from '../AttendanceDoughnut/util';
 import { MonthAttendanceTableData, getColumns } from './config';
 import { MonthAttendanceTableStyled } from './styled';
 
@@ -17,16 +17,15 @@ export interface MonthAttendanceTableProps {
 const MonthAttendanceTable = ({ date = dayjs() }: MonthAttendanceTableProps) => {
   const team = useRecoilValue(teamStore);
 
-  const { attendances, isEmpty } = useAttendanceQuery({
+  const { attendances } = useAttendanceQuery({
     teamId: team.id,
-    date: date.format('YY-MM'),
+    dateStr: date.format('YY-MM'),
     enabled: team.existTeam,
   });
 
   const positionAttendance = mappingAttendances(team, attendances);
-  const columns = getColumns();
   console.log(positionAttendance);
-
+  const columns = getColumns();
   const dataSource: MonthAttendanceTableData[] = positionAttendance.map(value => {
     return {
       key: value.position.id,

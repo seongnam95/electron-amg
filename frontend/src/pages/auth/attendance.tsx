@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { RiExchangeFundsLine } from 'react-icons/ri';
 
 import { Button, Flex, Segmented, Tooltip } from 'antd';
@@ -22,18 +22,25 @@ type ViewType = 'monthly' | 'daily';
 const AttendancePage = () => {
   // state
   const team = useRecoilValue(teamStore);
+
   const [viewType, setViewType] = useState<ViewType>('daily');
-  const [selectedAttendanceIds, setSelectedAttendanceIds] = useState<string[]>([]);
+  const [selectedEmployeeIds, setSelectedEmployeeIds] = useState<string[]>([]);
+  const [isWorking, setIsWorking] = useState<boolean>(false);
   const [selectedDay, setSelectedDay] = useState<Dayjs>(dayjs());
-  const date = selectedDay.format(viewType === 'daily' ? 'YY-MM-DD' : 'YY-MM');
+  const dateStr = selectedDay.format(viewType === 'daily' ? 'YY-MM-DD' : 'YY-MM');
 
   // hook
   const { openDrawer, renderDrawer } = useEmployeeInfoDrawer();
-  const { openModal, renderModal } = useAttendanceModal();
+  const { openModal, renderModal } = useAttendanceModal({
+    date: selectedDay,
+    onFinish: () => {
+      setIsWorking(false);
+    },
+  });
 
   const { employees } = useEmployeeQuery({ teamId: team?.id, enabled: team.existTeam });
   const { attendances } = useAttendanceQuery({
-    date: date,
+    dateStr: dateStr,
     teamId: team.id,
     enabled: team.existTeam,
   });
@@ -43,13 +50,20 @@ const AttendancePage = () => {
     if (date) setSelectedDay(date);
   };
 
-  const handleSelect = (ids: string[]) => setSelectedAttendanceIds(ids);
+  const handleSelect = (ids: string[]) => setSelectedEmployeeIds(ids);
+  const handleCollectiveChange = () => {
+    setIsWorking(true);
+    openModal({ employeeIds: selectedEmployeeIds });
+  };
   const handleContextMenu = (employee: EmployeeData, attendance?: AttendanceData) => {
-    //^ Modal 작동 방식 고려
-    // if (attendance) openModal();
+    setIsWorking(true);
+    openModal({
+      employeeIds: [employee.id],
+      initValues: attendance ? attendance : undefined,
+    });
   };
 
-  const hasSelected = selectedAttendanceIds.length > 0;
+  const showDock = selectedEmployeeIds.length > 0 && !isWorking;
   return (
     <AttendancePageStyled>
       {/* 컨트롤 바 */}
@@ -79,12 +93,17 @@ const AttendancePage = () => {
             onContextMenu={handleContextMenu}
           />
         ) : (
-          <MonthTable date={date} employees={employees} attendances={attendances} />
+          <MonthTable dateStr={dateStr} employees={employees} attendances={attendances} />
         )}
 
-        <Dock open={hasSelected}>
+        <Dock open={showDock}>
           <Tooltip title="일괄 변경" mouseEnterDelay={0.6}>
-            <Button type="text" size="large" icon={<RiExchangeFundsLine size="2.1rem" />} />
+            <Button
+              type="text"
+              size="large"
+              icon={<RiExchangeFundsLine size="2.1rem" />}
+              onClick={handleCollectiveChange}
+            />
           </Tooltip>
         </Dock>
       </Flex>

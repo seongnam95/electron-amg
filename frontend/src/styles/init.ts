@@ -199,4 +199,5 @@ export const InitGlobalStyled = memo(createGlobalStyle`
       color: #909090;
     }
   }
+
 `);

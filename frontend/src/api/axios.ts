@@ -3,7 +3,7 @@ import axios from 'axios';
 import { camelToSnake, snakeToCamel } from '~/utils/snakeCamelConverter';
 
 const axiosPrivate = axios.create({
-  baseURL: import.meta.env.VITE_BASE_URL,
+  baseURL: import.meta.env.VITE_URL_BASE,
   withCredentials: true,
 });
 

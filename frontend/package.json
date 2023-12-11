@@ -4,6 +4,7 @@
   "description": "amg-admin",
   "main": "dist-electron/index.js",
   "license": "MIT",
+  "private": true,
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build && electron-builder",

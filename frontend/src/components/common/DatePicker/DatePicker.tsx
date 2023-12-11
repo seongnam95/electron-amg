@@ -7,7 +7,7 @@ const DatePicker = generatePicker<Dayjs>(dayjsGenerateConfig);
 interface AntDatePickerProps {
   defaultValue?: Dayjs;
   disabledDate?: any;
-  onChange: (value: Dayjs | null, dateString: string) => void;
+  onChange?: (value: Dayjs | null, dateString: string) => void;
   picker?: 'time' | 'date' | 'week' | 'month' | 'quarter' | 'year' | undefined;
 }
 

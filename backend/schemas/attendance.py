@@ -5,18 +5,16 @@ from schemas.position import PositionResponse
 
 
 class AttendanceCreate(BaseModel):
-    include_meal_cost: Optional[bool] = None
     working_date: Optional[str] = None
-    position_id: Optional[str] = None
-
-
-class AttendanceUpdate(AttendanceCreate):
-    pay: Optional[int] = None
     is_paid: Optional[bool] = None
     memo: Optional[str] = None
     include_meal_cost: Optional[bool] = None
     ot_count: Optional[int] = None
     position_id: Optional[str] = None
+
+
+class AttendanceUpdate(AttendanceCreate):
+    pass
 
 
 class AttendanceResponse(BaseModel):

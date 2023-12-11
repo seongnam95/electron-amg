@@ -2,7 +2,7 @@ import { useMutation, useQuery, useQueryClient } from 'react-query';
 
 import {
   createAttendance,
-  fetchAttendances,
+  fetchAttendancesByTeam,
   removeAttendance,
   updateAttendance,
 } from '~/api/attendance';
@@ -10,21 +10,20 @@ import { AttendanceData } from '~/types/attendance';
 import { QueryBaseOptions } from '~/types/query';
 
 interface AttendanceQueryOptions<T> extends QueryBaseOptions<T> {
-  teamId?: string;
-  date?: string;
-  attendanceId?: string;
+  teamId: string;
+  dateStr: string;
 }
 
 export const useAttendanceQuery = ({
   teamId,
-  date,
+  dateStr,
   ...baseOptions
 }: AttendanceQueryOptions<AttendanceData[]>) => {
-  const queryKey: Array<string> = [import.meta.env.VITE_ATTENDANCE_QUERY_KEY, teamId, date];
+  const queryKey: Array<string> = [import.meta.env.VITE_ATTENDANCE_QUERY_KEY, teamId, dateStr];
 
   const { data, isLoading, isError } = useQuery(
     queryKey,
-    fetchAttendances({ id: teamId, date: date }),
+    fetchAttendancesByTeam({ teamId: teamId, dateStr: dateStr }),
     { ...baseOptions },
   );
 
@@ -36,30 +35,30 @@ export const useAttendanceQuery = ({
 // 생성
 export const useAttendanceCreate = ({
   teamId,
-  date,
+  dateStr,
   ...baseOptions
 }: AttendanceQueryOptions<AttendanceData[]>) => {
-  const queryKey: string[] = [import.meta.env.VITE_ATTENDANCE_QUERY_KEY, teamId, date];
+  const queryKey: string[] = [import.meta.env.VITE_ATTENDANCE_QUERY_KEY, teamId, dateStr];
   const queryClient = useQueryClient();
 
   const onSettled = () => queryClient.invalidateQueries(queryKey);
 
-  const { mutate: createAttendanceCreate, isLoading: isCreateAttendanceLoading } = useMutation(
+  const { mutate: createAttendanceMutate, isLoading: isCreateAttendanceLoading } = useMutation(
     queryKey,
     createAttendance,
     { onSettled, ...baseOptions },
   );
 
-  return { createAttendanceCreate, isCreateAttendanceLoading };
+  return { createAttendanceMutate, isCreateAttendanceLoading };
 };
 
 // 업데이트
 export const useAttendanceUpdate = ({
   teamId,
-  date,
+  dateStr,
   ...baseOptions
 }: AttendanceQueryOptions<AttendanceData[]>) => {
-  const queryKey: string[] = [import.meta.env.VITE_ATTENDANCE_QUERY_KEY, teamId, date];
+  const queryKey: string[] = [import.meta.env.VITE_ATTENDANCE_QUERY_KEY, teamId, dateStr];
   const queryClient = useQueryClient();
 
   const onSettled = () => queryClient.invalidateQueries(queryKey);
@@ -73,13 +72,13 @@ export const useAttendanceUpdate = ({
   return { updateAttendanceMutate, isUpdateAttendanceLoading };
 };
 
-// 업데이트
+// 삭제
 export const useAttendanceRemove = ({
   teamId,
-  date,
+  dateStr,
   ...baseOptions
 }: AttendanceQueryOptions<AttendanceData[]>) => {
-  const queryKey: string[] = [import.meta.env.VITE_ATTENDANCE_QUERY_KEY, teamId, date];
+  const queryKey: string[] = [import.meta.env.VITE_ATTENDANCE_QUERY_KEY, teamId, dateStr];
   const queryClient = useQueryClient();
 
   const onSettled = () => queryClient.invalidateQueries(queryKey);

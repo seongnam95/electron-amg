@@ -23,7 +23,7 @@ const AttendanceDoughnut = ({ date = dayjs() }: AttendanceDoughnutProps) => {
   const { employees } = useEmployeeQuery({ teamId: team.id, enabled: team.existTeam });
   const { attendances } = useAttendanceQuery({
     teamId: team.id,
-    date: date.format('YY-MM-DD'),
+    dateStr: date.format('YY-MM-DD'),
     enabled: team.existTeam,
   });
 

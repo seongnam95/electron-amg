@@ -1,12 +1,15 @@
-import { Button, Flex, Form, Input, InputNumber, Switch } from 'antd';
+import { ReactNode, useEffect } from 'react';
 
-import { AttendanceData, AttendanceUpdateBody } from '~/types/attendance';
+import { Button, Flex, Form, Input, InputNumber, Switch, FormInstance } from 'antd';
+
+import { AttendanceUpdateBody } from '~/types/attendance';
 
 export interface AttendanceFormProps {
-  attendances?: AttendanceData[];
+  initValues?: AttendanceUpdateBody;
+  loading?: boolean;
+  extraBtn?: ReactNode;
   cancelBtnText?: string;
   submitBtnText?: string;
-  isLoading?: boolean;
   onSubmit?: (data: AttendanceUpdateBody) => void;
   onCancel?: () => void;
 }
@@ -19,15 +22,20 @@ const defaultValues: AttendanceUpdateBody = {
 };
 
 const AttendanceForm = ({
-  attendances,
+  initValues,
+  loading,
+  extraBtn,
   cancelBtnText,
   submitBtnText,
-  isLoading,
   onSubmit,
   onCancel,
 }: AttendanceFormProps) => {
   const [form] = Form.useForm();
-  const isEditing = !!attendances?.length;
+
+  useEffect(() => {
+    if (initValues) form.setFieldsValue(initValues);
+    else form.setFieldsValue(defaultValues);
+  }, [initValues]);
 
   return (
     <Form
@@ -37,7 +45,6 @@ const AttendanceForm = ({
       colon={false}
       autoComplete="off"
       style={{ marginTop: 24 }}
-      initialValues={isEditing ? attendances[0] : defaultValues}
       onFinish={onSubmit}
     >
       <Form.Item label="식대 포함" name="includeMealCost" valuePropName="checked">
@@ -56,18 +63,21 @@ const AttendanceForm = ({
         <Input maxLength={20} placeholder="(일일 한줄 메모)" />
       </Form.Item>
 
-      <Flex justify="end" gap={8}>
-        <Button disabled={isLoading} type="text" htmlType="button" onClick={onCancel}>
-          {cancelBtnText ? cancelBtnText : '취소'}
-        </Button>
-        <Button
-          loading={isLoading}
-          type="primary"
-          htmlType="submit"
-          style={{ padding: '0 2.4rem' }}
-        >
-          {submitBtnText ? submitBtnText : isEditing ? '변경' : '저장'}
-        </Button>
+      <Flex justify={extraBtn ? 'space-between' : 'end'} gap={8}>
+        {extraBtn}
+        <Flex gap={8}>
+          <Button disabled={loading} type="text" htmlType="button" onClick={onCancel}>
+            {cancelBtnText ? cancelBtnText : '닫기'}
+          </Button>
+          <Button
+            loading={loading}
+            type="primary"
+            htmlType="submit"
+            style={{ padding: '0 2.4rem' }}
+          >
+            {submitBtnText ? submitBtnText : '저장'}
+          </Button>
+        </Flex>
       </Flex>
     </Form>
   );
