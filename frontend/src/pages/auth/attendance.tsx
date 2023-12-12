@@ -1,7 +1,7 @@
 import { MouseEvent, useState } from 'react';
 import { RiExchangeFundsLine } from 'react-icons/ri';
 
-import { Button, Flex, Segmented, Tooltip } from 'antd';
+import { Button, Flex, Popover, Segmented, Tooltip } from 'antd';
 import dayjs, { Dayjs } from 'dayjs';
 import { useRecoilValue } from 'recoil';
 
@@ -9,10 +9,12 @@ import DayTable from '~/components/attendance/DayTable';
 import MonthTable from '~/components/attendance/MonthTable';
 import AntDatePicker from '~/components/common/DatePicker';
 import Dock from '~/components/common/Dock';
+import AttendanceForm from '~/components/forms/AttendanceForm';
 import { useAttendanceQuery } from '~/hooks/queryHooks/useAttendanceQuery';
 import { useEmployeeQuery } from '~/hooks/queryHooks/useEmployeeQuery';
 import { useAttendanceModal } from '~/hooks/useAttendanceModal';
 import { useAttendancePopover } from '~/hooks/useAttendancePopover';
+import useContextPopup from '~/hooks/useContextPopup';
 import { useEmployeeInfoDrawer } from '~/hooks/useEmployeeInfoDrawer';
 import { teamStore } from '~/stores/team';
 import { AttendancePageStyled } from '~/styles/pageStyled/attendancePageStyled';
@@ -21,22 +23,20 @@ import { EmployeeData } from '~/types/employee';
 
 type ViewType = 'month' | 'day';
 const AttendancePage = () => {
-  // state
   const team = useRecoilValue(teamStore);
 
-  const { openPopover, renderPopover } = useAttendancePopover({ onFinish: () => {} });
   const [viewType, setViewType] = useState<ViewType>('day');
   const [selectedEmployeeIds, setSelectedEmployeeIds] = useState<string[]>([]);
   const [isWorking, setIsWorking] = useState<boolean>(false);
   const [selectedDay, setSelectedDay] = useState<Dayjs>(dayjs());
   const dateStr = selectedDay.format(viewType === 'day' ? 'YY-MM-DD' : 'YY-MM');
 
-  // hook
+  const { openPopup, renderPopup } = useContextPopup({
+    children: <AttendanceForm />,
+  });
   const { openDrawer, renderDrawer } = useEmployeeInfoDrawer();
   const { openModal, renderModal } = useAttendanceModal({
-    onFinish: () => {
-      setIsWorking(false);
-    },
+    onFinish: () => setIsWorking(false),
   });
 
   const { employees } = useEmployeeQuery({ teamId: team?.id, enabled: team.existTeam });
@@ -64,14 +64,15 @@ const AttendancePage = () => {
     attendance?: AttendanceData,
     date?: Dayjs,
   ) => {
-    console.log(event);
     setIsWorking(true);
-    openPopover({
-      targetPos: { x: event.clientX, y: event.clientY },
-      date: date ?? selectedDay,
-      employeeIds: [employee.id],
-      initValues: attendance ? attendance : undefined,
-    });
+    openPopup(event);
+    // openPopover({
+    //   target: event.currentTarget as HTMLElement,
+    //   targetPos: { x: event.clientX, y: event.clientY },
+    //   date: date ?? selectedDay,
+    //   employeeIds: [employee.id],
+    //   initValues: attendance ? attendance : undefined,
+    // });
   };
 
   const showDock = selectedEmployeeIds.length > 0 && !isWorking;
@@ -126,7 +127,7 @@ const AttendancePage = () => {
 
       {renderDrawer}
       {renderModal}
-      {renderPopover}
+      {renderPopup}
     </AttendancePageStyled>
   );
 };

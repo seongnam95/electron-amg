@@ -3,6 +3,7 @@ import styled from 'styled-components';
 export const AttendancePageStyled = styled.div`
   --footer-height: 10rem;
 
+  position: relative;
   display: flex;
   flex-direction: column;
   overflow: hidden;

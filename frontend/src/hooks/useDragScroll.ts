@@ -28,6 +28,8 @@ export const useDragScroll = ({
   let rafId: number | null = null;
 
   const handleMouseDown = (e: MouseEvent) => {
+    if (e.button !== 0) return;
+
     isDragging = true;
 
     startX = e.pageX - (ref.current?.offsetLeft || 0);

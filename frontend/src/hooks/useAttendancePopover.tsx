@@ -18,6 +18,7 @@ import {
 } from './queryHooks/useAttendanceQuery';
 
 interface PopoverOpenOptions {
+  target: HTMLElement;
   targetPos: { x: number; y: number };
   date: Dayjs;
   employeeIds: string | string[];
@@ -31,7 +32,7 @@ interface AttendancePopoverOptions {
 export const useAttendancePopover = ({ onFinish }: AttendancePopoverOptions) => {
   const team = useRecoilValue(teamStore);
 
-  const targetRef = useRef<HTMLElement>(null);
+  const [target, setTarget] = useState<HTMLElement>(document.body);
   const [targetPos, setTargetPos] = useState<{ x: number; y: number }>();
   const [visible, setVisible] = useState<boolean>(false);
   const [employeeIds, setEmployeeIds] = useState<string[]>([]);
@@ -57,7 +58,14 @@ export const useAttendancePopover = ({ onFinish }: AttendancePopoverOptions) => 
     onFinish?.();
   };
 
-  const openPopover = ({ targetPos, date, initValues, employeeIds }: PopoverOpenOptions) => {
+  const openPopover = ({
+    target,
+    targetPos,
+    date,
+    initValues,
+    employeeIds,
+  }: PopoverOpenOptions) => {
+    setTarget(target);
     setTargetPos(targetPos);
     setDate(date);
     setInitValues(initValues);
@@ -116,18 +124,9 @@ export const useAttendancePopover = ({ onFinish }: AttendancePopoverOptions) => 
       loading={isLoading}
     />
   );
+
   const renderPopover = (
-    <Popover
-      title="근무 로그 추가/변경"
-      open={visible}
-      trigger={'click'}
-      style={{
-        position: 'fixed',
-        top: `${targetPos?.y}`,
-        left: `${targetPos?.x}`,
-      }}
-      content={content}
-    ></Popover>
+    <Popover title="근무 로그 추가/변경" open={visible} trigger={'click'} content={content} />
   );
 
   return { openPopover, renderPopover };
