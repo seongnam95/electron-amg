@@ -13,7 +13,7 @@ import { AttendanceBarStyled, MonthTableStyled } from './styled';
 import { groupedAttendanceByDay } from './util';
 
 export interface MonthTableProps {
-  dateStr: string;
+  date: Dayjs;
   employees: EmployeeData[];
   attendances: AttendanceData[];
   onContextMenu?: (
@@ -24,7 +24,7 @@ export interface MonthTableProps {
   ) => void;
 }
 
-const MonthTable = ({ dateStr, employees, attendances, onContextMenu }: MonthTableProps) => {
+const MonthTable = ({ date, employees, attendances, onContextMenu }: MonthTableProps) => {
   const scrollRef = useDragScroll();
 
   const handleContextMenu = (event: MouseEvent, day: Dayjs, data: MonthTableData) => {
@@ -41,7 +41,7 @@ const MonthTable = ({ dateStr, employees, attendances, onContextMenu }: MonthTab
   };
 
   const columns = getColumns({
-    date: dayjs(dateStr, 'YY-MM'),
+    date: date,
     onCellContextMenu: handleContextMenu,
   });
 

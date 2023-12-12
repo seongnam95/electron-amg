@@ -1,10 +1,12 @@
 import { MouseEvent, useState } from 'react';
 import { RiExchangeFundsLine } from 'react-icons/ri';
 
-import { Button, Flex, Popover, Segmented, Tooltip } from 'antd';
+import { Button, Flex, Segmented, Tooltip } from 'antd';
+import clsx from 'clsx';
 import dayjs, { Dayjs } from 'dayjs';
 import { useRecoilValue } from 'recoil';
 
+import ContextPopup from '~/components/attendance/ContextPopup';
 import DayTable from '~/components/attendance/DayTable';
 import MonthTable from '~/components/attendance/MonthTable';
 import AntDatePicker from '~/components/common/DatePicker';
@@ -13,8 +15,6 @@ import AttendanceForm from '~/components/forms/AttendanceForm';
 import { useAttendanceQuery } from '~/hooks/queryHooks/useAttendanceQuery';
 import { useEmployeeQuery } from '~/hooks/queryHooks/useEmployeeQuery';
 import { useAttendanceModal } from '~/hooks/useAttendanceModal';
-import { useAttendancePopover } from '~/hooks/useAttendancePopover';
-import useContextPopup from '~/hooks/useContextPopup';
 import { useEmployeeInfoDrawer } from '~/hooks/useEmployeeInfoDrawer';
 import { teamStore } from '~/stores/team';
 import { AttendancePageStyled } from '~/styles/pageStyled/attendancePageStyled';
@@ -22,18 +22,17 @@ import { AttendanceData } from '~/types/attendance';
 import { EmployeeData } from '~/types/employee';
 
 type ViewType = 'month' | 'day';
+
 const AttendancePage = () => {
   const team = useRecoilValue(teamStore);
 
   const [viewType, setViewType] = useState<ViewType>('day');
-  const [selectedEmployeeIds, setSelectedEmployeeIds] = useState<string[]>([]);
   const [isWorking, setIsWorking] = useState<boolean>(false);
-  const [selectedDay, setSelectedDay] = useState<Dayjs>(dayjs());
-  const dateStr = selectedDay.format(viewType === 'day' ? 'YY-MM-DD' : 'YY-MM');
 
-  const { openPopup, renderPopup } = useContextPopup({
-    children: <AttendanceForm />,
-  });
+  const [selectedDate, setSelectedDate] = useState<Dayjs>(dayjs());
+  const [selectedEmployeeIds, setSelectedEmployeeIds] = useState<string[]>([]);
+  const [targetElement, setTargetElement] = useState<HTMLElement>();
+
   const { openDrawer, renderDrawer } = useEmployeeInfoDrawer();
   const { openModal, renderModal } = useAttendanceModal({
     onFinish: () => setIsWorking(false),
@@ -41,7 +40,7 @@ const AttendancePage = () => {
 
   const { employees } = useEmployeeQuery({ teamId: team?.id, enabled: team.existTeam });
   const { attendances } = useAttendanceQuery({
-    date: selectedDay,
+    date: selectedDate,
     dateType: viewType,
     teamId: team.id,
     enabled: team.existTeam,
@@ -49,30 +48,21 @@ const AttendancePage = () => {
 
   // 날짜 변경 핸들러
   const handleChangeDate = (date: Dayjs | null) => {
-    if (date) setSelectedDay(date);
+    if (date) setSelectedDate(date);
   };
 
   const handleSelect = (ids: string[]) => setSelectedEmployeeIds(ids);
   const handleCollectiveChange = () => {
     setIsWorking(true);
-    openModal({ date: selectedDay, employeeIds: selectedEmployeeIds });
+    openModal({ date: selectedDate, employeeIds: selectedEmployeeIds });
   };
 
-  const handleContextMenu = (
-    event: MouseEvent,
-    employee: EmployeeData,
-    attendance?: AttendanceData,
-    date?: Dayjs,
-  ) => {
+  const handleContextMenu = (event: MouseEvent) => {
     setIsWorking(true);
-    openPopup(event);
-    // openPopover({
-    //   target: event.currentTarget as HTMLElement,
-    //   targetPos: { x: event.clientX, y: event.clientY },
-    //   date: date ?? selectedDay,
-    //   employeeIds: [employee.id],
-    //   initValues: attendance ? attendance : undefined,
-    // });
+  };
+
+  const handlePopupCancel = () => {
+    if (targetElement) targetElement.className = clsx(targetElement.className, 'selected');
   };
 
   const showDock = selectedEmployeeIds.length > 0 && !isWorking;
@@ -89,29 +79,35 @@ const AttendancePage = () => {
         />
         <AntDatePicker
           picker={viewType === 'month' ? 'month' : 'date'}
-          defaultValue={selectedDay}
+          defaultValue={selectedDate}
           onChange={handleChangeDate}
         />
       </Flex>
 
       {/* 테이블 Wrap */}
       <Flex className="table-container" flex={1}>
-        {viewType === 'day' ? (
-          <DayTable
-            employees={employees}
-            attendances={attendances}
-            onSelect={handleSelect}
-            onClickName={openDrawer}
-            onContextMenu={handleContextMenu}
-          />
-        ) : (
-          <MonthTable
-            dateStr={dateStr}
-            employees={employees}
-            attendances={attendances}
-            onContextMenu={handleContextMenu}
-          />
-        )}
+        <ContextPopup
+          title="근무 기록 추가/변경"
+          content={<AttendanceForm onSubmit={v => console.log(v)} />}
+          onCancel={handlePopupCancel}
+        >
+          {viewType === 'day' ? (
+            <DayTable
+              employees={employees}
+              attendances={attendances}
+              onSelect={handleSelect}
+              onClickName={openDrawer}
+              onContextMenu={handleContextMenu}
+            />
+          ) : (
+            <MonthTable
+              date={selectedDate}
+              employees={employees}
+              attendances={attendances}
+              onContextMenu={handleContextMenu}
+            />
+          )}
+        </ContextPopup>
 
         <Dock open={showDock}>
           <Tooltip title="일괄 변경" mouseEnterDelay={0.6}>
@@ -127,7 +123,6 @@ const AttendancePage = () => {
 
       {renderDrawer}
       {renderModal}
-      {renderPopup}
     </AttendancePageStyled>
   );
 };

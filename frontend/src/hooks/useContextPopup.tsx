@@ -5,8 +5,8 @@ import { AnimatePresence, motion } from 'framer-motion';
 import ContextPopup, { ContextPopupProps } from '~/components/attendance/ContextPopup';
 
 interface ContextPopupOptions extends ContextPopupProps {}
-
 type PositionType = { offsetX: number; offsetY: number; originX?: number; originY?: number };
+
 const useContextPopup = ({ children, ...options }: ContextPopupOptions) => {
   const popupRef = useRef<HTMLDivElement>(null);
   const [visible, setVisible] = useState(false);
@@ -77,9 +77,10 @@ const useContextPopup = ({ children, ...options }: ContextPopupOptions) => {
         <motion.div
           ref={popupRef}
           key="context-popup"
-          initial={{ scale: 0 }}
-          animate={{ scale: 1 }}
-          exit={{ scale: 0 }}
+          initial={{ scale: 0, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          exit={{ scale: 0, opacity: 0 }}
+          transition={{ ease: 'easeInOut' }}
           style={{
             position: 'fixed',
             left: `${popupPosition.offsetX}px`,
@@ -89,7 +90,7 @@ const useContextPopup = ({ children, ...options }: ContextPopupOptions) => {
             originY: popupPosition.originY,
           }}
         >
-          <ContextPopup title="근무 로그 추가/변경" {...options}>
+          <ContextPopup title="근무 로그 추가/변경" {...options} onCancel={closePopup}>
             {children}
           </ContextPopup>
         </motion.div>
