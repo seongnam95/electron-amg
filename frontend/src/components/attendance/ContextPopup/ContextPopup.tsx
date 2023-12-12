@@ -2,7 +2,7 @@ import React, { cloneElement, ReactElement, ReactNode, useEffect, useRef, useSta
 import { AiOutlineClose } from 'react-icons/ai';
 
 import { Button, Flex, Space } from 'antd';
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence, motion, PanInfo, useMotionValue } from 'framer-motion';
 
 import { ContextPopupStyled } from './styled';
 import calculatePosition from './util';
@@ -20,9 +20,6 @@ const ContextPopup = ({ title, content, children, onCancel }: ContextPopupProps)
   const popupRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const [lineStart, setLineStart] = useState({ x: 0, y: 0 });
-  const [lineEnd, setLineEnd] = useState({ x: 0, y: 0 });
-
   const [visible, setVisible] = useState(false);
   const [mousePosition, setMousePosition] = useState<PositionType>({ offsetX: 0, offsetY: 0 });
   const [popupPosition, setPopupPosition] = useState<PositionType>({
@@ -36,13 +33,8 @@ const ContextPopup = ({ title, content, children, onCancel }: ContextPopupProps)
     if (visible && popupRef.current) {
       const newPosition = calculatePosition(popupRef, mousePosition.offsetX, mousePosition.offsetY);
       setPopupPosition(newPosition);
-
-      setLineEnd({
-        x: newPosition.offsetX + popupRef.current.offsetWidth / 2,
-        y: newPosition.offsetY + popupRef.current.offsetHeight / 2,
-      });
     }
-  }, [visible, mousePosition.offsetX, mousePosition.offsetY]);
+  }, [visible, popupPosition.offsetX, popupPosition.offsetY]);
 
   useEffect(() => {
     const handleClickOutside = (event: any) => {
@@ -75,23 +67,11 @@ const ContextPopup = ({ title, content, children, onCancel }: ContextPopupProps)
       setTimeout(() => {
         setMousePosition(newMousePosition);
         setVisible(true);
-        setLineStartPosition(event);
       }, 140);
     } else {
       setMousePosition(newMousePosition);
       setVisible(true);
-      setLineStartPosition(event);
     }
-  };
-
-  const setLineStartPosition = (event: MouseEvent) => {
-    if (!containerRef.current) return;
-
-    const { clientX, clientY } = event;
-    const { x, y } = containerRef.current.getBoundingClientRect();
-    const lineStartPosition = { x: clientX - x, y: clientY - y };
-
-    setLineStart(lineStartPosition);
   };
 
   const closePopup = () => {
@@ -132,19 +112,6 @@ const ContextPopup = ({ title, content, children, onCancel }: ContextPopupProps)
   return (
     <ContextPopupStyled ref={containerRef} className="ContextPopup">
       {clonedChildren}
-      {/* <div className={clsx('context-popup-mask', visible && 'visible')} /> */}
-      <svg
-        style={{
-          position: 'absolute',
-          left: 0,
-          top: 0,
-          width: '100%',
-          height: '100%',
-          pointerEvents: 'none',
-        }}
-      >
-        <line x1={lineStart.x} y1={lineStart.y} x2={lineEnd.x} y2={lineEnd.y} stroke="black" />
-      </svg>
       <AnimatePresence>
         {visible && (
           <motion.div
@@ -152,9 +119,11 @@ const ContextPopup = ({ title, content, children, onCancel }: ContextPopupProps)
             className="popup-wrap"
             key={`context-popup-${mousePosition.offsetX}-${mousePosition.offsetY}`}
             drag
+            dragMomentum={false}
+            dragElastic={false}
             dragConstraints={{ current: containerRef.current }}
             initial={{ scale: 0, opacity: 0 }}
-            animate={{ scale: 1, opacity: 0.4 }}
+            animate={{ scale: 1, opacity: 0.9 }}
             exit={{ scale: 0, opacity: 0 }}
             transition={{ ease: 'easeInOut', duration: 0.14 }}
             style={{
