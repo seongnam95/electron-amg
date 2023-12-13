@@ -11,6 +11,10 @@ export const ContextPopupStyled = styled.div`
 
     border-radius: 0.8rem;
     background-color: ${p => p.theme.colors.contentBG};
+
+    background-color: rgba(255, 255, 255, 0.6);
+    backdrop-filter: blur(24px);
+
     box-shadow: rgba(120, 120, 120, 0.2) 0 8px 32px;
     border: 1px solid ${p => p.theme.colors.borderColor};
 

@@ -18,7 +18,6 @@ import { useAttendanceModal } from '~/hooks/useAttendanceModal';
 import { useEmployeeInfoDrawer } from '~/hooks/useEmployeeInfoDrawer';
 import { teamStore } from '~/stores/team';
 import { AttendancePageStyled } from '~/styles/pageStyled/attendancePageStyled';
-import { AttendanceData } from '~/types/attendance';
 import { EmployeeData } from '~/types/employee';
 
 type ViewType = 'month' | 'day';
@@ -27,16 +26,13 @@ const AttendancePage = () => {
   const team = useRecoilValue(teamStore);
 
   const [viewType, setViewType] = useState<ViewType>('day');
-  const [isWorking, setIsWorking] = useState<boolean>(false);
+  const [isEditing, setIsEditing] = useState<boolean>(false);
 
   const [selectedDate, setSelectedDate] = useState<Dayjs>(dayjs());
   const [selectedEmployeeIds, setSelectedEmployeeIds] = useState<string[]>([]);
-  const [targetElement, setTargetElement] = useState<HTMLElement>();
 
   const { openDrawer, renderDrawer } = useEmployeeInfoDrawer();
-  const { openModal, renderModal } = useAttendanceModal({
-    onFinish: () => setIsWorking(false),
-  });
+  const { openModal, renderModal } = useAttendanceModal({ onFinish: () => setIsEditing(false) });
 
   const { employees } = useEmployeeQuery({ teamId: team?.id, enabled: team.existTeam });
   const { attendances } = useAttendanceQuery({
@@ -53,19 +49,18 @@ const AttendancePage = () => {
 
   const handleSelect = (ids: string[]) => setSelectedEmployeeIds(ids);
   const handleCollectiveChange = () => {
-    setIsWorking(true);
+    setIsEditing(true);
     openModal({ date: selectedDate, employeeIds: selectedEmployeeIds });
   };
 
-  const handleContextMenu = (event: MouseEvent) => {
-    setIsWorking(true);
+  const handleContextMenu = (event: MouseEvent, employee: EmployeeData) => {
+    setIsEditing(true);
+    console.log(event, employee);
   };
 
-  const handlePopupCancel = () => {
-    if (targetElement) targetElement.className = clsx(targetElement.className, 'selected');
-  };
+  const EditorSubtitle = <></>;
 
-  const showDock = selectedEmployeeIds.length > 0 && !isWorking;
+  const showDock = selectedEmployeeIds.length > 0 && !isEditing;
   return (
     <AttendancePageStyled>
       {/* 컨트롤 바 */}
@@ -89,7 +84,7 @@ const AttendancePage = () => {
         <ContextPopup
           title="근무 기록 추가/변경"
           content={<AttendanceForm onSubmit={v => console.log(v)} />}
-          onCancel={handlePopupCancel}
+          onCancel={() => setIsEditing(false)}
         >
           {viewType === 'day' ? (
             <DayTable

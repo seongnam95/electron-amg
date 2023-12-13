@@ -1,18 +1,18 @@
-import React, { cloneElement, ReactElement, ReactNode, useEffect, useRef, useState } from 'react';
+import { ReactElement, ReactNode, useEffect, useRef, useState } from 'react';
 import { AiOutlineClose } from 'react-icons/ai';
 
 import { Button, Flex, Space } from 'antd';
-import { AnimatePresence, motion, PanInfo, useMotionValue } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
+
+import insertHandlerChild from '~/utils/insertHandlerChild';
 
 import { ContextPopupStyled } from './styled';
-import calculatePosition from './util';
-
-type PositionType = { offsetX: number; offsetY: number; originX?: number; originY?: number };
+import calculateInsidePosition, { Offset } from './utils/calculateInsidePosition';
 
 export interface ContextPopupProps {
+  children: ReactElement;
+  content?: ReactElement;
   title?: ReactNode;
-  content?: ReactNode;
-  children?: ReactNode;
   onCancel?: () => void;
 }
 
@@ -21,118 +21,65 @@ const ContextPopup = ({ title, content, children, onCancel }: ContextPopupProps)
   const containerRef = useRef<HTMLDivElement>(null);
 
   const [visible, setVisible] = useState(false);
-  const [mousePosition, setMousePosition] = useState<PositionType>({ offsetX: 0, offsetY: 0 });
-  const [popupPosition, setPopupPosition] = useState<PositionType>({
-    offsetX: -9999,
-    offsetY: -9999,
-    originX: 0,
-    originY: 0,
-  });
+  const [mouseOffset, setMouseOffset] = useState<Offset>({ x: 0, y: 0 });
+  const [popupPosition, setPopupPosition] = useState<Offset>({ x: -9999, y: -9999 });
 
+  /** Popup 위치 선정 Effect */
   useEffect(() => {
     if (visible && popupRef.current) {
-      const newPosition = calculatePosition(popupRef, mousePosition.offsetX, mousePosition.offsetY);
-      setPopupPosition(newPosition);
+      const insideOffset = calculateInsidePosition(popupRef.current, mouseOffset.x, mouseOffset.y);
+      setPopupPosition(insideOffset);
     }
-  }, [visible, popupPosition.offsetX, popupPosition.offsetY]);
-
-  useEffect(() => {
-    const handleClickOutside = (event: any) => {
-      if (event.button !== 0) return;
-      if (popupRef.current && !popupRef.current.contains(event.target)) {
-        closePopup();
-      }
-    };
-
-    document.addEventListener('mousedown', handleClickOutside);
-    window.addEventListener('resize', closePopup);
-
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-      window.removeEventListener('resize', closePopup);
-    };
-  }, []);
+  }, [visible, mouseOffset.x, mouseOffset.y]);
 
   const openPopup = (event: MouseEvent) => {
     event.preventDefault();
-    const newMousePosition = { offsetX: event.clientX, offsetY: event.clientY };
+    const mouseOffset = { x: event.clientX, y: event.clientY };
 
-    if (
-      visible &&
-      (mousePosition.offsetX !== newMousePosition.offsetX ||
-        mousePosition.offsetY !== newMousePosition.offsetY)
-    ) {
-      setVisible(false);
-
-      setTimeout(() => {
-        setMousePosition(newMousePosition);
-        setVisible(true);
-      }, 140);
-    } else {
-      setMousePosition(newMousePosition);
-      setVisible(true);
-    }
+    if (visible) closePopup();
+    setMouseOffset(mouseOffset);
+    setVisible(true);
   };
 
   const closePopup = () => {
     setVisible(false);
-    setPopupPosition({ offsetX: -9999, offsetY: -9999 });
+    setPopupPosition({ x: -9999, y: -9999 });
   };
 
+  /** 취소 핸들러 */
   const handleCancel = () => {
     closePopup();
     onCancel?.();
   };
 
-  const clonedChildren = React.Children.map(children, child => {
-    if (React.isValidElement(child)) {
-      const originalContextMenuHandler = child.props.onContextMenu;
-
-      return cloneElement(child as ReactElement, {
-        onContextMenu: (...args: any[]) => {
-          openPopup(args[0]);
-          if (originalContextMenuHandler) {
-            originalContextMenuHandler(...args);
-          }
-        },
-      });
-    }
-    return child;
-  });
-
-  const clonedContent = React.Children.map(content, child => {
-    if (React.isValidElement(child)) {
-      return cloneElement(child as ReactElement, {
-        onCancel: handleCancel,
-      });
-    }
-    return child;
-  });
+  /** Element 핸들러에 함수 추가 */
+  const insertedChild = insertHandlerChild(children, { onContextMenu: openPopup });
+  const insertedContent = insertHandlerChild(content, { onCancel: handleCancel });
 
   return (
     <ContextPopupStyled ref={containerRef} className="ContextPopup">
-      {clonedChildren}
+      {insertedChild}
       <AnimatePresence>
         {visible && (
           <motion.div
             ref={popupRef}
             className="popup-wrap"
-            key={`context-popup-${mousePosition.offsetX}-${mousePosition.offsetY}`}
+            key={`context-popup-${mouseOffset.x}-${mouseOffset.y}`}
             drag
             dragMomentum={false}
             dragElastic={false}
             dragConstraints={{ current: containerRef.current }}
-            initial={{ scale: 0, opacity: 0 }}
-            animate={{ scale: 1, opacity: 0.9 }}
-            exit={{ scale: 0, opacity: 0 }}
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            exit={{ scale: 0 }}
             transition={{ ease: 'easeInOut', duration: 0.14 }}
             style={{
-              position: 'fixed',
-              left: `${popupPosition.offsetX}px`,
-              top: `${popupPosition.offsetY}px`,
               zIndex: 9999,
-              originX: popupPosition.originX,
-              originY: popupPosition.originY,
+              position: 'fixed',
+              left: `${popupPosition.x}px`,
+              top: `${popupPosition.y}px`,
+              originX: popupPosition.styleOriginX,
+              originY: popupPosition.styleOriginY,
             }}
           >
             <Flex className="popup-title" align="center" justify="space-between" gap={14}>
@@ -144,7 +91,7 @@ const ContextPopup = ({ title, content, children, onCancel }: ContextPopupProps)
                 onClick={handleCancel}
               />
             </Flex>
-            <Space className="popup-content">{clonedContent}</Space>
+            <Space className="popup-content">{insertedContent}</Space>
           </motion.div>
         )}
       </AnimatePresence>
