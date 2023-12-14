@@ -26,7 +26,7 @@ export const useEmployeeQuery = ({
   const { data, isLoading, isError, refetch } = useQuery(
     queryKey,
     fetchEmployees({ teamId, valid }),
-    { ...baseOptions },
+    { enabled: teamId !== '', ...baseOptions },
   );
 
   const dataList = data?.result.list;

@@ -5,6 +5,7 @@ import dayjsGenerateConfig from 'rc-picker/lib/generate/dayjs';
 const DatePicker = generatePicker<Dayjs>(dayjsGenerateConfig);
 
 interface AntDatePickerProps {
+  value?: Dayjs;
   defaultValue?: Dayjs;
   disabledDate?: any;
   onChange?: (value: Dayjs | null, dateString: string) => void;

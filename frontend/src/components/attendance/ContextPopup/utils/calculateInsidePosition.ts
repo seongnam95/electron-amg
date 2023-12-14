@@ -1,3 +1,5 @@
+import { BoundingBox } from 'framer-motion';
+
 export interface Offset {
   x: number;
   y: number;
@@ -12,7 +14,11 @@ export interface Offset {
  * @param mouseY - 마우스와 Y 좌표
  * @returns {Offset} 계산 된 위치 객체
  */
-const calculateInsidePosition = (element: HTMLElement, mouseX: number, mouseY: number): Offset => {
+export const calculateInsideOffset = (
+  element: HTMLElement,
+  mouseX: number,
+  mouseY: number,
+): Offset => {
   const { innerWidth, innerHeight } = window;
 
   const elementWidth = element.offsetWidth || 0;
@@ -28,4 +34,21 @@ const calculateInsidePosition = (element: HTMLElement, mouseX: number, mouseY: n
   return { x, y, styleOriginX, styleOriginY };
 };
 
-export default calculateInsidePosition;
+export const calculateDragConstraints = (
+  popupOffset: Offset,
+  popupElement: HTMLElement,
+  containerElement: HTMLElement,
+): BoundingBox => {
+  const { x, y } = popupOffset;
+  const { offsetWidth, offsetHeight } = popupElement;
+  const { top, bottom, left, right } = containerElement.getBoundingClientRect();
+
+  const dragLimit: BoundingBox = {
+    top: top - y,
+    bottom: bottom - (y + offsetHeight),
+    left: left - x,
+    right: right - (x + offsetWidth),
+  };
+
+  return dragLimit;
+};

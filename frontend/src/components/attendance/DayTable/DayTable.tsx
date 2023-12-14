@@ -1,7 +1,8 @@
-import { MouseEvent } from 'react';
+import { Key, MouseEvent } from 'react';
 
 import { Table } from 'antd';
 import { TableRowSelection } from 'antd/es/table/interface';
+import { Dayjs } from 'dayjs';
 
 import { useDragScroll } from '~/hooks/useDragScroll';
 import { AttendanceData } from '~/types/attendance';
@@ -13,23 +14,34 @@ import { DayTableStyled } from './styled';
 export interface DayTableProps {
   employees: EmployeeData[];
   attendances: AttendanceData[];
-  onSelect?: (employeeIds: string[]) => void;
+  disabledSelect?: boolean;
+  selectedEmployeeIds?: string[];
+  onSelect?: (employees: EmployeeData[]) => void;
   onClickName?: (employee: EmployeeData) => void;
-  onContextMenu?: (event: MouseEvent, employee: EmployeeData, attendance?: AttendanceData) => void;
+  onContextMenu?: (event: MouseEvent, employee: EmployeeData) => void;
 }
 
 const DayTable = ({
   employees,
   attendances,
+  disabledSelect,
+  selectedEmployeeIds,
   onSelect,
   onClickName,
   onContextMenu,
 }: DayTableProps) => {
   const scrollRef = useDragScroll();
 
+  const handleSelectedChange = (_: Key[], datas: DayTableData[]) => {
+    const selectedEmployees = datas.map(data => data.employee);
+    onSelect?.(selectedEmployees);
+  };
+
   // Row 체크 핸들러
   const rowSelection: TableRowSelection<DayTableData> = {
-    onChange: keys => onSelect?.(keys.map(String)),
+    selectedRowKeys: selectedEmployeeIds,
+    onChange: handleSelectedChange,
+    getCheckboxProps: () => ({ disabled: disabledSelect }),
   };
 
   // 테이블 컬럼 불러오기, 핸들러
@@ -58,7 +70,7 @@ const DayTable = ({
         dataSource={dataSource}
         rowSelection={rowSelection}
         onRow={row => ({
-          onContextMenu: event => onContextMenu?.(event, row.employee, row.attendance),
+          onContextMenu: event => onContextMenu?.(event, row.employee),
         })}
       />
     </DayTableStyled>

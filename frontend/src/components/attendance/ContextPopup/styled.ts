@@ -5,12 +5,7 @@ export const ContextPopupStyled = styled.div`
   width: 100%;
 
   .popup-wrap {
-    display: inline-flex;
-    flex-direction: column;
-    gap: 1.2rem;
-
     border-radius: 0.8rem;
-    background-color: ${p => p.theme.colors.contentBG};
 
     background-color: rgba(255, 255, 255, 0.6);
     backdrop-filter: blur(24px);
@@ -26,6 +21,12 @@ export const ContextPopupStyled = styled.div`
         font-size: ${p => p.theme.sizes.textLarge};
         margin-top: 0.3rem;
       }
+    }
+
+    .sub-title {
+      padding: 0 2rem 0 2.4rem;
+      color: ${p => p.theme.colors.textColor2};
+      font-size: ${p => p.theme.sizes.textSmall};
     }
 
     .popup-content {

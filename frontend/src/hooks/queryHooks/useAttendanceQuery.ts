@@ -40,7 +40,7 @@ export const useAttendanceQuery = ({
   const { data, isLoading, isError } = useQuery(
     queryKey,
     fetchAttendancesByTeam({ teamId: teamId, dateStr: dateStr }),
-    { ...baseOptions },
+    { enabled: teamId !== '', ...baseOptions },
   );
 
   const attendances = data ? data : [];

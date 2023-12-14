@@ -1,8 +1,8 @@
 import { MouseEvent, useState } from 'react';
+import { FaTrashAlt } from 'react-icons/fa';
 import { RiExchangeFundsLine } from 'react-icons/ri';
 
-import { Button, Flex, Segmented, Tooltip } from 'antd';
-import clsx from 'clsx';
+import { Button, Flex, Modal, Segmented, Tag, Tooltip } from 'antd';
 import dayjs, { Dayjs } from 'dayjs';
 import { useRecoilValue } from 'recoil';
 
@@ -14,10 +14,11 @@ import Dock from '~/components/common/Dock';
 import AttendanceForm from '~/components/forms/AttendanceForm';
 import { useAttendanceQuery } from '~/hooks/queryHooks/useAttendanceQuery';
 import { useEmployeeQuery } from '~/hooks/queryHooks/useEmployeeQuery';
-import { useAttendanceModal } from '~/hooks/useAttendanceModal';
+import useAttendanceController from '~/hooks/useAttendanceController';
 import { useEmployeeInfoDrawer } from '~/hooks/useEmployeeInfoDrawer';
 import { teamStore } from '~/stores/team';
 import { AttendancePageStyled } from '~/styles/pageStyled/attendancePageStyled';
+import { AttendanceUpdateBody } from '~/types/attendance';
 import { EmployeeData } from '~/types/employee';
 
 type ViewType = 'month' | 'day';
@@ -27,40 +28,92 @@ const AttendancePage = () => {
 
   const [viewType, setViewType] = useState<ViewType>('day');
   const [isEditing, setIsEditing] = useState<boolean>(false);
+  const [openModal, setOpenModal] = useState<boolean>(false);
 
   const [selectedDate, setSelectedDate] = useState<Dayjs>(dayjs());
-  const [selectedEmployeeIds, setSelectedEmployeeIds] = useState<string[]>([]);
+  const [selectedEmployees, setSelectedEmployees] = useState<EmployeeData[]>([]);
+  const selectedEmployeeIds = selectedEmployees.map(employee => employee.id);
 
-  const { openDrawer, renderDrawer } = useEmployeeInfoDrawer();
-  const { openModal, renderModal } = useAttendanceModal({ onFinish: () => setIsEditing(false) });
-
-  const { employees } = useEmployeeQuery({ teamId: team?.id, enabled: team.existTeam });
+  const { employees } = useEmployeeQuery({ teamId: team.id });
   const { attendances } = useAttendanceQuery({
     date: selectedDate,
     dateType: viewType,
     teamId: team.id,
-    enabled: team.existTeam,
   });
 
-  // 날짜 변경 핸들러
+  const { setAttendance, removeAttendance, isLoading } = useAttendanceController({
+    attendances: attendances,
+    date: selectedDate,
+    onSuccess: () => handleCancel(),
+  });
+
+  const { openDrawer, renderDrawer } = useEmployeeInfoDrawer();
+
+  const handleSubmit = (formData: AttendanceUpdateBody) =>
+    setAttendance(selectedEmployeeIds, formData);
+
   const handleChangeDate = (date: Dayjs | null) => {
     if (date) setSelectedDate(date);
   };
 
-  const handleSelect = (ids: string[]) => setSelectedEmployeeIds(ids);
-  const handleCollectiveChange = () => {
+  const handleContextMenu = (_: MouseEvent, employee: EmployeeData, date?: Dayjs) => {
+    if (date) setSelectedDate(date);
+
     setIsEditing(true);
-    openModal({ date: selectedDate, employeeIds: selectedEmployeeIds });
+    setSelectedEmployees([employee]);
   };
 
-  const handleContextMenu = (event: MouseEvent, employee: EmployeeData) => {
-    setIsEditing(true);
-    console.log(event, employee);
+  const handleCancel = () => {
+    setIsEditing(false);
+    setOpenModal(false);
+    setSelectedEmployees([]);
   };
 
-  const EditorSubtitle = <></>;
+  const handleRemove = () => removeAttendance(selectedEmployeeIds);
 
-  const showDock = selectedEmployeeIds.length > 0 && !isEditing;
+  const openAttendanceModal = () => {
+    setIsEditing(true);
+    setOpenModal(true);
+  };
+
+  const renderSubtitle = () => {
+    const selectedCount = selectedEmployees.length;
+    if (!selectedCount) return;
+
+    const firstName = selectedEmployees[0].name;
+    const names = selectedEmployees.map(employee => employee.name).join(', ');
+    const extra = selectedCount > 1 ? `외 ${selectedCount - 1}명` : '';
+
+    if (extra) {
+      return (
+        <Tooltip title={names}>
+          <Tag>
+            {firstName} {extra}
+          </Tag>
+        </Tooltip>
+      );
+    }
+
+    return <Tag>{firstName}</Tag>;
+  };
+
+  const renderExtraBtn = (
+    <Button type="text" icon={<FaTrashAlt size="1.6rem" />} danger onClick={handleRemove} />
+  );
+
+  const attendanceForm = () => {
+    return (
+      <AttendanceForm
+        description={renderSubtitle()}
+        extraBtn={renderExtraBtn}
+        loading={isLoading}
+        onSubmit={handleSubmit}
+        onCancel={handleCancel}
+      />
+    );
+  };
+
+  const showDock = selectedEmployees.length > 0 && !isEditing;
   return (
     <AttendancePageStyled>
       {/* 컨트롤 바 */}
@@ -74,6 +127,7 @@ const AttendancePage = () => {
         />
         <AntDatePicker
           picker={viewType === 'month' ? 'month' : 'date'}
+          value={selectedDate}
           defaultValue={selectedDate}
           onChange={handleChangeDate}
         />
@@ -82,15 +136,18 @@ const AttendancePage = () => {
       {/* 테이블 Wrap */}
       <Flex className="table-container" flex={1}>
         <ContextPopup
+          close={!isEditing}
           title="근무 기록 추가/변경"
-          content={<AttendanceForm onSubmit={v => console.log(v)} />}
-          onCancel={() => setIsEditing(false)}
+          content={attendanceForm()}
+          onCancel={handleCancel}
         >
           {viewType === 'day' ? (
             <DayTable
               employees={employees}
               attendances={attendances}
-              onSelect={handleSelect}
+              disabledSelect={isEditing}
+              selectedEmployeeIds={selectedEmployeeIds}
+              onSelect={setSelectedEmployees}
               onClickName={openDrawer}
               onContextMenu={handleContextMenu}
             />
@@ -110,14 +167,23 @@ const AttendancePage = () => {
               type="text"
               size="large"
               icon={<RiExchangeFundsLine size="2.1rem" />}
-              onClick={handleCollectiveChange}
+              onClick={openAttendanceModal}
             />
           </Tooltip>
         </Dock>
       </Flex>
 
+      <Modal
+        title="근무 기록 추가/변경"
+        open={openModal}
+        centered
+        width={380}
+        footer={false}
+        onCancel={handleCancel}
+        children={attendanceForm()}
+      />
+
       {renderDrawer}
-      {renderModal}
     </AttendancePageStyled>
   );
 };

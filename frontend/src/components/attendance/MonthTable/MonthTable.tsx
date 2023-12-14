@@ -16,24 +16,15 @@ export interface MonthTableProps {
   date: Dayjs;
   employees: EmployeeData[];
   attendances: AttendanceData[];
-  onContextMenu?: (
-    event: MouseEvent,
-    employee: EmployeeData,
-    attendance?: AttendanceData,
-    date?: Dayjs,
-  ) => void;
+  onContextMenu?: (event: MouseEvent, employee: EmployeeData, date: Dayjs) => void;
 }
 
 const MonthTable = ({ date, employees, attendances, onContextMenu }: MonthTableProps) => {
   const scrollRef = useDragScroll();
 
   const handleContextMenu = (event: MouseEvent, day: Dayjs, data: MonthTableData) => {
-    const { employee, attendances } = data;
-    const attendance = attendances.find(
-      attendance => attendance.workingDate === day.format('YY-MM-DD'),
-    );
-
-    onContextMenu?.(event, employee, attendance, day);
+    const { employee } = data;
+    onContextMenu?.(event, employee, day);
   };
 
   const rowSelection: TableRowSelection<MonthTableData> = {

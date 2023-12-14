@@ -18,7 +18,7 @@ export const useTeamQuery = ({ userId, ...baseOptions }: TeamQueryOptions<TeamDa
 
   const onSuccess = (teams: TeamData[]) => {
     if (teams.length === 0) setTeam({ ...initTeamValue, existTeam: false });
-    else if (team.id === '') setTeam({ ...teams[0], existTeam: true });
+    else if (!team.existTeam) setTeam({ ...teams[0], existTeam: true });
     baseOptions.onSuccess?.(teams);
   };
 

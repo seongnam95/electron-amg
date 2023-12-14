@@ -7,7 +7,7 @@ import { useRecoilValue } from 'recoil';
 
 import AttendanceForm from '~/components/forms/AttendanceForm';
 import { teamStore } from '~/stores/team';
-import { AttendanceUpdateBody } from '~/types/attendance';
+import { AttendanceData, AttendanceUpdateBody } from '~/types/attendance';
 
 import {
   AttendanceQueryOptions,
@@ -16,8 +16,10 @@ import {
   useAttendanceRemove,
   useAttendanceUpdate,
 } from './queryHooks/useAttendanceQuery';
+import useAttendanceController from './useAttendanceController';
 
 interface AttendanceModalOptions {
+  attendances: AttendanceData[];
   onFinish?: () => void;
 }
 
@@ -31,7 +33,7 @@ interface ModalOpenOptions {
  * Attendance 추가/편집 Modal
  * @returns Modal Open Fn, JSX.Element
  */
-export const useAttendanceModal = ({ onFinish }: AttendanceModalOptions) => {
+export const useAttendanceModal = ({ attendances, onFinish }: AttendanceModalOptions) => {
   const team = useRecoilValue(teamStore);
 
   const [open, setOpen] = useState<boolean>(false);
@@ -39,19 +41,12 @@ export const useAttendanceModal = ({ onFinish }: AttendanceModalOptions) => {
   const [initValues, setInitValues] = useState<AttendanceUpdateBody>();
   const [date, setDate] = useState<Dayjs>(dayjs());
 
-  const queryOptions: AttendanceQueryOptions = {
-    teamId: team.id,
-    dateType: 'day',
+  const { setAttendance, removeAttendance, isLoading } = useAttendanceController({
+    attendances: attendances,
     date: date,
-  };
-  const { attendances } = useAttendanceQuery(queryOptions);
+    onSuccess: () => closeModal(),
+  });
 
-  const mutateOptions = { ...queryOptions, onSuccess: () => closeModal() };
-  const { createAttendanceMutate, isCreateAttendanceLoading } = useAttendanceCreate(mutateOptions);
-  const { updateAttendanceMutate, isUpdateAttendanceLoading } = useAttendanceUpdate(mutateOptions);
-  const { removeAttendanceMutate, isRemoveAttendanceLoading } = useAttendanceRemove(mutateOptions);
-
-  useEffect(() => console.log(initValues), [initValues]);
   const closeModal = () => {
     setOpen(false);
     setEmployeeIds([]);
@@ -60,52 +55,21 @@ export const useAttendanceModal = ({ onFinish }: AttendanceModalOptions) => {
   };
 
   const openModal = ({ date, initValues, employeeIds }: ModalOpenOptions) => {
+    const ids = Array.isArray(employeeIds) ? employeeIds : [employeeIds];
+
     setDate(date);
     setInitValues(initValues);
-    const ids = Array.isArray(employeeIds) ? employeeIds : [employeeIds];
     setEmployeeIds(ids);
     setOpen(true);
   };
 
   const handleSubmit = (formData: AttendanceUpdateBody) => {
     const body: AttendanceUpdateBody = { ...formData, workingDate: date.format('YY-MM-DD') };
-    attendanceMutate(body);
+    setAttendance(employeeIds, body);
   };
 
-  const handleRemove = () => {
-    const { attendanceIds } = categorizeEmployeeIds();
-    removeAttendanceMutate(attendanceIds);
-  };
+  const handleRemove = () => removeAttendance(employeeIds);
 
-  /**
-   * 분류 된 ID에 맞는 mutate 호출
-   */
-  const attendanceMutate = (formData: AttendanceUpdateBody) => {
-    const { employeeIds, attendanceIds } = categorizeEmployeeIds();
-
-    if (employeeIds.length > 0)
-      createAttendanceMutate({ employeeIds: employeeIds, body: formData });
-
-    if (attendanceIds.length > 0)
-      updateAttendanceMutate({ employeeIds: attendanceIds, body: formData });
-  };
-
-  /**
-   * Attendance 데이터 유무에 따라 ID 분류
-   */
-  const categorizeEmployeeIds = () => {
-    return employeeIds.reduce(
-      (acc, id) => {
-        const attendance = attendances.find(attendance => attendance.employeeId === id);
-        attendance ? acc.attendanceIds.push(attendance.id) : acc.employeeIds.push(id);
-        return acc;
-      },
-      { employeeIds: [] as string[], attendanceIds: [] as string[] },
-    );
-  };
-
-  const isLoading =
-    isCreateAttendanceLoading || isUpdateAttendanceLoading || isRemoveAttendanceLoading;
   const renderModal = (
     <Modal
       title="근무 로그 추가/변경"

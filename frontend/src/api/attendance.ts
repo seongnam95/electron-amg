@@ -16,6 +16,7 @@ interface AttendancesFetchProps {
 export const fetchAttendancesByTeam =
   ({ teamId, dateStr }: AttendancesFetchProps) =>
   async (): Promise<AttendanceData[]> => {
+    console.log(teamId);
     const teamEndpoint = import.meta.env.VITE_TEAM_ENDPOINT;
     const attendanceEndpoint = import.meta.env.VITE_ATTENDANCE_ENDPOINT;
 
