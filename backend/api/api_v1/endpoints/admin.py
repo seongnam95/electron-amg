@@ -56,7 +56,8 @@ def init_data(db: Session = Depends(deps.get_db)):
     employee_bodys.append(admin_body)
 
     for employee in employees:
-        position = random.choice(positions)
+        print(positions[1:])
+        position = random.choice(positions[1:])
         body = schemas.EmployeeCreate(
             name=employee["name"],
             ssn=employee["ssn"],

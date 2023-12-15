@@ -7,7 +7,6 @@ import { useRecoilValue } from 'recoil';
 
 import logo from '~/assets/images/logo@256.png';
 import { useAuth } from '~/hooks/useAuth';
-import { useLogout } from '~/hooks/useLogout';
 import { userStore } from '~/stores/user';
 
 import { TitlebarStyled } from './styled';

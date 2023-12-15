@@ -35,6 +35,7 @@ class CRUDAttendance(CRUDBase[Attendance, AttendanceCreate, AttendanceUpdate]):
         obj_in_data = jsonable_encoder(attendance_in)
         obj_in_data["working_date"] = working_date
         obj_in_data["employee_id"] = employee.id
+        obj_in_data["earns_incentive"] = employee.position.default_earns_incentive
         obj_in_data["position_id"] = employee.position_id
         db_obj = self.model(**obj_in_data)
 
@@ -48,12 +49,12 @@ class CRUDAttendance(CRUDBase[Attendance, AttendanceCreate, AttendanceUpdate]):
         db: Session,
         *,
         employee_id: str,
-        date_str: str,
+        day_str: str,
     ) -> List[Attendance]:
         return (
             db.query(Attendance)
             .filter(Attendance.employee_id == employee_id)
-            .filter(Attendance.working_date.startswith(date_str))
+            .filter(Attendance.working_date.startswith(day_str))
             .all()
         )
 

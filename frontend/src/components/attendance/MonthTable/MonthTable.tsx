@@ -1,106 +1,35 @@
-import { HTMLAttributes, MouseEvent, useMemo } from 'react';
+import { MouseEvent, useMemo } from 'react';
 
-import { Table, Popover } from 'antd';
-import { TableRowSelection } from 'antd/es/table/interface';
-import dayjs, { Dayjs } from 'dayjs';
+import { Table, TableProps } from 'antd';
+import { Dayjs } from 'dayjs';
 
 import { useDragScroll } from '~/hooks/useDragScroll';
 import { AttendanceData } from '~/types/attendance';
 import { EmployeeData } from '~/types/employee';
 
-import { MonthTableData, getColumns } from './config';
-import { AttendanceBarStyled, MonthTableStyled } from './styled';
-import { groupedAttendanceByDay } from './util';
+import { MonthTableData, getColumns, getDataSource } from './config';
+import { MonthTableStyled } from './styled';
 
 export interface MonthTableProps {
-  date: Dayjs;
+  day: Dayjs;
   employees: EmployeeData[];
   attendances: AttendanceData[];
-  onContextMenu?: (event: MouseEvent, employee: EmployeeData, date: Dayjs) => void;
+  onContextMenu?: (event: MouseEvent, employee: EmployeeData, day: Dayjs) => void;
 }
 
-const MonthTable = ({ date, employees, attendances, onContextMenu }: MonthTableProps) => {
+const MonthTable = ({ day, employees, attendances, onContextMenu }: MonthTableProps) => {
   const scrollRef = useDragScroll();
 
-  const handleContextMenu = (event: MouseEvent, day: Dayjs, data: MonthTableData) => {
-    const { employee } = data;
-    onContextMenu?.(event, employee, day);
+  const tableProps: TableProps<MonthTableData> = {
+    rowSelection: { onChange: (keys: React.Key[]) => console.log(keys) },
+    columns: getColumns(day, { onContextMenu: onContextMenu }),
+    dataSource: useMemo(() => getDataSource(employees, attendances), [attendances]),
   };
-
-  const rowSelection: TableRowSelection<MonthTableData> = {
-    onChange: (keys: React.Key[]) => console.log(keys),
-  };
-
-  const columns = getColumns({
-    date: date,
-    onCellContextMenu: handleContextMenu,
-  });
-
-  const dataSource: MonthTableData[] = useMemo(() => {
-    return employees.map(employee => {
-      const targetAttendances = attendances.filter(data => data.employeeId === employee.id);
-      const workingGroups = groupedAttendanceByDay(targetAttendances);
-
-      // Attendance Bar 그룹핑
-      const existAttendances: { [key: string]: AttendanceData[] } = {};
-
-      workingGroups.forEach(group => {
-        const firstDate = dayjs(group[0].workingDate, 'YY-MM-DD').date();
-        existAttendances[firstDate] = group;
-      });
-
-      // 합계액
-      const paySum = targetAttendances.reduce(
-        (total, value) => total + value.position.standardPay,
-        0,
-      );
-      const incomeTax = paySum * 0.033;
-      const totalPay = paySum - incomeTax;
-
-      return {
-        key: employee.id,
-        name: employee.name,
-        employee: employee,
-        paySum: paySum,
-        incomeTax: incomeTax,
-        totalPay: totalPay,
-        attendances: targetAttendances,
-        ...existAttendances,
-      };
-    });
-  }, [attendances]);
 
   return (
     <MonthTableStyled className="AttendanceTable" ref={scrollRef}>
-      <Table
-        pagination={false}
-        columns={columns}
-        dataSource={dataSource}
-        rowSelection={rowSelection}
-      />
+      <Table pagination={false} {...tableProps} />
     </MonthTableStyled>
-  );
-};
-
-interface AttendanceBarProps extends HTMLAttributes<HTMLDivElement> {
-  employee: EmployeeData;
-  attendances: AttendanceData[];
-  cellWidth: number;
-}
-
-export const AttendanceBar = ({
-  employee,
-  attendances,
-  cellWidth,
-  ...props
-}: AttendanceBarProps) => {
-  const width = attendances.length * cellWidth;
-  const color = employee.position.color;
-
-  return (
-    <AttendanceBarStyled style={{ width: width }} {...props}>
-      <div className="attendance-bar" style={{ backgroundColor: color }} />
-    </AttendanceBarStyled>
   );
 };
 

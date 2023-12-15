@@ -106,7 +106,7 @@ export const formItems = [
     component: <Switch />,
   },
   {
-    name: 'isChild',
+    name: 'defaultEarnsIncentive',
     label: '팀장 인센티브 포함',
     tooltip: '출근 시 팀장 인센티브 추가 여부',
     valuePropName: 'checked',

@@ -21,8 +21,9 @@ class Attendance(Base):
 
     memo = Column(String, nullable=False, default="")  # 메모
 
-    is_paid = Column(Boolean, nullable=False, default=False)  # 선지급
+    is_prepaid = Column(Boolean, nullable=False, default=False)  # 선지급
     include_meal_cost = Column(Boolean, nullable=False, default=False)  # 식대 포함
+    earns_incentive = Column(Boolean, nullable=False, default=False)  # 인센티브 발생
     ot_count = Column(Integer, nullable=False, default=0)  # OT
 
     working_date = Column(

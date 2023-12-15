@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-export const DayTableStyled = styled.div`
+export const DateTableStyled = styled.div`
   position: relative;
 
   .ant-table-cell {

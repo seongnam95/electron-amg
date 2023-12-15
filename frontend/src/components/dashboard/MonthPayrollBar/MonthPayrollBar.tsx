@@ -15,17 +15,17 @@ import { MonthPayrollBarStyled } from './styled';
 import { sumPayByDay } from './utils';
 
 export interface MonthPayrollBarProps {
-  date?: Dayjs;
+  day?: Dayjs;
 }
 
-const MonthPayrollBar = ({ date = dayjs() }: MonthPayrollBarProps) => {
+const MonthPayrollBar = ({ day = dayjs() }: MonthPayrollBarProps) => {
   const team = useRecoilValue(teamStore);
   const wrapRef = useRef<HTMLDivElement>(null);
 
   const { attendances, isEmpty } = useAttendanceQuery({
     teamId: team.id,
-    date: date,
-    dateType: 'month',
+    day: day,
+    dayType: 'month',
     enabled: team.existTeam,
   });
 
@@ -80,7 +80,7 @@ const MonthPayrollBar = ({ date = dayjs() }: MonthPayrollBarProps) => {
               legend: { display: false },
               tooltip: {
                 callbacks: {
-                  title: item => `${date.format('YY년 MM월')} ${item[0].label}일`,
+                  title: item => `${day.format('YY년 MM월')} ${item[0].label}일`,
                   label: item => ` 일당 합계액: ${item.formattedValue}원`,
                 },
               },

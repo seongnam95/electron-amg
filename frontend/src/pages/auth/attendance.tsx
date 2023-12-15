@@ -1,116 +1,66 @@
 import { MouseEvent, useState } from 'react';
-import { FaTrashAlt } from 'react-icons/fa';
 import { RiExchangeFundsLine } from 'react-icons/ri';
 
-import { Button, Flex, Modal, Segmented, Tag, Tooltip } from 'antd';
+import { Button, Card, Flex, Segmented, Space, Statistic, Tooltip } from 'antd';
 import dayjs, { Dayjs } from 'dayjs';
 import { useRecoilValue } from 'recoil';
 
-import ContextPopup from '~/components/attendance/ContextPopup';
-import DayTable from '~/components/attendance/DayTable';
+import AttendanceStats from '~/components/attendance/AttendanceStats';
+import DateTable from '~/components/attendance/DateTable';
 import MonthTable from '~/components/attendance/MonthTable';
 import AntDatePicker from '~/components/common/DatePicker';
 import Dock from '~/components/common/Dock';
-import AttendanceForm from '~/components/forms/AttendanceForm';
+import { useAttendanceModal } from '~/hooks/componentHooks/useAttendanceModal';
+import { useEmployeeInfoDrawer } from '~/hooks/componentHooks/useEmployeeInfoDrawer';
 import { useAttendanceQuery } from '~/hooks/queryHooks/useAttendanceQuery';
 import { useEmployeeQuery } from '~/hooks/queryHooks/useEmployeeQuery';
-import useAttendanceController from '~/hooks/useAttendanceController';
-import { useEmployeeInfoDrawer } from '~/hooks/useEmployeeInfoDrawer';
 import { teamStore } from '~/stores/team';
 import { AttendancePageStyled } from '~/styles/pageStyled/attendancePageStyled';
-import { AttendanceUpdateBody } from '~/types/attendance';
 import { EmployeeData } from '~/types/employee';
 
-type ViewType = 'month' | 'day';
+type ViewType = 'month' | 'date';
 
 const AttendancePage = () => {
   const team = useRecoilValue(teamStore);
 
-  const [viewType, setViewType] = useState<ViewType>('day');
+  const [viewType, setViewType] = useState<ViewType>('date');
   const [isEditing, setIsEditing] = useState<boolean>(false);
-  const [openModal, setOpenModal] = useState<boolean>(false);
 
-  const [selectedDate, setSelectedDate] = useState<Dayjs>(dayjs());
+  const [selectedDay, setSelectedDay] = useState<Dayjs>(dayjs());
   const [selectedEmployees, setSelectedEmployees] = useState<EmployeeData[]>([]);
   const selectedEmployeeIds = selectedEmployees.map(employee => employee.id);
 
   const { employees } = useEmployeeQuery({ teamId: team.id });
   const { attendances } = useAttendanceQuery({
-    date: selectedDate,
-    dateType: viewType,
+    day: selectedDay,
+    dayType: viewType,
     teamId: team.id,
   });
 
-  const { setAttendance, removeAttendance, isLoading } = useAttendanceController({
+  const { openDrawer, renderDrawer } = useEmployeeInfoDrawer();
+  const { openModal, renderModal } = useAttendanceModal({
     attendances: attendances,
-    date: selectedDate,
-    onSuccess: () => handleCancel(),
+    onFinish: () => {
+      setSelectedEmployees([]);
+      setIsEditing(false);
+    },
   });
 
-  const { openDrawer, renderDrawer } = useEmployeeInfoDrawer();
-
-  const handleSubmit = (formData: AttendanceUpdateBody) =>
-    setAttendance(selectedEmployeeIds, formData);
-
-  const handleChangeDate = (date: Dayjs | null) => {
-    if (date) setSelectedDate(date);
+  const handleChangeDay = (day: Dayjs | null) => {
+    if (day) setSelectedDay(day);
   };
 
-  const handleContextMenu = (_: MouseEvent, employee: EmployeeData, date?: Dayjs) => {
-    if (date) setSelectedDate(date);
+  const handleContextMenu = (_: MouseEvent, employee: EmployeeData, day?: Dayjs) => {
+    if (day) setSelectedDay(day);
 
     setIsEditing(true);
     setSelectedEmployees([employee]);
+    openModal(day ?? selectedDay, [employee]);
   };
 
-  const handleCancel = () => {
-    setIsEditing(false);
-    setOpenModal(false);
-    setSelectedEmployees([]);
-  };
-
-  const handleRemove = () => removeAttendance(selectedEmployeeIds);
-
-  const openAttendanceModal = () => {
+  const handleBulkEditClick = () => {
     setIsEditing(true);
-    setOpenModal(true);
-  };
-
-  const renderSubtitle = () => {
-    const selectedCount = selectedEmployees.length;
-    if (!selectedCount) return;
-
-    const firstName = selectedEmployees[0].name;
-    const names = selectedEmployees.map(employee => employee.name).join(', ');
-    const extra = selectedCount > 1 ? `외 ${selectedCount - 1}명` : '';
-
-    if (extra) {
-      return (
-        <Tooltip title={names}>
-          <Tag>
-            {firstName} {extra}
-          </Tag>
-        </Tooltip>
-      );
-    }
-
-    return <Tag>{firstName}</Tag>;
-  };
-
-  const renderExtraBtn = (
-    <Button type="text" icon={<FaTrashAlt size="1.6rem" />} danger onClick={handleRemove} />
-  );
-
-  const attendanceForm = () => {
-    return (
-      <AttendanceForm
-        description={renderSubtitle()}
-        extraBtn={renderExtraBtn}
-        loading={isLoading}
-        onSubmit={handleSubmit}
-        onCancel={handleCancel}
-      />
-    );
+    openModal(selectedDay, selectedEmployees);
   };
 
   const showDock = selectedEmployees.length > 0 && !isEditing;
@@ -120,29 +70,24 @@ const AttendancePage = () => {
       <Flex align="center" justify="space-between" style={{ padding: '2rem' }}>
         <Segmented
           options={[
-            { label: '일간', value: 'day' },
+            { label: '일간', value: 'date' },
             { label: '월간', value: 'month' },
           ]}
           onChange={v => setViewType(v as ViewType)}
         />
         <AntDatePicker
-          picker={viewType === 'month' ? 'month' : 'date'}
-          value={selectedDate}
-          defaultValue={selectedDate}
-          onChange={handleChangeDate}
+          picker={viewType}
+          value={selectedDay}
+          defaultValue={selectedDay}
+          onChange={handleChangeDay}
         />
       </Flex>
 
-      {/* 테이블 Wrap */}
-      <Flex className="table-container" flex={1}>
-        <ContextPopup
-          close={!isEditing}
-          title="근무 기록 추가/변경"
-          content={attendanceForm()}
-          onCancel={handleCancel}
-        >
-          {viewType === 'day' ? (
-            <DayTable
+      <Flex className="attendance-content-wrap" vertical gap={24}>
+        {/* 테이블 Wrap */}
+        <Flex className="table-container" flex={1}>
+          {viewType === 'date' ? (
+            <DateTable
               employees={employees}
               attendances={attendances}
               disabledSelect={isEditing}
@@ -153,36 +98,29 @@ const AttendancePage = () => {
             />
           ) : (
             <MonthTable
-              date={selectedDate}
+              day={selectedDay}
               employees={employees}
               attendances={attendances}
               onContextMenu={handleContextMenu}
             />
           )}
-        </ContextPopup>
 
-        <Dock open={showDock}>
-          <Tooltip title="일괄 변경" mouseEnterDelay={0.6}>
-            <Button
-              type="text"
-              size="large"
-              icon={<RiExchangeFundsLine size="2.1rem" />}
-              onClick={openAttendanceModal}
-            />
-          </Tooltip>
-        </Dock>
+          <Dock open={showDock}>
+            <Tooltip title="일괄 변경" mouseEnterDelay={0.6}>
+              <Button
+                type="text"
+                size="large"
+                icon={<RiExchangeFundsLine size="2.1rem" />}
+                onClick={handleBulkEditClick}
+              />
+            </Tooltip>
+          </Dock>
+        </Flex>
+
+        <AttendanceStats attendances={attendances} />
       </Flex>
 
-      <Modal
-        title="근무 기록 추가/변경"
-        open={openModal}
-        centered
-        width={380}
-        footer={false}
-        onCancel={handleCancel}
-        children={attendanceForm()}
-      />
-
+      {renderModal}
       {renderDrawer}
     </AttendancePageStyled>
   );

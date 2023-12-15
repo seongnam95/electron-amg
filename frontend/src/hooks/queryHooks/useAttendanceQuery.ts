@@ -11,18 +11,18 @@ import {
 import { AttendanceData } from '~/types/attendance';
 import { QueryBaseOptions } from '~/types/query';
 
-type DateType = 'month' | 'day';
+type DayType = 'month' | 'date';
 
-const createQueryKey = (teamId: string, date: Dayjs, dateType: DateType): string[] => {
+const createQueryKey = (teamId: string, day: Dayjs, dayType: DayType): string[] => {
   const attendanceQueryKey = import.meta.env.VITE_ATTENDANCE_QUERY_KEY;
-  const dateStr = date.format(dateType === 'month' ? 'YY-MM' : 'YY-MM-DD');
-  return [attendanceQueryKey, teamId, ...dateStr.split('-')];
+  const dayStr = day.format(dayType === 'month' ? 'YY-MM' : 'YY-MM-DD');
+  return [attendanceQueryKey, teamId, ...dayStr.split('-')];
 };
 
 export interface AttendanceQueryOptions extends QueryBaseOptions<AttendanceData[]> {
   teamId: string;
-  dateType: 'day' | 'month';
-  date: Dayjs;
+  dayType: 'date' | 'month';
+  day: Dayjs;
 }
 
 /**
@@ -30,16 +30,16 @@ export interface AttendanceQueryOptions extends QueryBaseOptions<AttendanceData[
  */
 export const useAttendanceQuery = ({
   teamId,
-  dateType,
-  date,
+  dayType,
+  day,
   ...baseOptions
 }: AttendanceQueryOptions) => {
-  const queryKey: Array<string> = createQueryKey(teamId, date, dateType);
+  const queryKey: Array<string> = createQueryKey(teamId, day, dayType);
 
-  const dateStr = date.format(dateType === 'month' ? 'YY-MM' : 'YY-MM-DD');
+  const dayStr = day.format(dayType === 'month' ? 'YY-MM' : 'YY-MM-DD');
   const { data, isLoading, isError } = useQuery(
     queryKey,
-    fetchAttendancesByTeam({ teamId: teamId, dateStr: dateStr }),
+    fetchAttendancesByTeam({ teamId: teamId, dayStr: dayStr }),
     { enabled: teamId !== '', ...baseOptions },
   );
 
@@ -53,15 +53,15 @@ export const useAttendanceQuery = ({
  */
 export const useAttendanceCreate = ({
   teamId,
-  dateType,
-  date,
+  dayType,
+  day,
   ...baseOptions
 }: AttendanceQueryOptions) => {
   const queryClient = useQueryClient();
-  const queryKey: Array<string> = createQueryKey(teamId, date, dateType);
+  const queryKey: Array<string> = createQueryKey(teamId, day, dayType);
 
   const onSettled = () => {
-    const monthQueryKey = createQueryKey(teamId, date, 'month');
+    const monthQueryKey = createQueryKey(teamId, day, 'month');
     queryClient.invalidateQueries(monthQueryKey);
   };
 
@@ -79,15 +79,15 @@ export const useAttendanceCreate = ({
  */
 export const useAttendanceUpdate = ({
   teamId,
-  dateType,
-  date,
+  dayType,
+  day,
   ...baseOptions
 }: AttendanceQueryOptions) => {
   const queryClient = useQueryClient();
-  const queryKey: Array<string> = createQueryKey(teamId, date, dateType);
+  const queryKey: Array<string> = createQueryKey(teamId, day, dayType);
 
   const onSettled = () => {
-    const monthQueryKey = createQueryKey(teamId, date, 'month');
+    const monthQueryKey = createQueryKey(teamId, day, 'month');
     queryClient.invalidateQueries(monthQueryKey);
   };
 
@@ -105,15 +105,15 @@ export const useAttendanceUpdate = ({
  */
 export const useAttendanceRemove = ({
   teamId,
-  dateType,
-  date,
+  dayType,
+  day,
   ...baseOptions
 }: AttendanceQueryOptions) => {
   const queryClient = useQueryClient();
-  const queryKey: Array<string> = createQueryKey(teamId, date, dateType);
+  const queryKey: Array<string> = createQueryKey(teamId, day, dayType);
 
   const onSettled = () => {
-    const monthQueryKey = createQueryKey(teamId, date, 'month');
+    const monthQueryKey = createQueryKey(teamId, day, 'month');
     queryClient.invalidateQueries(monthQueryKey);
   };
 

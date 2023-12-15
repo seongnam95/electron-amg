@@ -10,7 +10,7 @@ import { AttendanceData } from '~/types/attendance';
 import { EmployeeData } from '~/types/employee';
 import { SALARY } from '~/types/position';
 
-export interface DayTableData {
+export interface DateTableData {
   key: string;
   employee: EmployeeData;
   attendance?: AttendanceData;
@@ -21,7 +21,7 @@ interface ColumnProps {
   onClickName?: (employee: EmployeeData) => void;
 }
 
-export const getColumns = ({ employees, onClickName }: ColumnProps): ColumnsType<DayTableData> => {
+export const getColumns = ({ employees, onClickName }: ColumnProps): ColumnsType<DateTableData> => {
   const positionFilters = [...new Set(employees?.map(employee => employee.position.name))].map(
     position => {
       return {
@@ -112,7 +112,7 @@ export const getColumns = ({ employees, onClickName }: ColumnProps): ColumnsType
       width: 70,
       align: 'center',
       render: (_, { attendance }) => {
-        if (attendance === undefined || !attendance.isPaid) return null;
+        if (attendance === undefined || !attendance.isPrepaid) return null;
         return (
           <Flex align="center" justify="center">
             <FaCircleCheck color={colors.success} />

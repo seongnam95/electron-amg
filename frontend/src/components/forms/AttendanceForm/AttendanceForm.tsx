@@ -1,10 +1,11 @@
-import { ReactNode, useEffect } from 'react';
+import { ReactNode } from 'react';
 
 import { Button, Flex, Form, Input, InputNumber, Switch, FormInstance, Space } from 'antd';
 
 import { AttendanceUpdateBody } from '~/types/attendance';
 
 export interface AttendanceFormProps {
+  form?: FormInstance;
   description?: ReactNode;
   initValues?: AttendanceUpdateBody;
   loading?: boolean;
@@ -16,15 +17,15 @@ export interface AttendanceFormProps {
 }
 
 const defaultValues: AttendanceUpdateBody = {
-  isPaid: false,
+  isPrepaid: false,
   includeMealCost: false,
   otCount: 0,
   memo: '',
 };
 
 const AttendanceForm = ({
+  form,
   description,
-  initValues,
   loading,
   extraBtn,
   cancelBtnText,
@@ -32,13 +33,6 @@ const AttendanceForm = ({
   onSubmit,
   onCancel,
 }: AttendanceFormProps) => {
-  const [form] = Form.useForm();
-
-  useEffect(() => {
-    if (initValues) form.setFieldsValue(initValues);
-    else form.setFieldsValue(defaultValues);
-  }, [initValues]);
-
   return (
     <Flex vertical>
       <div>{description}</div>
@@ -49,6 +43,7 @@ const AttendanceForm = ({
         labelAlign="left"
         colon={false}
         autoComplete="off"
+        initialValues={defaultValues}
         style={{ marginTop: 24 }}
         onFinish={onSubmit}
       >
@@ -56,7 +51,7 @@ const AttendanceForm = ({
           <Switch />
         </Form.Item>
 
-        <Form.Item label="선지급" name="isPaid" valuePropName="checked">
+        <Form.Item label="선지급" name="isPrepaid" valuePropName="checked">
           <Switch />
         </Form.Item>
 

@@ -1,5 +1,5 @@
+import { useSoundApp } from './componentHooks/useSoundApp';
 import { useEmployeeRemoveMutation } from './queryHooks/useEmployeeQuery';
-import { useSoundApp } from './useSoundApp';
 
 interface RemoveEmployeeOptions {
   teamId: string;

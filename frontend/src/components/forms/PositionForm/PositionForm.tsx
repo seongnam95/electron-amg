@@ -6,7 +6,7 @@ import { Button, Flex, Form, InputRef, Select, Space } from 'antd';
 import { motion } from 'framer-motion';
 
 import PositionList from '~/components/common/PositionList';
-import { useSoundApp } from '~/hooks/useSoundApp';
+import { useSoundApp } from '~/hooks/componentHooks/useSoundApp';
 import { PositionCreateBody, SalaryType } from '~/types/position';
 import { UnitData } from '~/types/unit';
 
@@ -16,7 +16,7 @@ const defaultValues: PositionCreateBody = {
   name: '',
   color: '#4C53FF',
   salaryCode: 1,
-  isChild: false,
+  defaultEarnsIncentive: false,
   standardPay: 0,
   isLeader: false,
   sortingIndex: 0,
@@ -90,7 +90,7 @@ const PositionForm = ({
   const handleSalaryChange = (code: SalaryType) => setSalaryCode(code);
   const handleLeaderChange = (value: boolean) => {
     setIsLeader(value);
-    form.setFieldValue('isChild', false);
+    form.setFieldValue('defaultEarnsIncentive', false);
   };
 
   // 직위 삭제
@@ -119,7 +119,7 @@ const PositionForm = ({
     switch (itemName) {
       case 'preset':
         return salaryCode !== 3;
-      case 'isChild':
+      case 'defaultEarnsIncentive':
         return isLeader;
       default:
         return false;

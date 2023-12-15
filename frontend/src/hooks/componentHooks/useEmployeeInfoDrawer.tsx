@@ -6,7 +6,7 @@ import EmployeeInfoDrawer from '~/components/drawer/EmployeeInfoDrawer';
 import { teamStore } from '~/stores/team';
 import { EmployeeData } from '~/types/employee';
 
-import { useRemoveEmployee } from './useRemoveEmployee';
+import { useRemoveEmployee } from '../useRemoveEmployee';
 
 export const useEmployeeInfoDrawer = () => {
   const team = useRecoilValue(teamStore);

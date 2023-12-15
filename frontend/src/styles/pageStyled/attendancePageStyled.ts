@@ -9,23 +9,14 @@ export const AttendancePageStyled = styled.div`
   overflow: hidden;
   height: 100%;
 
-  .table-container {
-    overflow: hidden;
+  .attendance-content-wrap {
+    padding: 1rem 2rem 2rem;
     height: calc(100% - var(--toolbar-height));
+    overflow: hidden;
 
-    .page-content {
-      height: calc(100% - var(--footer-height));
-    }
-  }
-
-  .attendance-footer {
-    height: var(--footer-height);
-    margin-top: 2.4rem;
-
-    .leader-state {
-      background-color: ${p => p.theme.colors.innerBg};
-      border-radius: 8px;
-      padding: 1.8rem;
+    .table-container {
+      height: 100%;
+      overflow: hidden;
     }
   }
 

@@ -2,7 +2,13 @@ import dayjs from 'dayjs';
 
 import { AttendanceData } from '~/types/attendance';
 
-export const groupedAttendanceByDay = (data: AttendanceData[]) => {
+/**
+ * 날짜별로 AttendanceData를 그룹한 데이터를 반환합니다.
+ * 연달아 있는 데이터는 이중배열로 반환합니다.
+ * @param data - 그룹화 대상 데이터
+ * @returns {AttendanceData[][]}
+ */
+export const groupedAttendanceByDay = (data: AttendanceData[]): AttendanceData[][] => {
   const sortedByDate = data.sort(
     (a, b) =>
       dayjs(a.workingDate, 'YY-MM-DD').valueOf() - dayjs(b.workingDate, 'YY-MM-DD').valueOf(),

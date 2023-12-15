@@ -15,7 +15,7 @@ interface PositionItemProps {
 
 const PositionItem = forwardRef<HTMLLIElement, PositionItemProps>(
   ({ className, position, onDoubleClick, ...dragHandleProps }, itemRef) => {
-    const { name, color, salaryCode, standardPay, isLeader, isChild } = position;
+    const { name, color, salaryCode, standardPay, isLeader, defaultEarnsIncentive } = position;
 
     return (
       <motion.li
@@ -31,7 +31,7 @@ const PositionItem = forwardRef<HTMLLIElement, PositionItemProps>(
             <Tag color={color} className="position-tag">
               {name}
             </Tag>
-            {isChild ? (
+            {defaultEarnsIncentive ? (
               <Flex className="child-tag">
                 <BiChild color="#767676" />
               </Flex>

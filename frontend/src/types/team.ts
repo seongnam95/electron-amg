@@ -1,3 +1,4 @@
+import { EmployeeData } from './employee';
 import { PositionData } from './position';
 import { UnitCreateBody, UnitData } from './unit';
 
@@ -11,6 +12,7 @@ export interface TeamData {
   createDate: string;
   units: UnitData[];
   positions: PositionData[];
+  leader?: EmployeeData;
   existTeam?: boolean;
 }
 

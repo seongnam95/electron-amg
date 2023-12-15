@@ -7,15 +7,15 @@ import { teamStore } from '~/stores/team';
 import { UnitTableStyled } from './styled';
 
 export interface UnitTableProps {
-  date?: Dayjs;
+  day?: Dayjs;
 }
 
-const UnitTable = ({ date = dayjs() }: UnitTableProps) => {
+const UnitTable = ({ day = dayjs() }: UnitTableProps) => {
   const team = useRecoilValue(teamStore);
   const { attendances } = useAttendanceQuery({
     teamId: team.id,
-    date: date,
-    dateType: 'month',
+    day: day,
+    dayType: 'month',
     enabled: team.existTeam,
   });
 

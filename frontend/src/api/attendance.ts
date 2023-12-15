@@ -5,7 +5,7 @@ import { DataListResponse, DataResponse } from './response';
 
 interface AttendancesFetchProps {
   teamId?: string;
-  dateStr?: string;
+  dayStr?: string;
 }
 
 /**
@@ -14,15 +14,14 @@ interface AttendancesFetchProps {
  * @returns Promise<AttendanceData[]>
  */
 export const fetchAttendancesByTeam =
-  ({ teamId, dateStr }: AttendancesFetchProps) =>
+  ({ teamId, dayStr }: AttendancesFetchProps) =>
   async (): Promise<AttendanceData[]> => {
-    console.log(teamId);
     const teamEndpoint = import.meta.env.VITE_TEAM_ENDPOINT;
     const attendanceEndpoint = import.meta.env.VITE_ATTENDANCE_ENDPOINT;
 
     const { data } = await axiosPrivate.get<DataListResponse<AttendanceData>>(
       `${teamEndpoint}/${teamId}/${attendanceEndpoint}`,
-      { params: { date: dateStr } },
+      { params: { day: dayStr } },
     );
 
     return data.result.list;

@@ -16,7 +16,7 @@ export interface PositionData {
   standardPay: number;
   sortingIndex: number;
   isLeader: boolean;
-  isChild: boolean;
+  defaultEarnsIncentive: boolean;
   unitId: string;
 }
 

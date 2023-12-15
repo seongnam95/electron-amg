@@ -11,7 +11,7 @@ class PositionBase(BaseModel):
     standard_pay: int
     sorting_index: int
     is_leader: bool
-    is_child: bool
+    default_earns_incentive: bool
 
 
 class PositionCreate(PositionBase):
@@ -25,7 +25,7 @@ class PositionUpdate(BaseModel):
     preset: Optional[int] = None
     standard_pay: Optional[int] = None
     is_leader: Optional[bool] = None
-    is_child: Optional[bool] = None
+    default_earns_incentive: Optional[bool] = None
     is_active: Optional[bool] = None
     unit_id: Optional[str] = None
 

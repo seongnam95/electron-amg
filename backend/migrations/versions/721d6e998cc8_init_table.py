@@ -1,8 +1,8 @@
 """init table
 
-Revision ID: 3df0d765ee4e
+Revision ID: 721d6e998cc8
 Revises: 
-Create Date: 2023-12-06 12:42:36.889934
+Create Date: 2023-12-15 17:42:14.808158
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = '3df0d765ee4e'
+revision: str = '721d6e998cc8'
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -48,8 +48,8 @@ def upgrade() -> None:
     sa.Column('standard_pay', sa.Integer(), nullable=False),
     sa.Column('sorting_index', sa.Integer(), nullable=False),
     sa.Column('is_leader', sa.Boolean(), nullable=False),
-    sa.Column('is_child', sa.Boolean(), nullable=False),
     sa.Column('is_active', sa.Boolean(), nullable=False),
+    sa.Column('default_earns_incentive', sa.Boolean(), nullable=False),
     sa.Column('team_id', sa.String(), nullable=False),
     sa.Column('unit_id', sa.String(), nullable=False),
     sa.ForeignKeyConstraint(['team_id'], ['team.id'], ),
@@ -93,8 +93,9 @@ def upgrade() -> None:
     op.create_table('attendance',
     sa.Column('id', sa.String(), nullable=False),
     sa.Column('memo', sa.String(), nullable=False),
-    sa.Column('is_paid', sa.Boolean(), nullable=False),
+    sa.Column('is_prepaid', sa.Boolean(), nullable=False),
     sa.Column('include_meal_cost', sa.Boolean(), nullable=False),
+    sa.Column('earns_incentive', sa.Boolean(), nullable=False),
     sa.Column('ot_count', sa.Integer(), nullable=False),
     sa.Column('working_date', sa.String(), nullable=False),
     sa.Column('position_id', sa.String(), nullable=False),

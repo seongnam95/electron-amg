@@ -1,4 +1,4 @@
-import { useSoundApp } from './useSoundApp';
+import { useSoundApp } from './componentHooks/useSoundApp';
 
 export const useCopyText = () => {
   const { soundMessage } = useSoundApp();

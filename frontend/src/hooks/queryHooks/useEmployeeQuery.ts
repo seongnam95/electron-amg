@@ -1,9 +1,11 @@
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 
 import { AxiosError } from 'axios';
+import { useSetRecoilState } from 'recoil';
 
 import { fetchEmployeeDocument, fetchEmployees, removeEmployees } from '~/api/employee';
 import { BaseResponse, DataListResponse } from '~/api/response';
+import { teamStore } from '~/stores/team';
 import { EmployeeData, EmployeeDocument } from '~/types/employee';
 import { QueryBaseOptions } from '~/types/query';
 
@@ -17,25 +19,34 @@ export const useEmployeeQuery = ({
   valid,
   ...baseOptions
 }: EmployeeQueryOptions<DataListResponse<EmployeeData>>) => {
+  const setTeam = useSetRecoilState(teamStore);
+
   const queryKey: string[] = [
     import.meta.env.VITE_EMPLOYEE_QUERY_KEY,
     teamId,
     ...(valid !== undefined ? [valid ? 'valid' : 'invalid'] : []),
   ];
 
+  const onSuccess = (data: DataListResponse<EmployeeData>) => {
+    const employees = data.result.list;
+
+    const teamLeader = employees.find(employee => employee.position.isLeader);
+    if (teamLeader) setTeam(prev => ({ ...prev, leader: teamLeader }));
+
+    baseOptions.onSuccess?.(data);
+  };
+
   const { data, isLoading, isError, refetch } = useQuery(
     queryKey,
     fetchEmployees({ teamId, valid }),
-    { enabled: teamId !== '', ...baseOptions },
+    { enabled: teamId !== '', ...baseOptions, onSuccess },
   );
 
-  const dataList = data?.result.list;
-
   const total = data?.result.total;
-  const teamLeader = dataList?.find(employees => employees.position.isLeader);
-  const employees = dataList
-    ? dataList.filter(employees => !employees.position.isLeader).toReversed()
-    : [];
+  const employees = data ? data.result.list : [];
+
+  const teamLeader = employees.find(employee => employee.position.isLeader);
+
   const sortedEmployees = employees.sort(
     (a, b) => a.position.sortingIndex - b.position.sortingIndex,
   );

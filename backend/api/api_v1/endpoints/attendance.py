@@ -16,7 +16,7 @@ router = APIRouter()
 )
 def read_attendances(
     team_id: str,
-    date: str,
+    day: str,
     page: int = 1,
     limit: int = 100,
     db: Session = Depends(deps.get_db),
@@ -28,7 +28,7 @@ def read_attendances(
     attendances = []
     for employee in team.employees:
         attendance_objs = crud.attendance.get_all_attendance_by_month(
-            db, employee_id=employee.id, date_str=date
+            db, employee_id=employee.id, day_str=day
         )
         if attendance_objs:
             for attendance in attendance_objs:

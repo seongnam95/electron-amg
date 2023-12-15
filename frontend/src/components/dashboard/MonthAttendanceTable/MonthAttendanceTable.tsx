@@ -10,19 +10,19 @@ import { MonthAttendanceTableData, getColumns } from './config';
 import { MonthAttendanceTableStyled } from './styled';
 
 export interface MonthAttendanceTableProps {
-  date?: Dayjs;
+  day?: Dayjs;
 }
 
 /**
  * 직위별 출근 통계 테이블 ( Monthly )
  */
-const MonthAttendanceTable = ({ date = dayjs() }: MonthAttendanceTableProps) => {
+const MonthAttendanceTable = ({ day = dayjs() }: MonthAttendanceTableProps) => {
   const team = useRecoilValue(teamStore);
 
   const { attendances } = useAttendanceQuery({
     teamId: team.id,
-    date: date,
-    dateType: 'month',
+    day: day,
+    dayType: 'month',
     enabled: team.existTeam,
   });
 

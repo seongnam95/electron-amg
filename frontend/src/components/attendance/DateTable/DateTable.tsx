@@ -2,16 +2,15 @@ import { Key, MouseEvent } from 'react';
 
 import { Table } from 'antd';
 import { TableRowSelection } from 'antd/es/table/interface';
-import { Dayjs } from 'dayjs';
 
 import { useDragScroll } from '~/hooks/useDragScroll';
 import { AttendanceData } from '~/types/attendance';
 import { EmployeeData } from '~/types/employee';
 
-import { getColumns, DayTableData } from './config';
-import { DayTableStyled } from './styled';
+import { getColumns, DateTableData } from './config';
+import { DateTableStyled } from './styled';
 
-export interface DayTableProps {
+export interface DateTableProps {
   employees: EmployeeData[];
   attendances: AttendanceData[];
   disabledSelect?: boolean;
@@ -21,7 +20,7 @@ export interface DayTableProps {
   onContextMenu?: (event: MouseEvent, employee: EmployeeData) => void;
 }
 
-const DayTable = ({
+const DateTable = ({
   employees,
   attendances,
   disabledSelect,
@@ -29,16 +28,16 @@ const DayTable = ({
   onSelect,
   onClickName,
   onContextMenu,
-}: DayTableProps) => {
+}: DateTableProps) => {
   const scrollRef = useDragScroll();
 
-  const handleSelectedChange = (_: Key[], datas: DayTableData[]) => {
+  const handleSelectedChange = (_: Key[], datas: DateTableData[]) => {
     const selectedEmployees = datas.map(data => data.employee);
     onSelect?.(selectedEmployees);
   };
 
   // Row 체크 핸들러
-  const rowSelection: TableRowSelection<DayTableData> = {
+  const rowSelection: TableRowSelection<DateTableData> = {
     selectedRowKeys: selectedEmployeeIds,
     onChange: handleSelectedChange,
     getCheckboxProps: () => ({ disabled: disabledSelect }),
@@ -51,7 +50,7 @@ const DayTable = ({
   });
 
   // 테이블 데이터 맵핑
-  const dataSource: DayTableData[] = employees.map(employee => {
+  const dataSource: DateTableData[] = employees.map(employee => {
     const attendance = attendances.find(data => data.employeeId === employee.id);
     return {
       key: employee.id,
@@ -63,7 +62,7 @@ const DayTable = ({
   });
 
   return (
-    <DayTableStyled className="AttendanceTable" ref={scrollRef}>
+    <DateTableStyled className="AttendanceTable" ref={scrollRef}>
       <Table
         pagination={false}
         columns={columns}
@@ -73,8 +72,8 @@ const DayTable = ({
           onContextMenu: event => onContextMenu?.(event, row.employee),
         })}
       />
-    </DayTableStyled>
+    </DateTableStyled>
   );
 };
 
-export default DayTable;
+export default DateTable;

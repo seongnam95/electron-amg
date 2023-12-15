@@ -13,18 +13,18 @@ import { attendanceReportByPosition } from '~/utils/statistics/attendanceReportB
 import { AttendanceDoughnutStyled } from './styled';
 
 export interface AttendanceDoughnutProps {
-  date?: Dayjs;
+  day?: Dayjs;
 }
 
 const { Text } = Typography;
-const AttendanceDoughnut = ({ date = dayjs() }: AttendanceDoughnutProps) => {
+const AttendanceDoughnut = ({ day = dayjs() }: AttendanceDoughnutProps) => {
   const team = useRecoilValue(teamStore);
 
   const { employees } = useEmployeeQuery({ teamId: team.id, enabled: team.existTeam });
   const { attendances } = useAttendanceQuery({
     teamId: team.id,
-    date: date,
-    dateType: 'day',
+    day: day,
+    dayType: 'date',
     enabled: team.existTeam,
   });
 
@@ -32,7 +32,7 @@ const AttendanceDoughnut = ({ date = dayjs() }: AttendanceDoughnutProps) => {
   const nonAttendanceCount = employees.length - attendances.length;
 
   const dataSource = {
-    labels: [...attendanceReports.map(report => report.position.name), '미출근'],
+    labels: [...attendanceReports.map(report => report.position?.name), '미출근'],
     datasets: [
       {
         data: [...attendanceReports.map(report => report.attendanceCount), nonAttendanceCount],
@@ -67,7 +67,7 @@ const AttendanceDoughnut = ({ date = dayjs() }: AttendanceDoughnutProps) => {
               legend: { display: false },
               tooltip: {
                 callbacks: {
-                  title: () => date.format('YY년 MM월 DD일'),
+                  title: () => day.format('YY년 MM월 DD일'),
                   label: item => ` ${item.label} : ${item.formattedValue}명`,
                 },
               },

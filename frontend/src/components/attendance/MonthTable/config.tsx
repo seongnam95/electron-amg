@@ -9,7 +9,8 @@ import { AttendanceData } from '~/types/attendance';
 import { EmployeeData } from '~/types/employee';
 import { generateDays } from '~/utils/commuteRange';
 
-import { AttendanceBar } from './MonthTable';
+import AttendanceBar from './AttendanceBar';
+import { groupedAttendanceByDay } from './util';
 
 export interface MonthTableData {
   key: string;
@@ -21,15 +22,14 @@ export interface MonthTableData {
 }
 
 interface ColumnProps {
-  date: Dayjs;
-  onCellContextMenu?: (event: MouseEvent, day: Dayjs, data: MonthTableData) => void;
+  onContextMenu?: (event: MouseEvent, employee: EmployeeData, day: Dayjs) => void;
 }
 
-export const getColumns = ({
-  date,
-  onCellContextMenu,
-}: ColumnProps): ColumnsType<MonthTableData> => {
-  const days = generateDays(date);
+export const getColumns = (
+  day: Dayjs,
+  { onContextMenu }: ColumnProps,
+): ColumnsType<MonthTableData> => {
+  const days = generateDays(day);
 
   const dayColumns: ColumnsType<MonthTableData> = days.map(day => {
     const isSaturday = day.dayOfWeek === '토';
@@ -41,15 +41,14 @@ export const getColumns = ({
       className: clsx('day', dayCellClassName),
       dataIndex: day.dayNum,
       title: day.dayNum,
-      width: 40,
+      width: 42,
       align: 'center',
       onCell: data => ({
-        // onMouseOver: () => console.log('mouse'),
-        onContextMenu: event => onCellContextMenu?.(event, day.day, data),
+        onContextMenu: event => onContextMenu?.(event, data.employee, day.day),
       }),
       render: (attendances, { employee }) => {
         if (attendances) {
-          return <AttendanceBar employee={employee} attendances={attendances} cellWidth={40} />;
+          return <AttendanceBar employee={employee} attendances={attendances} cellWidth={42} />;
         }
       },
     };
@@ -98,4 +97,41 @@ export const getColumns = ({
       render: (_, { totalPay }) => <b>{totalPay.toLocaleString()}</b>,
     },
   ];
+};
+
+export const getDataSource = (
+  employees: EmployeeData[],
+  attendances: AttendanceData[],
+): MonthTableData[] => {
+  return employees.map(employee => {
+    const targetAttendances = attendances.filter(data => data.employeeId === employee.id);
+    const workingGroups = groupedAttendanceByDay(targetAttendances);
+
+    // Attendance Bar 그룹핑
+    const existAttendances: { [key: string]: AttendanceData[] } = {};
+
+    workingGroups.forEach(group => {
+      const firstDate = dayjs(group[0].workingDate, 'YY-MM-DD').date();
+      existAttendances[firstDate] = group;
+    });
+
+    // 합계액
+    const paySum = targetAttendances.reduce(
+      (total, value) => total + value.position.standardPay,
+      0,
+    );
+    const incomeTax = paySum * 0.033;
+    const totalPay = paySum - incomeTax;
+
+    return {
+      key: employee.id,
+      name: employee.name,
+      employee: employee,
+      paySum: paySum,
+      incomeTax: incomeTax,
+      totalPay: totalPay,
+      attendances: targetAttendances,
+      ...existAttendances,
+    };
+  });
 };

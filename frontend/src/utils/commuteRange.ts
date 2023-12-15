@@ -1,4 +1,4 @@
-import dayjs, { Dayjs } from 'dayjs';
+import { Dayjs } from 'dayjs';
 
 export interface WeekColorData {
   day: Dayjs;
@@ -16,7 +16,7 @@ export const generateDays = (day: Dayjs): Array<WeekColorData> => {
     const dayOfWeek = date.day();
 
     return {
-      day: day.add(index, 'day'),
+      day: date,
       dayNum: dayNumber,
       dayOfWeek: days[dayOfWeek], // 요일 이름 추가
     };

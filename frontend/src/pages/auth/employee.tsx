@@ -12,11 +12,11 @@ import DraftCreateDrawer from '~/components/drawer/DraftCreateDrawer';
 import EmployeeInfoDrawer from '~/components/drawer/EmployeeInfoDrawer';
 import HistoryDrawer from '~/components/drawer/HistoryDrawer';
 import EmployeeTable from '~/components/employee/EmployeeTable';
+import { useSoundApp } from '~/hooks/componentHooks/useSoundApp';
 import { useEmployeeQuery } from '~/hooks/queryHooks/useEmployeeQuery';
 import { useCopyText } from '~/hooks/useCopyText';
 import { useDragScroll } from '~/hooks/useDragScroll';
 import { useRemoveEmployee } from '~/hooks/useRemoveEmployee';
-import { useSoundApp } from '~/hooks/useSoundApp';
 import { teamStore } from '~/stores/team';
 import { EmployeePageStyled } from '~/styles/pageStyled/employeePageStyled';
 

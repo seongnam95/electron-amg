@@ -5,8 +5,9 @@ export interface AttendanceData {
   memo: string;
   otCount: number;
   workingDate: string;
-  isPaid: boolean;
+  isPrepaid: boolean;
   includeMealCost: boolean;
+  earnsIncentive: boolean;
   employeeId: string;
   positionId: string;
   position: PositionData;

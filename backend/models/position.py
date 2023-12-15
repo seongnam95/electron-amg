@@ -26,8 +26,8 @@ class Position(Base):
     sorting_index = Column(Integer, nullable=False)  # 순서
 
     is_leader = Column(Boolean, nullable=False)  # 팀장 여부
-    is_child = Column(Boolean, nullable=False)  # 팀장 인센티브 추가 여부
     is_active = Column(Boolean, nullable=False, default=False)  # 활성화 여부
+    default_earns_incentive = Column(Boolean, nullable=False)  # 팀장 인센티브 추가 여부
 
     employee = relationship("Employee", back_populates="position")
     draft = relationship("Draft", back_populates="position")

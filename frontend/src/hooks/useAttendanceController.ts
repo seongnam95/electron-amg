@@ -12,28 +12,29 @@ import {
 } from './queryHooks/useAttendanceQuery';
 
 interface AttendanceControllerOptions {
-  date: Dayjs;
+  day: Dayjs;
   attendances: AttendanceData[];
   onSuccess?: () => void;
 }
 
 const useAttendanceController = (options: AttendanceControllerOptions) => {
-  const { date, attendances, onSuccess } = options;
+  const { day, attendances, onSuccess } = options;
   const { id: teamId } = useRecoilValue(teamStore);
 
   const mutateOptions: AttendanceQueryOptions = {
     teamId: teamId,
-    dateType: 'day',
-    date: date,
+    dayType: 'date',
+    day: day,
     onSuccess,
   };
+
   const { createAttendanceMutate, isCreateAttendanceLoading } = useAttendanceCreate(mutateOptions);
   const { updateAttendanceMutate, isUpdateAttendanceLoading } = useAttendanceUpdate(mutateOptions);
   const { removeAttendanceMutate, isRemoveAttendanceLoading } = useAttendanceRemove(mutateOptions);
 
   /** 분류 된 ID에 맞는 mutate 호출 */
   const setAttendance = (targetIds: string[], formData: AttendanceUpdateBody) => {
-    const { employeeIds, attendanceIds } = categorizeEmployeeIds(targetIds);
+    const { employeeIds, attendanceIds } = categorizeEmployeeIds(day, targetIds);
 
     if (employeeIds.length > 0)
       createAttendanceMutate({ employeeIds: employeeIds, body: formData });
@@ -44,15 +45,19 @@ const useAttendanceController = (options: AttendanceControllerOptions) => {
 
   /** Attendance 데이터 삭제 */
   const removeAttendance = (targetIds: string[]) => {
-    const { attendanceIds } = categorizeEmployeeIds(targetIds);
+    const { attendanceIds } = categorizeEmployeeIds(day, targetIds);
     removeAttendanceMutate(attendanceIds);
   };
 
   /** Attendance 데이터 유무에 따라 ID 분류 */
-  const categorizeEmployeeIds = (employeeIds: string[]) => {
+  const categorizeEmployeeIds = (day: Dayjs, employeeIds: string[]) => {
+    const dayStr = day.format('YY-MM-DD');
+    console.log('dayStr', dayStr);
     return employeeIds.reduce(
       (acc, id) => {
-        const attendance = attendances.find(attendance => attendance.employeeId === id);
+        const attendance = attendances.find(
+          attendance => attendance.employeeId === id && attendance.workingDate === dayStr,
+        );
         attendance ? acc.attendanceIds.push(attendance.id) : acc.employeeIds.push(id);
         return acc;
       },

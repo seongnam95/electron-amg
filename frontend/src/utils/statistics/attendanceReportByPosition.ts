@@ -3,8 +3,9 @@ import { PositionData } from '~/types/position';
 import { TeamData } from '~/types/team';
 
 export interface AttendanceReportData {
-  position: PositionData;
+  position?: PositionData;
 
+  earnsIncentiveCount: number;
   mealCostCount: number;
   prepaidCount: number;
   otCount: number;
@@ -22,9 +23,9 @@ export interface AttendanceReportData {
 
 /**
  * 직위별 출석 통계
- * @param team
- * @param attendances
- * @returns MappingAttendanceData[]
+ * @param team - 대상 팀 데이터
+ * @param attendances - 대상 Attendance Array 데이터
+ * @returns {AttendanceReportData[]} Position 별 출석 통계통계
  */
 export const attendanceReportByPosition = (
   team: TeamData,
@@ -36,6 +37,11 @@ export const attendanceReportByPosition = (
     const positionAttendances = attendances.filter(
       attendance => attendance.positionId === position.id,
     );
+
+    // 인센 포함 합계
+    const earnsIncentiveCount = positionAttendances.filter(
+      attendance => attendance.earnsIncentive,
+    ).length;
 
     // 총 출근일 수
     const attendanceCount = positionAttendances.length;
@@ -51,7 +57,7 @@ export const attendanceReportByPosition = (
       .reduce((total, value) => (total += value), 0);
 
     // 선지급일 합계
-    const paidCount = positionAttendances.filter(attendance => attendance.isPaid).length;
+    const paidCount = positionAttendances.filter(attendance => attendance.isPrepaid).length;
 
     // ------------------------------
 
@@ -75,6 +81,7 @@ export const attendanceReportByPosition = (
     return {
       position: position,
 
+      earnsIncentiveCount: earnsIncentiveCount,
       attendanceCount: attendanceCount,
       mealCostCount: mealCostCount,
       otCount: otCount,
@@ -90,4 +97,39 @@ export const attendanceReportByPosition = (
       finalPay: finalPay,
     };
   });
+};
+
+export const calculateReportTotal = (reports: AttendanceReportData[]) => {
+  return reports.reduce(
+    (totals, data) => {
+      return {
+        earnsIncentiveCount: totals.earnsIncentiveCount + data.earnsIncentiveCount,
+        mealCostCount: totals.mealCostCount + data.mealCostCount,
+        prepaidCount: totals.prepaidCount + data.prepaidCount,
+        otCount: totals.otCount + data.otCount,
+        attendanceCount: totals.attendanceCount + data.attendanceCount,
+        dailyPay: totals.dailyPay + data.dailyPay,
+        mealCost: totals.mealCost + data.mealCost,
+        otPay: totals.otPay + data.otPay,
+        prepay: totals.prepay + data.prepay,
+        taxAmount: totals.taxAmount + data.taxAmount,
+        totalPaySum: totals.totalPaySum + data.totalPaySum,
+        finalPay: totals.finalPay + data.finalPay,
+      };
+    },
+    {
+      earnsIncentiveCount: 0,
+      mealCostCount: 0,
+      prepaidCount: 0,
+      otCount: 0,
+      attendanceCount: 0,
+      dailyPay: 0,
+      mealCost: 0,
+      otPay: 0,
+      prepay: 0,
+      taxAmount: 0,
+      totalPaySum: 0,
+      finalPay: 0,
+    },
+  );
 };

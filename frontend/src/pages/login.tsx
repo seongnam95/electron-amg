@@ -6,8 +6,8 @@ import { Button, Flex, Form, Input, InputRef } from 'antd';
 import axios from 'axios';
 
 import { LoginBody } from '~/api/auth';
+import { useSoundApp } from '~/hooks/componentHooks/useSoundApp';
 import { useAuth } from '~/hooks/useAuth';
-import { useSoundApp } from '~/hooks/useSoundApp';
 import { LoginPageStyled } from '~/styles/pageStyled/loginPageStyled';
 
 const LoginPage = () => {

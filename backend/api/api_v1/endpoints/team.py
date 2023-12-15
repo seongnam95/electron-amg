@@ -61,7 +61,6 @@ def read_all_team(
     limit: int = 100,
 ):
     total = crud.employee.get_count(db)
-
     teams = crud.team.get_team_for_user(db, user_id=user_id)
 
     response = deps.create_list_response(
