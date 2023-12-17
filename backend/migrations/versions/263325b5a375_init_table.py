@@ -1,8 +1,8 @@
 """init table
 
-Revision ID: 721d6e998cc8
+Revision ID: 263325b5a375
 Revises: 
-Create Date: 2023-12-15 17:42:14.808158
+Create Date: 2023-12-16 02:34:23.851046
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = '721d6e998cc8'
+revision: str = '263325b5a375'
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -47,6 +47,7 @@ def upgrade() -> None:
     sa.Column('preset', sa.Integer(), nullable=False),
     sa.Column('standard_pay', sa.Integer(), nullable=False),
     sa.Column('sorting_index', sa.Integer(), nullable=False),
+    sa.Column('incentive_pay', sa.Integer(), nullable=False),
     sa.Column('is_leader', sa.Boolean(), nullable=False),
     sa.Column('is_active', sa.Boolean(), nullable=False),
     sa.Column('default_earns_incentive', sa.Boolean(), nullable=False),
@@ -110,7 +111,6 @@ def upgrade() -> None:
     sa.Column('name', sa.String(), nullable=False),
     sa.Column('username', sa.String(), nullable=False),
     sa.Column('hashed_password', sa.String(), nullable=False),
-    sa.Column('incentive_pay', sa.Integer(), nullable=False),
     sa.Column('is_admin', sa.Boolean(), nullable=False),
     sa.Column('is_superuser', sa.Boolean(), nullable=False),
     sa.Column('is_approved', sa.Boolean(), nullable=False),

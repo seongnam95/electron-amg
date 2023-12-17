@@ -15,6 +15,7 @@ export const AttendancePageStyled = styled.div`
     overflow: hidden;
 
     .table-container {
+      position: relative;
       height: 100%;
       overflow: hidden;
     }

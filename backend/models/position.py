@@ -25,6 +25,8 @@ class Position(Base):
     standard_pay = Column(Integer, nullable=False)  # 기준 단가
     sorting_index = Column(Integer, nullable=False)  # 순서
 
+    incentive_pay = Column(Integer, nullable=False, default=2000)  # 팀장 인센 기준
+
     is_leader = Column(Boolean, nullable=False)  # 팀장 여부
     is_active = Column(Boolean, nullable=False, default=False)  # 활성화 여부
     default_earns_incentive = Column(Boolean, nullable=False)  # 팀장 인센티브 추가 여부

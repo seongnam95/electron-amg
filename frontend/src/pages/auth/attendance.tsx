@@ -106,7 +106,7 @@ const AttendancePage = () => {
           )}
 
           <Dock open={showDock}>
-            <Tooltip title="일괄 변경" mouseEnterDelay={0.6}>
+            <Tooltip title="일괄 변경" placement="left" mouseEnterDelay={0.6}>
               <Button
                 type="text"
                 size="large"

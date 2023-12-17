@@ -23,8 +23,6 @@ class User(Base):
     username = Column(String, unique=True, nullable=False)  # 계정
     hashed_password = Column(String, nullable=False)  # 비밀번호
 
-    incentive_pay = Column(Integer, nullable=False, default=2000)  # 팀장 인센 기준
-
     is_admin = Column(Boolean, nullable=False, default=False)  # 어드민 여부 (팀장)
     is_superuser = Column(Boolean, nullable=False, default=False)  # 슈퍼유저 여부
     is_approved = Column(Boolean, nullable=False, default=True)  # 계정 활성화/비활성화

@@ -12,6 +12,7 @@ class PositionBase(BaseModel):
     sorting_index: int
     is_leader: bool
     default_earns_incentive: bool
+    incentive_pay: Optional[int] = None
 
 
 class PositionCreate(PositionBase):
@@ -28,6 +29,7 @@ class PositionUpdate(BaseModel):
     default_earns_incentive: Optional[bool] = None
     is_active: Optional[bool] = None
     unit_id: Optional[str] = None
+    incentive_pay: Optional[int] = None
 
     @model_validator(mode="before")
     def check_fields(cls, values: dict):

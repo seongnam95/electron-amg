@@ -9,7 +9,6 @@ class UserCreate(BaseModel):
     name: str
     username: str
     password: str
-    incentive_pay: Optional[int] = None
     is_admin: Optional[bool] = None
     is_superuser: Optional[bool] = None
     is_approved: Optional[bool] = None
@@ -33,7 +32,6 @@ class User(BaseModel):
     name: str
     username: str
     hashed_password: str
-    incentive_pay: int
     is_admin: bool
     is_superuser: bool
     is_approved: bool

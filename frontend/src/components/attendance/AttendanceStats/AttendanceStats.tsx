@@ -18,6 +18,7 @@ export interface AttendanceStatsProps {
 const AttendanceStats = ({ attendances }: AttendanceStatsProps) => {
   const team = useRecoilValue(teamStore);
 
+  const incentivePay = team.positions;
   const attendanceReports = attendanceReportByPosition(team, attendances);
   const { earnsIncentiveCount, dailyPay, mealCost, prepay, otPay, taxAmount, totalPaySum } =
     calculateReportTotal(attendanceReports);

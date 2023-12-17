@@ -3,24 +3,24 @@ import styled from 'styled-components';
 export const DockStyled = styled.div`
   .dock-wrap {
     position: absolute;
-    left: 50%;
-    bottom: 4rem;
-    transform: translateX(-50%);
+    right: 2.4rem;
+    bottom: 2.4rem;
 
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
     gap: 0.6rem;
 
-    background-color: rgba(255, 255, 255, 0.4);
-    backdrop-filter: blur(6px);
-    box-shadow: rgba(66, 66, 66, 0.1) 0 8px 36px;
+    background-color: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(32px);
+    box-shadow: rgba(66, 66, 66, 0.2) 0 8px 36px;
 
     font-size: 1.4rem;
-    padding: 1rem 1.8rem;
+    padding: 1.4rem;
 
     border-radius: 0.8rem;
-    z-index: 9999;
+    z-index: 1000;
   }
 
   .excel-btn {

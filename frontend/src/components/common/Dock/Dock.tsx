@@ -6,12 +6,11 @@ import { DockStyled } from './styled';
 
 interface DockProps {
   open?: boolean;
-  parentElement?: HTMLElement | null;
   children?: React.ReactNode;
 }
 
-const Dock = ({ open, parentElement, children }: DockProps) => {
-  return ReactDOM.createPortal(
+const Dock = ({ open, children }: DockProps) => {
+  return (
     <DockStyled>
       <AnimatePresence>
         {open ? (
@@ -26,8 +25,7 @@ const Dock = ({ open, parentElement, children }: DockProps) => {
           </motion.div>
         ) : null}
       </AnimatePresence>
-    </DockStyled>,
-    parentElement ? parentElement : document.body,
+    </DockStyled>
   );
 };
 
