@@ -3,6 +3,7 @@ import styled from 'styled-components';
 export const MonthAttendanceTableStyled = styled.div`
   overflow-y: auto;
   height: 100%;
+  width: 100%;
 `;
 
 export const HintText = styled.span`

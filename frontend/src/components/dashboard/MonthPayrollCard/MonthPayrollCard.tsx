@@ -10,19 +10,18 @@ import MonthPayrollBar from '../MonthPayrollBar';
 export interface MonthPayrollCardProps {}
 
 const MonthPayrollCard = ({}: MonthPayrollCardProps) => {
-  const [date, setDate] = useState<Dayjs>(dayjs());
+  const [day, setDay] = useState<Dayjs>(dayjs());
 
   const handleChangeMonth = (date: Dayjs | null) => {
-    if (date) setDate(date);
+    if (date) setDay(date);
   };
 
   return (
     <Card
       title="📊 월 수당 통계"
-      extra={<AntDatePicker picker="month" defaultValue={date} onChange={handleChangeMonth} />}
-      style={{ maxWidth: '90rem' }}
+      extra={<AntDatePicker picker="month" defaultValue={day} onChange={handleChangeMonth} />}
     >
-      <MonthPayrollBar date={date} />
+      <MonthPayrollBar day={day} />
     </Card>
   );
 };

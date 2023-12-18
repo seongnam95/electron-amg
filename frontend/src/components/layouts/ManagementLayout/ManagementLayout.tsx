@@ -11,7 +11,7 @@ const ManagementLayout = () => {
   return (
     <ManagementLayoutStyled id="layout" className="ManagementLayout">
       <SideNavbar />
-      <Flex vertical>
+      <Flex className="container" vertical>
         <Header />
         <Content>
           <Outlet />

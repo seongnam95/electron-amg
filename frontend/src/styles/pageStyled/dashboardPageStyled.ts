@@ -2,12 +2,14 @@ import styled from 'styled-components';
 
 export const DashboardPageStyled = styled.div`
   overflow: auto;
+  display: flex;
 
   height: 100%;
-  padding: 2rem;
+  padding: 2.4rem;
   background-color: ${p => p.theme.colors.innerBg};
 
-  > div:not(:last-child) {
-    margin-bottom: 2rem;
+  .card-wrap {
+    width: 100%;
+    max-width: 124rem;
   }
 `;

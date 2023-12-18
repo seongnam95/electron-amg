@@ -1,17 +1,12 @@
-import { Flex, TableColumnsType, Tooltip } from 'antd';
+import { Flex, TableColumnsType } from 'antd';
 
 import TooltipText from '~/components/common/TooltipText';
-import { TeamData } from '~/types/team';
-import { AttendanceReportData } from '~/utils/statistics/attendanceReportByPosition';
+import { PositionData } from '~/types/position';
+import { ReportData } from '~/types/statistics';
 
 import { HintText, PositionColorBox } from './styled';
 
-export interface MonthAttendanceTableData extends AttendanceReportData {
-  key: string;
-  team: TeamData;
-}
-
-export const getColumns = (): TableColumnsType<MonthAttendanceTableData> => {
+export const getColumns = (): TableColumnsType<ReportData<PositionData>> => {
   return [
     {
       key: 'positionName',
@@ -19,7 +14,7 @@ export const getColumns = (): TableColumnsType<MonthAttendanceTableData> => {
       title: '직위',
       width: 100,
       align: 'left',
-      render: (_, { position: { name, color } }) => (
+      render: (_, { target: { name, color } }) => (
         <Flex gap={8} align="center">
           <PositionColorBox color={color} />
           {name}
@@ -32,7 +27,7 @@ export const getColumns = (): TableColumnsType<MonthAttendanceTableData> => {
       title: '일일 수당',
       width: 100,
       align: 'right',
-      render: (_, { position: { standardPay } }) => (
+      render: (_, { target: { standardPay } }) => (
         <>
           {standardPay.toLocaleString()}
           <HintText>원</HintText>

@@ -5,10 +5,7 @@ import DescriptionsBox from '~/components/common/DescriptionsBox';
 import { useDragScroll } from '~/hooks/useDragScroll';
 import { teamStore } from '~/stores/team';
 import { AttendanceData } from '~/types/attendance';
-import {
-  attendanceReportByPosition,
-  calculateReportTotal,
-} from '~/utils/statistics/attendanceReportByPosition';
+import { getStats, calculateReportTotal } from '~/utils/statistics/report';
 
 import { AttendanceStatsStyled } from './styled';
 
@@ -22,7 +19,16 @@ const AttendanceStats = ({ attendances }: AttendanceStatsProps) => {
 
   const incentivePay = team.leader ? team.leader.position.incentivePay : 0;
 
-  const attendanceReports = attendanceReportByPosition(team, attendances);
+  const attendanceReports = team.positions.map(position => {
+    const filteredAttendances = attendances.filter(
+      attendance => attendance.positionId === position.id,
+    );
+    return {
+      target: position,
+      ...getStats(team, position.standardPay, filteredAttendances),
+    };
+  });
+
   const { earnsIncentiveCount, dailyPay, mealCost, prepay, otPay, taxAmount, totalPaySum } =
     calculateReportTotal(attendanceReports);
 

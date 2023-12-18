@@ -8,7 +8,7 @@ import { useRecoilValue } from 'recoil';
 import { useAttendanceQuery } from '~/hooks/queryHooks/useAttendanceQuery';
 import { useEmployeeQuery } from '~/hooks/queryHooks/useEmployeeQuery';
 import { teamStore } from '~/stores/team';
-import { attendanceReportByPosition } from '~/utils/statistics/attendanceReportByPosition';
+import { getStats } from '~/utils/statistics/report';
 
 import { AttendanceDoughnutStyled } from './styled';
 
@@ -28,14 +28,21 @@ const AttendanceDoughnut = ({ day = dayjs() }: AttendanceDoughnutProps) => {
     enabled: team.existTeam,
   });
 
-  const attendanceReports = team.existTeam ? attendanceReportByPosition(team, attendances) : [];
+  const reportsByPosition = team.positions.map(position => {
+    const filteredAttendances = attendances.filter(
+      attendance => attendance.positionId === position.id,
+    );
+    const stats = getStats(team, position.standardPay, filteredAttendances);
+    return { target: position, ...stats };
+  });
+
   const nonAttendanceCount = employees.length - attendances.length;
 
   const dataSource = {
-    labels: [...attendanceReports.map(report => report.position?.name), '미출근'],
+    labels: [...reportsByPosition.map(report => report.target.name), '미출근'],
     datasets: [
       {
-        data: [...attendanceReports.map(report => report.attendanceCount), nonAttendanceCount],
+        data: [...reportsByPosition.map(report => report.attendanceCount), nonAttendanceCount],
         backgroundColor: [...team.positions.map(position => position.color), '#e8e8e8'],
         borderWidth: 0,
       },
@@ -54,7 +61,7 @@ const AttendanceDoughnut = ({ day = dayjs() }: AttendanceDoughnutProps) => {
   };
 
   const isEmptyAttendance =
-    attendanceReports.reduce((total, value) => (total += value.attendanceCount), 0) === 0;
+    reportsByPosition.reduce((total, value) => (total += value.attendanceCount), 0) === 0;
 
   return (
     <AttendanceDoughnutStyled className="AttendanceDoughnut">

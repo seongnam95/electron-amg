@@ -8,11 +8,9 @@ import { useDragScroll } from '~/hooks/useDragScroll';
 import { teamStore } from '~/stores/team';
 import { AttendanceData } from '~/types/attendance';
 import { EmployeeData } from '~/types/employee';
-import { attendanceReportByEmployee } from '~/utils/statistics/attendanceReportByEmployee';
 
 import { MonthTableData, getColumns, getDataSource } from './config';
 import { MonthTableStyled } from './styled';
-import { groupedAttendanceByDay } from './util';
 
 export interface MonthTableProps {
   day: Dayjs;

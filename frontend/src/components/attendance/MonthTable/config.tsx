@@ -7,10 +7,10 @@ import dayjs, { Dayjs } from 'dayjs';
 
 import { AttendanceData } from '~/types/attendance';
 import { EmployeeData } from '~/types/employee';
-import { StatisticalReport } from '~/types/statistics';
+import { ReportData } from '~/types/statistics';
 import { TeamData } from '~/types/team';
 import { generateDays } from '~/utils/commuteRange';
-import { attendanceReportByEmployee } from '~/utils/statistics/attendanceReportByEmployee';
+import { getStats } from '~/utils/statistics/report';
 
 import AttendanceBar from './AttendanceBar';
 import { groupedAttendanceByDay } from './util';
@@ -18,7 +18,7 @@ import { groupedAttendanceByDay } from './util';
 export interface MonthTableData {
   key: string;
   employee: EmployeeData;
-  report: StatisticalReport;
+  report: ReportData;
   attendances: AttendanceData[];
 }
 
@@ -27,10 +27,17 @@ export const getDataSource = (
   employees: EmployeeData[],
   attendances: AttendanceData[],
 ) => {
-  const attendanceReports = attendanceReportByEmployee(team, employees, attendances);
+  const reportsByEmployee = employees.map(employee => {
+    const filteredAttendances = attendances.filter(
+      attendance => attendance.employeeId === employee.id,
+    );
+    const stats = getStats(team, employee.position.standardPay, filteredAttendances);
+    return { target: employee, ...stats };
+  });
 
-  return attendanceReports.map(report => {
+  return reportsByEmployee.map(report => {
     const { target: employee } = report;
+
     const targetAttendances = attendances.filter(data => data.employeeId === employee.id);
     const workingGroups = groupedAttendanceByDay(targetAttendances);
 

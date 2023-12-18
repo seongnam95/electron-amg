@@ -11,6 +11,10 @@ export const ManagementLayoutStyled = styled.div`
   width: 100vw;
   height: calc(100% - ${p => p.theme.sizes.titleBarHeight});
 
+  .container {
+    background-color: ${p => p.theme.colors.innerBg};
+  }
+
   .SideNavbar {
     width: var(--navbar-width);
   }
@@ -24,5 +28,6 @@ export const ManagementLayoutStyled = styled.div`
     overflow: hidden;
     height: calc(100% - var(--header-height));
     width: calc(100vw - var(--navbar-width));
+    background-color: ${p => p.theme.colors.contentBG};
   }
 `;

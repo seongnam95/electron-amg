@@ -1,4 +1,4 @@
-export interface StatisticalReport<T = any> {
+export interface ReportData<T = any> {
   target: T;
 
   earnsIncentiveCount: number;

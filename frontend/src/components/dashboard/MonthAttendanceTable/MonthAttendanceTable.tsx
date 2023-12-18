@@ -1,12 +1,13 @@
-import { Flex, Table } from 'antd';
+import { Table } from 'antd';
 import dayjs, { Dayjs } from 'dayjs';
 import { useRecoilValue } from 'recoil';
 
 import { useAttendanceQuery } from '~/hooks/queryHooks/useAttendanceQuery';
 import { teamStore } from '~/stores/team';
-import { attendanceReportByPosition } from '~/utils/statistics/attendanceReportByPosition';
+import { ReportData } from '~/types/statistics';
+import { getStats } from '~/utils/statistics/report';
 
-import { MonthAttendanceTableData, getColumns } from './config';
+import { getColumns } from './config';
 import { MonthAttendanceTableStyled } from './styled';
 
 export interface MonthAttendanceTableProps {
@@ -26,15 +27,17 @@ const MonthAttendanceTable = ({ day = dayjs() }: MonthAttendanceTableProps) => {
     enabled: team.existTeam,
   });
 
-  const attendanceReports = attendanceReportByPosition(team, attendances);
+  const reportsByPosition = team.positions.map(position => {
+    const filteredAttendances = attendances.filter(
+      attendance => attendance.positionId === position.id,
+    );
+    const stats = getStats(team, position.standardPay, filteredAttendances);
+    return { target: position, ...stats };
+  });
 
   const columns = getColumns();
-  const dataSource: MonthAttendanceTableData[] = attendanceReports.map(report => {
-    return {
-      key: report.position.id,
-      team: team,
-      ...report,
-    };
+  const dataSource: ReportData[] = reportsByPosition.map(report => {
+    return { key: report.target.id, ...report };
   });
 
   return (

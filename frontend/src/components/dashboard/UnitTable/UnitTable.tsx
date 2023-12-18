@@ -1,9 +1,11 @@
+import { Table, TableProps } from 'antd';
 import dayjs, { Dayjs } from 'dayjs';
 import { useRecoilValue } from 'recoil';
 
 import { useAttendanceQuery } from '~/hooks/queryHooks/useAttendanceQuery';
 import { teamStore } from '~/stores/team';
 
+import { UnitTableData, getColumns, getDataSource } from './config';
 import { UnitTableStyled } from './styled';
 
 export interface UnitTableProps {
@@ -19,21 +21,15 @@ const UnitTable = ({ day = dayjs() }: UnitTableProps) => {
     enabled: team.existTeam,
   });
 
-  const mapping = team.units.map(unit => {
-    return {
-      ...unit,
-      attendances: attendances.filter(attendance => attendance.position.unitId === unit.id),
-    };
-  });
+  const tableProps: TableProps<UnitTableData> = {
+    columns: getColumns(),
+    dataSource: getDataSource(team, attendances),
+    pagination: false,
+  };
 
   return (
     <UnitTableStyled className="UnitTable">
-      {mapping &&
-        mapping.map(unit => (
-          <div key={unit.id}>
-            {unit.name} / {unit.unitPay} / {unit.attendances.length}
-          </div>
-        ))}
+      <Table {...tableProps} />
     </UnitTableStyled>
   );
 };

@@ -3,13 +3,14 @@ import { Bar } from 'react-chartjs-2';
 
 import { Empty, Flex } from 'antd';
 import 'chart.js/auto';
+import { ChartData } from 'chart.js/auto';
 import dayjs, { Dayjs } from 'dayjs';
 import { useRecoilValue } from 'recoil';
 
 import DescriptionsBox from '~/components/common/DescriptionsBox';
 import { useAttendanceQuery } from '~/hooks/queryHooks/useAttendanceQuery';
 import { teamStore } from '~/stores/team';
-import { attendanceReportByPosition } from '~/utils/statistics/attendanceReportByPosition';
+import { calculateReportTotal, getStats } from '~/utils/statistics/report';
 
 import { MonthPayrollBarStyled } from './styled';
 import { sumPayByDay } from './utils';
@@ -29,34 +30,48 @@ const MonthPayrollBar = ({ day = dayjs() }: MonthPayrollBarProps) => {
     enabled: team.existTeam,
   });
 
-  const attendanceReports = attendanceReportByPosition(team, attendances);
+  /** 월 통계 */
+  const reportsByPosition = team.positions.map(position => {
+    const filteredAttendances = attendances.filter(
+      attendance => attendance.positionId === position.id,
+    );
+    const stats = getStats(team, position.standardPay, filteredAttendances);
+    return { target: position, ...stats };
+  });
 
-  const { dailyPaySum, prePaySum, taxSum, totalPaySum } = attendanceReports.reduce(
-    (record, value) => ({
-      dailyPaySum: record.dailyPaySum + value.dailyPay,
-      prePaySum: record.prePaySum + value.prepay,
-      taxSum: record.taxSum + value.taxAmount,
-      totalPaySum: record.totalPaySum + value.finalPay,
-    }),
-    {
-      dailyPaySum: 0,
-      prePaySum: 0,
-      taxSum: 0,
-      totalPaySum: 0,
-    },
-  );
+  const { dailyPay, prepay, taxAmount, totalPaySum } = calculateReportTotal(reportsByPosition);
 
+  /** 일일 통계 차트 */
   const sumPayDays = sumPayByDay(attendances);
 
-  const chartData = {
+  const positionData = team.positions.map(position => {
+    const data = Array.from({ length: day.daysInMonth() }, (_, index) => {
+      const filteredAttendances = attendances.filter(
+        attendance =>
+          attendance.positionId === position.id &&
+          index + 1 === parseInt(attendance.workingDate.split('-')[2], 10),
+      );
+      const { totalPaySum } = getStats(team, position.standardPay, filteredAttendances);
+      return totalPaySum;
+    });
+
+    return {
+      name: position.name,
+      color: position.color,
+      totals: data,
+    };
+  });
+
+  const dataset = positionData.map(position => ({
+    label: position.name,
+    data: position.totals,
+    backgroundColor: 'rgba(54, 162, 235, 0.6)',
+    borderWidth: 0,
+  }));
+
+  const chartData: ChartData<'bar'> = {
     labels: sumPayDays.map(day => day.day),
-    datasets: [
-      {
-        data: sumPayDays.map(day => day.paySum),
-        backgroundColor: 'rgba(54, 162, 235, 0.6)',
-        borderWidth: 0,
-      },
-    ],
+    datasets: dataset,
   };
 
   return (
@@ -67,7 +82,7 @@ const MonthPayrollBar = ({ day = dayjs() }: MonthPayrollBarProps) => {
           options={{
             maintainAspectRatio: false,
             scales: {
-              x: { grid: { display: false } },
+              x: { grid: { display: false }, stacked: true },
               y: {
                 beginAtZero: true,
                 grid: { display: false },
@@ -76,12 +91,31 @@ const MonthPayrollBar = ({ day = dayjs() }: MonthPayrollBarProps) => {
                 stacked: true,
               },
             },
+            datasets: {
+              bar: {
+                backgroundColor: 'red',
+              },
+            },
             plugins: {
               legend: { display: false },
               tooltip: {
+                mode: 'index',
+                intersect: false,
+
                 callbacks: {
-                  title: item => `${day.format('YY년 MM월')} ${item[0].label}일`,
-                  label: item => ` 일당 합계액: ${item.formattedValue}원`,
+                  title: items => {
+                    return `${day.format('YY년 MM월')} ${items[0].label}일`;
+                  },
+                  labelColor: item => {
+                    const datasetIndex = item.datasetIndex;
+                    const color = positionData[datasetIndex].color;
+                    return { backgroundColor: color, borderColor: color };
+                  },
+                  label: item => {
+                    const label = item.dataset.label || '';
+                    const value = item.formattedValue || '';
+                    return ` ${label} : ${value} 원`;
+                  },
                 },
               },
             },
@@ -98,19 +132,19 @@ const MonthPayrollBar = ({ day = dayjs() }: MonthPayrollBarProps) => {
           fullWidth
           justify="center"
           title="일당 합계"
-          children={`${dailyPaySum.toLocaleString()}원`}
+          children={`${dailyPay.toLocaleString()}원`}
         />
         <DescriptionsBox
           fullWidth
           justify="center"
           title="소득세 (3.3%)"
-          children={`${taxSum.toLocaleString()}원`}
+          children={`${taxAmount.toLocaleString()}원`}
         />
         <DescriptionsBox
           fullWidth
           justify="center"
           title="선지급"
-          children={`${prePaySum.toLocaleString()}원`}
+          children={`${prepay.toLocaleString()}원`}
         />
         <DescriptionsBox
           fullWidth
