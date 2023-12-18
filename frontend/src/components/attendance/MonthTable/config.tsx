@@ -7,7 +7,10 @@ import dayjs, { Dayjs } from 'dayjs';
 
 import { AttendanceData } from '~/types/attendance';
 import { EmployeeData } from '~/types/employee';
+import { StatisticalReport } from '~/types/statistics';
+import { TeamData } from '~/types/team';
 import { generateDays } from '~/utils/commuteRange';
+import { attendanceReportByEmployee } from '~/utils/statistics/attendanceReportByEmployee';
 
 import AttendanceBar from './AttendanceBar';
 import { groupedAttendanceByDay } from './util';
@@ -15,11 +18,38 @@ import { groupedAttendanceByDay } from './util';
 export interface MonthTableData {
   key: string;
   employee: EmployeeData;
-  paySum: number;
-  incomeTax: number;
-  totalPay: number;
+  report: StatisticalReport;
   attendances: AttendanceData[];
 }
+
+export const getDataSource = (
+  team: TeamData,
+  employees: EmployeeData[],
+  attendances: AttendanceData[],
+) => {
+  const attendanceReports = attendanceReportByEmployee(team, employees, attendances);
+
+  return attendanceReports.map(report => {
+    const { target: employee } = report;
+    const targetAttendances = attendances.filter(data => data.employeeId === employee.id);
+    const workingGroups = groupedAttendanceByDay(targetAttendances);
+
+    const existAttendances: { [key: string]: AttendanceData[] } = {};
+
+    workingGroups.forEach(group => {
+      const firstDate = dayjs(group[0].workingDate, 'YY-MM-DD').date();
+      existAttendances[firstDate] = group;
+    });
+
+    return {
+      key: employee.id,
+      employee: employee,
+      attendances: targetAttendances,
+      report: report,
+      ...existAttendances,
+    };
+  });
+};
 
 interface ColumnProps {
   onContextMenu?: (event: MouseEvent, employee: EmployeeData, day: Dayjs) => void;
@@ -72,66 +102,53 @@ export const getColumns = (
     },
     ...dayColumns,
     {
-      key: 'paySum',
-      dataIndex: 'paySum',
-      title: '수당 합계',
+      key: 'dailyPay',
+      dataIndex: 'dailyPay',
+      title: '일당 합계',
       width: 100,
       align: 'right',
-      render: (_, { paySum }) => <>{paySum.toLocaleString()}</>,
+      render: (_, { report }) => <>{report.dailyPay.toLocaleString()}</>,
+    },
+    {
+      key: 'mealCost',
+      dataIndex: 'mealCost',
+      title: '식대',
+      width: 90,
+      align: 'right',
+      render: (_, { report }) => <>{report.mealCost.toLocaleString()}</>,
+    },
+    {
+      key: 'paySum',
+      dataIndex: 'paySum',
+      title: 'OT',
+      width: 90,
+      align: 'right',
+      render: (_, { report }) => <>{report.otPay.toLocaleString()}</>,
+    },
+    {
+      key: 'prepay',
+      dataIndex: 'prepay',
+      title: '선지급',
+      width: 100,
+      align: 'right',
+      render: (_, { report }) => <>{report.prepay.toLocaleString()}</>,
     },
     {
       key: 'incomeTax',
       dataIndex: 'incomeTax',
-      title: '소득세 합계',
+      title: '소득세',
       width: 90,
       align: 'right',
-      render: (_, { incomeTax }) => <>{incomeTax.toLocaleString()}</>,
+      render: (_, { report }) => <>{report.taxAmount.toLocaleString()}</>,
     },
     {
       key: 'totalPay',
       dataIndex: 'totalPay',
       className: 'amount-paid',
-      title: '지급액 합계',
+      title: '지급액',
       width: 110,
       align: 'right',
-      render: (_, { totalPay }) => <b>{totalPay.toLocaleString()}</b>,
+      render: (_, { report }) => <b>{report.totalPaySum.toLocaleString()}</b>,
     },
   ];
-};
-
-export const getDataSource = (
-  employees: EmployeeData[],
-  attendances: AttendanceData[],
-): MonthTableData[] => {
-  return employees.map(employee => {
-    const targetAttendances = attendances.filter(data => data.employeeId === employee.id);
-    const workingGroups = groupedAttendanceByDay(targetAttendances);
-
-    // Attendance Bar 그룹핑
-    const existAttendances: { [key: string]: AttendanceData[] } = {};
-
-    workingGroups.forEach(group => {
-      const firstDate = dayjs(group[0].workingDate, 'YY-MM-DD').date();
-      existAttendances[firstDate] = group;
-    });
-
-    // 합계액
-    const paySum = targetAttendances.reduce(
-      (total, value) => total + value.position.standardPay,
-      0,
-    );
-    const incomeTax = paySum * 0.033;
-    const totalPay = paySum - incomeTax;
-
-    return {
-      key: employee.id,
-      name: employee.name,
-      employee: employee,
-      paySum: paySum,
-      incomeTax: incomeTax,
-      totalPay: totalPay,
-      attendances: targetAttendances,
-      ...existAttendances,
-    };
-  });
 };

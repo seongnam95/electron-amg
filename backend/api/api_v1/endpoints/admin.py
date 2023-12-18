@@ -17,9 +17,9 @@ px_img = "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEAwADAAAD/2wBDAAIBAQIBAQICAgI
 
 @router.delete("/clear")
 def delete_all_data(db: Session = Depends(deps.get_db)):
-    db.query(models.Team).delete()
-    db.query(models.user_team).delete()
-    db.query(models.Unit).delete()
+    # db.query(models.Team).delete()
+    # db.query(models.user_team).delete()
+    # db.query(models.Unit).delete()
     db.query(models.Employee).delete()
     db.query(models.Attendance).delete()
     db.query(models.Draft).delete()

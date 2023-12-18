@@ -1,43 +1,40 @@
 import { useState } from 'react';
 
-import { Button, Flex, Form } from 'antd';
+import { Button, Flex, Form, Space } from 'antd';
 
 import PositionForm from '~/components/forms/PositionForm';
 import { useSoundApp } from '~/hooks/componentHooks/useSoundApp';
-import { PositionCreateBody, PositionUpdateBody } from '~/types/position';
+import { PositionCreateBody } from '~/types/position';
 import { UnitData } from '~/types/unit';
 
 import PositionList from '../PositionList';
-import { PositionManagerStyled } from './styled';
 
 export interface PositionManagerProps {
-  positions?: PositionUpdateBody[];
   unitValues?: UnitData[];
   isLoading?: boolean;
-  onSubmit?: (positions: PositionUpdateBody[]) => void;
+  onSubmit?: (positions: PositionCreateBody[]) => void;
 }
 
-const PositionManager = ({ onSubmit }: PositionManagerProps) => {
+const PositionManager = ({ unitValues, isLoading, onSubmit }: PositionManagerProps) => {
   const [positions, setPositions] = useState<PositionCreateBody[]>([]);
   const [selectedPosition, setSelectedPosition] = useState<PositionCreateBody>();
-  const [existLeader, setExistLeader] = useState<boolean>(false);
+
   const isEditing = !!selectedPosition;
 
   const { soundMessage } = useSoundApp();
   const [form] = Form.useForm<PositionCreateBody>();
 
-  // 직위 삭제
-  const handlePositionRemove = () => {
-    if (selectedPosition?.isLeader) setExistLeader(false);
-    setPositions(prev => prev.filter(pos => pos !== selectedPosition));
-  };
-
   // 직위 추가
   const handleAddPosition = (data: PositionCreateBody) => {
-    console.log(data.isLeader);
+    setSelectedPosition(undefined);
 
-    if (data.isLeader) setExistLeader(true);
-
+    if (data.isLeader) {
+      const existLeader = positions.some(pos => pos.isLeader);
+      if (existLeader) {
+        soundMessage.warning('팀장은 각 팀당 한명만 가능합니다.');
+        return;
+      }
+    }
     if (isEditing) {
       setPositions(prev => prev.map(pos => (pos === selectedPosition ? { ...data } : pos)));
     } else {
@@ -45,10 +42,10 @@ const PositionManager = ({ onSubmit }: PositionManagerProps) => {
     }
   };
 
-  // 직위 변경
-  const handlePositionDoubleClick = (position: PositionCreateBody) => {
-    setSelectedPosition(position);
-    form.setFieldsValue(position);
+  // 직위 삭제
+  const handleRemovePosition = () => {
+    setPositions(prev => prev.filter(pos => pos !== selectedPosition));
+    setSelectedPosition(undefined);
   };
 
   // 서브밋
@@ -63,15 +60,34 @@ const PositionManager = ({ onSubmit }: PositionManagerProps) => {
   };
 
   return (
-    <PositionManagerStyled className="PositionManager">
-      <PositionList
-        positions={positions}
-        selectedPosition={selectedPosition}
-        onReorder={setPositions}
-        onDoubleClick={handlePositionDoubleClick}
-      />
-      <PositionForm existLeader={existLeader} />
-    </PositionManagerStyled>
+    <Space className="PositionManager" direction="vertical" align="end">
+      <Flex gap={32} style={{ marginBottom: 24 }}>
+        <PositionList
+          positions={positions}
+          selectedPosition={selectedPosition}
+          onReorder={setPositions}
+          onDoubleClick={setSelectedPosition}
+        />
+        <PositionForm
+          form={form}
+          isEditing={isEditing}
+          unitValues={unitValues}
+          initValues={selectedPosition}
+          onCancel={() => setSelectedPosition(undefined)}
+          onRemove={handleRemovePosition}
+          onSubmit={handleAddPosition}
+        />
+      </Flex>
+      <Button
+        loading={isLoading}
+        type="primary"
+        htmlType="submit"
+        style={{ padding: '0 2.4rem' }}
+        onClick={handleSubmit}
+      >
+        직위 생성하기
+      </Button>
+    </Space>
   );
 };
 

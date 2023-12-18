@@ -13,12 +13,12 @@ interface PositionItemProps {
   onDoubleClick?: (position: PositionCreateBody) => void;
 }
 
-const PositionItem = forwardRef<HTMLLIElement, PositionItemProps>(
+const PositionItem = forwardRef<HTMLDivElement, PositionItemProps>(
   ({ className, position, onDoubleClick, ...dragHandleProps }, itemRef) => {
     const { name, color, salaryCode, standardPay, isLeader, defaultEarnsIncentive } = position;
 
     return (
-      <motion.li
+      <motion.div
         ref={itemRef}
         key={position.name}
         initial={{ opacity: 0, y: 20 }}
@@ -50,7 +50,7 @@ const PositionItem = forwardRef<HTMLLIElement, PositionItemProps>(
             </Flex>
           </Flex>
         </PositionItemStyled>
-      </motion.li>
+      </motion.div>
     );
   },
 );

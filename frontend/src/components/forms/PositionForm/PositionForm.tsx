@@ -1,55 +1,85 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
+import { FaTrash } from 'react-icons/fa6';
 import { MdOutlineAdd } from 'react-icons/md';
 
-import { Button, Flex, Form, FormInstance, InputRef, Select, Space } from 'antd';
+import { Button, Flex, Form, FormInstance, Select, Space } from 'antd';
 import { AnimatePresence, motion } from 'framer-motion';
 
 import { PositionCreateBody } from '~/types/position';
 import { UnitData } from '~/types/unit';
 
-import { defaultPositionValues, getFormItems } from './formConfig';
+import { defaultPositionValues, formItems } from './formConfig';
 
 export interface PositionFormProps {
-  form?: FormInstance;
+  form?: FormInstance<PositionCreateBody>;
   isEditing?: boolean;
   initValues?: PositionCreateBody;
   unitValues?: UnitData[];
-  existLeader?: boolean;
+  onCancel?: () => void;
+  onRemove?: () => void;
   onSubmit?: (position: PositionCreateBody) => void;
 }
 
+const initHiddenStates = {
+  preset: true,
+  defaultEarnsIncentive: false,
+  incentive: true,
+};
+
 const PositionForm = ({
   form = Form.useForm<PositionCreateBody>()[0],
-  isEditing,
   initValues = defaultPositionValues,
+  isEditing,
   unitValues,
-  existLeader,
+  onCancel,
+  onRemove,
   onSubmit,
 }: PositionFormProps) => {
-  const inputRef = useRef<InputRef>(null);
-  const [hiddenStates, setHiddenStates] = useState({
-    preset: true,
-    defaultEarnsIncentive: false,
-    incentive: true,
-  });
+  const [hiddenStates, setHiddenStates] = useState(initHiddenStates);
 
-  const onFormValuesChange = (_: any, allValues: PositionCreateBody) => {
+  useEffect(() => {
+    formHiddenSetting(initValues);
+    form.setFieldsValue(initValues);
+  }, [initValues, isEditing]);
+
+  const formHiddenSetting = (formValues: PositionCreateBody) => {
     setHiddenStates({
-      preset: allValues.salaryCode !== 3,
-      defaultEarnsIncentive: allValues.isLeader,
-      incentive: !allValues.isLeader,
+      preset: formValues.salaryCode !== 3,
+      defaultEarnsIncentive: formValues.isLeader,
+      incentive: !formValues.isLeader,
     });
   };
 
-  useEffect(() => inputFocus(), []);
-  const inputFocus = () => inputRef.current?.focus();
-
-  const resetForm = () => {
-    form.resetFields();
-    setTimeout(() => inputFocus(), 0);
+  const handleChange = (_: any, formValues: PositionCreateBody) => {
+    formHiddenSetting(formValues);
   };
 
-  const formItems = getFormItems({ existLeader: existLeader ?? false, isMonthly: false });
+  const resetForm = () => {
+    form.setFieldsValue(defaultPositionValues);
+    formHiddenSetting(defaultPositionValues);
+  };
+
+  const handleEditCancel = () => {
+    onCancel?.();
+    resetForm();
+  };
+
+  const handleRemove = () => {
+    onRemove?.();
+    resetForm();
+  };
+
+  const handleSubmit = (formData: PositionCreateBody) => {
+    onSubmit?.({
+      ...formData,
+      preset: formData.preset ? formData.preset : 1,
+      defaultEarnsIncentive: formData.defaultEarnsIncentive
+        ? formData.defaultEarnsIncentive
+        : false,
+    });
+    resetForm();
+  };
+
   const unitSelectOptions = unitValues?.map(unit => ({ label: unit.name, value: unit.id }));
   return (
     <Space direction="vertical" size={24}>
@@ -60,8 +90,9 @@ const PositionForm = ({
         labelCol={{ span: 12 }}
         labelAlign="left"
         autoComplete="off"
-        onFinish={onSubmit}
-        onValuesChange={onFormValuesChange}
+        validateTrigger="onFinish"
+        onFinish={handleSubmit}
+        onValuesChange={handleChange}
         style={{ minWidth: '32rem' }}
       >
         <Form.Item
@@ -76,7 +107,7 @@ const PositionForm = ({
 
         {/* 아이템 렌더링 */}
         {formItems.map(item => (
-          <AnimatePresence>
+          <AnimatePresence key={item.name}>
             {!hiddenStates[item.name as keyof typeof hiddenStates] && (
               <motion.div
                 key={item.name}
@@ -108,15 +139,24 @@ const PositionForm = ({
           style={{ marginTop: 24 }}
           transition={{ duration: 0.2 }}
         >
-          <Flex gap={8}>
+          <Flex gap={18} justify="end">
             {isEditing ? (
               <>
-                <Button htmlType="button" type="text" onClick={resetForm}>
-                  취소
-                </Button>
-                <Button htmlType="submit" type="dashed" block>
-                  변경
-                </Button>
+                <Button
+                  htmlType="button"
+                  type="text"
+                  danger
+                  icon={<FaTrash />}
+                  onClick={handleRemove}
+                />
+                <Flex flex={1} gap={8}>
+                  <Button htmlType="button" type="text" onClick={handleEditCancel}>
+                    취소
+                  </Button>
+                  <Button htmlType="submit" type="dashed" block>
+                    변경
+                  </Button>
+                </Flex>
               </>
             ) : (
               <Button htmlType="submit" type="dashed" block>

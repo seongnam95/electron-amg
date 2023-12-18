@@ -1,25 +1,7 @@
 import { AttendanceData } from '~/types/attendance';
 import { PositionData } from '~/types/position';
+import { StatisticalReport } from '~/types/statistics';
 import { TeamData } from '~/types/team';
-
-export interface AttendanceReportData {
-  position?: PositionData;
-
-  earnsIncentiveCount: number;
-  mealCostCount: number;
-  prepaidCount: number;
-  otCount: number;
-  attendanceCount: number;
-
-  dailyPay: number;
-  mealCost: number;
-  otPay: number;
-  prepay: number;
-
-  taxAmount: number;
-  totalPaySum: number;
-  finalPay: number;
-}
 
 /**
  * 직위별 출석 통계
@@ -30,7 +12,7 @@ export interface AttendanceReportData {
 export const attendanceReportByPosition = (
   team: TeamData,
   attendances: AttendanceData[],
-): AttendanceReportData[] => {
+): StatisticalReport<PositionData>[] => {
   const { positions, mealCost, otPay } = team;
 
   return positions.map(position => {
@@ -79,7 +61,7 @@ export const attendanceReportByPosition = (
     const finalPay = totalPaySum - taxSum;
 
     return {
-      position: position,
+      target: position,
 
       earnsIncentiveCount: earnsIncentiveCount,
       attendanceCount: attendanceCount,
@@ -99,7 +81,7 @@ export const attendanceReportByPosition = (
   });
 };
 
-export const calculateReportTotal = (reports: AttendanceReportData[]) => {
+export const calculateReportTotal = (reports: StatisticalReport<PositionData>[]) => {
   return reports.reduce(
     (totals, data) => {
       return {

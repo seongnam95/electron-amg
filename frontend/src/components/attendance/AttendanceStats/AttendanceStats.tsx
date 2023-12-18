@@ -2,6 +2,7 @@ import { Flex } from 'antd';
 import { useRecoilValue } from 'recoil';
 
 import DescriptionsBox from '~/components/common/DescriptionsBox';
+import { useDragScroll } from '~/hooks/useDragScroll';
 import { teamStore } from '~/stores/team';
 import { AttendanceData } from '~/types/attendance';
 import {
@@ -17,14 +18,16 @@ export interface AttendanceStatsProps {
 
 const AttendanceStats = ({ attendances }: AttendanceStatsProps) => {
   const team = useRecoilValue(teamStore);
+  const dragRef = useDragScroll();
 
-  const incentivePay = team.positions;
+  const incentivePay = team.leader ? team.leader.position.incentivePay : 0;
+
   const attendanceReports = attendanceReportByPosition(team, attendances);
   const { earnsIncentiveCount, dailyPay, mealCost, prepay, otPay, taxAmount, totalPaySum } =
     calculateReportTotal(attendanceReports);
 
   return (
-    <AttendanceStatsStyled className="AttendanceStats">
+    <AttendanceStatsStyled className="AttendanceStats" ref={dragRef}>
       <Flex className="stats-wrap" gap={12}>
         <DescriptionsBox
           fullWidth
@@ -54,7 +57,7 @@ const AttendanceStats = ({ attendances }: AttendanceStatsProps) => {
           fullWidth
           justify="center"
           title="팀장 인센티브"
-          children={`${earnsIncentiveCount}원`}
+          children={`${(earnsIncentiveCount * incentivePay).toLocaleString()}원`}
         />
         <DescriptionsBox
           fullWidth

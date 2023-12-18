@@ -18,26 +18,18 @@ import { PositionCreateBody, PositionUpdateBody } from '~/types/position';
 import { TeamCreateBody } from '~/types/team';
 import { UnitCreateBody, UnitData } from '~/types/unit';
 
-interface FormData {
-  team: TeamCreateBody;
-  positions: PositionCreateBody[];
-}
-
-const defaultValues: FormData = {
-  team: {
-    name: '',
-    color: '#4C53FF',
-    mealCost: 7000,
-    otPay: 15000,
-    units: initUnits,
-  },
-  positions: [],
+const defaultTeamValues: TeamCreateBody = {
+  name: '',
+  color: '#4C53FF',
+  mealCost: 7000,
+  otPay: 15000,
+  units: initUnits,
 };
 
 const InitPage = () => {
   const { id } = useRecoilValue(userStore);
   const [step, setStep] = useState<number>(0);
-  const [formData, setFormData] = useState<FormData>(defaultValues);
+  const [teamFormData, setTeamFormData] = useState<TeamCreateBody>(defaultTeamValues);
   const [units, setUnits] = useState<UnitData[]>([]);
 
   const navigate = useNavigate();
@@ -61,13 +53,10 @@ const InitPage = () => {
 
   // TeamForm 서브밋 핸들러
   const handleTeamFormSubmit = (team: TeamCreateBody) => {
-    setFormData(prev => {
+    setTeamFormData(prev => {
       return {
-        team: {
-          ...team,
-          units: prev.team.units,
-        },
-        positions: prev.positions,
+        ...team,
+        units: prev.units,
       };
     });
     handleNextClick();
@@ -75,31 +64,17 @@ const InitPage = () => {
 
   // UnitForm 체인지 핸들러
   const handleUnitFormChange = (units: UnitCreateBody[]) => {
-    setFormData(prev => {
-      return {
-        team: {
-          ...prev.team,
-          units: units,
-        },
-        positions: prev.positions,
-      };
+    setTeamFormData(prev => {
+      return { ...prev, units: units };
     });
   };
 
   // 팀 생성 서브밋
-  const createTeamSubmit = () =>
-    createTeamMutate(formData.team, {
-      onSuccess: handleNextClick,
-      onError: err => {
-        console.log('err', err);
-      },
-    });
+  const createTeamSubmit = () => createTeamMutate(teamFormData, { onSuccess: handleNextClick });
 
   // 직위 생성 서브밋
   const createPositionSubmit = (bodys: PositionCreateBody[]) => {
-    createPositionMutate(bodys, {
-      onSuccess: () => navigate('/management/dashboard'),
-    });
+    createPositionMutate(bodys, { onSuccess: () => navigate('/management/dashboard') });
   };
 
   const steps = [
@@ -108,7 +83,7 @@ const InitPage = () => {
       title: '팀 추가',
       subTitle: '팀 정보',
       component: (
-        <TeamForm values={formData.team} submitBtnText="다음" onSubmit={handleTeamFormSubmit} />
+        <TeamForm values={teamFormData} submitBtnText="다음" onSubmit={handleTeamFormSubmit} />
       ),
     },
     {
@@ -117,7 +92,7 @@ const InitPage = () => {
       subTitle: '대행사 단가 설정',
       component: (
         <UnitForm
-          values={formData.team.units}
+          values={teamFormData.units}
           submitBtnText="팀 생성하기"
           cancelBtnText="이전"
           isLoading={isCreateTeamLoading}
@@ -133,9 +108,9 @@ const InitPage = () => {
       subTitle: '직위 추가하기',
       component: (
         <PositionManager
-          positions={formData.positions}
           unitValues={units}
           isLoading={isCreatePositionLoading}
+          onSubmit={createPositionSubmit}
         />
       ),
     },

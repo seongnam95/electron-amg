@@ -1,7 +1,7 @@
 import { MouseEvent, useState } from 'react';
 import { RiExchangeFundsLine } from 'react-icons/ri';
 
-import { Button, Card, Flex, Segmented, Space, Statistic, Tooltip } from 'antd';
+import { Button, Flex, Segmented, Tooltip } from 'antd';
 import dayjs, { Dayjs } from 'dayjs';
 import { useRecoilValue } from 'recoil';
 
@@ -51,8 +51,6 @@ const AttendancePage = () => {
   };
 
   const handleContextMenu = (_: MouseEvent, employee: EmployeeData, day?: Dayjs) => {
-    if (day) setSelectedDay(day);
-
     setIsEditing(true);
     setSelectedEmployees([employee]);
     openModal(day ?? selectedDay, [employee]);
@@ -73,7 +71,7 @@ const AttendancePage = () => {
             { label: '일간', value: 'date' },
             { label: '월간', value: 'month' },
           ]}
-          onChange={v => setViewType(v as ViewType)}
+          onChange={view => setViewType(view as ViewType)}
         />
         <AntDatePicker
           picker={viewType}
