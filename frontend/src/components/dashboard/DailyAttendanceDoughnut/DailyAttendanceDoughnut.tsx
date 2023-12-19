@@ -10,14 +10,14 @@ import { useEmployeeQuery } from '~/hooks/queryHooks/useEmployeeQuery';
 import { teamStore } from '~/stores/team';
 import { getAttendanceStats } from '~/utils/statistics/report';
 
-import { AttendanceDoughnutStyled } from './styled';
+import { DailyAttendanceDoughnutStyled } from './styled';
 
-export interface AttendanceDoughnutProps {
+export interface DailyAttendanceDoughnutProps {
   day?: Dayjs;
 }
 
 const { Text } = Typography;
-const AttendanceDoughnut = ({ day = dayjs() }: AttendanceDoughnutProps) => {
+const DailyAttendanceDoughnut = ({ day = dayjs() }: DailyAttendanceDoughnutProps) => {
   const team = useRecoilValue(teamStore);
 
   const { employees } = useEmployeeQuery({ teamId: team.id, enabled: team.existTeam });
@@ -28,21 +28,21 @@ const AttendanceDoughnut = ({ day = dayjs() }: AttendanceDoughnutProps) => {
     enabled: team.existTeam,
   });
 
-  const reportsByPosition = team.positions.map(position => {
+  const reports = team.positions.map(position => {
     const filteredAttendances = attendances.filter(
       attendance => attendance.positionId === position.id,
     );
     const stats = getAttendanceStats(team, position.standardPay, filteredAttendances);
-    return { target: position, ...stats };
+    return { ...stats, target: position };
   });
 
   const nonAttendanceCount = employees.length - attendances.length;
 
   const dataSource = {
-    labels: [...reportsByPosition.map(report => report.target.name), '미출근'],
+    labels: [...reports.map(report => report.target.name), '미출근'],
     datasets: [
       {
-        data: [...reportsByPosition.map(report => report.attendanceCount), nonAttendanceCount],
+        data: [...reports.map(report => report.attendanceCount), nonAttendanceCount],
         backgroundColor: [...team.positions.map(position => position.color), '#e8e8e8'],
         borderWidth: 0,
       },
@@ -61,10 +61,10 @@ const AttendanceDoughnut = ({ day = dayjs() }: AttendanceDoughnutProps) => {
   };
 
   const isEmptyAttendance =
-    reportsByPosition.reduce((total, value) => (total += value.attendanceCount), 0) === 0;
+    reports.reduce((total, value) => (total += value.attendanceCount), 0) === 0;
 
   return (
-    <AttendanceDoughnutStyled className="AttendanceDoughnut">
+    <DailyAttendanceDoughnutStyled className="AttendanceDoughnut">
       <Flex className="chart-wrap" justify="space-between">
         <Doughnut
           data={isEmptyAttendance ? EmptyDoughnutData : dataSource}
@@ -99,8 +99,8 @@ const AttendanceDoughnut = ({ day = dayjs() }: AttendanceDoughnutProps) => {
           </Flex>
         </Flex>
       </Flex>
-    </AttendanceDoughnutStyled>
+    </DailyAttendanceDoughnutStyled>
   );
 };
 
-export default AttendanceDoughnut;
+export default DailyAttendanceDoughnut;

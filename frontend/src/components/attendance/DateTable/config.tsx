@@ -4,7 +4,7 @@ import { MdEditNote } from 'react-icons/md';
 import { Button, Flex, Tag, Tooltip } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 
-import { HintText } from '~/components/dashboard/MonthAttendanceTable/styled';
+import { HintText } from '~/components/dashboard/MonthlyAttendanceTable/styled';
 import { colors } from '~/styles/themes';
 import { AttendanceData } from '~/types/attendance';
 import { EmployeeData } from '~/types/employee';

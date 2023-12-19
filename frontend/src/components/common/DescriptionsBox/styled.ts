@@ -4,7 +4,7 @@ import styled from 'styled-components';
 
 export interface DescriptionsBoxStyledProps extends HTMLAttributes<HTMLDivElement> {
   fullWidth?: boolean;
-  justify?: 'center' | 'left' | 'right';
+  justify?: 'center' | 'start' | 'end';
 }
 
 export const DescriptionsBoxStyled = styled.div<DescriptionsBoxStyledProps>`

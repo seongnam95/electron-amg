@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-export const MonthAttendanceTableStyled = styled.div`
+export const MonthlyAttendanceTableStyled = styled.div`
   overflow-y: auto;
   height: 100%;
   width: 100%;
@@ -12,7 +12,7 @@ export const HintText = styled.span`
   margin-left: 3px;
   font-weight: normal;
   line-height: ${p => p.theme.sizes.textSmall};
-  margin-top: 4px;
+  margin-top: 2px;
 `;
 
 export const PositionColorBox = styled.div<{ color?: string }>`

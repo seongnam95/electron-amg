@@ -27,15 +27,16 @@ export const getDataSource = (
   employees: EmployeeData[],
   attendances: AttendanceData[],
 ) => {
-  const reportsByEmployee = employees.map(employee => {
+  const reports = employees.map(employee => {
     const filteredAttendances = attendances.filter(
       attendance => attendance.employeeId === employee.id,
     );
+
     const stats = getAttendanceStats(team, employee.position.standardPay, filteredAttendances);
-    return { target: employee, ...stats };
+    return { ...stats, target: employee };
   });
 
-  return reportsByEmployee.map(report => {
+  return reports.map(report => {
     const { target: employee } = report;
 
     const targetAttendances = attendances.filter(data => data.employeeId === employee.id);
@@ -111,7 +112,7 @@ export const getColumns = (
     {
       key: 'dailyPay',
       dataIndex: 'dailyPay',
-      title: '일당 합계',
+      title: '수당 합계',
       width: 100,
       align: 'right',
       render: (_, { report }) => <>{report.dailyPay.toLocaleString()}</>,

@@ -5,9 +5,9 @@ import clsx from 'clsx';
 
 import { CardStyled } from './styled';
 
-export interface CardProps extends HTMLAttributes<HTMLDivElement> {
+export interface CardProps {
   className?: string;
-  title?: string;
+  title?: ReactNode;
   children?: ReactNode;
   hint?: string;
   suffix?: ReactNode;

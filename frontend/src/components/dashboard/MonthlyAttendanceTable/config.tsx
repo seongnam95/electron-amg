@@ -1,6 +1,6 @@
 import { Flex, TableColumnsType } from 'antd';
 
-import TooltipText from '~/components/common/TooltipText';
+import Info from '~/components/common/Info';
 import { PositionData } from '~/types/position';
 import { ReportData } from '~/types/statistics';
 
@@ -37,7 +37,7 @@ export const getColumns = (): TableColumnsType<ReportData<PositionData>> => {
     {
       key: 'totalAttendance',
       dataIndex: 'totalAttendance',
-      title: '총 출근일',
+      title: '출근일',
       width: 100,
       align: 'right',
       render: (_, { attendanceCount }) => (
@@ -50,9 +50,9 @@ export const getColumns = (): TableColumnsType<ReportData<PositionData>> => {
     {
       key: 'mealCostCount',
       dataIndex: 'mealCostCount',
-      title: '식대 포함',
+      title: '식대',
       width: 100,
-      align: 'right',
+      align: 'center',
       render: (_, { mealCostCount }) => (
         <>
           {mealCostCount}
@@ -65,11 +65,11 @@ export const getColumns = (): TableColumnsType<ReportData<PositionData>> => {
       dataIndex: 'overtimeCount',
       title: 'OT',
       width: 100,
-      align: 'right',
+      align: 'center',
       render: (_, { otCount }) => (
         <>
           {otCount}
-          <HintText>T</HintText>
+          <HintText>시간</HintText>
         </>
       ),
     },
@@ -89,7 +89,7 @@ export const getColumns = (): TableColumnsType<ReportData<PositionData>> => {
     {
       key: 'dailyPaySum',
       dataIndex: 'dailyPaySum',
-      title: <TooltipText title="일일 수당 + 식대 + OT - 선지급">급여 합계</TooltipText>,
+      title: <Info title="일일 수당 + 식대 + OT - 선지급">급여 합계</Info>,
       width: 100,
       align: 'right',
       render: (_, { totalPaySum }) => (
@@ -102,7 +102,7 @@ export const getColumns = (): TableColumnsType<ReportData<PositionData>> => {
     {
       key: 'tax',
       dataIndex: 'tax',
-      title: <TooltipText title="급여 합계 * 3.3%">소득세</TooltipText>,
+      title: <Info title="급여 합계 * 3.3%">소득세</Info>,
       width: 100,
       align: 'right',
       render: (_, { taxAmount }) => (
@@ -116,9 +116,9 @@ export const getColumns = (): TableColumnsType<ReportData<PositionData>> => {
       key: 'totalSumPay',
       dataIndex: 'totalSumPay',
       title: (
-        <TooltipText title="급여 합계 - 소득세" placement="topRight">
+        <Info title="급여 합계 - 소득세" placement="topRight">
           총 합계액
-        </TooltipText>
+        </Info>
       ),
       width: 100,
       align: 'right',

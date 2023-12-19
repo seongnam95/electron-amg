@@ -2,6 +2,13 @@ import { AttendanceData } from '~/types/attendance';
 import { ReportData } from '~/types/statistics';
 import { TeamData } from '~/types/team';
 
+/**
+ * 출근 데이터의 통계를 구합니다.
+ * @param team - 팀 데이터 입니다. 식대 비용, OT 시급을 필요로 합니다.
+ * @param pay - 합계액을 구할 기준 금액입니다. ( pay * 출근일 수 )
+ * @param attendances - 통계할 출근 데이터 입니다.
+ * @returns {ReportData}
+ */
 export const getAttendanceStats = (
   team: TeamData,
   pay: number,
@@ -63,10 +70,16 @@ export const getAttendanceStats = (
   };
 };
 
-export const calculateReportTotal = (reports: ReportData[]) => {
+/**
+ * 리포트 리스트의 통계를 모두 합산합니다.
+ * @param reports 합산할 리포트 데이터 리스트입니다.
+ * @returns {ReportData}
+ */
+export const calculateReportTotal = (reports: ReportData[]): ReportData => {
   return reports.reduce(
     (totals, data) => {
       return {
+        target: undefined,
         earnsIncentiveCount: totals.earnsIncentiveCount + data.earnsIncentiveCount,
         mealCostCount: totals.mealCostCount + data.mealCostCount,
         prepaidCount: totals.prepaidCount + data.prepaidCount,
@@ -82,6 +95,7 @@ export const calculateReportTotal = (reports: ReportData[]) => {
       };
     },
     {
+      target: undefined,
       earnsIncentiveCount: 0,
       mealCostCount: 0,
       prepaidCount: 0,

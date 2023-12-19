@@ -3,15 +3,19 @@ import styled from 'styled-components';
 export const DashboardPageStyled = styled.div`
   position: relative;
 
-  overflow: auto;
-
   height: 100%;
   background-color: ${p => p.theme.colors.innerBg};
 
   .control-bar {
-    background-color: ${p => p.theme.colors.contentBG};
+    position: absolute;
+    width: 100%;
+
+    background-color: rgba(255, 255, 255, 0.4);
+    backdrop-filter: blur(16px);
     border-bottom: 1px solid ${p => p.theme.colors.borderColor};
     padding: 1.4rem 2.8rem;
+
+    z-index: 1000;
   }
 
   .card-grid-wrap {
@@ -20,10 +24,12 @@ export const DashboardPageStyled = styled.div`
     grid-template-rows: 38rem auto;
     gap: 2rem;
     margin: 0 auto;
-    padding: 2.4rem;
+    padding: 9rem 2.4rem 2.4rem;
 
     width: 100%;
+    height: 100%;
     max-width: 124rem;
+    overflow: auto;
 
     .month-pay-chart-card {
       grid-row: 1 / 2;

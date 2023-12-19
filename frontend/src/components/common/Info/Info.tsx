@@ -4,7 +4,7 @@ import { Tooltip, TooltipProps } from 'antd';
 
 import { colors } from '~/styles/themes';
 
-const TooltipText = ({ children, ...props }: TooltipProps) => {
+const Info = ({ children, ...props }: TooltipProps) => {
   return (
     <div style={{ display: 'inline-flex', gap: 8, alignItems: 'center' }}>
       {children}
@@ -15,4 +15,4 @@ const TooltipText = ({ children, ...props }: TooltipProps) => {
   );
 };
 
-export default TooltipText;
+export default Info;
