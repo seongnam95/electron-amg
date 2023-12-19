@@ -1,5 +1,5 @@
 import { ThemeConfig } from 'antd/es/config-provider/context';
-import { darken, lighten, rgba } from 'polished';
+import { darken, rgba } from 'polished';
 
 export const sizes = {
   textSmall: '13px',

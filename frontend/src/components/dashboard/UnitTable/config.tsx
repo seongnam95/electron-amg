@@ -4,7 +4,7 @@ import { colors } from '~/styles/themes';
 import { AttendanceData } from '~/types/attendance';
 import { TeamData } from '~/types/team';
 import { UnitData } from '~/types/unit';
-import { getStats } from '~/utils/statistics/report';
+import { getAttendanceStats } from '~/utils/statistics/report';
 
 import { HintText } from '../MonthAttendanceTable/styled';
 
@@ -23,13 +23,13 @@ export const getDataSource = (team: TeamData, attendances: AttendanceData[]): Un
     otPay: otPaySum,
     mealCostCount,
     mealCost: mealCostSum,
-  } = getStats(team, 0, attendances);
+  } = getAttendanceStats(team, 0, attendances);
 
   const unitData: UnitTableData[] = units.map(unit => {
     const attendancesByUnit = attendances.filter(
       attendance => attendance.position.unitId === unit.id,
     );
-    const stats = getStats(team, unit.unitPay, attendancesByUnit);
+    const stats = getAttendanceStats(team, unit.unitPay, attendancesByUnit);
 
     return {
       key: unit.id,

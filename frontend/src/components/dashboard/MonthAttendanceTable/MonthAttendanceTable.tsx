@@ -5,7 +5,7 @@ import { useRecoilValue } from 'recoil';
 import { useAttendanceQuery } from '~/hooks/queryHooks/useAttendanceQuery';
 import { teamStore } from '~/stores/team';
 import { ReportData } from '~/types/statistics';
-import { getStats } from '~/utils/statistics/report';
+import { getAttendanceStats } from '~/utils/statistics/report';
 
 import { getColumns } from './config';
 import { MonthAttendanceTableStyled } from './styled';
@@ -31,18 +31,20 @@ const MonthAttendanceTable = ({ day = dayjs() }: MonthAttendanceTableProps) => {
     const filteredAttendances = attendances.filter(
       attendance => attendance.positionId === position.id,
     );
-    const stats = getStats(team, position.standardPay, filteredAttendances);
-    return { target: position, ...stats };
+    const stats = getAttendanceStats(team, position.standardPay, filteredAttendances);
+    return { ...stats, target: position };
   });
 
-  const columns = getColumns();
-  const dataSource: ReportData[] = reportsByPosition.map(report => {
-    return { key: report.target.id, ...report };
-  });
+  const tableProps = {
+    columns: getColumns(),
+    dataSource: reportsByPosition.map(report => {
+      return { key: report.target.id, ...report };
+    }),
+  };
 
   return (
     <MonthAttendanceTableStyled className="MonthAttendanceTable">
-      <Table pagination={false} columns={columns} dataSource={dataSource} />
+      <Table pagination={false} {...tableProps} />
     </MonthAttendanceTableStyled>
   );
 };

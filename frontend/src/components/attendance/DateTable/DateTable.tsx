@@ -1,7 +1,6 @@
 import { Key, MouseEvent } from 'react';
 
 import { Table } from 'antd';
-import { TableRowSelection } from 'antd/es/table/interface';
 
 import { useDragScroll } from '~/hooks/useDragScroll';
 import { AttendanceData } from '~/types/attendance';
@@ -36,41 +35,36 @@ const DateTable = ({
     onSelect?.(selectedEmployees);
   };
 
-  // Row 체크 핸들러
-  const rowSelection: TableRowSelection<DateTableData> = {
-    selectedRowKeys: selectedEmployeeIds,
-    onChange: handleSelectedChange,
-    getCheckboxProps: () => ({ disabled: disabledSelect }),
+  const tableProps = {
+    rowSelection: {
+      selectedRowKeys: selectedEmployeeIds,
+      onChange: handleSelectedChange,
+      getCheckboxProps: () => ({ disabled: disabledSelect }),
+    },
+    columns: getColumns({
+      employees: employees,
+      onClickName: onClickName,
+    }),
+    dataSource: employees.map(employee => {
+      const attendance = attendances.find(data => data.employeeId === employee.id);
+      return {
+        key: employee.id,
+        name: employee.name,
+        position: employee.position,
+        attendance: attendance,
+        employee: employee,
+      };
+    }),
   };
-
-  // 테이블 컬럼 불러오기, 핸들러
-  const columns = getColumns({
-    employees: employees,
-    onClickName: onClickName,
-  });
-
-  // 테이블 데이터 맵핑
-  const dataSource: DateTableData[] = employees.map(employee => {
-    const attendance = attendances.find(data => data.employeeId === employee.id);
-    return {
-      key: employee.id,
-      name: employee.name,
-      position: employee.position,
-      attendance: attendance,
-      employee: employee,
-    };
-  });
 
   return (
     <DateTableStyled className="AttendanceTable" ref={scrollRef}>
       <Table
         pagination={false}
-        columns={columns}
-        dataSource={dataSource}
-        rowSelection={rowSelection}
         onRow={row => ({
           onContextMenu: event => onContextMenu?.(event, row.employee),
         })}
+        {...tableProps}
       />
     </DateTableStyled>
   );

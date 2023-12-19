@@ -10,7 +10,7 @@ import { EmployeeData } from '~/types/employee';
 import { ReportData } from '~/types/statistics';
 import { TeamData } from '~/types/team';
 import { generateDays } from '~/utils/commuteRange';
-import { getStats } from '~/utils/statistics/report';
+import { getAttendanceStats } from '~/utils/statistics/report';
 
 import AttendanceBar from './AttendanceBar';
 import { groupedAttendanceByDay } from './util';
@@ -31,7 +31,7 @@ export const getDataSource = (
     const filteredAttendances = attendances.filter(
       attendance => attendance.employeeId === employee.id,
     );
-    const stats = getStats(team, employee.position.standardPay, filteredAttendances);
+    const stats = getAttendanceStats(team, employee.position.standardPay, filteredAttendances);
     return { target: employee, ...stats };
   });
 

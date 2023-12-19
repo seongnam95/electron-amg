@@ -8,7 +8,7 @@ import { useRecoilValue } from 'recoil';
 import { useAttendanceQuery } from '~/hooks/queryHooks/useAttendanceQuery';
 import { useEmployeeQuery } from '~/hooks/queryHooks/useEmployeeQuery';
 import { teamStore } from '~/stores/team';
-import { getStats } from '~/utils/statistics/report';
+import { getAttendanceStats } from '~/utils/statistics/report';
 
 import { AttendanceDoughnutStyled } from './styled';
 
@@ -32,7 +32,7 @@ const AttendanceDoughnut = ({ day = dayjs() }: AttendanceDoughnutProps) => {
     const filteredAttendances = attendances.filter(
       attendance => attendance.positionId === position.id,
     );
-    const stats = getStats(team, position.standardPay, filteredAttendances);
+    const stats = getAttendanceStats(team, position.standardPay, filteredAttendances);
     return { target: position, ...stats };
   });
 
@@ -85,14 +85,14 @@ const AttendanceDoughnut = ({ day = dayjs() }: AttendanceDoughnutProps) => {
 
       <Flex vertical gap={4} style={{ width: '100%' }}>
         <Flex flex={1} justify="space-between">
-          <Text type="secondary">총 인원</Text>
+          <Text type="secondary">총 출근 예상 인원</Text>
           <Flex gap={4} align="center">
             <Text strong>{employees.length}</Text>
             <Text type="secondary">명</Text>
           </Flex>
         </Flex>
         <Flex flex={1} justify="space-between">
-          <Text type="secondary">출근</Text>
+          <Text type="secondary">출근 인원</Text>
           <Flex gap={4} align="center">
             <Text strong>{attendances.length}</Text>
             <Text type="secondary">명</Text>

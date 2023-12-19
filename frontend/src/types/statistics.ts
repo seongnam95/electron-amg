@@ -1,11 +1,11 @@
 export interface ReportData<T = any> {
   target: T;
 
+  attendanceCount: number;
   earnsIncentiveCount: number;
   mealCostCount: number;
   prepaidCount: number;
   otCount: number;
-  attendanceCount: number;
 
   dailyPay: number;
   mealCost: number;

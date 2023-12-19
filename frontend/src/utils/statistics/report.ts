@@ -1,10 +1,12 @@
 import { AttendanceData } from '~/types/attendance';
-import { PositionData } from '~/types/position';
 import { ReportData } from '~/types/statistics';
 import { TeamData } from '~/types/team';
-import { UnitData } from '~/types/unit';
 
-export const getStats = (team: TeamData, pay: number, attendances: AttendanceData[]) => {
+export const getAttendanceStats = (
+  team: TeamData,
+  pay: number,
+  attendances: AttendanceData[],
+): ReportData => {
   const { mealCost, otPay } = team;
 
   // 인센 포함 합계
@@ -42,8 +44,10 @@ export const getStats = (team: TeamData, pay: number, attendances: AttendanceDat
   const finalPay = totalPaySum - taxSum;
 
   return {
-    earnsIncentiveCount: earnsIncentiveCount,
+    target: undefined,
+
     attendanceCount: attendanceCount,
+    earnsIncentiveCount: earnsIncentiveCount,
     mealCostCount: mealCostCount,
     otCount: otCount,
     prepaidCount: paidCount,

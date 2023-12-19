@@ -5,7 +5,7 @@ import DescriptionsBox from '~/components/common/DescriptionsBox';
 import { useDragScroll } from '~/hooks/useDragScroll';
 import { teamStore } from '~/stores/team';
 import { AttendanceData } from '~/types/attendance';
-import { getStats, calculateReportTotal } from '~/utils/statistics/report';
+import { getAttendanceStats, calculateReportTotal } from '~/utils/statistics/report';
 
 import { AttendanceStatsStyled } from './styled';
 
@@ -25,7 +25,7 @@ const AttendanceStats = ({ attendances }: AttendanceStatsProps) => {
     );
     return {
       target: position,
-      ...getStats(team, position.standardPay, filteredAttendances),
+      ...getAttendanceStats(team, position.standardPay, filteredAttendances),
     };
   });
 

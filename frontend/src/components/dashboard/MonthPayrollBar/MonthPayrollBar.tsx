@@ -10,7 +10,7 @@ import { useRecoilValue } from 'recoil';
 import DescriptionsBox from '~/components/common/DescriptionsBox';
 import { useAttendanceQuery } from '~/hooks/queryHooks/useAttendanceQuery';
 import { teamStore } from '~/stores/team';
-import { calculateReportTotal, getStats } from '~/utils/statistics/report';
+import { calculateReportTotal, getAttendanceStats } from '~/utils/statistics/report';
 
 import { MonthPayrollBarStyled } from './styled';
 import { sumPayByDay } from './utils';
@@ -35,7 +35,7 @@ const MonthPayrollBar = ({ day = dayjs() }: MonthPayrollBarProps) => {
     const filteredAttendances = attendances.filter(
       attendance => attendance.positionId === position.id,
     );
-    const stats = getStats(team, position.standardPay, filteredAttendances);
+    const stats = getAttendanceStats(team, position.standardPay, filteredAttendances);
     return { target: position, ...stats };
   });
 
@@ -51,7 +51,7 @@ const MonthPayrollBar = ({ day = dayjs() }: MonthPayrollBarProps) => {
           attendance.positionId === position.id &&
           index + 1 === parseInt(attendance.workingDate.split('-')[2], 10),
       );
-      const { totalPaySum } = getStats(team, position.standardPay, filteredAttendances);
+      const { totalPaySum } = getAttendanceStats(team, position.standardPay, filteredAttendances);
       return totalPaySum;
     });
 
@@ -101,7 +101,6 @@ const MonthPayrollBar = ({ day = dayjs() }: MonthPayrollBarProps) => {
               tooltip: {
                 mode: 'index',
                 intersect: false,
-
                 callbacks: {
                   title: items => {
                     return `${day.format('YY년 MM월')} ${items[0].label}일`;
@@ -115,6 +114,11 @@ const MonthPayrollBar = ({ day = dayjs() }: MonthPayrollBarProps) => {
                     const label = item.dataset.label || '';
                     const value = item.formattedValue || '';
                     return ` ${label} : ${value} 원`;
+                  },
+                  afterBody: item => {
+                    const dayIndex = parseInt(item[0].label, 10) - 1;
+                    const totalAmount = sumPayDays[dayIndex].paySum;
+                    return `\n📌 일일 합계액: ${totalAmount.toLocaleString()}원`;
                   },
                 },
               },

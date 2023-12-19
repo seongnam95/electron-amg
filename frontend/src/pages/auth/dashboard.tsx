@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 
-import { Flex, Space } from 'antd';
+import { Affix, Button, DatePicker, Flex, InputRef, Row, Space } from 'antd';
 import dayjs, { Dayjs } from 'dayjs';
 
 import Card from '~/components/common/Card';
@@ -11,74 +11,37 @@ import MonthPayrollBar from '~/components/dashboard/MonthPayrollBar';
 import UnitTable from '~/components/dashboard/UnitTable';
 import { DashboardPageStyled } from '~/styles/pageStyled/dashboardPageStyled';
 
-interface DayState {
-  day: Dayjs;
-  picker: 'date' | 'month';
-}
-
-interface DashboardDays {
-  monthPayStats: DayState;
-  monthUnitStats: DayState;
-  monthAttendanceStats: DayState;
-  dateAttendanceStats: DayState;
-}
-
 const DashboardPage = () => {
-  const [days, setDays] = useState<DashboardDays>({
-    monthPayStats: { day: dayjs(), picker: 'month' },
-    monthUnitStats: { day: dayjs(), picker: 'month' },
-    monthAttendanceStats: { day: dayjs(), picker: 'month' },
-    dateAttendanceStats: { day: dayjs(), picker: 'date' },
-  });
+  const [day, setDay] = useState<Dayjs>(dayjs());
 
-  const handleChangeDay = (key: keyof DashboardDays, day: Dayjs | null) => {
-    if (!day) return;
-    setDays(prev => ({ ...prev, [key]: { ...prev[key], day: day } }));
+  const handleChangeDay = (day: Dayjs | null) => {
+    if (day) return setDay(day);
   };
 
   return (
     <DashboardPageStyled>
-      <Space className="card-wrap" direction="vertical" size={24}>
-        <Flex gap={20}>
-          <Card
-            title="📊 월 수당 통계"
-            style={{ width: '100%' }}
-            children={<MonthPayrollBar day={days.monthPayStats.day} />}
-            extra={
-              <AntDatePicker
-                picker={days.monthPayStats.picker}
-                value={days.monthPayStats.day}
-                onChange={day => handleChangeDay('monthPayStats', day)}
-              />
-            }
-          />
-          <Card
-            title="대행사 청구 단가"
-            style={{ height: '38rem', minWidth: '41rem' }}
-            children={<UnitTable day={days.monthUnitStats.day} />}
-            extra={
-              <AntDatePicker
-                picker={days.monthUnitStats.picker}
-                value={days.monthUnitStats.day}
-                onChange={day => handleChangeDay('monthUnitStats', day)}
-              />
-            }
-          />
-        </Flex>
+      <Flex className="control-bar" justify="end">
+        <AntDatePicker picker="month" value={day} onChange={handleChangeDay} />
+      </Flex>
+      <div className="card-grid-wrap">
         <Card
-          title="월별 출근 합계"
-          style={{ height: '36rem' }}
-          children={<MonthAttendanceTable day={days.monthAttendanceStats.day} />}
-          extra={
-            <AntDatePicker
-              picker={days.monthAttendanceStats.picker}
-              value={days.monthAttendanceStats.day}
-              onChange={day => handleChangeDay('monthAttendanceStats', day)}
-            />
-          }
+          className="month-pay-chart-card"
+          title="📊 월 수당 통계"
+          children={<MonthPayrollBar day={day} />}
         />
-        <Flex gap="2rem">
-          <Card
+        <Card
+          className="unit-pay-list-card"
+          title="대행사 청구 단가"
+          children={<UnitTable day={day} />}
+        />
+
+        <Card
+          className="month-attendance-table-card"
+          title="월별 출근 합계"
+          children={<MonthAttendanceTable day={day} />}
+        />
+
+        {/* <Card
             title="🙋‍♂️ 출근 현황"
             style={{ width: '32rem' }}
             children={<AttendanceDoughnut day={days.dateAttendanceStats.day} />}
@@ -89,9 +52,8 @@ const DashboardPage = () => {
                 onChange={day => handleChangeDay('dateAttendanceStats', day)}
               />
             }
-          />
-        </Flex>
-      </Space>
+          /> */}
+      </div>
     </DashboardPageStyled>
   );
 };
