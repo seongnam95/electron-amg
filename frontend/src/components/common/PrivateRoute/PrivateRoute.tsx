@@ -6,6 +6,7 @@ import { userStore } from '~/stores/user';
 
 const PrivateRoute = () => {
   const { isLogin } = useRecoilValue(userStore);
+
   return isLogin ? <Outlet /> : <Navigate to="/" />;
 };
 

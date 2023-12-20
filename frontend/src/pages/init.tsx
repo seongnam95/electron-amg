@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { Space, Steps } from 'antd';
@@ -14,7 +14,7 @@ import { usePositionCreateMutation } from '~/hooks/queryHooks/usePositionQuery';
 import { useTeamCreateMutation } from '~/hooks/queryHooks/useTeamQuery';
 import { userStore } from '~/stores/user';
 import { InitPageStyled } from '~/styles/pageStyled/initPageStyled';
-import { PositionCreateBody, PositionUpdateBody } from '~/types/position';
+import { PositionCreateBody } from '~/types/position';
 import { TeamCreateBody } from '~/types/team';
 import { UnitCreateBody, UnitData } from '~/types/unit';
 

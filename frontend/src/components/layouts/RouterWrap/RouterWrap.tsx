@@ -1,27 +1,31 @@
 import { Route, Routes } from 'react-router-dom';
 
 import PrivateRoute from '~/components/common/PrivateRoute';
+import ManagementLayout from '~/components/layouts/ManagementLayout';
 import IndexPage from '~/pages';
 import NotFoundPage from '~/pages/404';
-import AttendancePage from '~/pages/auth/attendance';
-import DashboardPage from '~/pages/auth/dashboard';
-import EmployeePage from '~/pages/auth/employee';
 import InitPage from '~/pages/init';
 import LoginPage from '~/pages/login';
-
-import ManagementLayout from '../ManagementLayout';
+import AttendancePage from '~/pages/management/attendance/attendance';
+import AttendanceDatePage from '~/pages/management/attendance/date';
+import AttendanceMonthPage from '~/pages/management/attendance/month';
+import DashboardPage from '~/pages/management/dashboard';
+import EmployeePage from '~/pages/management/employee';
 
 const RouterWrap = () => {
   return (
     <Routes>
       <Route path="/" element={<IndexPage />} />
-      <Route index={true} path="login" element={<LoginPage />} />
+      <Route index path="login" element={<LoginPage />} />
       <Route element={<PrivateRoute />}>
         <Route path="init" element={<InitPage />} />
         <Route path="management" element={<ManagementLayout />}>
           <Route index path="dashboard" element={<DashboardPage />} />
           <Route path="employee" element={<EmployeePage />} />
-          <Route path="attendance" element={<AttendancePage />} />
+          <Route path="attendance" element={<AttendancePage />}>
+            <Route index path="date" element={<AttendanceDatePage />} />
+            <Route path="month" element={<AttendanceMonthPage />} />
+          </Route>
         </Route>
       </Route>
       <Route path="*" element={<NotFoundPage />} />

@@ -4,24 +4,18 @@ import { useRecoilValue } from 'recoil';
 
 import { useAttendanceQuery } from '~/hooks/queryHooks/useAttendanceQuery';
 import { teamStore } from '~/stores/team';
+import { AttendanceData } from '~/types/attendance';
 
 import { HintText } from '../MonthlyAttendanceTable/styled';
 import { getDataSource } from './config';
 import { UnitPayListStyled } from './styled';
 
 export interface UnitPayListProps {
-  day?: Dayjs;
+  attendances: AttendanceData[];
 }
 
-const UnitPayList = ({ day = dayjs() }: UnitPayListProps) => {
+const UnitPayList = ({ attendances }: UnitPayListProps) => {
   const team = useRecoilValue(teamStore);
-
-  const { attendances } = useAttendanceQuery({
-    teamId: team.id,
-    day: day,
-    dayType: 'month',
-    enabled: team.existTeam,
-  });
 
   const datas = getDataSource(team, attendances);
 

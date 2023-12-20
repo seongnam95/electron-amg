@@ -13,13 +13,18 @@ import { MonthTableData, getColumns, getDataSource } from './config';
 import { MonthTableStyled } from './styled';
 
 export interface MonthTableProps {
-  day: Dayjs;
-  employees: EmployeeData[];
-  attendances: AttendanceData[];
+  day?: Dayjs;
+  employees?: EmployeeData[];
+  attendances?: AttendanceData[];
   onContextMenu?: (event: MouseEvent, employee: EmployeeData, day: Dayjs) => void;
 }
 
-const MonthTable = ({ day, employees, attendances, onContextMenu }: MonthTableProps) => {
+const MonthTable = ({
+  day = dayjs(),
+  employees = [],
+  attendances = [],
+  onContextMenu,
+}: MonthTableProps) => {
   const team = useRecoilValue(teamStore);
   const scrollRef = useDragScroll();
 

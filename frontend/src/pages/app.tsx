@@ -1,11 +1,11 @@
-import { useEffect, useMemo } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useMemo } from 'react';
 
 import { ConfigProvider, theme, App as AntApp } from 'antd';
 import locale from 'antd/lib/locale/ko_KR';
 import 'dayjs/locale/ko';
 import styled, { ThemeProvider } from 'styled-components';
 
+import BreadcrumbConfig from '~/components/layouts/BreadcrumbConfig';
 import RouterWrap from '~/components/layouts/RouterWrap';
 import Titlebar from '~/components/layouts/Titlebar';
 import { InitGlobalStyled } from '~/styles/init';
@@ -23,14 +23,6 @@ declare module 'styled-components' {
 
 const App = () => {
   const antdToken = theme.useToken();
-  const { pathname } = useLocation();
-  useEffect(() => {
-    console.log(pathname);
-  }, [pathname]);
-  // const nav = useNavigate();
-  // useEffect(() => {
-  //   nav('/login');
-  // }, []);
 
   const styledTheme = useMemo(
     () => ({
@@ -49,6 +41,7 @@ const App = () => {
         <AppStyled id="app">
           <Titlebar />
           <AntApp message={{ maxCount: 1 }} style={{ height: '100%' }}>
+            <BreadcrumbConfig />
             <RouterWrap />
           </AntApp>
         </AppStyled>

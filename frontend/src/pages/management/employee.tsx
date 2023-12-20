@@ -3,7 +3,7 @@ import { FiPlus } from 'react-icons/fi';
 import { HiOutlineDotsVertical } from 'react-icons/hi';
 import { VscRefresh } from 'react-icons/vsc';
 
-import { Flex, Pagination, Segmented, DropdownProps, Dropdown, Button } from 'antd';
+import { Flex, Segmented, Dropdown, Button } from 'antd';
 import { SegmentedValue } from 'antd/es/segmented';
 import { useRecoilValue } from 'recoil';
 
@@ -114,9 +114,9 @@ const EmployeePage = () => {
         />
       </Flex>
 
-      <Flex justify="center" style={{ padding: '1.2rem 0' }}>
+      {/* <Flex justify="center" style={{ padding: '1.2rem 0' }}>
         <Pagination current={0} />
-      </Flex>
+      </Flex> */}
 
       {/* 근로자 정보 Drawer */}
       <EmployeeInfoDrawer

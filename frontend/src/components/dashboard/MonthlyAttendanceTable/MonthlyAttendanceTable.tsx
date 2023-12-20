@@ -4,6 +4,7 @@ import { useRecoilValue } from 'recoil';
 
 import { useAttendanceQuery } from '~/hooks/queryHooks/useAttendanceQuery';
 import { teamStore } from '~/stores/team';
+import { AttendanceData } from '~/types/attendance';
 import { PositionData } from '~/types/position';
 import { ReportData } from '~/types/statistics';
 import { getAttendanceStats } from '~/utils/statistics/report';
@@ -12,19 +13,12 @@ import { getColumns } from './config';
 import { MonthlyAttendanceTableStyled } from './styled';
 
 export interface MonthlyAttendanceTableProps {
-  day?: Dayjs;
+  attendances: AttendanceData[];
 }
 
 /** 월별 출근 통계 테이블 */
-const MonthlyAttendanceTable = ({ day = dayjs() }: MonthlyAttendanceTableProps) => {
+const MonthlyAttendanceTable = ({ attendances }: MonthlyAttendanceTableProps) => {
   const team = useRecoilValue(teamStore);
-
-  const { attendances } = useAttendanceQuery({
-    teamId: team.id,
-    day: day,
-    dayType: 'month',
-    enabled: team.existTeam,
-  });
 
   const reports: ReportData<PositionData>[] = team.positions.map(position => {
     const filteredAttendances = attendances.filter(

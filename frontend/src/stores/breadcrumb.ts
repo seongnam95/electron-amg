@@ -2,21 +2,15 @@ import { ReactNode } from 'react';
 
 import { atom } from 'recoil';
 
-export interface MenuItemData {
+export interface BreadcrumbData {
   key: string;
-  text: string;
   path: string;
+  menu?: boolean;
+  text?: string;
   icon?: JSX.Element | ReactNode;
 }
 
-const initBreadcrumb: MenuItemData = {
-  key: '',
-  path: '/',
-  icon: '',
-  text: '대시보드',
-};
-
-export const breadcrumbStore = atom<MenuItemData[]>({
+export const breadcrumbStore = atom<BreadcrumbData[]>({
   key: 'breadcrumbState',
-  default: [initBreadcrumb],
+  default: [],
 });

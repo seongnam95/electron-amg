@@ -1,68 +1,35 @@
-import { ReactNode, useEffect, useMemo } from 'react';
-import { BsFillPeopleFill } from 'react-icons/bs';
-import { FaBusinessTime } from 'react-icons/fa';
-import { GoHomeFill } from 'react-icons/go';
-import { Link, useLocation } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 import clsx from 'clsx';
 import { motion, LayoutGroup, AnimatePresence } from 'framer-motion';
-import { useSetRecoilState } from 'recoil';
+import { useRecoilValue } from 'recoil';
 
-import { MenuItemData, breadcrumbStore } from '~/stores/breadcrumb';
+import { breadcrumbStore } from '~/stores/breadcrumb';
 
 import { SideNavbarStyled } from './styled';
 
 const SideNavbar = () => {
-  const { pathname } = useLocation();
-  const setBreadcrumb = useSetRecoilState(breadcrumbStore);
-
-  useEffect(() => {
-    const activeMenu = menus.find(menu => menu.path === pathname);
-    if (activeMenu) setBreadcrumb([activeMenu]);
-  }, [pathname]);
-
-  const menus: MenuItemData[] = useMemo(
-    () => [
-      {
-        key: 'dashboard',
-        text: '대시보드',
-        icon: <GoHomeFill className="menu-icon" />,
-        path: '/management/dashboard',
-      },
-      {
-        key: 'employee',
-        text: '직원 관리',
-        icon: <BsFillPeopleFill className="menu-icon" />,
-        path: '/management/employee',
-      },
-      {
-        key: 'attendance',
-        text: '근태',
-        icon: <FaBusinessTime className="menu-icon" />,
-        path: '/management/attendance',
-      },
-    ],
-    [],
-  );
+  const breadcrumb = useRecoilValue(breadcrumbStore);
+  const menus = breadcrumb.filter(crumb => crumb.menu);
 
   return (
     <SideNavbarStyled className="SideNavbar">
       <LayoutGroup>
         <div className="items">
           <AnimatePresence>
-            {menus.map(item => {
-              const isActive = pathname === item.path;
-
+            {menus.map(menu => {
+              const isActive = true;
+              console.log(menu.key);
               return (
                 <motion.div
-                  key={item.key}
+                  key={menu.key}
                   initial={{ opacity: 0, y: -5 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -5 }}
                 >
                   <Link
-                    key={item.key}
-                    to={item.path}
+                    key={menu.key}
+                    to={menu.path}
                     className={clsx('item', isActive && 'active')}
                   >
                     {isActive && (
@@ -77,7 +44,7 @@ const SideNavbar = () => {
                         }}
                       />
                     )}
-                    {item.icon}
+                    {menu.icon}
                   </Link>
                 </motion.div>
               );

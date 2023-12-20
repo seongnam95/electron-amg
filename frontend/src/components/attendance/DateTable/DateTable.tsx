@@ -10,8 +10,8 @@ import { getColumns, DateTableData } from './config';
 import { DateTableStyled } from './styled';
 
 export interface DateTableProps {
-  employees: EmployeeData[];
-  attendances: AttendanceData[];
+  employees?: EmployeeData[];
+  attendances?: AttendanceData[];
   disabledSelect?: boolean;
   selectedEmployeeIds?: string[];
   onSelect?: (employees: EmployeeData[]) => void;
@@ -20,8 +20,8 @@ export interface DateTableProps {
 }
 
 const DateTable = ({
-  employees,
-  attendances,
+  employees = [],
+  attendances = [],
   disabledSelect,
   selectedEmployeeIds,
   onSelect,

@@ -1,36 +1,31 @@
 import { useRef } from 'react';
 import { Bar } from 'react-chartjs-2';
 
-import { Empty, Flex, Space } from 'antd';
+import { Empty, Flex } from 'antd';
 import 'chart.js/auto';
 import { ChartData } from 'chart.js/auto';
 import dayjs, { Dayjs } from 'dayjs';
 import { useRecoilValue } from 'recoil';
 
 import DescriptionsBox from '~/components/common/DescriptionsBox';
-import { useAttendanceQuery } from '~/hooks/queryHooks/useAttendanceQuery';
 import { teamStore } from '~/stores/team';
+import { AttendanceData } from '~/types/attendance';
 import { calculateReportTotal, getAttendanceStats } from '~/utils/statistics/report';
 
 import getChartOptions from './chartConfig';
 import { MonthlyPayChartStyled } from './styled';
 
 export interface MonthPayrollBarProps {
+  attendances: AttendanceData[];
   day?: Dayjs;
 }
 
 /** 월 수당 통계 차트 */
-const MonthlyPayChart = ({ day = dayjs() }: MonthPayrollBarProps) => {
+const MonthlyPayChart = ({ day = dayjs(), attendances }: MonthPayrollBarProps) => {
   const team = useRecoilValue(teamStore);
   const wrapRef = useRef<HTMLDivElement>(null);
   const dates = Array.from({ length: day.daysInMonth() }, (_, index) => index + 1);
-
-  const { attendances, isEmpty } = useAttendanceQuery({
-    teamId: team.id,
-    day: day,
-    dayType: 'month',
-    enabled: team.existTeam,
-  });
+  const isEmpty = attendances === undefined || attendances.length === 0;
 
   /** 월 통계 */
   const reports = team.positions.map(position => {
@@ -67,6 +62,11 @@ const MonthlyPayChart = ({ day = dayjs() }: MonthPayrollBarProps) => {
     };
   });
 
+  const getAverage = (total: number, length: number) => {
+    return Math.round(total / length);
+  };
+
+  /** Chart Bar Props */
   const dataset = statsData.map(stats => ({
     label: stats.positionName,
     data: stats.dailyPaySums,
@@ -77,10 +77,6 @@ const MonthlyPayChart = ({ day = dayjs() }: MonthPayrollBarProps) => {
   const chartData: ChartData<'bar'> = {
     labels: dates,
     datasets: dataset,
-  };
-
-  const getAverage = (total: number, length: number) => {
-    return Math.round(total / length);
   };
 
   const chartOptions = getChartOptions(day, statsData);
@@ -96,16 +92,16 @@ const MonthlyPayChart = ({ day = dayjs() }: MonthPayrollBarProps) => {
       </Flex>
       <Flex gap={8} justify="center">
         <DescriptionsBox
-          justify="end"
+          justify="center"
           title="평균 수당"
-          info="ddd"
-          children={`${getAverage(dailyPay, dates.length).toLocaleString()}원`}
+          info="일일 수당 합계 평균"
+          children={`${Math.round(dailyPay / dates.length).toLocaleString()}원`}
         />
         <DescriptionsBox
-          justify="end"
+          justify="center"
           title="평균 출근 인원"
-          info="ddd"
-          children={`${getAverage(attendanceCount, dates.length).toLocaleString()}명`}
+          info="일일 출근 인원 평균"
+          children={`${Math.round(attendanceCount / dates.length).toLocaleString()}명`}
         />
       </Flex>
     </MonthlyPayChartStyled>

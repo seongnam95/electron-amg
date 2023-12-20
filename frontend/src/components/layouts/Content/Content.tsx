@@ -9,12 +9,14 @@ export interface ContentProps {
 }
 
 const Content = ({ children }: ContentProps) => {
-  const { pathname } = useLocation();
+  // const { pathname } = useLocation();
+  // const pathArray = pathname.slice(1).split('/');
+  console.log('랜더');
 
   return (
     <ContentStyled id="contentWrap" className="Content">
       <motion.div
-        key={pathname}
+        // key={pathname}
         initial={{ opacity: 0, x: -12, y: -12 }}
         animate={{ opacity: 1, x: 0, y: 0 }}
         transition={{ duration: 0.3, ease: 'easeInOut' }}

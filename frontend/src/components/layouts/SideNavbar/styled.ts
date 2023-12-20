@@ -28,13 +28,13 @@ export const SideNavbarStyled = styled.div`
         transform: scale(1.06);
       }
     }
-
+    /* 
     .menu-icon {
       position: relative;
       z-index: 1;
       font-size: 2.4rem;
       transition: all 140ms;
-    }
+    } */
 
     .menuActiveBG {
       position: absolute;

@@ -1,13 +1,12 @@
 import { MouseEvent, useState } from 'react';
 import { RiExchangeFundsLine } from 'react-icons/ri';
+import { Outlet, useNavigate } from 'react-router-dom';
 
 import { Button, Flex, Segmented, Tooltip } from 'antd';
 import dayjs, { Dayjs } from 'dayjs';
 import { useRecoilValue } from 'recoil';
 
 import AttendanceStats from '~/components/attendance/AttendanceStats';
-import DateTable from '~/components/attendance/DateTable';
-import MonthTable from '~/components/attendance/MonthTable';
 import AntDatePicker from '~/components/common/DatePicker';
 import Dock from '~/components/common/Dock';
 import { useAttendanceModal } from '~/hooks/componentHooks/useAttendanceModal';
@@ -22,6 +21,7 @@ type ViewType = 'month' | 'date';
 
 const AttendancePage = () => {
   const team = useRecoilValue(teamStore);
+  const navigate = useNavigate();
 
   const [viewType, setViewType] = useState<ViewType>('date');
   const [isEditing, setIsEditing] = useState<boolean>(false);
@@ -71,7 +71,9 @@ const AttendancePage = () => {
             { label: '일간', value: 'date' },
             { label: '월간', value: 'month' },
           ]}
-          onChange={view => setViewType(view as ViewType)}
+          onChange={view => {
+            navigate(view.toString());
+          }}
         />
         <AntDatePicker
           picker={viewType}
@@ -84,25 +86,7 @@ const AttendancePage = () => {
       <Flex className="attendance-content-wrap" vertical gap={24}>
         {/* 테이블 Wrap */}
         <Flex className="table-container" flex={1}>
-          {viewType === 'date' ? (
-            <DateTable
-              employees={employees}
-              attendances={attendances}
-              disabledSelect={isEditing}
-              selectedEmployeeIds={selectedEmployeeIds}
-              onSelect={setSelectedEmployees}
-              onClickName={openDrawer}
-              onContextMenu={handleContextMenu}
-            />
-          ) : (
-            <MonthTable
-              day={selectedDay}
-              employees={employees}
-              attendances={attendances}
-              onContextMenu={handleContextMenu}
-            />
-          )}
-
+          <Outlet />
           <Dock open={showDock}>
             <Tooltip title="일괄 변경" placement="left" mouseEnterDelay={0.6}>
               <Button
