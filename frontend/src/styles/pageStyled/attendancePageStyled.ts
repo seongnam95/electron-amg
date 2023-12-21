@@ -11,10 +11,4 @@ export const AttendancePageStyled = styled.div`
     height: 100%;
     overflow: hidden;
   }
-
-  .AttendanceTable {
-    height: 100%;
-    overflow: hidden;
-    border-radius: 8px;
-  }
 `;

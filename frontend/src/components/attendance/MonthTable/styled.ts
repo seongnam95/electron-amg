@@ -1,9 +1,17 @@
 import styled from 'styled-components';
 
 export const MonthTableStyled = styled.div`
+  height: 100%;
+  overflow: hidden;
+  border: 1px solid ${p => p.theme.colors.borderColor};
+  border-radius: 8px;
   margin: 0 2rem 2rem;
 
   .ant-table-cell {
+    ::before {
+      display: none;
+    }
+
     &.day {
       padding: 0 !important;
 
@@ -18,6 +26,10 @@ export const MonthTableStyled = styled.div`
         color: ${p => p.theme.colors.red};
         background-color: rgba(254, 249, 249, 0.8);
       }
+    }
+
+    :not(:last-child) {
+      border-right: 1px solid ${p => p.theme.colors.borderColor};
     }
   }
 `;

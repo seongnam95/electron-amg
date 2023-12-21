@@ -24,7 +24,6 @@ const MonthTable = ({ day, employees, attendances, loading, onContextMenu }: Mon
 
   const tableProps: TableProps<MonthTableData> = {
     pagination: false,
-    bordered: true,
     scroll: { x: '100%', y: '100%' },
     showSorterTooltip: false,
     columns: useMemo(() => getColumns(day, { onContextMenu: onContextMenu }), []),

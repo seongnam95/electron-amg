@@ -150,7 +150,7 @@ export const InitGlobalStyled = memo(createGlobalStyle`
     }
 
     .ant-table-container{
-      height: 100%;
+      height: calc(100% - 4.5rem);
     }
   }
   
