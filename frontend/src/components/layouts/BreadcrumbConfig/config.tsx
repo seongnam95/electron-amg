@@ -1,54 +1,37 @@
-import { ReactNode } from 'react';
 import { BsFillPeopleFill } from 'react-icons/bs';
 import { FaBusinessTime } from 'react-icons/fa';
 import { GoHomeFill } from 'react-icons/go';
 
-interface BreadcrumbValueData {
-  key: string;
-  path: string[];
-  text?: string;
-  icon?: ReactNode;
-  menu?: boolean;
-}
+import { BreadcrumbData } from '~/stores/breadcrumb';
 
-export const breadcrumbValues: BreadcrumbValueData[] = [
-  {
+export const breadcrumbValues: { [key: string]: BreadcrumbData } = {
+  login: {
     key: 'login',
-    path: ['login'],
+    path: '/login',
   },
-  {
+  management: {
     key: 'management',
-    path: ['management'],
+    path: '/management',
   },
-  {
+  dashboard: {
     key: 'dashboard',
-    path: ['management', 'dashboard'],
+    path: '/management/dashboard',
     text: '대시보드',
-    icon: <GoHomeFill size={24} />,
+    icon: <GoHomeFill className="menu-icon" size={24} />,
     menu: true,
   },
-  {
+  employee: {
     key: 'employee',
-    path: ['management', 'employee'],
+    path: '/management/employee',
     text: '직원관리',
-    icon: <BsFillPeopleFill size={24} />,
+    icon: <BsFillPeopleFill className="menu-icon" size={24} />,
     menu: true,
   },
-  {
+  attendance: {
     key: 'attendance',
-    path: ['management', 'attendance'],
+    path: '/management/attendance',
     text: '근태관리',
-    icon: <FaBusinessTime size={24} />,
+    icon: <FaBusinessTime className="menu-icon" size={24} />,
     menu: true,
   },
-  {
-    key: 'month',
-    path: ['management', 'attendance', 'month'],
-    text: '월간',
-  },
-  {
-    key: 'date',
-    path: ['management', 'attendance', 'date'],
-    text: '일간',
-  },
-];
+};

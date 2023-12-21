@@ -58,6 +58,7 @@ export const getColumns = ({
       title: '이름',
       width: 90,
       ellipsis: true,
+      fixed: 'left',
       sorter: (a, b) => a.name.localeCompare(b.name),
       render: (_, { key, name }) => {
         const handleClick = () => onClickName(key.toString());

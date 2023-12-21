@@ -98,9 +98,10 @@ export const getColumns = (
       dataIndex: 'name',
       title: '이름',
       width: 90,
+      fixed: 'left',
       ellipsis: true,
       sorter: (a, b) => a.employee.name.localeCompare(b.employee.name),
-      render: (_, { key, employee }) => {
+      render: (_, { employee }) => {
         return (
           <Button size="small" type="text">
             <b>{employee.name}</b>
@@ -155,6 +156,7 @@ export const getColumns = (
       className: 'amount-paid',
       title: '지급액',
       width: 110,
+      fixed: 'right',
       align: 'right',
       render: (_, { report }) => <b>{report.totalPaySum.toLocaleString()}</b>,
     },

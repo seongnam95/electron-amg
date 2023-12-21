@@ -11,7 +11,6 @@ export interface ContentProps {
 const Content = ({ children }: ContentProps) => {
   // const { pathname } = useLocation();
   // const pathArray = pathname.slice(1).split('/');
-  console.log('랜더');
 
   return (
     <ContentStyled id="contentWrap" className="Content">

@@ -47,6 +47,7 @@ export const getColumns = ({ employees, onClickName }: ColumnProps): ColumnsType
       title: '이름',
       width: 90,
       ellipsis: true,
+      fixed: 'left',
       sorter: (a, b) => a.employee.name.localeCompare(b.employee.name),
       render: (_, { employee }) => (
         <Button size="small" type="text" onClick={() => onClickName?.(employee)}>
@@ -158,6 +159,7 @@ export const getColumns = ({ employees, onClickName }: ColumnProps): ColumnsType
       dataIndex: 'state',
       title: '상태',
       width: 80,
+      fixed: 'right',
       align: 'center',
       render: (_, { attendance }) => {
         if (attendance === undefined)

@@ -17,17 +17,19 @@ interface HeaderProps extends HTMLAttributes<HTMLDivElement> {}
 const Header = ({ children, ...props }: HeaderProps) => {
   const breadcrumb = useRecoilValue(breadcrumbStore);
 
-  const items: BreadcrumbItemType[] = breadcrumb.map((crumb, idx) => {
-    return {
-      key: crumb.key,
-      title: (
-        <Flex align="center" gap={8}>
-          {idx === 0 ? <span style={{ color: '#767676' }}>#</span> : null}
-          {crumb.text}
-        </Flex>
-      ),
-    };
-  });
+  const items: BreadcrumbItemType[] = breadcrumb
+    .filter(crumb => crumb.text)
+    .map((crumb, idx) => {
+      return {
+        key: crumb.key,
+        title: (
+          <Flex align="center" gap={8}>
+            {idx === 0 ? <span style={{ color: '#767676', marginTop: 3 }}>#</span> : null}
+            {crumb.text}
+          </Flex>
+        ),
+      };
+    });
 
   const crumbKey = items.map(item => item.key).join('/');
   return (
@@ -38,11 +40,9 @@ const Header = ({ children, ...props }: HeaderProps) => {
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.3, ease: 'easeInOut' }}
       >
-        <Flex align="center" justify="space-between">
-          <Breadcrumb items={items} />
-          <TeamSelector />
-        </Flex>
+        <Breadcrumb items={items} />
       </motion.div>
+      <TeamSelector />
     </HeaderStyled>
   );
 };

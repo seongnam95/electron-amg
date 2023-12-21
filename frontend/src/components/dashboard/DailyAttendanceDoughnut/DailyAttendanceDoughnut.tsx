@@ -84,14 +84,14 @@ const DailyAttendanceDoughnut = ({ day = dayjs() }: DailyAttendanceDoughnutProps
       </Flex>
 
       <Flex vertical gap={4} style={{ width: '100%' }}>
-        <Flex flex={1} justify="space-between">
-          <Text type="secondary">총 출근 예상 인원</Text>
+        <Flex flex={1} gap={24} justify="space-between">
+          <Text type="secondary">출근 예상 인원</Text>
           <Flex gap={4} align="center">
             <Text strong>{employees.length}</Text>
             <Text type="secondary">명</Text>
           </Flex>
         </Flex>
-        <Flex flex={1} justify="space-between">
+        <Flex flex={1} gap={24} justify="space-between">
           <Text type="secondary">출근 인원</Text>
           <Flex gap={4} align="center">
             <Text strong>{attendances.length}</Text>

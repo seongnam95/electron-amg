@@ -85,7 +85,13 @@ export const antdTheme: ThemeConfig = {
       colorText: colors.textColor2,
     },
     Table: {
+      colorIcon: colors.iconColor1,
       colorBgContainer: colors.contentBG,
+      colorTextHeading: colors.textColor2,
+      cellFontSize: 13,
+      fontWeightStrong: 400,
+      padding: 12,
+      fontSizeIcon: 8,
     },
     Popover: {
       colorBgElevated: colors.innerBg,

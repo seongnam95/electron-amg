@@ -1,22 +1,12 @@
 import styled from 'styled-components';
 
 export const DateTableStyled = styled.div`
-  position: relative;
+  border: 1px solid ${p => p.theme.colors.borderColor};
+  margin: 0 0 2rem 2rem;
 
-  .ant-table-cell {
-    &.first-cell {
-      border-right: 1px solid ${p => p.theme.colors.borderColor};
-    }
-
-    &.last-cell {
-      border-left: 1px solid ${p => p.theme.colors.borderColor};
-    }
-  }
-
-  .AttendanceEditForm {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
+  .ant-table-thead {
+    position: sticky;
+    top: 0;
+    z-index: 11;
   }
 `;

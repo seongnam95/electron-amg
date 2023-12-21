@@ -66,6 +66,7 @@ const EmployeeTable = ({
       <Table
         showHeader
         loading={isLoading}
+        scroll={{ x: '100%', y: '100%' }}
         columns={columns}
         dataSource={dataSource}
         rowSelection={rowSelection}

@@ -12,10 +12,10 @@ const BreadcrumbConfig = () => {
   const setBreadcrumb = useSetRecoilState(breadcrumbStore);
 
   useEffect(() => {
-    const pathSegments = pathname.split('/').filter(x => x);
+    const pathSegments = pathname.split('/').filter(path => path);
+
     const newBreadcrumb: BreadcrumbData[] = pathSegments.map(segment => {
-      const configData = breadcrumbValues.find(crumb => crumb.key === segment);
-      return { key: segment, path: pathname, ...configData };
+      return breadcrumbValues[segment];
     });
 
     setBreadcrumb(newBreadcrumb);

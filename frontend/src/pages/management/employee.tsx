@@ -114,10 +114,6 @@ const EmployeePage = () => {
         />
       </Flex>
 
-      {/* <Flex justify="center" style={{ padding: '1.2rem 0' }}>
-        <Pagination current={0} />
-      </Flex> */}
-
       {/* 근로자 정보 Drawer */}
       <EmployeeInfoDrawer
         open={openEmployeeInfoDrawer}

@@ -8,11 +8,14 @@ export const EmployeePageStyled = styled.div`
   height: 100%;
 
   .table-container {
+    height: 100%;
     overflow: hidden;
+  }
 
-    .EmployeeTable {
-      height: 100%;
-      overflow: auto;
-    }
+  .EmployeeTable {
+    height: 100%;
+    overflow: hidden;
+    border-radius: 8px;
+    border: 1px solid ${p => p.theme.colors.borderColor};
   }
 `;

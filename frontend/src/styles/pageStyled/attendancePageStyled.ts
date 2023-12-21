@@ -1,8 +1,6 @@
 import styled from 'styled-components';
 
 export const AttendancePageStyled = styled.div`
-  --footer-height: 10rem;
-
   position: relative;
   display: flex;
   flex-direction: column;
@@ -10,19 +8,13 @@ export const AttendancePageStyled = styled.div`
   height: 100%;
 
   .attendance-content-wrap {
-    padding: 1rem 2rem 2rem;
-    height: calc(100% - var(--toolbar-height));
+    height: 100%;
     overflow: hidden;
-
-    .table-container {
-      position: relative;
-      height: 100%;
-      overflow: hidden;
-    }
   }
 
   .AttendanceTable {
     height: 100%;
-    overflow: auto;
+    overflow: hidden;
+    border-radius: 8px;
   }
 `;

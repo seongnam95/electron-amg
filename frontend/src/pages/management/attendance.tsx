@@ -1,12 +1,14 @@
 import { MouseEvent, useState } from 'react';
 import { RiExchangeFundsLine } from 'react-icons/ri';
-import { Outlet, useNavigate } from 'react-router-dom';
 
 import { Button, Flex, Segmented, Tooltip } from 'antd';
 import dayjs, { Dayjs } from 'dayjs';
 import { useRecoilValue } from 'recoil';
 
 import AttendanceStats from '~/components/attendance/AttendanceStats';
+import DateTable from '~/components/attendance/DateTable';
+import DateTableContainer from '~/components/attendance/DateTableContainer';
+import MonthTable from '~/components/attendance/MonthTable';
 import AntDatePicker from '~/components/common/DatePicker';
 import Dock from '~/components/common/Dock';
 import { useAttendanceModal } from '~/hooks/componentHooks/useAttendanceModal';
@@ -21,7 +23,6 @@ type ViewType = 'month' | 'date';
 
 const AttendancePage = () => {
   const team = useRecoilValue(teamStore);
-  const navigate = useNavigate();
 
   const [viewType, setViewType] = useState<ViewType>('date');
   const [isEditing, setIsEditing] = useState<boolean>(false);
@@ -31,7 +32,7 @@ const AttendancePage = () => {
   const selectedEmployeeIds = selectedEmployees.map(employee => employee.id);
 
   const { employees } = useEmployeeQuery({ teamId: team.id });
-  const { attendances } = useAttendanceQuery({
+  const { attendances, isLoading } = useAttendanceQuery({
     day: selectedDay,
     dayType: viewType,
     teamId: team.id,
@@ -71,9 +72,7 @@ const AttendancePage = () => {
             { label: '일간', value: 'date' },
             { label: '월간', value: 'month' },
           ]}
-          onChange={view => {
-            navigate(view.toString());
-          }}
+          onChange={view => setViewType(view as ViewType)}
         />
         <AntDatePicker
           picker={viewType}
@@ -83,10 +82,31 @@ const AttendancePage = () => {
         />
       </Flex>
 
-      <Flex className="attendance-content-wrap" vertical gap={24}>
+      <Flex className="attendance-content-wrap" vertical flex={1}>
         {/* 테이블 Wrap */}
-        <Flex className="table-container" flex={1}>
-          <Outlet />
+        <Flex flex={1} style={{ overflow: 'hidden' }}>
+          {viewType === 'date' ? (
+            <DateTableContainer>
+              <DateTable
+                employees={employees}
+                attendances={attendances}
+                selectedEmployeeIds={selectedEmployeeIds}
+                disabledSelect={isEditing}
+                onClickName={openDrawer}
+                onSelect={setSelectedEmployees}
+                onContextMenu={handleContextMenu}
+              />
+            </DateTableContainer>
+          ) : (
+            <MonthTable
+              day={selectedDay}
+              loading={isLoading}
+              employees={employees}
+              attendances={attendances}
+              onContextMenu={handleContextMenu}
+            />
+          )}
+
           <Dock open={showDock}>
             <Tooltip title="일괄 변경" placement="left" mouseEnterDelay={0.6}>
               <Button

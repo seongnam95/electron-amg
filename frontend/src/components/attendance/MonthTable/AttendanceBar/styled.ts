@@ -10,8 +10,8 @@ export const AttendanceBarStyled = styled.div`
   justify-content: center;
 
   padding: 0 0.4rem;
-  pointer-events: none;
   z-index: 2;
+  pointer-events: none;
 
   cursor: pointer;
 
@@ -20,13 +20,8 @@ export const AttendanceBarStyled = styled.div`
     height: 1.8rem;
 
     border-radius: 4px;
-    background-color: ${p => p.theme.colors.green};
 
     transition: all 140ms ease-in-out;
     opacity: 0.8;
-
-    :hover {
-      background-color: ${p => p.theme.colors.blue};
-    }
   }
 `;

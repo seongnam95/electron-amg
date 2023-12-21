@@ -6,9 +6,7 @@ import IndexPage from '~/pages';
 import NotFoundPage from '~/pages/404';
 import InitPage from '~/pages/init';
 import LoginPage from '~/pages/login';
-import AttendancePage from '~/pages/management/attendance/attendance';
-import AttendanceDatePage from '~/pages/management/attendance/date';
-import AttendanceMonthPage from '~/pages/management/attendance/month';
+import AttendancePage from '~/pages/management/attendance';
 import DashboardPage from '~/pages/management/dashboard';
 import EmployeePage from '~/pages/management/employee';
 
@@ -22,10 +20,7 @@ const RouterWrap = () => {
         <Route path="management" element={<ManagementLayout />}>
           <Route index path="dashboard" element={<DashboardPage />} />
           <Route path="employee" element={<EmployeePage />} />
-          <Route path="attendance" element={<AttendancePage />}>
-            <Route index path="date" element={<AttendanceDatePage />} />
-            <Route path="month" element={<AttendanceMonthPage />} />
-          </Route>
+          <Route path="attendance" element={<AttendancePage />} />
         </Route>
       </Route>
       <Route path="*" element={<NotFoundPage />} />

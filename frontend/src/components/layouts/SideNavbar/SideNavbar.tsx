@@ -6,11 +6,12 @@ import { useRecoilValue } from 'recoil';
 
 import { breadcrumbStore } from '~/stores/breadcrumb';
 
+import { breadcrumbValues } from '../BreadcrumbConfig/config';
 import { SideNavbarStyled } from './styled';
 
 const SideNavbar = () => {
   const breadcrumb = useRecoilValue(breadcrumbStore);
-  const menus = breadcrumb.filter(crumb => crumb.menu);
+  const menus = Object.values(breadcrumbValues).filter(item => item.menu);
 
   return (
     <SideNavbarStyled className="SideNavbar">
@@ -18,8 +19,7 @@ const SideNavbar = () => {
         <div className="items">
           <AnimatePresence>
             {menus.map(menu => {
-              const isActive = true;
-              console.log(menu.key);
+              const isActive = breadcrumb.some(crumb => crumb.key === menu.key);
               return (
                 <motion.div
                   key={menu.key}

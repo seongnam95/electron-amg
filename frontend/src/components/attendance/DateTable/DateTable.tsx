@@ -1,6 +1,6 @@
 import { Key, MouseEvent } from 'react';
 
-import { Table } from 'antd';
+import { Table, TableProps } from 'antd';
 
 import { useDragScroll } from '~/hooks/useDragScroll';
 import { AttendanceData } from '~/types/attendance';
@@ -28,14 +28,17 @@ const DateTable = ({
   onClickName,
   onContextMenu,
 }: DateTableProps) => {
-  const scrollRef = useDragScroll();
-
   const handleSelectedChange = (_: Key[], datas: DateTableData[]) => {
     const selectedEmployees = datas.map(data => data.employee);
     onSelect?.(selectedEmployees);
   };
 
-  const tableProps = {
+  const tableProps: TableProps<DateTableData> = {
+    scroll: { x: '100%', y: '100%' },
+    showSorterTooltip: false,
+    onRow: row => ({
+      onContextMenu: event => onContextMenu?.(event, row.employee),
+    }),
     rowSelection: {
       selectedRowKeys: selectedEmployeeIds,
       onChange: handleSelectedChange,
@@ -58,14 +61,8 @@ const DateTable = ({
   };
 
   return (
-    <DateTableStyled className="AttendanceTable" ref={scrollRef}>
-      <Table
-        pagination={false}
-        onRow={row => ({
-          onContextMenu: event => onContextMenu?.(event, row.employee),
-        })}
-        {...tableProps}
-      />
+    <DateTableStyled className="AttendanceTable">
+      <Table pagination={false} {...tableProps} />
     </DateTableStyled>
   );
 };

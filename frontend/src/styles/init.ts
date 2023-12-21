@@ -126,57 +126,38 @@ export const InitGlobalStyled = memo(createGlobalStyle`
     }
   }
   
-  /* Table */
-  .ant-table-content {
-    white-space: nowrap;
-    
-    /* Table Head */
-    .ant-table-thead {
-      position: sticky;
-      top: 0;
-      z-index: 11;
+  .ant-table-wrapper {
+    height: 100%;
 
-      .anticon {
-        font-size: 8px;
-      }
-
-      > tr > th {
-        font-weight: normal;
-        font-size: ${p => [p.theme.sizes.textSmall]};
-        color: ${p => p.theme.colors.textColor2};
-        padding: 1rem 1rem;
-        background-color: rgb(250, 250, 250, 0.8);
-        backdrop-filter: blur(10px);
-
-        ::before {
-          display: none;
-        }
-      }
+    .ant-table-cell-fix-left {
+      z-index: 10;
     }
 
-    .ant-table-tbody > tr > td {
-      padding: 1.2rem 1rem;
-      background-color: ${p => p.theme.colors.contentBG};
+    .ant-table-cell-fix-right {
+      z-index: 10;
     }
 
-    .ant-table-cell {
-      :nth-child(1),
-      :nth-child(2) {
-        position: sticky;
-        z-index: 10;
-        background-color: rgb(250, 250, 250, 0.8);
-        backdrop-filter: blur(10px);
-      }
-
-      :nth-child(1) {
-        left: 0;
-      }
-
-      :nth-child(2) {
-        left: 32px;
-        border-right: 1px solid rgb(245, 245, 245);
-      }
+    .ant-spin-nested-loading {
+      height: 100%;
     }
+
+    .ant-spin-container {
+      height: 100%;
+    }
+
+    .ant-table {
+      height: 100%;
+    }
+
+    .ant-table-container{
+      height: 100%;
+    }
+  }
+  
+  /* Table Head */
+  .ant-table-thead .anticon {
+    font-size: 8px;
+    padding: 0 0.4rem;
   }
 
   .ant-tabs-nav-wrap {

@@ -5,13 +5,13 @@ export const DailyAttendanceDoughnutStyled = styled.div`
 
   display: flex;
   flex-direction: column;
-  gap: 2.4rem;
+  gap: 3.2rem;
   align-items: center;
   justify-content: space-between;
 
   .chart-wrap {
     position: relative;
-    max-width: 16rem;
-    max-height: 16rem;
+    max-width: 14rem;
+    max-height: 14rem;
   }
 `;
