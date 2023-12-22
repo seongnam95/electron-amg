@@ -1,8 +1,6 @@
 import { Table, TableProps } from 'antd';
-import dayjs, { Dayjs } from 'dayjs';
 import { useRecoilValue } from 'recoil';
 
-import { useAttendanceQuery } from '~/hooks/queryHooks/useAttendanceQuery';
 import { teamStore } from '~/stores/team';
 import { AttendanceData } from '~/types/attendance';
 import { PositionData } from '~/types/position';
@@ -29,6 +27,7 @@ const MonthlyAttendanceTable = ({ attendances }: MonthlyAttendanceTableProps) =>
   });
 
   const tableProps: TableProps<ReportData<PositionData>> = {
+    pagination: false,
     columns: getColumns(),
     dataSource: reports.map(report => {
       return { key: report.target.id, ...report };
@@ -37,7 +36,7 @@ const MonthlyAttendanceTable = ({ attendances }: MonthlyAttendanceTableProps) =>
 
   return (
     <MonthlyAttendanceTableStyled className="MonthAttendanceTable">
-      <Table pagination={false} {...tableProps} />
+      <Table {...tableProps} />
     </MonthlyAttendanceTableStyled>
   );
 };

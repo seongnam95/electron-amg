@@ -20,7 +20,7 @@ const UnitPayList = ({ attendances }: UnitPayListProps) => {
   const datas = getDataSource(team, attendances);
 
   return (
-    <UnitPayListStyled className="UnitTable">
+    <UnitPayListStyled className="UnitList">
       <List className="unit-list">
         {datas.map((data, idx) => {
           if (datas.length === idx + 1) return;
@@ -28,12 +28,12 @@ const UnitPayList = ({ attendances }: UnitPayListProps) => {
           return (
             <List.Item key={data.key}>
               <Flex>
-                <span className="item-label">{data.name}</span>
-                <Tag className="item-unit">{data.unitPay.toLocaleString()}</Tag>
+                <span className="unit-name">{data.name}</span>
+                <Tag className="unit-pay">{data.unitPay.toLocaleString()}</Tag>
               </Flex>
 
               <Flex gap={12} align="center">
-                <p className="item-total">
+                <p className="unit-total-pay">
                   {data.totalPay.toLocaleString()}
                   <HintText>원</HintText>
                 </p>
@@ -46,7 +46,7 @@ const UnitPayList = ({ attendances }: UnitPayListProps) => {
         })}
       </List>
 
-      <Flex className="total-wrap" align="center" justify="space-between">
+      <Flex className="total-sum-footer" align="center" justify="space-between">
         <HintText>총 합계액</HintText>
         <Flex align="baseline">
           <span className="total-sum">{datas[datas.length - 1].totalPay.toLocaleString()}</span>

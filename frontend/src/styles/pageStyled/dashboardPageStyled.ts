@@ -6,6 +6,11 @@ export const DashboardPageStyled = styled.div`
   height: 100%;
   background-color: ${p => p.theme.colors.innerBg};
 
+  *::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+  }
+
   .control-bar {
     position: absolute;
     width: 100%;
@@ -20,7 +25,7 @@ export const DashboardPageStyled = styled.div`
 
   .card-grid-wrap {
     display: grid;
-    grid-template-columns: minmax(70rem, auto) minmax(37rem, auto);
+    grid-template-columns: minmax(70rem, auto) minmax(40rem, auto);
     grid-template-rows: 38rem auto;
     gap: 2rem;
     margin: 0 auto;

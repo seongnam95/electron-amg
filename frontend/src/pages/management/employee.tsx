@@ -1,42 +1,49 @@
 import { useState } from 'react';
+import { FaTrashAlt } from 'react-icons/fa';
 import { FiPlus } from 'react-icons/fi';
 import { HiOutlineDotsVertical } from 'react-icons/hi';
+import { ImFileExcel } from 'react-icons/im';
 import { VscRefresh } from 'react-icons/vsc';
 
-import { Flex, Segmented, Dropdown, Button } from 'antd';
-import { SegmentedValue } from 'antd/es/segmented';
+import { Flex, Segmented, Dropdown, Button, Tooltip } from 'antd';
 import { useRecoilValue } from 'recoil';
 
+import Dock from '~/components/common/Dock';
 import DropdownItem from '~/components/common/DropdownItem';
 import DraftCreateDrawer from '~/components/drawer/DraftCreateDrawer';
-import EmployeeInfoDrawer from '~/components/drawer/EmployeeInfoDrawer';
 import HistoryDrawer from '~/components/drawer/HistoryDrawer';
 import EmployeeTable from '~/components/employee/EmployeeTable';
+import { useEmployeeInfoDrawer } from '~/hooks/componentHooks/useEmployeeInfoDrawer';
 import { useSoundApp } from '~/hooks/componentHooks/useSoundApp';
 import { useEmployeeQuery } from '~/hooks/queryHooks/useEmployeeQuery';
 import { useCopyText } from '~/hooks/useCopyText';
-import { useDragScroll } from '~/hooks/useDragScroll';
 import { useRemoveEmployee } from '~/hooks/useRemoveEmployee';
 import { teamStore } from '~/stores/team';
 import { EmployeePageStyled } from '~/styles/pageStyled/employeePageStyled';
+import { EmployeeData } from '~/types/employee';
 
 type ViewType = 'all' | 'valid' | 'invalid';
 
 const EmployeePage = () => {
-  // ---- State
+  /** State */
   const team = useRecoilValue(teamStore);
 
-  const [employeeId, setEmployeeId] = useState<string>();
+  const [selectedEmployees, setSelectedEmployees] = useState<EmployeeData[]>([]);
   const [viewType, setViewType] = useState<ViewType>('all');
 
-  const [openEmployeeInfoDrawer, setOpenEmployeeInfoDrawer] = useState<boolean>(false);
   const [openDraftDrawer, setOpenDraftDrawer] = useState<boolean>(false);
   const [openHistoryDrawer, setOpenHistoryDrawer] = useState<boolean>(false);
 
-  // ---- Hook
-  const tableWrapRef = useDragScroll();
+  /** Hook */
   const { copyText } = useCopyText();
   const { soundMessage } = useSoundApp();
+
+  const { openDrawer, renderDrawer } = useEmployeeInfoDrawer();
+
+  const { removeEmployee } = useRemoveEmployee({
+    teamId: team.id,
+    onSuccess: () => setSelectedEmployees([]),
+  });
 
   const { employees, isLoading, refetch } = useEmployeeQuery({
     teamId: team.id,
@@ -44,38 +51,23 @@ const EmployeePage = () => {
     enabled: team.existTeam,
   });
 
-  const { removeEmployee } = useRemoveEmployee({
-    teamId: team.id,
-    onSuccess: () => {
-      setOpenEmployeeInfoDrawer(false);
-    },
-  });
-
-  // ---- Handler
-  const handleChangeView = (view: SegmentedValue) => {
-    setViewType(view as ViewType);
-    if (tableWrapRef.current) tableWrapRef.current.scrollTo({ top: 0 });
-  };
-
-  const handleClickName = (id: string) => {
-    setEmployeeId(id);
-    setOpenEmployeeInfoDrawer(true);
-  };
+  /** Handler */
+  const handleRemove = () => removeEmployee(selectedEmployees.map(employee => employee.id));
 
   const handleRefetch = () => {
     refetch().then(() => {
       soundMessage.info('새로고침 되었습니다.');
-      if (tableWrapRef.current) tableWrapRef.current.scrollTo({ top: 0 });
     });
   };
 
+  /** Config */
   const segmentedOptions = [
     { label: '전체', value: 'all' },
     { label: '계약중', value: 'valid' },
     { label: '계약종료', value: 'invalid' },
   ];
 
-  const menuItems = [
+  const dropdownMenuItems = [
     {
       key: 'create-draft',
       label: <DropdownItem label="계약서 초안 생성" icon={<FiPlus size={18} />} color="#1677FF" />,
@@ -88,12 +80,21 @@ const EmployeePage = () => {
     },
   ];
 
-  const selectedEmployee = employees.find(employee => employee.id === employeeId);
+  const showDock = selectedEmployees.length > 0;
   return (
     <EmployeePageStyled className="EmployeePage">
       <Flex gap={14} align="center" justify="space-between" style={{ padding: '2rem' }}>
-        <Segmented defaultValue={viewType} options={segmentedOptions} onChange={handleChangeView} />
-        <Dropdown placement="bottomRight" trigger={['click']} arrow menu={{ items: menuItems }}>
+        <Segmented
+          defaultValue={viewType}
+          options={segmentedOptions}
+          onChange={view => setViewType(view as ViewType)}
+        />
+        <Dropdown
+          placement="bottomRight"
+          trigger={['click']}
+          arrow
+          menu={{ items: dropdownMenuItems }}
+        >
           <Button
             type="text"
             shape="circle"
@@ -105,22 +106,34 @@ const EmployeePage = () => {
       {/* 근무자 테이블 */}
       <Flex className="table-container" flex={1} vertical>
         <EmployeeTable
-          isLoading={isLoading}
+          loading={isLoading}
           employees={employees}
-          tableWrapRef={tableWrapRef}
           onCopy={copyText}
-          onRemove={removeEmployee}
-          onClickName={handleClickName}
+          onSelect={setSelectedEmployees}
+          onClickName={openDrawer}
         />
-      </Flex>
 
-      {/* 근로자 정보 Drawer */}
-      <EmployeeInfoDrawer
-        open={openEmployeeInfoDrawer}
-        employee={selectedEmployee}
-        onRemove={removeEmployee}
-        onClose={() => setOpenEmployeeInfoDrawer(false)}
-      />
+        <Dock open={showDock}>
+          <Tooltip title="엑셀로 저장" mouseEnterDelay={0.6}>
+            <Button
+              className="excel-btn"
+              type="text"
+              size="large"
+              icon={<ImFileExcel size="2.1rem" />}
+            />
+          </Tooltip>
+
+          <Tooltip title="삭제" mouseEnterDelay={0.6}>
+            <Button
+              danger
+              type="text"
+              size="large"
+              icon={<FaTrashAlt size="2.1rem" />}
+              onClick={handleRemove}
+            />
+          </Tooltip>
+        </Dock>
+      </Flex>
 
       {/* 계약서 폼 생성 Drawer */}
       <DraftCreateDrawer
@@ -138,6 +151,8 @@ const EmployeePage = () => {
           onClose={() => setOpenHistoryDrawer(false)}
         />
       )}
+
+      {renderDrawer}
     </EmployeePageStyled>
   );
 };

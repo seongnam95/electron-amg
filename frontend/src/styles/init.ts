@@ -12,8 +12,8 @@ export const InitGlobalStyled = memo(createGlobalStyle`
   }
 
   *::-webkit-scrollbar {
-    width: 0;
-    height: 0;
+    width: 4px;
+    height: 4px;
   }
 
   *::-webkit-scrollbar-track {
@@ -150,14 +150,17 @@ export const InitGlobalStyled = memo(createGlobalStyle`
     }
 
     .ant-table-container{
-      height: calc(100% - 4.5rem);
+      height: calc(100% - 5rem);
     }
   }
   
   /* Table Head */
-  .ant-table-thead .anticon {
-    font-size: 8px;
-    padding: 0 0.4rem;
+  .ant-table-thead {
+    height: 5rem;
+    .anticon {
+      font-size: 8px;
+      padding: 0 0.4rem;
+    }
   }
 
   .ant-tabs-nav-wrap {

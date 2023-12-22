@@ -11,7 +11,7 @@ interface DockProps {
 
 const Dock = ({ open, children }: DockProps) => {
   return (
-    <DockStyled>
+    <DockStyled className="Dock">
       <AnimatePresence>
         {open ? (
           <motion.div

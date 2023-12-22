@@ -12,18 +12,18 @@ import MonthlyAttendanceTable from '~/components/dashboard/MonthlyAttendanceTabl
 import MonthlyPayChart from '~/components/dashboard/MonthlyPayChart';
 import UnitPayList from '~/components/dashboard/UnitPayList';
 import { useAttendanceQuery } from '~/hooks/queryHooks/useAttendanceQuery';
+import { useEmployeeQuery } from '~/hooks/queryHooks/useEmployeeQuery';
 import { teamStore } from '~/stores/team';
 import { DashboardPageStyled } from '~/styles/pageStyled/dashboardPageStyled';
 
 const DashboardPage = () => {
   const team = useRecoilValue(teamStore);
   const [day, setDay] = useState<Dayjs>(dayjs());
-
+  const { employees } = useEmployeeQuery({ teamId: team.id });
   const { attendances } = useAttendanceQuery({
     teamId: team.id,
     day: day,
     dayType: 'month',
-    enabled: team.existTeam,
   });
 
   const handleChangeDay = (day: Dayjs | null) => {
@@ -34,8 +34,8 @@ const DashboardPage = () => {
     {
       className: 'month-pay-chart-card',
       icon: <FcBarChart size={24} />,
-      title: '월 수당 통계 차트',
-      content: <MonthlyPayChart attendances={attendances} day={day} />,
+      title: '출근 통계 차트',
+      content: <MonthlyPayChart employees={employees} attendances={attendances} day={day} />,
     },
     {
       className: 'unit-pay-list-card',

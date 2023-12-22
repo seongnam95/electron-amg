@@ -23,7 +23,7 @@ export const CardStyled = styled.div`
 
   .card-content {
     flex: 1;
-    overflow: auto;
+    overflow: hidden;
     padding: 0 3rem 3rem;
   }
 `;

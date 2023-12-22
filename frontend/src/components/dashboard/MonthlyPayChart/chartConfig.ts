@@ -7,7 +7,6 @@ const getChartOptions = (
     positionName: string;
     positionColor: string;
     attendanceCounts: number[];
-    dailyPaySums: number[];
   }[],
 ): ChartOptions<'bar'> => {
   return {
@@ -44,7 +43,7 @@ const getChartOptions = (
           label: (item: TooltipItem<'bar'>) => {
             const label = item.dataset.label || '';
             const value = item.formattedValue || '';
-            return ` ${label} : ${value} 원`;
+            return ` ${label} : ${value} 명`;
           },
           afterBody: (items: TooltipItem<'bar'>[]) => {
             const dateIndex = items[0].dataIndex;
@@ -53,12 +52,7 @@ const getChartOptions = (
               return total + stats.attendanceCounts[dateIndex];
             }, 0);
 
-            const totalAmount = items.reduce((total, item) => {
-              const pay = Number(item.formattedValue.replaceAll(',', ''));
-              return total + pay;
-            }, 0);
-
-            return `\n🙋🏻 총 출근 인원: ${attendanceCount}명\n📌 일일 합계액: ${totalAmount.toLocaleString()}원`;
+            return `\n🙋🏻 출근 인원: ${attendanceCount}명`;
           },
         },
       },

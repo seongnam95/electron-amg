@@ -43,7 +43,7 @@ const UnitForm = ({
         initialValues={{ units: values }}
         onFinish={handleFinish}
         disabled={isLoading}
-        validateTrigger="onFinish"
+        validateTrigger="onSubmit"
         onChange={handleChange}
       >
         <Space direction="vertical" size={24}>

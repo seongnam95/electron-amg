@@ -1,4 +1,5 @@
 import { AttendanceData } from '~/types/attendance';
+import { PositionData } from '~/types/position';
 import { ReportData } from '~/types/statistics';
 import { TeamData } from '~/types/team';
 
@@ -13,6 +14,7 @@ export const getAttendanceStats = (
   team: TeamData,
   pay: number,
   attendances: AttendanceData[],
+  preset?: number,
 ): ReportData => {
   const { mealCost, otPay } = team;
 
@@ -20,7 +22,7 @@ export const getAttendanceStats = (
   const earnsIncentiveCount = attendances.filter(attendance => attendance.earnsIncentive).length;
 
   // 총 출근일 수
-  const attendanceCount = attendances.length;
+  const attendanceCount = preset ? preset : attendances.length;
 
   // 식대 포함 합계
   const mealCostCount = attendances.filter(attendance => attendance.includeMealCost).length;

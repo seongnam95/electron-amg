@@ -8,8 +8,10 @@ import { useRecoilValue } from 'recoil';
 import { useAttendanceQuery } from '~/hooks/queryHooks/useAttendanceQuery';
 import { useEmployeeQuery } from '~/hooks/queryHooks/useEmployeeQuery';
 import { teamStore } from '~/stores/team';
+import { colors } from '~/styles/themes';
 import { getAttendanceStats } from '~/utils/statistics/report';
 
+import { PositionColorBox } from '../MonthlyAttendanceTable/styled';
 import { DailyAttendanceDoughnutStyled } from './styled';
 
 export interface DailyAttendanceDoughnutProps {
@@ -36,63 +38,40 @@ const DailyAttendanceDoughnut = ({ day = dayjs() }: DailyAttendanceDoughnutProps
     return { ...stats, target: position };
   });
 
-  const nonAttendanceCount = employees.length - attendances.length;
-
-  const dataSource = {
-    labels: [...reports.map(report => report.target.name), '미출근'],
-    datasets: [
-      {
-        data: [...reports.map(report => report.attendanceCount), nonAttendanceCount],
-        backgroundColor: [...team.positions.map(position => position.color), '#e8e8e8'],
-        borderWidth: 0,
-      },
-    ],
-  };
-
-  const EmptyDoughnutData = {
-    labels: ['데이터 없음'],
-    datasets: [
-      {
-        data: [100],
-        backgroundColor: ['#e8e8e8'],
-        borderWidth: 0,
-      },
-    ],
-  };
-
-  const isEmptyAttendance =
-    reports.reduce((total, value) => (total += value.attendanceCount), 0) === 0;
-
   return (
     <DailyAttendanceDoughnutStyled className="AttendanceDoughnut">
-      <Flex className="chart-wrap" justify="space-between">
-        <Doughnut
-          data={isEmptyAttendance ? EmptyDoughnutData : dataSource}
-          options={{
-            cutout: '50%',
-            plugins: {
-              legend: { display: false },
-              tooltip: {
-                callbacks: {
-                  title: () => day.format('YY년 MM월 DD일'),
-                  label: item => ` ${item.label} : ${item.formattedValue}명`,
-                },
-              },
-            },
-          }}
-        />
+      <Flex vertical style={{ width: '100%' }}>
+        {reports.map(report => {
+          const totalEmployeeCount = employees.filter(
+            employee => employee.position.id === report.target.id,
+          ).length;
+
+          return (
+            <Flex justify="space-between">
+              <Flex className="position-label-wrap" align="center" gap={6}>
+                <PositionColorBox color={report.target.color} />
+                {report.target.name}
+              </Flex>
+              <Flex gap={4} align="center">
+                <Text type="secondary">{totalEmployeeCount} / </Text>
+                <Text strong>{report.attendanceCount}</Text>
+                <Text type="secondary">명</Text>
+              </Flex>
+            </Flex>
+          );
+        })}
       </Flex>
 
       <Flex vertical gap={4} style={{ width: '100%' }}>
         <Flex flex={1} gap={24} justify="space-between">
-          <Text type="secondary">출근 예상 인원</Text>
+          <Text type="secondary">전체 인원</Text>
           <Flex gap={4} align="center">
             <Text strong>{employees.length}</Text>
             <Text type="secondary">명</Text>
           </Flex>
         </Flex>
         <Flex flex={1} gap={24} justify="space-between">
-          <Text type="secondary">출근 인원</Text>
+          <Text type="secondary">총 출근 인원</Text>
           <Flex gap={4} align="center">
             <Text strong>{attendances.length}</Text>
             <Text type="secondary">명</Text>

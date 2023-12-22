@@ -5,12 +5,12 @@ import { Button, Flex, Segmented, Tooltip } from 'antd';
 import dayjs, { Dayjs } from 'dayjs';
 import { useRecoilValue } from 'recoil';
 
-import AttendanceStats from '~/components/attendance/AttendanceStats';
 import DateTable from '~/components/attendance/DateTable';
-import DateTableContainer from '~/components/attendance/DateTableContainer';
 import MonthTable from '~/components/attendance/MonthTable';
+import Card from '~/components/common/Card';
 import AntDatePicker from '~/components/common/DatePicker';
 import Dock from '~/components/common/Dock';
+import DailyAttendanceDoughnut from '~/components/dashboard/DailyAttendanceDoughnut';
 import { useAttendanceModal } from '~/hooks/componentHooks/useAttendanceModal';
 import { useEmployeeInfoDrawer } from '~/hooks/componentHooks/useEmployeeInfoDrawer';
 import { useAttendanceQuery } from '~/hooks/queryHooks/useAttendanceQuery';
@@ -66,7 +66,7 @@ const AttendancePage = () => {
   return (
     <AttendancePageStyled>
       {/* 컨트롤 바 */}
-      <Flex align="center" justify="space-between" style={{ padding: '2rem' }}>
+      <Flex align="center" gap={12} style={{ padding: '2rem' }}>
         <Segmented
           options={[
             { label: '일간', value: 'date' },
@@ -82,44 +82,43 @@ const AttendancePage = () => {
         />
       </Flex>
 
-      <Flex className="attendance-content-wrap" vertical flex={1}>
-        {/* 테이블 Wrap */}
-        <Flex flex={1} style={{ overflow: 'hidden' }}>
-          {viewType === 'date' ? (
-            <DateTableContainer>
-              <DateTable
-                employees={employees}
-                attendances={attendances}
-                selectedEmployeeIds={selectedEmployeeIds}
-                disabledSelect={isEditing}
-                onClickName={openDrawer}
-                onSelect={setSelectedEmployees}
-                onContextMenu={handleContextMenu}
-              />
-            </DateTableContainer>
-          ) : (
-            <MonthTable
-              day={selectedDay}
-              loading={isLoading}
+      {/* 테이블 Wrap */}
+      <Flex className="table-wrap" flex={1}>
+        {viewType === 'date' ? (
+          <Flex className="date-table-container">
+            <DateTable
               employees={employees}
               attendances={attendances}
+              selectedEmployeeIds={selectedEmployeeIds}
+              disabledSelect={isEditing}
+              onClickName={openDrawer}
+              onSelect={setSelectedEmployees}
               onContextMenu={handleContextMenu}
             />
-          )}
+            <Card className="attendance-stats-card" title="🙋‍♂️ 출근현황">
+              <DailyAttendanceDoughnut day={selectedDay} />
+            </Card>
+          </Flex>
+        ) : (
+          <MonthTable
+            day={selectedDay}
+            loading={isLoading}
+            employees={employees}
+            attendances={attendances}
+            onContextMenu={handleContextMenu}
+          />
+        )}
 
-          <Dock open={showDock}>
-            <Tooltip title="일괄 변경" placement="left" mouseEnterDelay={0.6}>
-              <Button
-                type="text"
-                size="large"
-                icon={<RiExchangeFundsLine size="2.1rem" />}
-                onClick={handleBulkEditClick}
-              />
-            </Tooltip>
-          </Dock>
-        </Flex>
-
-        <AttendanceStats attendances={attendances} />
+        <Dock open={showDock}>
+          <Tooltip title="일괄 변경" placement="left" mouseEnterDelay={0.6}>
+            <Button
+              type="text"
+              size="large"
+              icon={<RiExchangeFundsLine size="2.1rem" />}
+              onClick={handleBulkEditClick}
+            />
+          </Tooltip>
+        </Dock>
       </Flex>
 
       {renderModal}

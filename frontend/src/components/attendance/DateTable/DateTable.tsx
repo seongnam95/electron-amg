@@ -2,7 +2,6 @@ import { Key, MouseEvent } from 'react';
 
 import { Table, TableProps } from 'antd';
 
-import { useDragScroll } from '~/hooks/useDragScroll';
 import { AttendanceData } from '~/types/attendance';
 import { EmployeeData } from '~/types/employee';
 
@@ -34,8 +33,6 @@ const DateTable = ({
   };
 
   const tableProps: TableProps<DateTableData> = {
-    scroll: { x: '100%', y: '100%' },
-    showSorterTooltip: false,
     onRow: row => ({
       onContextMenu: event => onContextMenu?.(event, row.employee),
     }),
@@ -61,8 +58,13 @@ const DateTable = ({
   };
 
   return (
-    <DateTableStyled className="AttendanceTable">
-      <Table pagination={false} {...tableProps} />
+    <DateTableStyled className="DateTable">
+      <Table
+        pagination={false}
+        showSorterTooltip={false}
+        scroll={{ x: '100%', y: '100%' }}
+        {...tableProps}
+      />
     </DateTableStyled>
   );
 };

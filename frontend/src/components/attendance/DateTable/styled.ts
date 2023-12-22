@@ -5,5 +5,4 @@ export const DateTableStyled = styled.div`
   overflow: hidden;
   border: 1px solid ${p => p.theme.colors.borderColor};
   border-radius: 8px;
-  margin: 0 0 2rem 2rem;
 `;

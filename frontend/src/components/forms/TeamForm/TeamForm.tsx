@@ -41,7 +41,7 @@ const TeamForm = ({ values = defaultValues, submitBtnText, onSubmit }: TeamFormP
         labelCol={{ span: 12 }}
         labelAlign="left"
         autoComplete="off"
-        validateTrigger="onFinish"
+        validateTrigger="onSubmit"
         style={{ minWidth: '34rem' }}
         onFinish={handleFinish}
       >

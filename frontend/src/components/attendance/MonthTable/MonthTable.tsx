@@ -1,4 +1,4 @@
-import { MouseEvent, useMemo } from 'react';
+import { MouseEvent, useEffect, useRef } from 'react';
 
 import { Table, TableProps } from 'antd';
 import { Dayjs } from 'dayjs';
@@ -23,16 +23,19 @@ const MonthTable = ({ day, employees, attendances, loading, onContextMenu }: Mon
   const team = useRecoilValue(teamStore);
 
   const tableProps: TableProps<MonthTableData> = {
-    pagination: false,
-    scroll: { x: '100%', y: '100%' },
-    showSorterTooltip: false,
-    columns: useMemo(() => getColumns(day, { onContextMenu: onContextMenu }), []),
-    dataSource: useMemo(() => getDataSource(team, employees, attendances), [attendances]),
+    columns: getColumns(day, { onContextMenu: onContextMenu }),
+    dataSource: getDataSource(team, employees, attendances),
   };
 
   return (
-    <MonthTableStyled className="AttendanceTable">
-      <Table loading={loading} {...tableProps} />
+    <MonthTableStyled className="MonthTable">
+      <Table
+        loading={loading}
+        pagination={false}
+        showSorterTooltip={false}
+        scroll={{ x: '100%', y: '100%' }}
+        {...tableProps}
+      />
     </MonthTableStyled>
   );
 };

@@ -1,23 +1,17 @@
 import { Button, Flex, TableColumnsType, Tag } from 'antd';
 
 import { EmployeeData } from '~/types/employee';
-import { PositionData, SALARY } from '~/types/position';
+import { SALARY } from '~/types/position';
 import { formatPhoneNumber, formatSSN } from '~/utils/formatData';
 
-export interface EmployeeTableDataType {
+export interface EmployeeTableData {
   key: string;
-  name: string;
-  phone: string;
-  ssn: string;
-  bank: string;
-  bankNum: string;
-  endPeriod: string;
-  position: PositionData;
+  employee: EmployeeData;
 }
 
 interface ColumnProps {
   employees?: EmployeeData[];
-  onClickName: (id: string) => void;
+  onClickName: (employee: EmployeeData) => void;
   onCopy?: (data: string) => void;
 }
 
@@ -25,7 +19,7 @@ export const getColumns = ({
   employees,
   onClickName,
   onCopy,
-}: ColumnProps): TableColumnsType<EmployeeTableDataType> => {
+}: ColumnProps): TableColumnsType<EmployeeTableData> => {
   const bankFilters = [...new Set(employees?.map(employee => employee.bank))].map(bank => {
     return {
       value: bank,
@@ -59,13 +53,13 @@ export const getColumns = ({
       width: 90,
       ellipsis: true,
       fixed: 'left',
-      sorter: (a, b) => a.name.localeCompare(b.name),
-      render: (_, { key, name }) => {
-        const handleClick = () => onClickName(key.toString());
+      sorter: (a, b) => a.employee.name.localeCompare(b.employee.name),
+      render: (_, { employee }) => {
+        const handleClick = () => onClickName(employee);
 
         return (
           <Button size="small" type="text" onClick={handleClick}>
-            <b>{name}</b>
+            <b>{employee.name}</b>
           </Button>
         );
       },
@@ -77,8 +71,8 @@ export const getColumns = ({
       width: 90,
       align: 'center',
       filters: positionFilters,
-      onFilter: (value, record) => record.position.name === value,
-      render: (_, { position }) => {
+      onFilter: (value, record) => record.employee.position.name === value,
+      render: (_, { employee: { position } }) => {
         return (
           <Tag
             style={{ width: 64, textAlign: 'center', marginInlineEnd: 0 }}
@@ -95,7 +89,7 @@ export const getColumns = ({
       title: '연락처',
       width: 140,
       align: 'center',
-      render: (_, { phone }) => (
+      render: (_, { employee: { phone } }) => (
         <Button size="small" type="text" onContextMenu={() => onCopy?.(phone)}>
           {formatPhoneNumber(phone)}
         </Button>
@@ -107,7 +101,7 @@ export const getColumns = ({
       title: '주민등록번호',
       width: 150,
       align: 'center',
-      render: (_, { ssn }) => (
+      render: (_, { employee: { ssn } }) => (
         <Button size="small" type="text" onContextMenu={() => onCopy?.(ssn)}>
           {formatSSN(ssn)}
         </Button>
@@ -120,8 +114,8 @@ export const getColumns = ({
       width: 210,
       align: 'center',
       filters: bankFilters,
-      onFilter: (value, record) => record.bank === value,
-      render: (_, { bank, bankNum }) => (
+      onFilter: (value, record) => record.employee.bank === value,
+      render: (_, { employee: { bank, bankNum } }) => (
         <Button size="small" type="text" onContextMenu={() => onCopy?.(`${bank} ${bankNum}`)}>
           <Flex justify="space-between" style={{ width: 180, maxWidth: 180 }}>
             <Tag style={{ width: 50, textAlign: 'center' }}>{bank}</Tag>
@@ -137,8 +131,8 @@ export const getColumns = ({
       width: 160,
       align: 'center',
       filters: salaryFilters,
-      onFilter: (value, record) => record.position.salaryCode === value,
-      render: (_, { position }) => (
+      onFilter: (value, record) => record.employee.position.salaryCode === value,
+      render: (_, { employee: { position } }) => (
         <Flex justify="center">
           <Flex justify="space-between" style={{ width: 130, maxWidth: 130 }}>
             <Tag>{SALARY[position.salaryCode]}</Tag>
@@ -153,7 +147,7 @@ export const getColumns = ({
       width: 110,
       title: '계약 만료일',
       align: 'center',
-      render: (_, { endPeriod }) => (
+      render: (_, { employee: { endPeriod } }) => (
         <Tag style={{ width: '8rem', textAlign: 'center', marginInlineEnd: 0 }}>{endPeriod}</Tag>
       ),
     },
