@@ -1,5 +1,5 @@
 import { useSoundApp } from './componentHooks/useSoundApp';
-import { useEmployeeRemoveMutation } from './queryHooks/useEmployeeQuery';
+import { useEmployeeRemove } from './queryHooks/useEmployeeQuery';
 
 interface RemoveEmployeeOptions {
   teamId: string;
@@ -10,7 +10,7 @@ interface RemoveEmployeeOptions {
 export const useRemoveEmployee = ({ teamId, onSuccess, onCancel }: RemoveEmployeeOptions) => {
   const { soundMessage, soundModal } = useSoundApp();
 
-  const { removeEmployeeMutate } = useEmployeeRemoveMutation({
+  const { removeEmployeeMutate } = useEmployeeRemove({
     teamId: teamId,
     onError: msg => soundMessage.error(msg),
     onSuccess: onSuccess,

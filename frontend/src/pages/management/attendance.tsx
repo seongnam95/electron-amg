@@ -14,7 +14,7 @@ import DailyAttendanceDoughnut from '~/components/dashboard/DailyAttendanceDough
 import { useAttendanceModal } from '~/hooks/componentHooks/useAttendanceModal';
 import { useEmployeeInfoDrawer } from '~/hooks/componentHooks/useEmployeeInfoDrawer';
 import { useAttendanceQuery } from '~/hooks/queryHooks/useAttendanceQuery';
-import { useEmployeeQuery } from '~/hooks/queryHooks/useEmployeeQuery';
+import { useEmployee } from '~/hooks/queryHooks/useEmployeeQuery';
 import { teamStore } from '~/stores/team';
 import { AttendancePageStyled } from '~/styles/pageStyled/attendancePageStyled';
 import { EmployeeData } from '~/types/employee';
@@ -31,7 +31,7 @@ const AttendancePage = () => {
   const [selectedEmployees, setSelectedEmployees] = useState<EmployeeData[]>([]);
   const selectedEmployeeIds = selectedEmployees.map(employee => employee.id);
 
-  const { employees } = useEmployeeQuery({ teamId: team.id });
+  const { employees } = useEmployee({ teamId: team.id });
   const { attendances, isLoading } = useAttendanceQuery({
     day: selectedDay,
     dayType: viewType,
@@ -83,7 +83,7 @@ const AttendancePage = () => {
       </Flex>
 
       {/* 테이블 Wrap */}
-      <Flex className="table-wrap" flex={1}>
+      <Flex className="table-wrap">
         {viewType === 'date' ? (
           <Flex className="date-table-container">
             <DateTable
@@ -95,9 +95,12 @@ const AttendancePage = () => {
               onSelect={setSelectedEmployees}
               onContextMenu={handleContextMenu}
             />
-            <Card className="attendance-stats-card" title="🙋‍♂️ 출근현황">
-              <DailyAttendanceDoughnut day={selectedDay} />
-            </Card>
+            <Flex vertical gap={20}>
+              <Card title="🙋‍♂️ 출근현황" style={{ width: '24rem' }}>
+                <DailyAttendanceDoughnut day={selectedDay} />
+              </Card>
+              <Card>d</Card>
+            </Flex>
           </Flex>
         ) : (
           <MonthTable

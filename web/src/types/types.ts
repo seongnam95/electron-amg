@@ -27,7 +27,6 @@ export interface EmployeeType {
   id: string;
   name: string;
   phone: string;
-  address: string;
   bank: string;
   bankNumCover: string;
 }
@@ -35,7 +34,6 @@ export interface EmployeeType {
 export interface ContractorData {
   name: string;
   phone: string;
-  address: string;
   signBase64: string;
 }
 
@@ -44,7 +42,6 @@ export interface FormValueType {
   phone: string;
   idFront: string;
   idBack: string;
-  address: string;
   bank: string;
   bankNum: string;
   idCard: string;

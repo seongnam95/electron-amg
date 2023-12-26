@@ -6,7 +6,7 @@ import { InputRef, Form, Button, Flex, Space, Input, InputNumber } from 'antd';
 
 import { UnitCreateBody } from '~/types/unit';
 
-import { initUnits } from './formConfig';
+import { initUnits } from './config';
 import { UnitFormStyled } from './styled';
 
 export interface UnitFormProps {

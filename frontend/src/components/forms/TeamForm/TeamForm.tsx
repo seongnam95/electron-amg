@@ -4,7 +4,7 @@ import { InputRef, Form, Button, Flex, Space } from 'antd';
 
 import { TeamCreateBody } from '~/types/team';
 
-import { formItems } from './formConfig';
+import { formItems } from './config';
 
 const defaultValues: TeamCreateBody = {
   name: '',

@@ -63,7 +63,8 @@ export const getColumns = ({ employees, onClickName }: ColumnProps): ColumnsType
       align: 'center',
       filters: positionFilters,
       onFilter: (value, record) => record.employee.position.name === value,
-      render: (_, { employee: { position } }) => {
+      render: (_, { attendance, employee }) => {
+        const position = attendance ? attendance.position : employee.position;
         return (
           <Tag
             style={{ width: 64, textAlign: 'center', marginInlineEnd: 0 }}

@@ -15,7 +15,7 @@ import HistoryDrawer from '~/components/drawer/HistoryDrawer';
 import EmployeeTable from '~/components/employee/EmployeeTable';
 import { useEmployeeInfoDrawer } from '~/hooks/componentHooks/useEmployeeInfoDrawer';
 import { useSoundApp } from '~/hooks/componentHooks/useSoundApp';
-import { useEmployeeQuery } from '~/hooks/queryHooks/useEmployeeQuery';
+import { useEmployee } from '~/hooks/queryHooks/useEmployeeQuery';
 import { useCopyText } from '~/hooks/useCopyText';
 import { useRemoveEmployee } from '~/hooks/useRemoveEmployee';
 import { teamStore } from '~/stores/team';
@@ -45,7 +45,7 @@ const EmployeePage = () => {
     onSuccess: () => setSelectedEmployees([]),
   });
 
-  const { employees, isLoading, refetch } = useEmployeeQuery({
+  const { employees, isLoading, refetch } = useEmployee({
     teamId: team.id,
     valid: viewType === 'valid' ? true : viewType === 'invalid' ? false : undefined,
     enabled: team.existTeam,

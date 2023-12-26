@@ -8,7 +8,6 @@ from datetime import datetime, date
 class EmployeeBase(BaseModel):
     name: str
     phone: str
-    address: str
     start_period: date
     end_period: date
     bank: str
@@ -27,7 +26,6 @@ class EmployeeCreate(EmployeeBase):
 
 class EmployeeUpdate(BaseModel):
     phone: Optional[str] = None
-    address: Optional[str] = None
     bank: Optional[str] = None
     bank_num: Optional[str] = None
     bank_book: Optional[str] = None
@@ -52,7 +50,6 @@ class EncryptEmployee(BaseModel):
     id: str
     name: str
     phone: str
-    address: str
     start_period: date
     end_period: date
     bank: str
@@ -79,7 +76,6 @@ class EmployeeCoveringResponse(BaseModel):
     id: str
     name: str
     phone: str
-    address: str
     bank: str
     bank_num_cover: str
 
@@ -92,14 +88,14 @@ class EmployeeResponse(BaseModel):
     id: str
     name: str
     phone: str
-    address: str
     ssn: str
     bank: str
     bank_num: str
     start_period: date
     end_period: date
-    create_date: datetime
+    position_id: str
     position: PositionResponse
+    create_date: datetime
 
     class Config:
         from_attributes = True

@@ -26,7 +26,6 @@ export const draftState = atom<DraftData>({
 export const initContractor: ContractorData = {
   name: "",
   phone: "",
-  address: "",
   signBase64: "",
 };
 

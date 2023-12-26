@@ -1,4 +1,6 @@
-import styled from 'styled-components';
+import { HTMLAttributes } from 'react';
+
+import styled, { CSSProperties } from 'styled-components';
 
 export const TeamSelectorStyled = styled.div`
   display: flex;
@@ -27,12 +29,5 @@ export const TeamSelectorStyled = styled.div`
         background-color: ${p => p.theme.colors.innerBg};
       }
     }
-  }
-
-  .color-bar {
-    width: 0.8rem;
-    height: 1.8rem;
-    border-radius: 0.2rem;
-    transition: opacity 120ms ease-in-out;
   }
 `;

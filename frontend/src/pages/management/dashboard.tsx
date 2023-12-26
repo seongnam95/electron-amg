@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { FaFlag } from 'react-icons/fa';
 import { FaCalendarDays, FaHouseFlag } from 'react-icons/fa6';
 import { FcBarChart } from 'react-icons/fc';
 
@@ -12,14 +13,14 @@ import MonthlyAttendanceTable from '~/components/dashboard/MonthlyAttendanceTabl
 import MonthlyPayChart from '~/components/dashboard/MonthlyPayChart';
 import UnitPayList from '~/components/dashboard/UnitPayList';
 import { useAttendanceQuery } from '~/hooks/queryHooks/useAttendanceQuery';
-import { useEmployeeQuery } from '~/hooks/queryHooks/useEmployeeQuery';
+import { useEmployee } from '~/hooks/queryHooks/useEmployeeQuery';
 import { teamStore } from '~/stores/team';
 import { DashboardPageStyled } from '~/styles/pageStyled/dashboardPageStyled';
 
 const DashboardPage = () => {
   const team = useRecoilValue(teamStore);
   const [day, setDay] = useState<Dayjs>(dayjs());
-  const { employees } = useEmployeeQuery({ teamId: team.id });
+  const { employees } = useEmployee({ teamId: team.id });
   const { attendances } = useAttendanceQuery({
     teamId: team.id,
     day: day,
@@ -39,7 +40,7 @@ const DashboardPage = () => {
     },
     {
       className: 'unit-pay-list-card',
-      icon: <FaHouseFlag color="#f27373" size={19} />,
+      icon: <FaFlag color="#f27373" size={17} />,
       title: '대행사 청구 단가',
       content: <UnitPayList attendances={attendances} employees={employees} />,
     },

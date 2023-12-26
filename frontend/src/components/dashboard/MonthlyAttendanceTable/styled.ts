@@ -14,10 +14,3 @@ export const HintText = styled.span`
   line-height: ${p => p.theme.sizes.textSmall};
   margin-top: 2px;
 `;
-
-export const PositionColorBox = styled.div<{ color?: string }>`
-  width: 1.2rem;
-  height: 1.4rem;
-  border-radius: 0.3rem;
-  background-color: ${p => p.color};
-`;

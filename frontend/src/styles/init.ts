@@ -157,10 +157,14 @@ export const InitGlobalStyled = memo(createGlobalStyle`
   /* Table Head */
   .ant-table-thead {
     height: 5rem;
+
     .anticon {
       font-size: 8px;
       padding: 0 0.4rem;
     }
+  }
+
+  .ant-table-cell {
   }
 
   .ant-tabs-nav-wrap {
@@ -178,11 +182,14 @@ export const InitGlobalStyled = memo(createGlobalStyle`
     .ant-input-prefix {
       margin-inline-end: 12px;
     }
-
     
     svg {
       color: #909090;
     }
+  }
+
+  .ant-input-number .ant-input-number-handler-wrap {
+    display: none;
   }
   
   .ant-input-wrapper .ant-input-group-addon {

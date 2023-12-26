@@ -67,7 +67,6 @@ const validationSchemas = {
         "핸드폰 번호가 올바르게 입력되지 않았습니다."
       )
       .required("핸드폰 번호 입력은 필수입니다."),
-    address: Yup.string().required("주소 입력은 필수입니다."),
   }),
 
   // 주소, 은행명, 계좌번호
@@ -99,7 +98,6 @@ export const STEPS = [
       idFront: "",
       idBack: "",
       phone: "",
-      address: "",
     } as FormValueType,
   },
   {

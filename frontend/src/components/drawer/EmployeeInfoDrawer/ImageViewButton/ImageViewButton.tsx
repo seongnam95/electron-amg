@@ -15,7 +15,7 @@ const ImageViewButton = ({ icon, label, src }: ImageViewButtonProps) => {
 
   return (
     <ImageViewButtonStyled>
-      <button className="img-btn" onClick={() => setOpen(true)}>
+      <button disabled={!src} className="img-btn" onClick={() => setOpen(true)}>
         {icon}
         {label}
       </button>

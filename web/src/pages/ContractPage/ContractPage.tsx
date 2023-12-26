@@ -69,7 +69,6 @@ const ContractPage = () => {
     const body: CreateEmployeeBody = {
       name: values.name,
       phone: values.phone,
-      address: values.address,
       startPeriod: draft.startPeriod,
       endPeriod: draft.endPeriod,
       bank: values.bank,
@@ -84,7 +83,6 @@ const ContractPage = () => {
     createEmployee({ teamId: draft.teamId, body: body }).then(() => {
       setContractor({
         name: values.name,
-        address: values.address,
         phone: values.phone,
         signBase64: values.signBase64,
       });

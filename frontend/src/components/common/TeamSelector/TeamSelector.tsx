@@ -1,9 +1,12 @@
+import { FaFlag } from 'react-icons/fa';
+import { FaBuildingFlag } from 'react-icons/fa6';
 import { FiChevronDown } from 'react-icons/fi';
 
-import { Dropdown, Skeleton } from 'antd';
+import { Dropdown, Flex, Skeleton, Tag } from 'antd';
 import { ItemType } from 'antd/es/menu/hooks/useItems';
 import { useRecoilState, useRecoilValue } from 'recoil';
 
+import ColorBar from '~/components/employee/ColorBar';
 import { useTeamQuery } from '~/hooks/queryHooks/useTeamQuery';
 import { teamStore } from '~/stores/team';
 import { userStore } from '~/stores/user';
@@ -67,13 +70,36 @@ const TeamSelector = () => {
             <label className="team-label selector">
               <FiChevronDown style={{ marginLeft: '8px' }} />
               {team.name}
-              <span className="color-bar" style={{ backgroundColor: team.color }} />
+              <Flex
+                align="center"
+                justify="center"
+                style={{
+                  width: '2rem',
+                  height: '2rem',
+                  backgroundColor: team.color,
+                  borderRadius: '50%',
+                }}
+              >
+                <FaFlag color={'white'} size={9} />
+              </Flex>
             </label>
           </div>
         </Dropdown>
       ) : (
         <label className="team-label">
-          <span className="color-bar" style={{ backgroundColor: team.color }} />
+          <Flex
+            align="center"
+            justify="center"
+            style={{
+              width: '2rem',
+              height: '2rem',
+              backgroundColor: team.color,
+              borderRadius: '50%',
+            }}
+          >
+            <FaFlag color={'white'} size={9} />
+          </Flex>
+
           {team.name}
         </label>
       )}

@@ -21,12 +21,22 @@ export const ImageViewButtonStyled = styled.div`
     transition: all 200ms ease-in-out;
     cursor: pointer;
 
+    :disabled {
+      color: ${p => p.theme.colors.textColor3};
+      background-color: ${p => p.theme.colors.disableBg};
+      cursor: not-allowed;
+
+      svg {
+        color: ${p => p.theme.colors.textColor3};
+      }
+    }
+
     svg {
       color: ${p => p.theme.colors.textColor2};
       transition: all 200ms ease-in-out;
     }
 
-    :hover {
+    :not(:disabled):hover {
       color: ${p => p.theme.colors.primary};
       background-color: ${p => p.theme.colors.selectedHoverBg};
 

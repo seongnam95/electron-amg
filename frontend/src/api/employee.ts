@@ -1,6 +1,6 @@
 import { AxiosResponse } from 'axios';
 
-import { EmployeeData, EmployeeDocument } from '~/types/employee';
+import { EmployeeData, EmployeeDocument, EmployeeUpdateBody } from '~/types/employee';
 
 import axiosPrivate from './axios';
 import { BaseResponse, DataListResponse, DataResponse } from './response';
@@ -34,6 +34,22 @@ export const fetchEmployeeDocument =
       `${endpoint}/${employeeId}/document`,
     );
 
+    return data.result;
+  };
+
+/**
+ * Employee 업데이트 API
+ * @param EmployeeAxiosProps
+ * @returns Promise<EmployeeData[]>
+ */
+export const updateEmployee =
+  (employeeId?: string) =>
+  async (body: EmployeeUpdateBody): Promise<EmployeeData> => {
+    const employeeEndpoint = import.meta.env.VITE_EMPLOYEE_ENDPOINT;
+    const { data } = await axiosPrivate.put<DataResponse<EmployeeData>>(
+      `${employeeEndpoint}/${employeeId}`,
+      body,
+    );
     return data.result;
   };
 

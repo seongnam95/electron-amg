@@ -1,10 +1,11 @@
 import { Flex, TableColumnsType } from 'antd';
 
 import Info from '~/components/common/Info';
+import ColorBar from '~/components/employee/ColorBar';
 import { PositionData } from '~/types/position';
 import { ReportData } from '~/types/statistics';
 
-import { HintText, PositionColorBox } from './styled';
+import { HintText } from './styled';
 
 export const getColumns = (): TableColumnsType<ReportData<PositionData>> => {
   return [
@@ -16,7 +17,7 @@ export const getColumns = (): TableColumnsType<ReportData<PositionData>> => {
       align: 'left',
       render: (_, { target: { name, color } }) => (
         <Flex gap={8} align="center">
-          <PositionColorBox color={color} />
+          <ColorBar color={color} height="1.5rem" />
           {name}
         </Flex>
       ),

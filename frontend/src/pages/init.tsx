@@ -9,7 +9,7 @@ import Card from '~/components/common/Card';
 import PositionManager from '~/components/common/PositionManager';
 import TeamForm from '~/components/forms/TeamForm';
 import UnitForm from '~/components/forms/UnitForm';
-import { initUnits } from '~/components/forms/UnitForm/formConfig';
+import { initUnits } from '~/components/forms/UnitForm/config';
 import { usePositionCreateMutation } from '~/hooks/queryHooks/usePositionQuery';
 import { useTeamCreateMutation } from '~/hooks/queryHooks/useTeamQuery';
 import { userStore } from '~/stores/user';

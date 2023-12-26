@@ -32,7 +32,6 @@ const InfoDescriptions = ({ team, employee, unit, documents, loading }: InfoDesc
       >
         <Descriptions.Item label="이름">{employee.name}</Descriptions.Item>
         <Descriptions.Item label="주민등록번호">{formatSSN(employee.ssn)}</Descriptions.Item>
-        <Descriptions.Item label="거주지">{employee.address}</Descriptions.Item>
         <Descriptions.Item label="연락처">{formatPhoneNumber(employee.phone)}</Descriptions.Item>
         <Descriptions.Item label="계좌번호">
           <Tag>{employee.bank}</Tag>
@@ -78,7 +77,7 @@ const InfoDescriptions = ({ team, employee, unit, documents, loading }: InfoDesc
           icon={<RiBankCard2Fill rotate="-60deg" size={24} style={{ padding: '1px' }} />}
           src={documents?.bankBook}
         />
-        <ImageViewButton label="계약서" icon={<FaSignature size={24} />} src={documents?.idCard} />
+        <ImageViewButton label="계약서" icon={<FaSignature size={24} />} src={documents?.sign} />
       </Flex>
     </>
   );

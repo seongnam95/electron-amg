@@ -5,13 +5,13 @@ export interface EmployeeData {
   id: string;
   name: string;
   phone: string;
-  address: string;
   ssn: string;
   bank: string;
   bankNum: string;
   startPeriod: string;
   endPeriod: string;
   createDate: string;
+  positionId: string;
   position: PositionData;
 }
 
@@ -23,8 +23,7 @@ export interface EmployeeDocument {
 }
 
 /** 근로자 생성 API 바디 */
-export type EmployeeCreateBody = Omit<EmployeeData, 'id' | 'attendances'> &
-  Omit<EmployeeDocument, 'id'>;
+export type EmployeeCreateBody = Omit<EmployeeData, 'id' | 'attendances'>;
 
 /** 근로자 업데이트 API 바디 */
-export type EmployeeUpdateBody = Partial<EmployeeCreateBody>;
+export type EmployeeUpdateBody = Partial<EmployeeData>;

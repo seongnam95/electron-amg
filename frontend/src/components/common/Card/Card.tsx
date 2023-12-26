@@ -1,7 +1,8 @@
-import { HTMLAttributes, ReactNode, forwardRef } from 'react';
+import { ReactNode, forwardRef } from 'react';
 
 import { Flex } from 'antd';
 import clsx from 'clsx';
+import { CSSObject } from 'styled-components';
 
 import { CardStyled } from './styled';
 
@@ -12,6 +13,7 @@ export interface CardProps {
   hint?: string;
   suffix?: ReactNode;
   extra?: ReactNode;
+  style?: CSSObject;
 }
 
 const Card = forwardRef<HTMLDivElement, CardProps>(

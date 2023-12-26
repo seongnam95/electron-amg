@@ -8,7 +8,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { PositionCreateBody } from '~/types/position';
 import { UnitData } from '~/types/unit';
 
-import { defaultPositionValues, formItems } from './formConfig';
+import { defaultPositionValues, formItems } from './config';
 
 export interface PositionFormProps {
   form?: FormInstance<PositionCreateBody>;

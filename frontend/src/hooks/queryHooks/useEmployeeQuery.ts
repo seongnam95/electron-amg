@@ -3,18 +3,24 @@ import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { AxiosError } from 'axios';
 import { useSetRecoilState } from 'recoil';
 
-import { fetchEmployeeDocument, fetchEmployees, removeEmployees } from '~/api/employee';
+import {
+  fetchEmployeeDocument,
+  fetchEmployees,
+  removeEmployees,
+  updateEmployee,
+} from '~/api/employee';
 import { BaseResponse, DataListResponse } from '~/api/response';
 import { teamStore } from '~/stores/team';
 import { EmployeeData, EmployeeDocument } from '~/types/employee';
 import { QueryBaseOptions } from '~/types/query';
 
 interface EmployeeQueryOptions<T> extends QueryBaseOptions<T> {
+  employeeId?: string;
   teamId?: string;
   valid?: boolean;
 }
 
-export const useEmployeeQuery = ({
+export const useEmployee = ({
   teamId,
   valid,
   ...baseOptions
@@ -60,10 +66,7 @@ interface EmployeeDetailQueryOptions extends QueryBaseOptions<EmployeeDocument> 
   employeeId?: string;
 }
 
-export const useEmployeeDocumentQuery = ({
-  employeeId,
-  ...baseOptions
-}: EmployeeDetailQueryOptions) => {
+export const useEmployeeDocument = ({ employeeId, ...baseOptions }: EmployeeDetailQueryOptions) => {
   const queryKey: Array<string> = [import.meta.env.VITE_EMPLOYEE_QUERY_KEY, 'document', employeeId];
 
   const {
@@ -77,7 +80,28 @@ export const useEmployeeDocumentQuery = ({
   return { employeeDocument, isLoading, isError };
 };
 
-export const useEmployeeRemoveMutation = ({
+/**
+ * Update Employee
+ */
+export const useEmployeeUpdate = ({
+  employeeId,
+  teamId,
+  ...baseOptions
+}: EmployeeQueryOptions<EmployeeData>) => {
+  const queryKey: string[] = [import.meta.env.VITE_EMPLOYEE_QUERY_KEY, teamId];
+  const queryClient = useQueryClient();
+
+  const onSettled = () => queryClient.invalidateQueries(queryKey);
+
+  const { mutate, isLoading } = useMutation(queryKey, updateEmployee(employeeId), {
+    onSettled,
+    ...baseOptions,
+  });
+
+  return { mutate, isLoading };
+};
+
+export const useEmployeeRemove = ({
   teamId,
   onError,
   onSuccess,

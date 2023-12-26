@@ -20,7 +20,6 @@ class Employee(Base):
 
     name = Column(String, nullable=False)  # 이름
     phone = Column(String, nullable=False)  # 연락처
-    address = Column(String, nullable=False)  # 거주지
 
     bank = Column(String, nullable=False)  # 은행명
     bank_num_enc = Column(Text, nullable=False)  # 계좌번호 (암호화)

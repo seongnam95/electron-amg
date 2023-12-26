@@ -26,13 +26,13 @@ const _colors = {
   sidebarSelected: '',
   sidebarIconActive: '#333333',
 
-  selectedBg: '#F6F9FF',
+  selectedBg: '#ECF0FE',
   selectedHoverBg: '#F1F5FF',
 
   innerBg: '#F9F9F9',
   contentBG: '#ffffff',
   formFieldBG: '#f9f9f9',
-  disableBg: '#bdbdbd',
+  disableBg: '#dbdbdb',
 
   borderColor: '#f0f0f0',
   borderColorDark: '#333333',
@@ -92,6 +92,7 @@ export const antdTheme: ThemeConfig = {
       fontWeightStrong: 400,
       padding: 12,
       fontSizeIcon: 8,
+      rowSelectedBg: colors.selectedBg,
     },
     Popover: {
       colorBgElevated: colors.innerBg,

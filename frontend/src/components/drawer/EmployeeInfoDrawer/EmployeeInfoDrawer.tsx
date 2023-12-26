@@ -1,13 +1,15 @@
 import { useState } from 'react';
-import { FaTrashAlt } from 'react-icons/fa';
+import { FaTrashAlt, FaUserEdit } from 'react-icons/fa';
 
 import { Button, Drawer, DrawerProps, Flex } from 'antd';
+import { motion } from 'framer-motion';
 import { useRecoilValue } from 'recoil';
 
 import EmployeeForm from '~/components/forms/EmployeeForm';
-import { useEmployeeDocumentQuery } from '~/hooks/queryHooks/useEmployeeQuery';
+import { useSoundApp } from '~/hooks/componentHooks/useSoundApp';
+import { useEmployeeDocument, useEmployeeUpdate } from '~/hooks/queryHooks/useEmployeeQuery';
 import { teamStore } from '~/stores/team';
-import { EmployeeData } from '~/types/employee';
+import { EmployeeData, EmployeeUpdateBody } from '~/types/employee';
 
 import InfoDescriptions from './InfoDescriptions/InfoDescriptions';
 
@@ -21,8 +23,17 @@ const EmployeeInfoDrawer = ({ employee, onRemove, ...props }: EmployeeInfoDrawer
   const unit = team.units.find(unit => unit.id === (employee ? employee.position.unitId : ''));
 
   const [editing, setEditing] = useState<boolean>(false);
+  const { soundMessage } = useSoundApp();
+  const { mutate: employeeUpdate, isLoading: isUpdateLoading } = useEmployeeUpdate({
+    employeeId: employee ? employee.id : '',
+    teamId: team.id,
+    onSuccess: () => {
+      soundMessage.success('정상 처리되었습니다.');
+      setEditing(false);
+    },
+  });
 
-  const { employeeDocument, isLoading } = useEmployeeDocumentQuery({
+  const { employeeDocument, isLoading } = useEmployeeDocument({
     employeeId: employee?.id,
     enabled: !!employee?.id,
   });
@@ -32,16 +43,20 @@ const EmployeeInfoDrawer = ({ employee, onRemove, ...props }: EmployeeInfoDrawer
   };
 
   const drawerProps: DrawerProps = {
-    title: '근무자 정보',
+    title: `근무자 정보 ${editing ? '수정' : ''}`,
     closable: false,
     rootClassName: 'ant-drawer-inline',
     extra: (
-      <Flex>
-        <Button type="text" danger icon={<FaTrashAlt size="1.6rem" onClick={handleRemove} />} />
-        {!editing && (
-          <Button type="text" onClick={() => setEditing(true)}>
-            편집
-          </Button>
+      <Flex align="center">
+        {editing ? (
+          <Button type="text" danger icon={<FaTrashAlt size="1.6rem" />} onClick={handleRemove} />
+        ) : (
+          <Button
+            type="text"
+            style={{ paddingLeft: 4 }}
+            icon={<FaUserEdit size="1.6rem" />}
+            onClick={() => setEditing(true)}
+          />
         )}
       </Flex>
     ),
@@ -53,17 +68,28 @@ const EmployeeInfoDrawer = ({ employee, onRemove, ...props }: EmployeeInfoDrawer
 
   return (
     <Drawer {...drawerProps}>
-      {editing ? (
-        <EmployeeForm team={team} employee={employee} onCancel={() => setEditing(false)} />
-      ) : (
-        <InfoDescriptions
-          team={team}
-          employee={employee}
-          unit={unit}
-          documents={employeeDocument}
-          loading={isLoading}
-        />
-      )}
+      <motion.div
+        initial={{ x: editing ? 40 : -40, opacity: 0 }}
+        animate={{ x: 0, opacity: 1 }}
+        key={editing ? 'edit' : 'default'}
+      >
+        {editing ? (
+          <EmployeeForm
+            team={team}
+            employee={employee}
+            onCancel={() => setEditing(false)}
+            onSubmit={employeeUpdate}
+          />
+        ) : (
+          <InfoDescriptions
+            team={team}
+            employee={employee}
+            unit={unit}
+            documents={employeeDocument}
+            loading={isLoading}
+          />
+        )}
+      </motion.div>
     </Drawer>
   );
 };

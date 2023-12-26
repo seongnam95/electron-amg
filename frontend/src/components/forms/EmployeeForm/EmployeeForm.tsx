@@ -1,63 +1,69 @@
-import { ReactNode, useState } from 'react';
+import { Button, Divider, Flex, Form, Select, Tag, Typography } from 'antd';
 
-import { Button, Divider, Flex, Form, Input, Select, Space } from 'antd';
-import clsx from 'clsx';
-
+import { HintText } from '~/components/dashboard/MonthlyAttendanceTable/styled';
 import { EmployeeData, EmployeeUpdateBody } from '~/types/employee';
+import { SALARY } from '~/types/position';
 import { TeamData } from '~/types/team';
-import { UnitData } from '~/types/unit';
 
-import { formItems } from './formConfig';
+import { employeeFormConfig } from './config';
 import { EmployeeFormStyled } from './styled';
 
 export interface EmployeeFormProps {
   team: TeamData;
-  employee?: EmployeeUpdateBody;
+  employee?: EmployeeData;
+  onSubmit?: (formData: EmployeeUpdateBody) => void;
   onCancel?: () => void;
 }
 
-const EmployeeForm = ({ team, employee, onCancel }: EmployeeFormProps) => {
-  const handleAddressClick = () => {};
-
-  const initValues = {
+const EmployeeForm = ({ team, employee, onSubmit, onCancel }: EmployeeFormProps) => {
+  const initValues: EmployeeUpdateBody = {
     name: employee?.name,
-    phone: employee?.phone && employee?.phone.slice(3),
+    phone: employee?.phone,
     ssn: employee?.ssn,
-    address: employee?.address,
-    bank: {
-      name: employee?.bank,
-      bankNum: employee?.bankNum,
-    },
-    position: employee?.position?.id,
+    bank: employee?.bank,
+    bankNum: employee?.bankNum,
+    positionId: employee?.positionId,
   };
 
   const positionOptions = team.positions.map(position => ({
     value: position.id,
-    label: position.name,
+    label: (
+      <Flex align="center" justify="space-between" gap={8} style={{ paddingRight: 6 }}>
+        {position.name}
+        <Flex align="center" gap={4}>
+          <HintText>{position.standardPay.toLocaleString()}원</HintText>
+          <Tag bordered={false} style={{ fontWeight: 'normal', marginInlineEnd: 0 }}>
+            {SALARY[position.salaryCode].slice(0, 1)}
+          </Tag>
+        </Flex>
+      </Flex>
+    ),
   }));
 
   return (
     <EmployeeFormStyled className="EmployeeForm">
       <Form
         colon={false}
-        labelCol={{ span: 10 }}
+        labelCol={{ span: 9 }}
         initialValues={initValues}
         labelAlign="left"
         autoComplete="off"
         validateTrigger="onSubmit"
-        onFinish={v => console.log(v)}
+        onFinish={onSubmit}
       >
-        {formItems.map(item => (
-          <Form.Item key={item.name} name={item.name} label={item.label}>
+        <Form.Item name="positionId" label="직위">
+          <Select options={positionOptions} />
+        </Form.Item>
+
+        <Divider />
+
+        {employeeFormConfig.map((item, idx) => (
+          <Form.Item key={`item-${idx}`} name={item.name} label={item.label}>
             {item.component}
           </Form.Item>
         ))}
 
         <Divider />
-
-        <Form.Item name="position" label="직위">
-          <Select options={positionOptions} />
-        </Form.Item>
 
         <Flex gap={12}>
           <Button type="text" htmlType="button" onClick={onCancel}>

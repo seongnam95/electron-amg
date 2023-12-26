@@ -5,13 +5,13 @@ import 'chart.js/auto';
 import dayjs, { Dayjs } from 'dayjs';
 import { useRecoilValue } from 'recoil';
 
+import ColorBar from '~/components/employee/ColorBar';
 import { useAttendanceQuery } from '~/hooks/queryHooks/useAttendanceQuery';
-import { useEmployeeQuery } from '~/hooks/queryHooks/useEmployeeQuery';
+import { useEmployee } from '~/hooks/queryHooks/useEmployeeQuery';
 import { teamStore } from '~/stores/team';
 import { colors } from '~/styles/themes';
 import { getAttendanceStats } from '~/utils/statistics/report';
 
-import { PositionColorBox } from '../MonthlyAttendanceTable/styled';
 import { DailyAttendanceDoughnutStyled } from './styled';
 
 export interface DailyAttendanceDoughnutProps {
@@ -22,7 +22,7 @@ const { Text } = Typography;
 const DailyAttendanceDoughnut = ({ day = dayjs() }: DailyAttendanceDoughnutProps) => {
   const team = useRecoilValue(teamStore);
 
-  const { employees } = useEmployeeQuery({ teamId: team.id, enabled: team.existTeam });
+  const { employees } = useEmployee({ teamId: team.id, enabled: team.existTeam });
   const { attendances } = useAttendanceQuery({
     teamId: team.id,
     day: day,
@@ -49,7 +49,7 @@ const DailyAttendanceDoughnut = ({ day = dayjs() }: DailyAttendanceDoughnutProps
           return (
             <Flex justify="space-between" key={report.target.id}>
               <Flex className="position-label-wrap" align="center" gap={6}>
-                <PositionColorBox color={report.target.color} />
+                <ColorBar color={report.target.color} height="1.4rem" />
                 {report.target.name}
               </Flex>
               <Flex gap={4} align="center">

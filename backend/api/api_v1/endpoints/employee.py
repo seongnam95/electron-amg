@@ -177,7 +177,6 @@ def _covering_employee(employee: models.Employee):
         phone=employee.phone,
         bank=employee.bank,
         bank_num_cover=bank_num_cover,
-        address=employee.address,
         bank_book=image_to_base64(employee.bank_book_file_nm),
         id_card=image_to_base64(employee.id_card_file_nm),
     )
