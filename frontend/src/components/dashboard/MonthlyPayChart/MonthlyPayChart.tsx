@@ -34,6 +34,7 @@ const MonthlyPayChart = ({ day = dayjs(), employees, attendances }: MonthPayroll
     const filteredAttendances = attendances.filter(
       attendance => attendance.positionId === position.id,
     );
+
     const stats = getAttendanceStats(team, position.standardPay, filteredAttendances);
     return { ...stats, target: position };
   });

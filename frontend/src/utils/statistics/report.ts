@@ -8,6 +8,7 @@ import { TeamData } from '~/types/team';
  * @param team - 팀 데이터 입니다. 식대 비용, OT 시급을 필요로 합니다.
  * @param pay - 합계액을 구할 기준 금액입니다. ( pay * 출근일 수 )
  * @param attendances - 통계할 출근 데이터 입니다.
+ * @param preset - preset이 있을 경우 출근일을 preset으로 지정 후 결과 산출
  * @returns {ReportData}
  */
 export const getAttendanceStats = (

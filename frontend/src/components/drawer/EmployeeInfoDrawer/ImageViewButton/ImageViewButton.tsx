@@ -7,7 +7,7 @@ import { ImageViewButtonStyled } from './styled';
 interface ImageViewButtonProps {
   label: string;
   icon: ReactNode;
-  src: string;
+  src?: string;
 }
 
 const ImageViewButton = ({ icon, label, src }: ImageViewButtonProps) => {

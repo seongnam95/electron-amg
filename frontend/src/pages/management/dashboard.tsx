@@ -41,7 +41,7 @@ const DashboardPage = () => {
       className: 'unit-pay-list-card',
       icon: <FaHouseFlag color="#f27373" size={19} />,
       title: '대행사 청구 단가',
-      content: <UnitPayList attendances={attendances} />,
+      content: <UnitPayList attendances={attendances} employees={employees} />,
     },
     {
       className: 'month-attendance-table-card',

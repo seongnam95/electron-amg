@@ -178,10 +178,17 @@ export const InitGlobalStyled = memo(createGlobalStyle`
     .ant-input-prefix {
       margin-inline-end: 12px;
     }
+
     
     svg {
       color: #909090;
     }
+  }
+  
+  .ant-input-wrapper .ant-input-group-addon {
+    padding-top: 3px;
+    color: ${p => p.theme.colors.textColor2};
+    font-size: ${p => p.theme.sizes.textSmall};
   }
 
 `);

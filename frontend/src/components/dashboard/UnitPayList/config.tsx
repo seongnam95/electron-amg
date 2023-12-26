@@ -1,4 +1,6 @@
 import { AttendanceData } from '~/types/attendance';
+import { EmployeeData } from '~/types/employee';
+import { PositionData } from '~/types/position';
 import { ReportData } from '~/types/statistics';
 import { TeamData } from '~/types/team';
 import { UnitData } from '~/types/unit';
@@ -12,18 +14,35 @@ export interface UnitListData {
   totalPay: number;
 }
 
-export const getDataSource = (team: TeamData, attendances: AttendanceData[]): UnitListData[] => {
+export const getDataSource = (
+  team: TeamData,
+  attendances: AttendanceData[],
+  employees: EmployeeData[],
+): UnitListData[] => {
   const { units, mealCost, otPay } = team;
 
-  const reports: ReportData<UnitData>[] = units.map(unit => {
-    const attendancesByUnit = attendances.filter(
-      attendance => attendance.position.unitId === unit.id,
+  // 근로자별 리포트
+  const reportsByEmployee: ReportData<EmployeeData>[] = employees.map(employee => {
+    const attendancesByEmployee = attendances.filter(
+      attendance => attendance.employeeId === employee.id,
     );
-    const report = getAttendanceStats(team, unit.unitPay, attendancesByUnit);
-    return { ...report, target: unit };
+    const preset = employee.position.salaryCode === 3 ? employee.position.preset : undefined;
+    const report = getAttendanceStats(
+      team,
+      employee.position.standardPay,
+      attendancesByEmployee,
+      preset,
+    );
+    return { ...report, target: employee };
   });
 
-  const unitDatas: UnitListData[] = reports.map(report => ({
+  // 단가별 리포트
+  const reportsByUnit: ReportData<UnitData>[] = units.map(unit => {
+    const reports = reportsByEmployee.filter(report => report.target.position.unitId === unit.id);
+    return { ...calculateReportTotal(reports), target: unit };
+  });
+
+  const unitDatas: UnitListData[] = reportsByUnit.map(report => ({
     key: report.target.id,
     name: report.target.name,
     unitPay: report.target.unitPay,
@@ -31,7 +50,7 @@ export const getDataSource = (team: TeamData, attendances: AttendanceData[]): Un
     totalPay: report.dailyPay,
   }));
 
-  const totalReport: ReportData<UnitData> = calculateReportTotal(reports);
+  const totalReport: ReportData<UnitData> = calculateReportTotal(reportsByUnit);
 
   return [
     ...unitDatas,

@@ -1,10 +1,9 @@
-import { Flex, List, TableProps, Tag } from 'antd';
-import dayjs, { Dayjs } from 'dayjs';
+import { Flex, List, Tag } from 'antd';
 import { useRecoilValue } from 'recoil';
 
-import { useAttendanceQuery } from '~/hooks/queryHooks/useAttendanceQuery';
 import { teamStore } from '~/stores/team';
 import { AttendanceData } from '~/types/attendance';
+import { EmployeeData } from '~/types/employee';
 
 import { HintText } from '../MonthlyAttendanceTable/styled';
 import { getDataSource } from './config';
@@ -12,12 +11,12 @@ import { UnitPayListStyled } from './styled';
 
 export interface UnitPayListProps {
   attendances: AttendanceData[];
+  employees: EmployeeData[];
 }
 
-const UnitPayList = ({ attendances }: UnitPayListProps) => {
+const UnitPayList = ({ attendances, employees }: UnitPayListProps) => {
   const team = useRecoilValue(teamStore);
-
-  const datas = getDataSource(team, attendances);
+  const datas = getDataSource(team, attendances, employees);
 
   return (
     <UnitPayListStyled className="UnitList">

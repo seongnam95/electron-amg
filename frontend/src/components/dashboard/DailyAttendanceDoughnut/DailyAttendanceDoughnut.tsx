@@ -47,7 +47,7 @@ const DailyAttendanceDoughnut = ({ day = dayjs() }: DailyAttendanceDoughnutProps
           ).length;
 
           return (
-            <Flex justify="space-between">
+            <Flex justify="space-between" key={report.target.id}>
               <Flex className="position-label-wrap" align="center" gap={6}>
                 <PositionColorBox color={report.target.color} />
                 {report.target.name}
