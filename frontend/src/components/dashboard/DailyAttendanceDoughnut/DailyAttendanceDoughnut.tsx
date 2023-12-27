@@ -34,7 +34,7 @@ const DailyAttendanceDoughnut = ({ day = dayjs() }: DailyAttendanceDoughnutProps
     const filteredAttendances = attendances.filter(
       attendance => attendance.positionId === position.id,
     );
-    const stats = getAttendanceStats(team, position.standardPay, filteredAttendances);
+    const stats = getAttendanceStats(team, filteredAttendances);
     return { ...stats, target: position };
   });
 

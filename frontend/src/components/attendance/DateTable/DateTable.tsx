@@ -5,7 +5,7 @@ import { Table, TableProps } from 'antd';
 import { AttendanceData } from '~/types/attendance';
 import { EmployeeData } from '~/types/employee';
 
-import { getColumns, DateTableData } from './config';
+import { getColumns, DateTableData, getDataSource } from './config';
 import { DateTableStyled } from './styled';
 
 export interface DateTableProps {
@@ -45,16 +45,7 @@ const DateTable = ({
       employees: employees,
       onClickName: onClickName,
     }),
-    dataSource: employees.map(employee => {
-      const attendance = attendances.find(data => data.employeeId === employee.id);
-      return {
-        key: employee.id,
-        name: employee.name,
-        position: employee.position,
-        attendance: attendance,
-        employee: employee,
-      };
-    }),
+    dataSource: getDataSource(employees, attendances),
   };
 
   return (

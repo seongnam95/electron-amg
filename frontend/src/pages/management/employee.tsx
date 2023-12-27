@@ -16,7 +16,6 @@ import EmployeeTable from '~/components/employee/EmployeeTable';
 import { useEmployeeInfoDrawer } from '~/hooks/componentHooks/useEmployeeInfoDrawer';
 import { useSoundApp } from '~/hooks/componentHooks/useSoundApp';
 import { useEmployee } from '~/hooks/queryHooks/useEmployeeQuery';
-import { useCopyText } from '~/hooks/useCopyText';
 import { useRemoveEmployee } from '~/hooks/useRemoveEmployee';
 import { teamStore } from '~/stores/team';
 import { EmployeePageStyled } from '~/styles/pageStyled/employeePageStyled';
@@ -35,7 +34,6 @@ const EmployeePage = () => {
   const [openHistoryDrawer, setOpenHistoryDrawer] = useState<boolean>(false);
 
   /** Hook */
-  const { copyText } = useCopyText();
   const { soundMessage } = useSoundApp();
 
   const { openDrawer, renderDrawer } = useEmployeeInfoDrawer();
@@ -51,6 +49,10 @@ const EmployeePage = () => {
     enabled: team.existTeam,
   });
 
+  const sortedEmployees = employees.sort(
+    (a, b) => a.position.sortingIndex - b.position.sortingIndex,
+  );
+
   /** Handler */
   const handleRemove = () => removeEmployee(selectedEmployees.map(employee => employee.id));
 
@@ -58,6 +60,20 @@ const EmployeePage = () => {
     refetch().then(() => {
       soundMessage.info('새로고침 되었습니다.');
     });
+  };
+
+  const handleCopy = (data: string) => {
+    try {
+      const inputElement = document.createElement('input');
+      inputElement.value = data;
+      inputElement.select();
+      document.execCommand('copy');
+      document.body.removeChild(inputElement);
+
+      soundMessage.success('클립보드에 저장되었습니다.');
+    } catch (err) {
+      soundMessage.success('클립보드 복사에 실패했습니다.');
+    }
   };
 
   /** Config */
@@ -107,8 +123,8 @@ const EmployeePage = () => {
       <Flex className="table-container" flex={1} vertical>
         <EmployeeTable
           loading={isLoading}
-          employees={employees}
-          onCopy={copyText}
+          employees={sortedEmployees}
+          onCopy={handleCopy}
           onSelect={setSelectedEmployees}
           onClickName={openDrawer}
         />
@@ -138,7 +154,7 @@ const EmployeePage = () => {
       {/* 계약서 폼 생성 Drawer */}
       <DraftCreateDrawer
         open={openDraftDrawer}
-        onCopy={copyText}
+        onCopy={handleCopy}
         onHistory={() => setOpenHistoryDrawer(true)}
         onClose={() => setOpenDraftDrawer(false)}
       />
@@ -147,7 +163,7 @@ const EmployeePage = () => {
       {team && (
         <HistoryDrawer
           open={openHistoryDrawer}
-          onCopy={copyText}
+          onCopy={handleCopy}
           onClose={() => setOpenHistoryDrawer(false)}
         />
       )}

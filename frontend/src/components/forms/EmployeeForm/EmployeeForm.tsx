@@ -1,4 +1,4 @@
-import { Button, Divider, Flex, Form, Select, Tag, Typography } from 'antd';
+import { Button, Divider, Flex, Form, FormInstance, Select, Tag, Typography } from 'antd';
 
 import { HintText } from '~/components/dashboard/MonthlyAttendanceTable/styled';
 import { EmployeeData, EmployeeUpdateBody } from '~/types/employee';
@@ -11,11 +11,20 @@ import { EmployeeFormStyled } from './styled';
 export interface EmployeeFormProps {
   team: TeamData;
   employee?: EmployeeData;
+  form?: FormInstance;
+  loading?: boolean;
   onSubmit?: (formData: EmployeeUpdateBody) => void;
   onCancel?: () => void;
 }
 
-const EmployeeForm = ({ team, employee, onSubmit, onCancel }: EmployeeFormProps) => {
+const EmployeeForm = ({
+  team,
+  employee,
+  loading,
+  form = Form.useForm<EmployeeUpdateBody>()[0],
+  onSubmit,
+  onCancel,
+}: EmployeeFormProps) => {
   const initValues: EmployeeUpdateBody = {
     name: employee?.name,
     phone: employee?.phone,
@@ -43,6 +52,7 @@ const EmployeeForm = ({ team, employee, onSubmit, onCancel }: EmployeeFormProps)
   return (
     <EmployeeFormStyled className="EmployeeForm">
       <Form
+        form={form}
         colon={false}
         labelCol={{ span: 9 }}
         initialValues={initValues}
@@ -66,10 +76,10 @@ const EmployeeForm = ({ team, employee, onSubmit, onCancel }: EmployeeFormProps)
         <Divider />
 
         <Flex gap={12}>
-          <Button type="text" htmlType="button" onClick={onCancel}>
+          <Button type="text" htmlType="button" onClick={onCancel} disabled={loading}>
             취소
           </Button>
-          <Button type="primary" htmlType="submit" block>
+          <Button type="primary" htmlType="submit" block loading={loading}>
             저장
           </Button>
         </Flex>

@@ -2,26 +2,27 @@ import { BiSolidIdCard } from 'react-icons/bi';
 import { FaSignature } from 'react-icons/fa';
 import { RiBankCard2Fill } from 'react-icons/ri';
 
-import { Descriptions, Divider, Flex, Skeleton, Tag } from 'antd';
+import { Descriptions, Divider, Empty, Flex, Skeleton, Tag } from 'antd';
 
+import ImageViewButton from '~/components/common/ImageViewButton';
 import { EmployeeData, EmployeeDocument } from '~/types/employee';
 import { SALARY } from '~/types/position';
 import { TeamData } from '~/types/team';
 import { UnitData } from '~/types/unit';
 import { formatPhoneNumber, formatSSN } from '~/utils/formatData';
 
-import ImageViewButton from '../ImageViewButton';
-
-interface InfoDescriptionsProps {
-  team: TeamData;
-  employee: EmployeeData;
+interface EmployeeInfoProps {
+  team?: TeamData;
+  employee?: EmployeeData;
   unit?: UnitData;
   documents?: EmployeeDocument;
   loading?: boolean;
 }
 
-const InfoDescriptions = ({ team, employee, unit, documents, loading }: InfoDescriptionsProps) => {
+const EmployeeInfo = ({ team, employee, unit, documents, loading }: EmployeeInfoProps) => {
   if (loading) return <Skeleton active />;
+  else if (!employee || !team || !unit) return <Empty style={{ marginTop: '20%' }} />;
+
   return (
     <>
       <Descriptions
@@ -47,12 +48,10 @@ const InfoDescriptions = ({ team, employee, unit, documents, loading }: InfoDesc
       >
         <Descriptions.Item label="소속 업체">{team.name}</Descriptions.Item>
 
-        {unit && (
-          <Descriptions.Item label="대행사 단가">
-            <Tag>{unit.name}</Tag>
-            {unit.unitPay.toLocaleString()}원
-          </Descriptions.Item>
-        )}
+        <Descriptions.Item label="대행사 단가">
+          <Tag>{unit.name}</Tag>
+          {unit.unitPay.toLocaleString()}원
+        </Descriptions.Item>
 
         <Descriptions.Item label="계약 수당">
           <Tag>{SALARY[employee.position.salaryCode]}</Tag>
@@ -83,4 +82,4 @@ const InfoDescriptions = ({ team, employee, unit, documents, loading }: InfoDesc
   );
 };
 
-export default InfoDescriptions;
+export default EmployeeInfo;

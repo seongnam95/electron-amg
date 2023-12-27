@@ -13,8 +13,9 @@ import { generateDays } from '~/utils/commuteRange';
 import { getAttendanceStats } from '~/utils/statistics/report';
 
 import AttendanceBar from './AttendanceBar';
-import { groupedAttendanceByDay } from './util';
+import { AttendanceGroupData, groupedAttendanceByDay } from './util';
 
+/** [ MonthTable ] 데이터 인터페이스*/
 export interface MonthTableData {
   key: string;
   employee: EmployeeData;
@@ -22,23 +23,25 @@ export interface MonthTableData {
   attendances: AttendanceData[];
 }
 
+/**
+ * [ MonthTable ] 데이터 소스를 반환합니다.
+ * @param team 팀 데이터
+ * @param employees 근로자 데이터 리스트
+ * @param attendances 출근 기록 데이터 리스트
+ * @returns {MonthTableData[]} MonthTableData[]
+ */
 export const getDataSource = (
   team: TeamData,
   employees: EmployeeData[],
   attendances: AttendanceData[],
-) => {
+): MonthTableData[] => {
   const reports = employees.map(employee => {
     const preset = employee.position.salaryCode === 3 ? employee.position.preset : undefined;
     const filteredAttendances = attendances.filter(
       attendance => attendance.employeeId === employee.id,
     );
 
-    const stats = getAttendanceStats(
-      team,
-      employee.position.standardPay,
-      filteredAttendances,
-      preset,
-    );
+    const stats = getAttendanceStats(team, filteredAttendances, preset);
     return { ...stats, target: employee };
   });
 
@@ -48,10 +51,10 @@ export const getDataSource = (
     const targetAttendances = attendances.filter(data => data.employeeId === employee.id);
     const workingGroups = groupedAttendanceByDay(targetAttendances);
 
-    const existAttendances: { [key: string]: AttendanceData[] } = {};
+    const existAttendances: { [key: string]: AttendanceGroupData } = {};
 
     workingGroups.forEach(group => {
-      const firstDate = dayjs(group[0].workingDate, 'YY-MM-DD').date();
+      const firstDate = dayjs(group.attendances[0].workingDate, 'YY-MM-DD').date();
       existAttendances[firstDate] = group;
     });
 
@@ -65,14 +68,17 @@ export const getDataSource = (
   });
 };
 
+/** [ MonthTable ] 컬럼 인터페이스 */
 interface ColumnProps {
+  day: Dayjs;
   onContextMenu?: (event: MouseEvent, employee: EmployeeData, day: Dayjs) => void;
 }
 
-export const getColumns = (
-  day: Dayjs,
-  { onContextMenu }: ColumnProps,
-): ColumnsType<MonthTableData> => {
+/**
+ * [ MonthTable ] 컬럼 데이터를 반환합니다.
+ * @param ColumnProps 날짜, 대상 근로자 데이터, 핸들러
+ */
+export const getColumns = ({ day, onContextMenu }: ColumnProps): ColumnsType<MonthTableData> => {
   const days = generateDays(day);
 
   const dayColumns: ColumnsType<MonthTableData> = days.map(day => {
@@ -90,9 +96,15 @@ export const getColumns = (
       onCell: data => ({
         onContextMenu: event => onContextMenu?.(event, data.employee, day.day),
       }),
-      render: (attendances, { employee }) => {
+      render: attendances => {
         if (attendances) {
-          return <AttendanceBar employee={employee} attendances={attendances} cellWidth={42} />;
+          return (
+            <AttendanceBar
+              color={attendances.position.color}
+              attendances={attendances.attendances}
+              cellWidth={42}
+            />
+          );
         }
       },
     };

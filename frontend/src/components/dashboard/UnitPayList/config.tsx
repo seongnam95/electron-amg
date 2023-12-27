@@ -14,43 +14,42 @@ export interface UnitListData {
   totalPay: number;
 }
 
-export const getDataSource = (
-  team: TeamData,
-  attendances: AttendanceData[],
-  employees: EmployeeData[],
-): UnitListData[] => {
-  const { units, mealCost, otPay } = team;
+export const getDataSource = (team: TeamData, attendances: AttendanceData[]): UnitListData[] => {
+  const { units, mealCost, otPay, positions } = team;
 
-  // 근로자별 리포트
-  const reportsByEmployee: ReportData<EmployeeData>[] = employees.map(employee => {
-    const attendancesByEmployee = attendances.filter(
-      attendance => attendance.employeeId === employee.id,
+  // 직위별 리포트
+  const reportsByPosition: ReportData<PositionData>[] = positions.map(position => {
+    const filteredAttendances = attendances.filter(
+      attendance => attendance.positionId === position.id,
     );
-    const preset = employee.position.salaryCode === 3 ? employee.position.preset : undefined;
-    const report = getAttendanceStats(
-      team,
-      employee.position.standardPay,
-      attendancesByEmployee,
-      preset,
-    );
-    return { ...report, target: employee };
+
+    const preset = position.salaryCode === 3 ? position.preset : undefined;
+    const report = getAttendanceStats(team, filteredAttendances, preset);
+    return { ...report, target: position };
   });
 
   // 단가별 리포트
-  const reportsByUnit: ReportData<UnitData>[] = units.map(unit => {
-    const reports = reportsByEmployee.filter(report => report.target.position.unitId === unit.id);
-    return { ...calculateReportTotal(reports), target: unit };
+  const reportsByUnit = units.map(unit => {
+    const filteredReports = reportsByPosition.filter(report => report.target.unitId === unit.id);
+    const unitCount = filteredReports.reduce((total, report) => total + report.attendanceCount, 0);
+    const unitPaySum = unitCount * unit.unitPay;
+
+    return {
+      unit: unit,
+      unitCount,
+      unitPaySum,
+    };
   });
 
   const unitDatas: UnitListData[] = reportsByUnit.map(report => ({
-    key: report.target.id,
-    name: report.target.name,
-    unitPay: report.target.unitPay,
-    count: report.attendanceCount,
-    totalPay: report.dailyPay,
+    key: report.unit.id,
+    name: report.unit.name,
+    unitPay: report.unit.unitPay,
+    count: report.unitCount,
+    totalPay: report.unitPaySum,
   }));
 
-  const totalReport: ReportData<UnitData> = calculateReportTotal(reportsByUnit);
+  const totalReport: ReportData<UnitData> = calculateReportTotal(reportsByPosition);
 
   return [
     ...unitDatas,

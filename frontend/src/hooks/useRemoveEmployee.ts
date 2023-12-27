@@ -18,6 +18,7 @@ export const useRemoveEmployee = ({ teamId, onSuccess, onCancel }: RemoveEmploye
 
   const removeEmployee = (target: string | string[]) => {
     const ids = typeof target === 'string' ? [target] : target;
+
     soundModal({
       type: 'warning',
       title: '해당 근로자를 삭제하시겠습니까?',

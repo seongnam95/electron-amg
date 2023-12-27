@@ -42,7 +42,7 @@ const DashboardPage = () => {
       className: 'unit-pay-list-card',
       icon: <FaFlag color="#f27373" size={17} />,
       title: '대행사 청구 단가',
-      content: <UnitPayList attendances={attendances} employees={employees} />,
+      content: <UnitPayList attendances={attendances} />,
     },
     {
       className: 'month-attendance-table-card',

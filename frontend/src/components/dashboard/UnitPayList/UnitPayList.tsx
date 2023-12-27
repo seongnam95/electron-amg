@@ -11,12 +11,11 @@ import { UnitPayListStyled } from './styled';
 
 export interface UnitPayListProps {
   attendances: AttendanceData[];
-  employees: EmployeeData[];
 }
 
-const UnitPayList = ({ attendances, employees }: UnitPayListProps) => {
+const UnitPayList = ({ attendances }: UnitPayListProps) => {
   const team = useRecoilValue(teamStore);
-  const datas = getDataSource(team, attendances, employees);
+  const datas = getDataSource(team, attendances);
 
   return (
     <UnitPayListStyled className="UnitList">

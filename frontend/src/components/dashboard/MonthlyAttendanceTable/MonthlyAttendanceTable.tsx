@@ -14,6 +14,7 @@ export interface MonthlyAttendanceTableProps {
   attendances: AttendanceData[];
 }
 
+// TODO : 월급 받는 포지션은 별도로 처리해야함. (급여 합계 부분)
 /** 월별 출근 통계 테이블 */
 const MonthlyAttendanceTable = ({ attendances }: MonthlyAttendanceTableProps) => {
   const team = useRecoilValue(teamStore);
@@ -22,7 +23,7 @@ const MonthlyAttendanceTable = ({ attendances }: MonthlyAttendanceTableProps) =>
     const filteredAttendances = attendances.filter(
       attendance => attendance.positionId === position.id,
     );
-    const stats = getAttendanceStats(team, position.standardPay, filteredAttendances);
+    const stats = getAttendanceStats(team, filteredAttendances);
     return { ...stats, target: position };
   });
 

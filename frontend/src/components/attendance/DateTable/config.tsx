@@ -8,19 +8,52 @@ import { HintText } from '~/components/dashboard/MonthlyAttendanceTable/styled';
 import { colors } from '~/styles/themes';
 import { AttendanceData } from '~/types/attendance';
 import { EmployeeData } from '~/types/employee';
-import { SALARY } from '~/types/position';
+import { PositionData, SALARY } from '~/types/position';
 
+/** [ DateTable ] 데이터 인터페이스 */
 export interface DateTableData {
   key: string;
   employee: EmployeeData;
+  position: PositionData;
   attendance?: AttendanceData;
 }
 
+/**
+ * [ DateTable ] 데이터 소스를 반환합니다.
+ * @param employees 근로자 데이터 리스트
+ * @param attendances 출근 기록 데이터 리스트
+ * @returns {DateTableData[]} DateTableData[]
+ */
+export const getDataSource = (
+  employees: EmployeeData[],
+  attendances: AttendanceData[],
+): DateTableData[] => {
+  const dataSource = employees.map(employee => {
+    const attendance = attendances.find(data => data.employeeId === employee.id);
+    const position = attendance ? attendance.position : employee.position;
+
+    return {
+      key: employee.id,
+      name: employee.name,
+      employee: employee,
+      position: position,
+      attendance: attendance,
+    };
+  });
+
+  return dataSource.sort((a, b) => a.position.sortingIndex - b.position.sortingIndex);
+};
+
+/** [ DateTable ] 컬럼 인터페이스 */
 interface ColumnProps {
   employees?: EmployeeData[];
   onClickName?: (employee: EmployeeData) => void;
 }
 
+/**
+ * [ DateTable ] 컬럼 데이터를 반환합니다.
+ * @param ColumnProps 대상 근로자 데이터, 핸들러
+ */
 export const getColumns = ({ employees, onClickName }: ColumnProps): ColumnsType<DateTableData> => {
   const positionFilters = [...new Set(employees?.map(employee => employee.position.name))].map(
     position => {
@@ -63,8 +96,7 @@ export const getColumns = ({ employees, onClickName }: ColumnProps): ColumnsType
       align: 'center',
       filters: positionFilters,
       onFilter: (value, record) => record.employee.position.name === value,
-      render: (_, { attendance, employee }) => {
-        const position = attendance ? attendance.position : employee.position;
+      render: (_, { position }) => {
         return (
           <Tag
             style={{ width: 64, textAlign: 'center', marginInlineEnd: 0 }}

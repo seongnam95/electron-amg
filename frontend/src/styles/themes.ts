@@ -100,5 +100,8 @@ export const antdTheme: ThemeConfig = {
     Descriptions: {
       padding: 8,
     },
+    Empty: {
+      colorText: colors.textColor2,
+    },
   },
 };

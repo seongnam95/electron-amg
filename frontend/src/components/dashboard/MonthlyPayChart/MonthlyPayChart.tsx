@@ -35,7 +35,7 @@ const MonthlyPayChart = ({ day = dayjs(), employees, attendances }: MonthPayroll
       attendance => attendance.positionId === position.id,
     );
 
-    const stats = getAttendanceStats(team, position.standardPay, filteredAttendances);
+    const stats = getAttendanceStats(team, filteredAttendances);
     return { ...stats, target: position };
   });
 
@@ -50,12 +50,7 @@ const MonthlyPayChart = ({ day = dayjs(), employees, attendances }: MonthPayroll
           index + 1 === parseInt(attendance.workingDate.split('-')[2], 10),
       );
 
-      const { attendanceCount } = getAttendanceStats(
-        team,
-        position.standardPay,
-        filteredAttendances,
-      );
-
+      const { attendanceCount } = getAttendanceStats(team, filteredAttendances);
       return { attendanceCount };
     });
 

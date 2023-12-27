@@ -4,17 +4,23 @@ import { EmployeeData } from '~/types/employee';
 import { SALARY } from '~/types/position';
 import { formatPhoneNumber, formatSSN } from '~/utils/formatData';
 
+/** [ EmployeeTable ] 데이터 인터페이스 */
 export interface EmployeeTableData {
   key: string;
   employee: EmployeeData;
 }
 
+/** [ EmployeeTable ] 컬럼 인터페이스 */
 interface ColumnProps {
   employees?: EmployeeData[];
   onClickName: (employee: EmployeeData) => void;
   onCopy?: (data: string) => void;
 }
 
+/**
+ * [ EmployeeTable ] 컬럼 데이터를 반환합니다.
+ * @param ColumnProps 대상 근로자 데이터, 핸들러
+ */
 export const getColumns = ({
   employees,
   onClickName,

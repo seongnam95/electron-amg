@@ -164,9 +164,6 @@ export const InitGlobalStyled = memo(createGlobalStyle`
     }
   }
 
-  .ant-table-cell {
-  }
-
   .ant-tabs-nav-wrap {
     padding: 0 14px;
   }
@@ -197,5 +194,4 @@ export const InitGlobalStyled = memo(createGlobalStyle`
     color: ${p => p.theme.colors.textColor2};
     font-size: ${p => p.theme.sizes.textSmall};
   }
-
 `);

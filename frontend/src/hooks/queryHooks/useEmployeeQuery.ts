@@ -74,6 +74,7 @@ export const useEmployeeDocument = ({ employeeId, ...baseOptions }: EmployeeDeta
     isLoading,
     isError,
   } = useQuery(queryKey, fetchEmployeeDocument(employeeId), {
+    enabled: !!employeeId,
     ...baseOptions,
   });
 

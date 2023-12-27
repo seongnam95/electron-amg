@@ -23,7 +23,7 @@ const MonthTable = ({ day, employees, attendances, loading, onContextMenu }: Mon
   const team = useRecoilValue(teamStore);
 
   const tableProps: TableProps<MonthTableData> = {
-    columns: getColumns(day, { onContextMenu: onContextMenu }),
+    columns: getColumns({ day, onContextMenu: onContextMenu }),
     dataSource: getDataSource(team, employees, attendances),
   };
 
