@@ -23,6 +23,7 @@ export const useAttendanceModal = ({ attendances, onFinish }: AttendanceModalOpt
 
   const [day, setDay] = useState<Dayjs>(dayjs());
   const [employees, setEmployees] = useState<EmployeeData[]>([]);
+
   const employeeIds = employees.map(employee => employee.id);
 
   const { setAttendance, removeAttendance, isLoading } = useAttendanceController({
@@ -34,7 +35,7 @@ export const useAttendanceModal = ({ attendances, onFinish }: AttendanceModalOpt
   const openModal = (day: Dayjs, employees: EmployeeData[]) => {
     setDay(day);
     setEmployees(employees);
-    setFormValue(employees);
+    setFormValue(employees, day);
     setOpen(true);
   };
 
@@ -52,7 +53,7 @@ export const useAttendanceModal = ({ attendances, onFinish }: AttendanceModalOpt
   const handleRemove = () => removeAttendance(employeeIds);
 
   /** 폼 기본 값 설정 */
-  const setFormValue = (employees: EmployeeData[]) => {
+  const setFormValue = (employees: EmployeeData[], day: Dayjs) => {
     if (employees.length === 1) {
       const selectedEmployee = employees[0];
       const selectedDayStr = day.format('YY-MM-DD');
@@ -64,7 +65,9 @@ export const useAttendanceModal = ({ attendances, onFinish }: AttendanceModalOpt
       );
 
       if (matchingAttendance) form.setFieldsValue(matchingAttendance);
-      else form.resetFields();
+      else {
+        form.resetFields();
+      }
     } else form.resetFields();
   };
 

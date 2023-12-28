@@ -39,7 +39,7 @@ const MonthlyPayChart = ({ day = dayjs(), employees, attendances }: MonthPayroll
     return { ...stats, target: position };
   });
 
-  const { dailyPay, attendanceCount } = calculateReportTotal(reports);
+  const { paySum: dailyPay, attendanceCount } = calculateReportTotal(reports);
 
   /** 일일 통계 차트 */
   const statsData = team.positions.map(position => {

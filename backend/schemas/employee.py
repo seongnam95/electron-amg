@@ -16,6 +16,8 @@ class EmployeeBase(BaseModel):
     bank_book: str
     id_card: str
     sign_base64: str
+    salary_code: int
+    preset: int
     team_id: str
     position_id: str
 
@@ -30,6 +32,9 @@ class EmployeeUpdate(BaseModel):
     bank_num: Optional[str] = None
     bank_book: Optional[str] = None
     id_card: Optional[str] = None
+    preset: Optional[int] = None
+    salary_code: Optional[int] = None
+    standard_pay: Optional[int] = None
     position_id: Optional[str] = None
     team_id: Optional[str] = None
 
@@ -58,6 +63,8 @@ class EncryptEmployee(BaseModel):
     bank_book_file_nm: str
     id_card_file_nm: str
     sign_base64: str
+    salary_code: int
+    preset: int
     position_id: str
     create_date: datetime
     position: PositionResponse
@@ -93,6 +100,8 @@ class EmployeeResponse(BaseModel):
     bank_num: str
     start_period: date
     end_period: date
+    salary_code: int
+    preset: int
     position_id: str
     position: PositionResponse
     create_date: datetime

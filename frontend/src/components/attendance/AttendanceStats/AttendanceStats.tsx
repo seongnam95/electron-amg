@@ -33,8 +33,15 @@ const AttendanceStats = ({ attendances }: AttendanceStatsProps) => {
     };
   });
 
-  const { earnsIncentiveCount, dailyPay, mealCost, prepay, otPay, taxAmount, totalPaySum } =
-    calculateReportTotal(reports);
+  const {
+    earnsIncentiveCount,
+    paySum: dailyPay,
+    mealCostSum: mealCost,
+    prepaySum: prepay,
+    otPaySum: otPay,
+    taxAmount,
+    totalPaySum,
+  } = calculateReportTotal(reports);
 
   return (
     <AttendanceStatsStyled className="AttendanceStats" ref={dragRef}>

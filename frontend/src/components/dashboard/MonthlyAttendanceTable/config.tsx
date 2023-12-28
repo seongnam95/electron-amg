@@ -81,7 +81,7 @@ export const getColumns = (): TableColumnsType<ReportData<PositionData>> => {
       title: '선지급액',
       width: 100,
       align: 'right',
-      render: (_, { prepay }) => (
+      render: (_, { prepaySum: prepay }) => (
         <>
           {prepay.toLocaleString()}
           <HintText>원</HintText>

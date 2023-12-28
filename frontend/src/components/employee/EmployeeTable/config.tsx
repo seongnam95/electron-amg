@@ -1,7 +1,6 @@
 import { Button, Flex, TableColumnsType, Tag } from 'antd';
 
-import { EmployeeData } from '~/types/employee';
-import { SALARY } from '~/types/position';
+import { EmployeeData, SALARY } from '~/types/employee';
 import { formatPhoneNumber, formatSSN } from '~/utils/formatData';
 
 /** [ EmployeeTable ] 데이터 인터페이스 */
@@ -42,7 +41,7 @@ export const getColumns = ({
     },
   );
 
-  const salaryFilters = [...new Set(employees?.map(employee => employee.position.salaryCode))].map(
+  const salaryFilters = [...new Set(employees?.map(employee => employee.salaryCode))].map(
     salary => {
       return {
         value: salary,
@@ -137,11 +136,11 @@ export const getColumns = ({
       width: 160,
       align: 'center',
       filters: salaryFilters,
-      onFilter: (value, record) => record.employee.position.salaryCode === value,
-      render: (_, { employee: { position } }) => (
+      onFilter: (value, record) => record.employee.salaryCode === value,
+      render: (_, { employee: { position, salaryCode } }) => (
         <Flex justify="center">
           <Flex justify="space-between" style={{ width: 130, maxWidth: 130 }}>
-            <Tag>{SALARY[position.salaryCode]}</Tag>
+            <Tag>{SALARY[salaryCode]}</Tag>
             <span>{position.standardPay.toLocaleString()}원</span>
           </Flex>
         </Flex>

@@ -1,5 +1,12 @@
 import { PositionData } from './position';
 
+export const SALARY = {
+  1: '일급',
+  2: '주급',
+  3: '월급',
+} as const;
+export type SalaryType = keyof typeof SALARY;
+
 /** 근로자 데이터 인터페이스 */
 export interface EmployeeData {
   id: string;
@@ -10,6 +17,8 @@ export interface EmployeeData {
   bankNum: string;
   startPeriod: string;
   endPeriod: string;
+  salaryCode: SalaryType;
+  preset: number;
   createDate: string;
   positionId: string;
   position: PositionData;

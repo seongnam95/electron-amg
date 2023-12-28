@@ -5,7 +5,7 @@ import { Flex, Tag } from 'antd';
 import { motion } from 'framer-motion';
 import styled from 'styled-components';
 
-import { PositionCreateBody, SALARY } from '~/types/position';
+import { PositionCreateBody } from '~/types/position';
 
 interface PositionItemProps {
   className: string;
@@ -15,7 +15,7 @@ interface PositionItemProps {
 
 const PositionItem = forwardRef<HTMLDivElement, PositionItemProps>(
   ({ className, position, onDoubleClick, ...dragHandleProps }, itemRef) => {
-    const { name, color, salaryCode, standardPay, isLeader, defaultEarnsIncentive } = position;
+    const { name, color, standardPay, isLeader, defaultEarnsIncentive } = position;
 
     return (
       <motion.div
@@ -46,7 +46,6 @@ const PositionItem = forwardRef<HTMLDivElement, PositionItemProps>(
           <Flex align="center">
             <Flex gap={8}>
               <span className="pay-text">{standardPay ? standardPay.toLocaleString() : 0}원</span>
-              <Tag>{salaryCode ? SALARY[salaryCode] : '빈 값'}</Tag>
             </Flex>
           </Flex>
         </PositionItemStyled>

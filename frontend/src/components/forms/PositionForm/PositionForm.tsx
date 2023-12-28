@@ -21,9 +21,8 @@ export interface PositionFormProps {
 }
 
 const initHiddenStates = {
-  preset: true,
   defaultEarnsIncentive: false,
-  incentive: true,
+  incentivePay: true,
 };
 
 const PositionForm = ({
@@ -44,9 +43,8 @@ const PositionForm = ({
 
   const formHiddenSetting = (formValues: PositionCreateBody) => {
     setHiddenStates({
-      preset: formValues.salaryCode !== 3,
       defaultEarnsIncentive: formValues.isLeader,
-      incentive: !formValues.isLeader,
+      incentivePay: !formValues.isLeader,
     });
   };
 
@@ -72,7 +70,6 @@ const PositionForm = ({
   const handleSubmit = (formData: PositionCreateBody) => {
     onSubmit?.({
       ...formData,
-      preset: formData.preset ? formData.preset : 1,
       defaultEarnsIncentive: formData.defaultEarnsIncentive
         ? formData.defaultEarnsIncentive
         : false,
@@ -105,31 +102,32 @@ const PositionForm = ({
           <Select placeholder="(대행사 단가 선택)" options={unitSelectOptions} />
         </Form.Item>
 
-        {/* 아이템 렌더링 */}
-        {formItems.map(item => (
-          <AnimatePresence key={item.name}>
-            {!hiddenStates[item.name as keyof typeof hiddenStates] && (
-              <motion.div
-                key={item.name}
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: 'auto' }}
-                exit={{ opacity: 0, height: 0 }}
-                transition={{ duration: 0.2 }}
-              >
-                <Form.Item
-                  label={item.label}
-                  name={item.name as keyof PositionCreateBody}
-                  rules={item.rules}
-                  tooltip={item.tooltip}
-                  valuePropName={item.valuePropName}
-                  style={{ marginBottom: 0, padding: '1.2rem 0' }}
+        <AnimatePresence>
+          {/* 아이템 렌더링 */}
+          {formItems.map(
+            item =>
+              !hiddenStates[item.name as keyof typeof hiddenStates] && (
+                <motion.div
+                  key={item.name}
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: 'auto' }}
+                  exit={{ opacity: 0, height: 0 }}
+                  transition={{ duration: 0.2 }}
                 >
-                  {item.component}
-                </Form.Item>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        ))}
+                  <Form.Item
+                    label={item.label}
+                    name={item.name as keyof PositionCreateBody}
+                    rules={item.rules}
+                    tooltip={item.tooltip}
+                    valuePropName={item.valuePropName}
+                    style={{ marginBottom: 0, padding: '1.2rem 0' }}
+                  >
+                    {item.component}
+                  </Form.Item>
+                </motion.div>
+              ),
+          )}
+        </AnimatePresence>
 
         <motion.div
           key={isEditing ? 'edit' : 'add'}

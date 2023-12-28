@@ -5,8 +5,7 @@ import { RiBankCard2Fill } from 'react-icons/ri';
 import { Descriptions, Divider, Empty, Flex, Skeleton, Tag } from 'antd';
 
 import ImageViewButton from '~/components/common/ImageViewButton';
-import { EmployeeData, EmployeeDocument } from '~/types/employee';
-import { SALARY } from '~/types/position';
+import { EmployeeData, EmployeeDocument, SALARY } from '~/types/employee';
 import { TeamData } from '~/types/team';
 import { UnitData } from '~/types/unit';
 import { formatPhoneNumber, formatSSN } from '~/utils/formatData';
@@ -23,6 +22,10 @@ const EmployeeInfo = ({ team, employee, unit, documents, loading }: EmployeeInfo
   if (loading) return <Skeleton active />;
   else if (!employee || !team || !unit) return <Empty style={{ marginTop: '20%' }} />;
 
+  const pay =
+    employee.salaryCode === 3
+      ? employee.preset * employee.position.standardPay
+      : employee.position.standardPay;
   return (
     <>
       <Descriptions
@@ -39,7 +42,9 @@ const EmployeeInfo = ({ team, employee, unit, documents, loading }: EmployeeInfo
           {employee.bankNum}
         </Descriptions.Item>
       </Descriptions>
+
       <Divider />
+
       <Descriptions
         column={1}
         colon={false}
@@ -47,15 +52,13 @@ const EmployeeInfo = ({ team, employee, unit, documents, loading }: EmployeeInfo
         contentStyle={{ display: 'inline-block', textAlign: 'right' }}
       >
         <Descriptions.Item label="소속 업체">{team.name}</Descriptions.Item>
-
         <Descriptions.Item label="대행사 단가">
           <Tag>{unit.name}</Tag>
           {unit.unitPay.toLocaleString()}원
         </Descriptions.Item>
-
         <Descriptions.Item label="계약 수당">
-          <Tag>{SALARY[employee.position.salaryCode]}</Tag>
-          {employee.position.standardPay.toLocaleString()}원
+          <Tag>{SALARY[employee.salaryCode]}</Tag>
+          {pay.toLocaleString()}원
         </Descriptions.Item>
 
         <Descriptions.Item label="계약기간">

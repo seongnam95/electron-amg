@@ -7,6 +7,7 @@ import { useRecoilValue } from 'recoil';
 import { teamStore } from '~/stores/team';
 import { AttendanceData } from '~/types/attendance';
 import { EmployeeData } from '~/types/employee';
+import { getStatsByEmployee } from '~/utils/statistics/report';
 
 import { MonthTableData, getColumns, getDataSource } from './config';
 import { MonthTableStyled } from './styled';

@@ -1,11 +1,13 @@
-import { Button, Divider, Flex, Form, FormInstance, Select, Tag, Typography } from 'antd';
+import { cloneElement, useEffect, useState } from 'react';
 
-import { HintText } from '~/components/dashboard/MonthlyAttendanceTable/styled';
+import { Button, Divider, Flex, Form, FormInstance } from 'antd';
+import { AnimatePresence, motion } from 'framer-motion';
+
+import Info from '~/components/common/Info';
 import { EmployeeData, EmployeeUpdateBody } from '~/types/employee';
-import { SALARY } from '~/types/position';
 import { TeamData } from '~/types/team';
 
-import { employeeFormConfig } from './config';
+import { getFormConfig } from './config';
 import { EmployeeFormStyled } from './styled';
 
 export interface EmployeeFormProps {
@@ -25,6 +27,15 @@ const EmployeeForm = ({
   onSubmit,
   onCancel,
 }: EmployeeFormProps) => {
+  const [disabledPreset, setDisabledPreset] = useState<boolean>(() => {
+    return employee?.salaryCode === 3;
+  });
+
+  const handleChange = (_: any, changeValues: EmployeeUpdateBody) => {
+    if (changeValues.salaryCode === 3) setDisabledPreset(true);
+    else setDisabledPreset(false);
+  };
+
   const initValues: EmployeeUpdateBody = {
     name: employee?.name,
     phone: employee?.phone,
@@ -32,46 +43,50 @@ const EmployeeForm = ({
     bank: employee?.bank,
     bankNum: employee?.bankNum,
     positionId: employee?.positionId,
+    salaryCode: employee?.salaryCode,
+    preset: employee?.preset,
   };
 
-  const positionOptions = team.positions.map(position => ({
-    value: position.id,
-    label: (
-      <Flex align="center" justify="space-between" gap={8} style={{ paddingRight: 6 }}>
-        {position.name}
-        <Flex align="center" gap={4}>
-          <HintText>{position.standardPay.toLocaleString()}원</HintText>
-          <Tag bordered={false} style={{ fontWeight: 'normal', marginInlineEnd: 0 }}>
-            {SALARY[position.salaryCode].slice(0, 1)}
-          </Tag>
-        </Flex>
-      </Flex>
-    ),
-  }));
-
+  const formItems = getFormConfig(team);
   return (
     <EmployeeFormStyled className="EmployeeForm">
       <Form
         form={form}
         colon={false}
-        labelCol={{ span: 9 }}
+        labelCol={{ span: 10 }}
         initialValues={initValues}
         labelAlign="left"
         autoComplete="off"
         validateTrigger="onSubmit"
         onFinish={onSubmit}
+        onValuesChange={handleChange}
+        disabled={loading}
       >
-        <Form.Item name="positionId" label="직위">
-          <Select options={positionOptions} />
-        </Form.Item>
-
-        <Divider />
-
-        {employeeFormConfig.map((item, idx) => (
-          <Form.Item key={`item-${idx}`} name={item.name} label={item.label}>
-            {item.component}
-          </Form.Item>
-        ))}
+        <AnimatePresence>
+          {formItems.map((item, idx) => {
+            const hidden = item.name === 'preset' && !disabledPreset;
+            if (item.name === 'divider') return item.component;
+            return (
+              !hidden && (
+                <motion.div
+                  key={`item-${idx}`}
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: 'auto' }}
+                  exit={{ opacity: 0, height: 0 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <Form.Item
+                    name={item.name}
+                    label={<Info title={item.tooltip}>{item.label}</Info>}
+                    style={{ marginBottom: 0, padding: '1.2rem 0' }}
+                  >
+                    {item.component}
+                  </Form.Item>
+                </motion.div>
+              )
+            );
+          })}
+        </AnimatePresence>
 
         <Divider />
 

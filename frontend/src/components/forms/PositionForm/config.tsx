@@ -6,13 +6,11 @@ import { PositionCreateBody } from '~/types/position';
 export const defaultPositionValues: PositionCreateBody = {
   name: '',
   color: '#4C53FF',
-  salaryCode: 1,
   defaultEarnsIncentive: false,
   standardPay: 0,
   isLeader: false,
   incentivePay: 0,
   sortingIndex: 0,
-  preset: 1,
   unitId: '',
 };
 
@@ -74,33 +72,6 @@ export const formItems = [
     label: '명칭',
     rules: formRules.name,
     component: <Input spellCheck={false} placeholder="(직위 명칭)" />,
-  },
-  {
-    name: 'salaryCode',
-    label: '급여',
-    rules: formRules.salary,
-    component: (
-      <Select
-        options={[
-          { label: '일급', value: 1 },
-          { label: '주급', value: 2 },
-          { label: '월급', value: 3 },
-        ]}
-      />
-    ),
-  },
-  {
-    name: 'preset',
-    label: '프리셋',
-    tooltip: '"일일 수당 x 프리셋" 으로 계산',
-    rules: formRules.preset,
-    component: (
-      <InputNumber
-        min={0}
-        style={{ width: '100%' }}
-        formatter={value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
-      />
-    ),
   },
   {
     name: 'standardPay',

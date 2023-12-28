@@ -1,18 +1,18 @@
 import { AttendanceData } from '~/types/attendance';
+import { EmployeeData } from '~/types/employee';
 import { ReportData } from '~/types/statistics';
 import { TeamData } from '~/types/team';
 
 const initStats: ReportData = {
-  target: undefined,
   earnsIncentiveCount: 0,
   mealCostCount: 0,
   prepaidCount: 0,
   otCount: 0,
   attendanceCount: 0,
-  dailyPay: 0,
-  mealCost: 0,
-  otPay: 0,
-  prepay: 0,
+  paySum: 0,
+  mealCostSum: 0,
+  otPaySum: 0,
+  prepaySum: 0,
   taxAmount: 0,
   totalPaySum: 0,
   finalPay: 0,
@@ -51,7 +51,8 @@ export const getAttendanceStats = (
   const paidCount = attendances.filter(attendance => attendance.isPrepaid).length;
 
   // 일일 수당 합계 [ 출근일 * 일일 수당 ]
-  const dailyPaySum = attendances.reduce(
+  let dailyPaySum;
+  dailyPaySum = attendances.reduce(
     (total, attendance) => total + attendance.position.standardPay,
     0,
   );
@@ -74,18 +75,16 @@ export const getAttendanceStats = (
   const finalPay = totalPaySum - taxSum;
 
   return {
-    target: undefined,
-
     attendanceCount: attendanceCount,
     earnsIncentiveCount: earnsIncentiveCount,
     mealCostCount: mealCostCount,
     otCount: otCount,
     prepaidCount: paidCount,
 
-    dailyPay: dailyPaySum,
-    mealCost: mealCostSum,
-    otPay: otPaySum,
-    prepay: prepaySum,
+    paySum: dailyPaySum,
+    mealCostSum: mealCostSum,
+    otPaySum: otPaySum,
+    prepaySum: prepaySum,
 
     totalPaySum: totalPaySum,
     taxAmount: taxSum,
@@ -107,13 +106,102 @@ export const calculateReportTotal = (reports: ReportData[]): ReportData => {
       prepaidCount: totals.prepaidCount + data.prepaidCount,
       otCount: totals.otCount + data.otCount,
       attendanceCount: totals.attendanceCount + data.attendanceCount,
-      dailyPay: totals.dailyPay + data.dailyPay,
-      mealCost: totals.mealCost + data.mealCost,
-      otPay: totals.otPay + data.otPay,
-      prepay: totals.prepay + data.prepay,
+      paySum: totals.paySum + data.paySum,
+      mealCostSum: totals.mealCostSum + data.mealCostSum,
+      otPaySum: totals.otPaySum + data.otPaySum,
+      prepaySum: totals.prepaySum + data.prepaySum,
       taxAmount: totals.taxAmount + data.taxAmount,
       totalPaySum: totals.totalPaySum + data.totalPaySum,
       finalPay: totals.finalPay + data.finalPay,
     };
   }, initStats);
 };
+
+export const getStatsByEmployee = (
+  team: TeamData,
+  employees: EmployeeData[],
+  attendances: AttendanceData[],
+): {
+  employee: EmployeeData;
+  attendances: AttendanceData[];
+  report: ReportData;
+}[] => {
+  const { otPay, mealCost } = team;
+
+  return employees.map(employee => {
+    const isMonthlyPay = employee.salaryCode === 3;
+
+    const filteredAttendances = attendances.filter(
+      attendance => attendance.employeeId === employee.id,
+    );
+
+    // 인센 포함 합계
+    const earnsIncentiveCount = filteredAttendances.filter(
+      attendance => attendance.earnsIncentive,
+    ).length;
+
+    // 총 출근일 수
+    const attendanceCount = filteredAttendances.length;
+
+    // 식대 포함 합계
+    const mealCostCount = filteredAttendances.filter(
+      attendance => attendance.includeMealCost,
+    ).length;
+
+    // OT 총 합계
+    const otCount = filteredAttendances
+      .map(attendance => attendance.otCount)
+      .reduce((total, value) => (total += value), 0);
+
+    // 선지급일 합계
+    const paidCount = filteredAttendances.filter(attendance => attendance.isPrepaid).length;
+
+    // 월급일 경우 월급 * preset, 나머지는 attendance의 position.standardPay 합
+    const dailyPaySum = isMonthlyPay
+      ? employee.position.standardPay * employee.preset
+      : filteredAttendances.reduce(
+          (total, attendance) => total + attendance.position.standardPay,
+          0,
+        );
+
+    // 식대 비용 합계 [ 식대 포함일 * 식대 ]
+    const mealCostSum = mealCostCount * mealCost;
+
+    // OT 합계 [ OT 시간 * OT 시급 ]
+    const otPaySum = otCount * otPay;
+
+    // 선지급 합계 [ 선지급 수 * 일일 수당 ]
+    const prepaySum = filteredAttendances.reduce((total, attendance) => {
+      if (attendance.isPrepaid) return total + attendance.position.standardPay;
+      return total;
+    }, 0);
+
+    // 일일 수당 합계액 + 식대 합계액 + OT 합계액 - 선지급액
+    const totalPaySum = dailyPaySum + mealCostSum + otPaySum - prepaySum;
+    const taxSum = totalPaySum * 0.033;
+    const finalPay = totalPaySum - taxSum;
+
+    return {
+      employee: employee,
+      attendances: filteredAttendances,
+      report: {
+        attendanceCount: attendanceCount,
+        earnsIncentiveCount: earnsIncentiveCount,
+        mealCostCount: mealCostCount,
+        otCount: otCount,
+        prepaidCount: paidCount,
+
+        paySum: dailyPaySum,
+        mealCostSum: mealCostSum,
+        otPaySum: otPaySum,
+        prepaySum: prepaySum,
+
+        totalPaySum: totalPaySum,
+        taxAmount: taxSum,
+        finalPay: finalPay,
+      },
+    };
+  });
+};
+
+export const getStatsByAttendance = (team: TeamData, attendances: AttendanceData[]) => {};

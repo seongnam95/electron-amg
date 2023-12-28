@@ -7,8 +7,8 @@ import { ColumnsType } from 'antd/es/table';
 import { HintText } from '~/components/dashboard/MonthlyAttendanceTable/styled';
 import { colors } from '~/styles/themes';
 import { AttendanceData } from '~/types/attendance';
-import { EmployeeData } from '~/types/employee';
-import { PositionData, SALARY } from '~/types/position';
+import { EmployeeData, SALARY } from '~/types/employee';
+import { PositionData } from '~/types/position';
 
 /** [ DateTable ] 데이터 인터페이스 */
 export interface DateTableData {
@@ -64,7 +64,7 @@ export const getColumns = ({ employees, onClickName }: ColumnProps): ColumnsType
     },
   );
 
-  const salaryFilters = [...new Set(employees?.map(employee => employee.position.salaryCode))].map(
+  const salaryFilters = [...new Set(employees?.map(employee => employee.salaryCode))].map(
     salary => {
       return {
         value: salary,
@@ -114,11 +114,11 @@ export const getColumns = ({ employees, onClickName }: ColumnProps): ColumnsType
       width: 160,
       align: 'center',
       filters: salaryFilters,
-      onFilter: (value, record) => record.employee.position.salaryCode === value,
-      render: (_, { employee: { position } }) => (
+      onFilter: (value, record) => record.employee.salaryCode === value,
+      render: (_, { employee: { position, salaryCode } }) => (
         <Flex justify="center">
           <Flex justify="space-between" style={{ width: 120, maxWidth: 120 }}>
-            <Tag>{SALARY[position.salaryCode]}</Tag>
+            <Tag>{SALARY[salaryCode]}</Tag>
             <span>{position.standardPay.toLocaleString()}원</span>
           </Flex>
         </Flex>

@@ -56,6 +56,8 @@ def init_data(db: Session = Depends(deps.get_db)):
         id_card=px_img,
         bank_book=px_img,
         sign_base64=px_img,
+        salary_code=1,
+        preset=0,
         user_id=user.id,
         team_id=team.id,
         position_id=positions[0].id,
@@ -65,7 +67,6 @@ def init_data(db: Session = Depends(deps.get_db)):
     employee_bodys.append(admin_body)
 
     for employee in employees:
-        print(positions[1:])
         position = random.choice(positions[1:])
         body = schemas.EmployeeCreate(
             name=employee["name"],
@@ -75,6 +76,8 @@ def init_data(db: Session = Depends(deps.get_db)):
             bank_num=employee["bank_num"],
             start_period="2023-12-01",
             end_period="2023-12-31",
+            salary_code=1,
+            preset=0,
             id_card=px_img,
             bank_book=px_img,
             sign_base64=px_img,

@@ -32,6 +32,9 @@ class Employee(Base):
     start_period = Column(Date, nullable=False)  # 계약 시작일
     end_period = Column(Date, nullable=False)  # 계약 종료일
 
+    salary_code = Column(Integer, nullable=False)  # 급여 종류
+    preset = Column(Integer, nullable=False, default=0)  # 급여별 프리셋
+
     create_date = Column(DateTime(timezone=True), nullable=False, default=datetime.now)
 
     # 소속

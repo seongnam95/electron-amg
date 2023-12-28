@@ -58,21 +58,21 @@ export const getDataSource = (team: TeamData, attendances: AttendanceData[]): Un
       name: '식대',
       unitPay: mealCost,
       count: totalReport.mealCostCount,
-      totalPay: totalReport.mealCost,
+      totalPay: totalReport.mealCostSum,
     },
     {
       key: 'ot',
       name: 'OT',
       unitPay: otPay,
       count: totalReport.otCount,
-      totalPay: totalReport.otPay,
+      totalPay: totalReport.otPaySum,
     },
     {
       key: 'total',
       name: '총 합계액',
       unitPay: 0,
       count: 0,
-      totalPay: totalReport.dailyPay,
+      totalPay: totalReport.paySum,
     },
   ];
 };

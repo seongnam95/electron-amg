@@ -28,7 +28,6 @@ const MonthlyAttendanceTable = ({ attendances }: MonthlyAttendanceTableProps) =>
   });
 
   const tableProps: TableProps<ReportData<PositionData>> = {
-    pagination: false,
     columns: getColumns(),
     dataSource: reports.map(report => {
       return { key: report.target.id, ...report };
@@ -37,7 +36,7 @@ const MonthlyAttendanceTable = ({ attendances }: MonthlyAttendanceTableProps) =>
 
   return (
     <MonthlyAttendanceTableStyled className="MonthAttendanceTable">
-      <Table {...tableProps} />
+      <Table pagination={false} {...tableProps} />
     </MonthlyAttendanceTableStyled>
   );
 };

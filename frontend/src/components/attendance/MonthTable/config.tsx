@@ -10,7 +10,7 @@ import { EmployeeData } from '~/types/employee';
 import { ReportData } from '~/types/statistics';
 import { TeamData } from '~/types/team';
 import { generateDays } from '~/utils/commuteRange';
-import { getAttendanceStats } from '~/utils/statistics/report';
+import { getAttendanceStats, getStatsByEmployee } from '~/utils/statistics/report';
 
 import AttendanceBar from './AttendanceBar';
 import { AttendanceGroupData, groupedAttendanceByDay } from './util';
@@ -35,22 +35,12 @@ export const getDataSource = (
   employees: EmployeeData[],
   attendances: AttendanceData[],
 ): MonthTableData[] => {
-  const reports = employees.map(employee => {
-    const preset = employee.position.salaryCode === 3 ? employee.position.preset : undefined;
-    const filteredAttendances = attendances.filter(
-      attendance => attendance.employeeId === employee.id,
-    );
+  const employeeStats = getStatsByEmployee(team, employees, attendances);
+  console.log(employeeStats);
+  return employeeStats.map(stats => {
+    const { employee, attendances, report } = stats;
 
-    const stats = getAttendanceStats(team, filteredAttendances, preset);
-    return { ...stats, target: employee };
-  });
-
-  return reports.map(report => {
-    const { target: employee } = report;
-
-    const targetAttendances = attendances.filter(data => data.employeeId === employee.id);
-    const workingGroups = groupedAttendanceByDay(targetAttendances);
-
+    const workingGroups = groupedAttendanceByDay(attendances);
     const existAttendances: { [key: string]: AttendanceGroupData } = {};
 
     workingGroups.forEach(group => {
@@ -61,7 +51,7 @@ export const getDataSource = (
     return {
       key: employee.id,
       employee: employee,
-      attendances: targetAttendances,
+      attendances: attendances,
       report: report,
       ...existAttendances,
     };
@@ -142,7 +132,7 @@ export const getColumns = ({ day, onContextMenu }: ColumnProps): ColumnsType<Mon
       title: '수당 합계',
       width: 100,
       align: 'right',
-      render: (_, { report }) => <>{report.dailyPay.toLocaleString()}</>,
+      render: (_, { report }) => <>{report.paySum.toLocaleString()}</>,
     },
     {
       key: 'mealCost',
@@ -150,7 +140,7 @@ export const getColumns = ({ day, onContextMenu }: ColumnProps): ColumnsType<Mon
       title: '식대',
       width: 90,
       align: 'right',
-      render: (_, { report }) => <>{report.mealCost.toLocaleString()}</>,
+      render: (_, { report }) => <>{report.mealCostSum.toLocaleString()}</>,
     },
     {
       key: 'paySum',
@@ -158,7 +148,7 @@ export const getColumns = ({ day, onContextMenu }: ColumnProps): ColumnsType<Mon
       title: 'OT',
       width: 90,
       align: 'right',
-      render: (_, { report }) => <>{report.otPay.toLocaleString()}</>,
+      render: (_, { report }) => <>{report.otPaySum.toLocaleString()}</>,
     },
     {
       key: 'prepay',
@@ -166,7 +156,7 @@ export const getColumns = ({ day, onContextMenu }: ColumnProps): ColumnsType<Mon
       title: '선지급',
       width: 100,
       align: 'right',
-      render: (_, { report }) => <>{report.prepay.toLocaleString()}</>,
+      render: (_, { report }) => <>{report.prepaySum.toLocaleString()}</>,
     },
     {
       key: 'incomeTax',
