@@ -108,23 +108,6 @@ export const getColumns = ({ employees, onClickName }: ColumnProps): ColumnsType
       },
     },
     {
-      key: 'salary',
-      dataIndex: 'salary',
-      title: '일일 수당',
-      width: 160,
-      align: 'center',
-      filters: salaryFilters,
-      onFilter: (value, record) => record.employee.salaryCode === value,
-      render: (_, { employee: { position, salaryCode } }) => (
-        <Flex justify="center">
-          <Flex justify="space-between" style={{ width: 120, maxWidth: 120 }}>
-            <Tag>{SALARY[salaryCode]}</Tag>
-            <span>{position.standardPay.toLocaleString()}원</span>
-          </Flex>
-        </Flex>
-      ),
-    },
-    {
       key: 'mealIncluded',
       dataIndex: 'mealIncluded',
       title: '식대 포함',
@@ -166,6 +149,22 @@ export const getColumns = ({ employees, onClickName }: ColumnProps): ColumnsType
           <Flex align="center" justify="center">
             {attendance.otCount}
             <HintText>T</HintText>
+          </Flex>
+        );
+      },
+    },
+    {
+      key: 'preset',
+      dataIndex: 'preset',
+      title: '프리셋',
+      width: 90,
+      align: 'center',
+      render: (_, { attendance }) => {
+        if (attendance === undefined || attendance.preset === 1) return null;
+        return (
+          <Flex align="center" justify="center" gap={4}>
+            <HintText>*</HintText>
+            {attendance.preset}
           </Flex>
         );
       },

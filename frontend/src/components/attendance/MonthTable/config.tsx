@@ -1,6 +1,6 @@
 import { MouseEvent } from 'react';
 
-import { Button, Flex, Tag } from 'antd';
+import { Button } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 import clsx from 'clsx';
 import dayjs, { Dayjs } from 'dayjs';
@@ -10,7 +10,7 @@ import { EmployeeData } from '~/types/employee';
 import { ReportData } from '~/types/statistics';
 import { TeamData } from '~/types/team';
 import { generateDays } from '~/utils/commuteRange';
-import { getAttendanceStats, getStatsByEmployee } from '~/utils/statistics/report';
+import { getStatsByEmployee } from '~/utils/statistics/report';
 
 import AttendanceBar from './AttendanceBar';
 import { AttendanceGroupData, groupedAttendanceByDay } from './util';

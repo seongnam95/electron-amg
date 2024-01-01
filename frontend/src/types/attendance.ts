@@ -2,6 +2,7 @@ import { PositionData } from './position';
 
 export interface AttendanceData {
   id: string;
+  preset: number;
   memo: string;
   otCount: number;
   workingDate: string;

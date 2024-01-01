@@ -53,7 +53,7 @@ export const getAttendanceStats = (
   // 일일 수당 합계 [ 출근일 * 일일 수당 ]
   let dailyPaySum;
   dailyPaySum = attendances.reduce(
-    (total, attendance) => total + attendance.position.standardPay,
+    (total, attendance) => total + attendance.position.standardPay * attendance.preset,
     0,
   );
 
@@ -141,7 +141,10 @@ export const getStatsByEmployee = (
     ).length;
 
     // 총 출근일 수
-    const attendanceCount = filteredAttendances.length;
+    const attendanceCount = filteredAttendances.reduce(
+      (total, attendance) => total + attendance.preset,
+      0,
+    );
 
     // 식대 포함 합계
     const mealCostCount = filteredAttendances.filter(
@@ -160,7 +163,7 @@ export const getStatsByEmployee = (
     const dailyPaySum = isMonthlyPay
       ? employee.position.standardPay * employee.preset
       : filteredAttendances.reduce(
-          (total, attendance) => total + attendance.position.standardPay,
+          (total, attendance) => total + attendance.position.standardPay * attendance.preset,
           0,
         );
 

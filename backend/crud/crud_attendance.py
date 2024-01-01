@@ -32,11 +32,19 @@ class CRUDAttendance(CRUDBase[Attendance, AttendanceCreate, AttendanceUpdate]):
         if attendance:
             raise HTTPException(status_code=404, detail="이미 출근처리 되었습니다.")
 
+        position_id = (
+            attendance_in.position_id
+            if attendance_in.position_id and not attendance_in.position_id == "default"
+            else employee.position_id
+        )
+
+        print(position_id)
+
         obj_in_data = jsonable_encoder(attendance_in)
         obj_in_data["working_date"] = working_date
         obj_in_data["employee_id"] = employee.id
         obj_in_data["earns_incentive"] = employee.position.default_earns_incentive
-        obj_in_data["position_id"] = employee.position_id
+        obj_in_data["position_id"] = position_id
         db_obj = self.model(**obj_in_data)
 
         db.add(db_obj)

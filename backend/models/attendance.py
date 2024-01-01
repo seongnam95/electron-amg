@@ -19,6 +19,7 @@ class Attendance(Base):
         default=lambda: str(B64UUID(uuid4())),
     )  # PK
 
+    preset = Column(Integer, nullable=False, default=1)  # 프리셋
     memo = Column(String, nullable=False, default="")  # 메모
 
     is_prepaid = Column(Boolean, nullable=False, default=False)  # 선지급

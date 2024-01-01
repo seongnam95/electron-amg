@@ -5,6 +5,7 @@ from schemas.position import PositionResponse
 
 
 class AttendanceCreate(BaseModel):
+    preset: Optional[int] = None
     working_date: Optional[str] = None
     memo: Optional[str] = None
     earns_incentive: Optional[bool] = None
@@ -20,6 +21,7 @@ class AttendanceUpdate(AttendanceCreate):
 
 class AttendanceResponse(BaseModel):
     id: str
+    preset: int
     memo: str
     is_prepaid: bool
     include_meal_cost: bool
