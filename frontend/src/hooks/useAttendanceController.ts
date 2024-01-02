@@ -52,7 +52,7 @@ const useAttendanceController = (options: AttendanceControllerOptions) => {
   /** Attendance 데이터 유무에 따라 ID 분류 */
   const categorizeEmployeeIds = (day: Dayjs, employeeIds: string[]) => {
     const dayStr = day.format('YY-MM-DD');
-    console.log('dayStr', dayStr);
+
     return employeeIds.reduce(
       (acc, id) => {
         const attendance = attendances.find(

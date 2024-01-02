@@ -8,7 +8,7 @@ import { ReportData } from '~/types/statistics';
 import { HintText } from './styled';
 
 /** [ MonthlyAttendanceTable ] 컬럼 데이터를 반환합니다. */
-export const getColumns = (): TableColumnsType<ReportData<PositionData>> => {
+export const getColumns = (): TableColumnsType<ReportData> => {
   return [
     {
       key: 'positionName',

@@ -1,7 +1,6 @@
-import { Doughnut } from 'react-chartjs-2';
+import { useMemo } from 'react';
 
 import { Typography, Flex } from 'antd';
-import 'chart.js/auto';
 import dayjs, { Dayjs } from 'dayjs';
 import { useRecoilValue } from 'recoil';
 
@@ -9,17 +8,16 @@ import ColorBar from '~/components/employee/ColorBar';
 import { useAttendanceQuery } from '~/hooks/queryHooks/useAttendanceQuery';
 import { useEmployee } from '~/hooks/queryHooks/useEmployeeQuery';
 import { teamStore } from '~/stores/team';
-import { colors } from '~/styles/themes';
-import { getAttendanceStats } from '~/utils/statistics/report';
+import { EmployeeData } from '~/types/employee';
 
-import { DailyAttendanceDoughnutStyled } from './styled';
+import { DailyAttendanceStatsStyled } from './styled';
 
-export interface DailyAttendanceDoughnutProps {
+export interface DailyAttendanceStatsProps {
   day?: Dayjs;
 }
 
 const { Text } = Typography;
-const DailyAttendanceDoughnut = ({ day = dayjs() }: DailyAttendanceDoughnutProps) => {
+const DailyAttendanceStats = ({ day = dayjs() }: DailyAttendanceStatsProps) => {
   const team = useRecoilValue(teamStore);
 
   const { employees } = useEmployee({ teamId: team.id, enabled: team.existTeam });
@@ -30,30 +28,51 @@ const DailyAttendanceDoughnut = ({ day = dayjs() }: DailyAttendanceDoughnutProps
     enabled: team.existTeam,
   });
 
-  const reports = team.positions.map(position => {
-    const filteredAttendances = attendances.filter(
-      attendance => attendance.positionId === position.id,
-    );
-    const stats = getAttendanceStats(team, filteredAttendances);
-    return { ...stats, target: position };
-  });
+  const reports = useMemo(() => {
+    const newEmployees = employees.reduce((acc, employee) => {
+      const attendancePosition = attendances.find(
+        attendance => attendance.employeeId === employee.id,
+      );
+      const newPosition = attendancePosition ? attendancePosition.position : employee.position;
+      acc.push({
+        ...employee,
+        positionId: newPosition.id,
+        position: newPosition,
+      });
+      return acc;
+    }, [] as EmployeeData[]);
+
+    const report = team.positions.map(position => {
+      const totalCount = newEmployees.filter(
+        employee => employee.positionId === position.id,
+      ).length;
+
+      const attendanceCount = attendances.filter(
+        attendance => attendance.positionId === position.id,
+      ).length;
+
+      return {
+        position: position,
+        totalCount: totalCount,
+        attendanceCount: attendanceCount,
+      };
+    });
+
+    return report;
+  }, [employees, attendances]);
 
   return (
-    <DailyAttendanceDoughnutStyled className="AttendanceDoughnut">
+    <DailyAttendanceStatsStyled className="AttendanceDoughnut">
       <Flex vertical style={{ width: '100%' }}>
         {reports.map(report => {
-          const totalEmployeeCount = employees.filter(
-            employee => employee.position.id === report.target.id,
-          ).length;
-
           return (
-            <Flex justify="space-between" key={report.target.id}>
+            <Flex justify="space-between" key={report.position.id}>
               <Flex className="position-label-wrap" align="center" gap={6}>
-                <ColorBar color={report.target.color} height="1.4rem" />
-                {report.target.name}
+                <ColorBar color={report.position.color} height="1.4rem" />
+                {report.position.name}
               </Flex>
               <Flex gap={4} align="center">
-                <Text type="secondary">{totalEmployeeCount} / </Text>
+                <Text type="secondary">{report.totalCount} / </Text>
                 <Text strong>{report.attendanceCount}</Text>
                 <Text type="secondary">명</Text>
               </Flex>
@@ -78,8 +97,8 @@ const DailyAttendanceDoughnut = ({ day = dayjs() }: DailyAttendanceDoughnutProps
           </Flex>
         </Flex>
       </Flex>
-    </DailyAttendanceDoughnutStyled>
+    </DailyAttendanceStatsStyled>
   );
 };
 
-export default DailyAttendanceDoughnut;
+export default DailyAttendanceStats;

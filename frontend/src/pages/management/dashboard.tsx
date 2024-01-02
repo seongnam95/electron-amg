@@ -48,7 +48,7 @@ const DashboardPage = () => {
       className: 'month-attendance-table-card',
       icon: <FaCalendarDays color="#ffa963" size={19} />,
       title: '월별 출근 합계',
-      content: <MonthlyAttendanceTable attendances={attendances} />,
+      content: <MonthlyAttendanceTable employees={employees} attendances={attendances} />,
     },
   ];
 

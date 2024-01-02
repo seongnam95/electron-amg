@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-export const DailyAttendanceDoughnutStyled = styled.div`
+export const DailyAttendanceStatsStyled = styled.div`
   height: 100%;
 
   display: flex;

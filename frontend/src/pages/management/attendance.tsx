@@ -10,7 +10,7 @@ import MonthTable from '~/components/attendance/MonthTable';
 import Card from '~/components/common/Card';
 import AntDatePicker from '~/components/common/DatePicker';
 import Dock from '~/components/common/Dock';
-import DailyAttendanceDoughnut from '~/components/dashboard/DailyAttendanceDoughnut';
+import DailyAttendanceStats from '~/components/dashboard/DailyAttendanceStats';
 import { useAttendanceModal } from '~/hooks/componentHooks/useAttendanceModal';
 import { useEmployeeInfoDrawer } from '~/hooks/componentHooks/useEmployeeInfoDrawer';
 import { useAttendanceQuery } from '~/hooks/queryHooks/useAttendanceQuery';
@@ -97,7 +97,7 @@ const AttendancePage = () => {
             />
             <Flex vertical gap={20}>
               <Card title="🙋‍♂️ 출근현황" style={{ width: '24rem' }}>
-                <DailyAttendanceDoughnut day={selectedDay} />
+                <DailyAttendanceStats day={selectedDay} />
               </Card>
               <Card>d</Card>
             </Flex>

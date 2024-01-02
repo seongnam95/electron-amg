@@ -38,6 +38,7 @@ const defaultValues: AttendanceUpdateBody = {
   includeMealCost: false,
   otCount: 0,
   memo: '',
+  earnsIncentive: false,
 };
 
 const AttendanceForm = ({
