@@ -4,7 +4,11 @@ import { PositionData } from '~/types/position';
 import { ReportData } from '~/types/statistics';
 import { TeamData } from '~/types/team';
 import { UnitData } from '~/types/unit';
-import { calculateReportTotal, getAttendanceStats } from '~/utils/statistics/report';
+import {
+  calculateReportTotal,
+  getAttendanceStats,
+  getReportByPositions,
+} from '~/utils/statistics/report';
 
 export interface UnitListData {
   key: string;
@@ -14,23 +18,18 @@ export interface UnitListData {
   totalPay: number;
 }
 
-export const getDataSource = (team: TeamData, attendances: AttendanceData[]): UnitListData[] => {
-  const { units, mealCost, otPay, positions } = team;
+export const getDataSource = (
+  team: TeamData,
+  employees: EmployeeData[],
+  attendances: AttendanceData[],
+): UnitListData[] => {
+  const { units, mealCost, otPay } = team;
 
-  // 직위별 리포트
-  const reportsByPosition: ReportData<PositionData>[] = positions.map(position => {
-    const filteredAttendances = attendances.filter(
-      attendance => attendance.positionId === position.id,
-    );
-
-    const preset = position.salaryCode === 3 ? position.preset : undefined;
-    const report = getAttendanceStats(team, filteredAttendances, preset);
-    return { ...report, target: position };
-  });
+  const reports = getReportByPositions(team, employees, attendances);
 
   // 단가별 리포트
   const reportsByUnit = units.map(unit => {
-    const filteredReports = reportsByPosition.filter(report => report.target.unitId === unit.id);
+    const filteredReports = reports.filter(report => report.target?.unitId === unit.id);
     const unitCount = filteredReports.reduce((total, report) => total + report.attendanceCount, 0);
     const unitPaySum = unitCount * unit.unitPay;
 
@@ -49,7 +48,7 @@ export const getDataSource = (team: TeamData, attendances: AttendanceData[]): Un
     totalPay: report.unitPaySum,
   }));
 
-  const totalReport: ReportData<UnitData> = calculateReportTotal(reportsByPosition);
+  const totalReport: ReportData<UnitData> = calculateReportTotal(reports);
 
   return [
     ...unitDatas,

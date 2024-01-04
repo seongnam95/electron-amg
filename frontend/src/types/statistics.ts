@@ -1,4 +1,6 @@
-export interface ReportData {
+export interface ReportData<T = any> {
+  target?: T;
+
   attendanceCount: number;
   earnsIncentiveCount: number;
   mealCostCount: number;

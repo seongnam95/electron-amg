@@ -1,5 +1,6 @@
 import { AttendanceData } from '~/types/attendance';
 import { EmployeeData } from '~/types/employee';
+import { PositionData } from '~/types/position';
 import { ReportData } from '~/types/statistics';
 import { TeamData } from '~/types/team';
 
@@ -28,6 +29,7 @@ const initStats: ReportData = {
 export const getAttendanceStats = (
   team: TeamData,
   attendances: AttendanceData[],
+  pay?: number,
   preset?: number,
 ): ReportData => {
   if (!team.existTeam || !attendances || attendances.length === 0) return initStats;
@@ -51,11 +53,13 @@ export const getAttendanceStats = (
   const paidCount = attendances.filter(attendance => attendance.isPrepaid).length;
 
   // 일일 수당 합계 [ 출근일 * 일일 수당 ]
-  let dailyPaySum;
-  dailyPaySum = attendances.reduce(
-    (total, attendance) => total + attendance.position.standardPay * attendance.preset,
-    0,
-  );
+  const dailyPaySum =
+    preset && pay
+      ? pay * attendanceCount
+      : attendances.reduce(
+          (total, attendance) => total + attendance.position.standardPay * attendance.preset,
+          0,
+        );
 
   // 식대 비용 합계 [ 식대 포함일 * 식대 ]
   const mealCostSum = mealCostCount * mealCost;
@@ -207,4 +211,54 @@ export const getStatsByEmployee = (
   });
 };
 
-export const getStatsByAttendance = (team: TeamData, attendances: AttendanceData[]) => {};
+export const getReportByPositions = (
+  team: TeamData,
+  employees: EmployeeData[],
+  attendances: AttendanceData[],
+) => {
+  const { positions } = team;
+  const monthlyEmployees = employees.filter(employee => employee.salaryCode === 3);
+  const monthlyEmployeeIds = monthlyEmployees.map(employee => employee.id);
+
+  const monthlyEmployeeReportByPosition: ReportData<PositionData>[] = monthlyEmployees.map(
+    employee => {
+      const filteredAttendances = attendances.filter(
+        attendance => attendance.employeeId === employee.id,
+      );
+
+      const report = getAttendanceStats(
+        team,
+        filteredAttendances,
+        employee.position.standardPay,
+        employee.preset,
+      );
+
+      return {
+        ...report,
+        target: employee.position,
+      };
+    },
+  );
+
+  const reportsByPosition: ReportData<PositionData>[] = positions.map(position => {
+    const filteredAttendances = attendances.filter(
+      attendance =>
+        attendance.positionId === position.id &&
+        !monthlyEmployeeIds.includes(attendance.employeeId),
+    );
+
+    const report = getAttendanceStats(team, filteredAttendances);
+    return { ...report, target: position };
+  });
+  const concatReport = [...monthlyEmployeeReportByPosition, ...reportsByPosition];
+
+  const reports: ReportData<PositionData>[] = positions.map(position => {
+    const filteredReports = concatReport.filter(report => report.target?.id === position.id);
+    return {
+      ...calculateReportTotal(filteredReports),
+      target: position,
+    };
+  });
+
+  return reports;
+};

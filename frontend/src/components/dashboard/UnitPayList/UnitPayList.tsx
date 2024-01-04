@@ -10,12 +10,13 @@ import { getDataSource } from './config';
 import { UnitPayListStyled } from './styled';
 
 export interface UnitPayListProps {
+  employees: EmployeeData[];
   attendances: AttendanceData[];
 }
 
-const UnitPayList = ({ attendances }: UnitPayListProps) => {
+const UnitPayList = ({ employees, attendances }: UnitPayListProps) => {
   const team = useRecoilValue(teamStore);
-  const datas = getDataSource(team, attendances);
+  const datas = getDataSource(team, employees, attendances);
 
   return (
     <UnitPayListStyled className="UnitList">
