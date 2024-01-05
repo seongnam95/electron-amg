@@ -19,7 +19,7 @@ const NavBar = ({ className }: NavBarProps) => {
       {
         icon: 'bx-user',
         link: '/manager/employee',
-        text: '직원 관리',
+        text: '근무자 관리',
       },
       {
         icon: 'bx-time',

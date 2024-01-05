@@ -26,7 +26,7 @@ export interface MonthTableData {
 /**
  * [ MonthTable ] 데이터 소스를 반환합니다.
  * @param team 팀 데이터
- * @param employees 근로자 데이터 리스트
+ * @param employees 근무자 데이터 리스트
  * @param attendances 출근 기록 데이터 리스트
  * @returns {MonthTableData[]} MonthTableData[]
  */
@@ -66,7 +66,7 @@ interface ColumnProps {
 
 /**
  * [ MonthTable ] 컬럼 데이터를 반환합니다.
- * @param ColumnProps 날짜, 대상 근로자 데이터, 핸들러
+ * @param ColumnProps 날짜, 대상 근무자 데이터, 핸들러
  */
 export const getColumns = ({ day, onContextMenu }: ColumnProps): ColumnsType<MonthTableData> => {
   const days = generateDays(day);

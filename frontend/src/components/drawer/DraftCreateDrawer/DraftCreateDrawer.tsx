@@ -85,7 +85,7 @@ const DraftCreateDrawer = ({ onCopy, onClose, onHistory, ...props }: DraftCreate
   );
 
   const RenderTitle = existTeam ? (
-    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+    <Flex align="center" gap={10}>
       <span
         style={{
           width: '0.7rem',
@@ -95,7 +95,7 @@ const DraftCreateDrawer = ({ onCopy, onClose, onHistory, ...props }: DraftCreate
         }}
       />
       {team?.name}
-    </div>
+    </Flex>
   ) : (
     <Skeleton.Input active size="small" />
   );

@@ -1,8 +1,8 @@
 import { useState } from 'react';
-import { FaTrashAlt } from 'react-icons/fa';
-import { FiPlus } from 'react-icons/fi';
+import { FaFileContract, FaTrashAlt } from 'react-icons/fa';
 import { HiOutlineDotsVertical } from 'react-icons/hi';
 import { ImFileExcel } from 'react-icons/im';
+import { IoMdPersonAdd } from 'react-icons/io';
 import { VscRefresh } from 'react-icons/vsc';
 
 import { Flex, Segmented, Dropdown, Button, Tooltip } from 'antd';
@@ -13,12 +13,14 @@ import DropdownItem from '~/components/common/DropdownItem';
 import DraftCreateDrawer from '~/components/drawer/DraftCreateDrawer';
 import HistoryDrawer from '~/components/drawer/HistoryDrawer';
 import EmployeeTable from '~/components/employee/EmployeeTable';
+import useDraft from '~/hooks/componentHooks/useDraft';
 import { useEmployeeInfoDrawer } from '~/hooks/componentHooks/useEmployeeInfoDrawer';
 import { useSoundApp } from '~/hooks/componentHooks/useSoundApp';
 import { useEmployee } from '~/hooks/queryHooks/useEmployeeQuery';
 import { useRemoveEmployee } from '~/hooks/useRemoveEmployee';
 import { teamStore } from '~/stores/team';
 import { EmployeePageStyled } from '~/styles/pageStyled/employeePageStyled';
+import { colors } from '~/styles/themes';
 import { EmployeeData } from '~/types/employee';
 
 type ViewType = 'all' | 'valid' | 'invalid';
@@ -30,13 +32,13 @@ const EmployeePage = () => {
   const [selectedEmployees, setSelectedEmployees] = useState<EmployeeData[]>([]);
   const [viewType, setViewType] = useState<ViewType>('all');
 
-  const [openDraftDrawer, setOpenDraftDrawer] = useState<boolean>(false);
   const [openHistoryDrawer, setOpenHistoryDrawer] = useState<boolean>(false);
 
   /** Hook */
   const { soundMessage } = useSoundApp();
 
   const { openDrawer, renderDrawer } = useEmployeeInfoDrawer();
+  const { openDrawer: openDraftDrawer, renderDrawer: renderDraftDrawer } = useDraft();
 
   const { removeEmployee } = useRemoveEmployee({
     teamId: team.id,
@@ -85,13 +87,26 @@ const EmployeePage = () => {
 
   const dropdownMenuItems = [
     {
+      key: 'create-employee',
+      label: (
+        <DropdownItem
+          label="근무자 추가"
+          color={colors.primary}
+          icon={<IoMdPersonAdd size={16} />}
+        />
+      ),
+      // onClick: () => setOpenDraftDrawer(true),
+    },
+    {
       key: 'create-draft',
-      label: <DropdownItem label="계약서 초안 생성" icon={<FiPlus size={18} />} color="#1677FF" />,
-      onClick: () => setOpenDraftDrawer(true),
+      label: <DropdownItem label="계약서 생성" icon={<FaFileContract size={14} />} />,
+      onClick: openDraftDrawer,
     },
     {
       key: 'refetch',
-      label: <DropdownItem label="새로고침" icon={<VscRefresh size={17} />} />,
+      label: (
+        <DropdownItem label="새로고침" color={colors.textColor1} icon={<VscRefresh size={17} />} />
+      ),
       onClick: handleRefetch,
     },
   ];
@@ -152,12 +167,12 @@ const EmployeePage = () => {
       </Flex>
 
       {/* 계약서 폼 생성 Drawer */}
-      <DraftCreateDrawer
+      {/* <DraftCreateDrawer
         open={openDraftDrawer}
         onCopy={handleCopy}
         onHistory={() => setOpenHistoryDrawer(true)}
         onClose={() => setOpenDraftDrawer(false)}
-      />
+      /> */}
 
       {/* 계약서 폼 히스토리 Drawer */}
       {team && (
@@ -169,6 +184,7 @@ const EmployeePage = () => {
       )}
 
       {renderDrawer}
+      {renderDraftDrawer}
     </EmployeePageStyled>
   );
 };

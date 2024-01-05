@@ -22,12 +22,12 @@ router = APIRouter()
 SchemaType = TypeVar("SchemaType", bound=BaseModel)
 
 
-# 개인정보로 근로자 불러오기
+# 개인정보로 근무자 불러오기
 @router.get("/employee/search/", response_model=DataResponse[EmployeeCoveringResponse])
 def search_employee(name: str, ssn: str, db: Session = Depends(deps.get_db)):
     employee = crud.employee.get_employee_search(db=db, name=name, ssn=ssn)
     if not employee:
-        return DataResponse(msg="해당하는 근로자를 찾을 수 없습니다.", result=None)
+        return DataResponse(msg="해당하는 근무자를 찾을 수 없습니다.", result=None)
 
     response = _covering_employee(employee)
     return DataResponse(msg="정상 처리되었습니다.", result=response)
@@ -38,7 +38,7 @@ def search_employee(name: str, ssn: str, db: Session = Depends(deps.get_db)):
 # -----------------------------------------------------------------------------------------
 
 
-# GET : 근로자 [신분증, 통장사본, 서명] 불러오기
+# GET : 근무자 [신분증, 통장사본, 서명] 불러오기
 @router.get(
     "/employee/{employee_id}/document",
     response_model=DataResponse[EmployeeDocumentResponse],
@@ -46,13 +46,13 @@ def search_employee(name: str, ssn: str, db: Session = Depends(deps.get_db)):
 def read_employee(employee_id: str, db: Session = Depends(deps.get_db)):
     employee = crud.employee.get(db=db, id=employee_id)
     if not employee:
-        raise HTTPException(status_code=404, detail="해당 직원을 찾을 수 없습니다.")
+        raise HTTPException(status_code=404, detail="해당 근무자을 찾을 수 없습니다.")
 
     employee_dec = _decrypt_employees(employee, EmployeeDocumentResponse)
     return DataResponse(msg="정상 처리되었습니다.", result=employee_dec)
 
 
-# GET : 팀 소속 전체 근로자 불러오기
+# GET : 팀 소속 전체 근무자 불러오기
 @router.get("/team/{team_id}/employee", response_model=ListResponse[EmployeeResponse])
 def read_multi_employee(
     team_id: str,
@@ -82,7 +82,7 @@ def read_multi_employee(
     return ListResponse(msg="정상 처리되었습니다.", result=response)
 
 
-# PUT : 근로자 업데이트
+# PUT : 근무자 업데이트
 @router.put(
     "/employee/{employee_id}", response_model=DataResponse[schemas.EmployeeResponse]
 )
@@ -93,7 +93,7 @@ def update_employee(
 ):
     employee = crud.employee.get(db=db, id=employee_id)
     if not employee:
-        raise HTTPException(status_code=404, detail="해당 직원을 찾을 수 없습니다.")
+        raise HTTPException(status_code=404, detail="해당 근무자을 찾을 수 없습니다.")
 
     employee = crud.employee.update_employee(
         db=db, employee_obj=employee, employee_in=employee_in
@@ -102,7 +102,7 @@ def update_employee(
     return DataResponse(msg="정상 처리되었습니다.", result=employee_enc)
 
 
-# REMOVE : 근로자 삭제
+# REMOVE : 근무자 삭제
 @router.delete("/employee/{employee_id}", response_model=BaseResponse)
 def delete_employee(
     # user: User = Depends(deps.get_current_user),
@@ -111,7 +111,7 @@ def delete_employee(
 ):
     employee = crud.employee.get(db=db, id=employee_id)
     if not employee:
-        raise HTTPException(status_code=404, detail="해당 직원을 찾을 수 없습니다.")
+        raise HTTPException(status_code=404, detail="해당 근무자을 찾을 수 없습니다.")
 
     crud.employee.remove_employee(db=db, employee_obj=employee)
     return BaseResponse(msg="정상 처리되었습니다.")

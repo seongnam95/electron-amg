@@ -7,7 +7,7 @@ export const SALARY = {
 } as const;
 export type SalaryType = keyof typeof SALARY;
 
-/** 근로자 데이터 인터페이스 */
+/** 근무자 데이터 인터페이스 */
 export interface EmployeeData {
   id: string;
   name: string;
@@ -31,8 +31,8 @@ export interface EmployeeDocument {
   sign: string;
 }
 
-/** 근로자 생성 API 바디 */
+/** 근무자 생성 API 바디 */
 export type EmployeeCreateBody = Omit<EmployeeData, 'id' | 'attendances'>;
 
-/** 근로자 업데이트 API 바디 */
+/** 근무자 업데이트 API 바디 */
 export type EmployeeUpdateBody = Partial<EmployeeData>;

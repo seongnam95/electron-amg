@@ -186,7 +186,7 @@ def create_employees(*, team_id, admin_id, positions, employees):
 
         crate_employee_res.append(res)
 
-    print("근로자 생성")
+    print("근무자 생성")
     return crate_employee_res
 
 

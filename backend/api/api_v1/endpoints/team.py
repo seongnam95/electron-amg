@@ -119,7 +119,7 @@ def read_all_draft_by_team(
     return ListResponse(msg="정상 처리되었습니다.", result=response)
 
 
-# [ Employee ] 근로자 생성
+# [ Employee ] 근무자 생성
 @router.post("/team/{team_id}/employee", response_model=BaseResponse)
 def create_employee_by_team(
     team_id: str,

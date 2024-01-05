@@ -14,8 +14,8 @@ export interface AttendanceData {
   position: PositionData;
 }
 
-/** 근로자 생성 API 바디 */
+/** 근무자 생성 API 바디 */
 export type AttendanceCreateBody = Partial<Omit<AttendanceData, 'id' | 'position'>>;
 
-/** 근로자 업데이트 API 바디 */
+/** 근무자 업데이트 API 바디 */
 export type AttendanceUpdateBody = Partial<AttendanceCreateBody>;

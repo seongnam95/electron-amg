@@ -76,7 +76,7 @@ export const formItems = [
   {
     name: 'standardPay',
     label: '일일 수당',
-    tooltip: '직원에게 지급할 일일 수당',
+    tooltip: '근무자에게 지급할 일일 수당',
     rules: formRules.pay,
     component: (
       <InputNumber

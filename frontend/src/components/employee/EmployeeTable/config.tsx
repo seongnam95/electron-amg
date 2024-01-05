@@ -18,7 +18,7 @@ interface ColumnProps {
 
 /**
  * [ EmployeeTable ] 컬럼 데이터를 반환합니다.
- * @param ColumnProps 대상 근로자 데이터, 핸들러
+ * @param ColumnProps 대상 근무자 데이터, 핸들러
  */
 export const getColumns = ({
   employees,

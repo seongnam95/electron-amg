@@ -23,7 +23,7 @@ export const breadcrumbValues: { [key: string]: BreadcrumbData } = {
   employee: {
     key: 'employee',
     path: '/management/employee',
-    text: '직원관리',
+    text: '근무자 관리',
     icon: <BsFillPeopleFill className="menu-icon" size={24} />,
     menu: true,
   },

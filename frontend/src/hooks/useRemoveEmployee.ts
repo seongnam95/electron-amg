@@ -21,7 +21,7 @@ export const useRemoveEmployee = ({ teamId, onSuccess, onCancel }: RemoveEmploye
 
     soundModal({
       type: 'warning',
-      title: '해당 근로자를 삭제하시겠습니까?',
+      title: '해당 근무자를 삭제하시겠습니까?',
       content: '휴지통으로 이동되며, 30일 후 완전히 삭제됩니다.',
       okText: '삭제',
       okType: 'danger',

@@ -13,6 +13,7 @@ export const useCopyText = () => {
   const copyTextLegacy = (data: string) => {
     try {
       const inputElement = document.createElement('input');
+
       inputElement.value = data;
       inputElement.select();
       document.execCommand('copy');

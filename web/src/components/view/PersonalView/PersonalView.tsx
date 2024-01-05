@@ -50,7 +50,7 @@ function PersonalView({ viewRef, ...props }: PersonalViewProps) {
     errors.idBack,
   ]);
 
-  // 기존 근로자 API 호출
+  // 기존 근무자 API 호출
   const getEmployeeList = () => {
     if (nameRef.current && frontRef.current && backRef.current) {
       const name = nameRef.current.value;

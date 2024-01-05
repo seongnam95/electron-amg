@@ -25,7 +25,7 @@ class CRUDEmployee(CRUDBase[Employee, EmployeeCreate, EmployeeUpdate]):
 
         return employee_dict
 
-    # 근로자 생성
+    # 근무자 생성
     def create_employee(self, db: Session, employee_in: EmployeeCreate) -> Employee:
         employee_enc_dict = self._encrypt_employee(employee_in)
         employee_obj = Employee(**employee_enc_dict)
@@ -36,7 +36,7 @@ class CRUDEmployee(CRUDBase[Employee, EmployeeCreate, EmployeeUpdate]):
 
         return employee_obj
 
-    # ? 근로자 업데이트
+    # ? 근무자 업데이트
     def update_employee(
         self, db: Session, employee_obj: Employee, employee_in: EmployeeUpdate
     ) -> Employee:
@@ -51,7 +51,7 @@ class CRUDEmployee(CRUDBase[Employee, EmployeeCreate, EmployeeUpdate]):
 
         return employee_obj
 
-    # 근로자 삭제
+    # 근무자 삭제
     def remove_employee(self, db: Session, *, employee_obj: Employee):
         remove_image(employee_obj.bank_book_file_nm)
         remove_image(employee_obj.id_card_file_nm)
@@ -59,7 +59,7 @@ class CRUDEmployee(CRUDBase[Employee, EmployeeCreate, EmployeeUpdate]):
         db.delete(employee_obj)
         db.commit()
 
-    # 근로자 검색 [이름, 주민등록번호]
+    # 근무자 검색 [이름, 주민등록번호]
     def get_employee_search(
         self, db: Session, name: str, ssn: str
     ) -> Optional[Employee]:

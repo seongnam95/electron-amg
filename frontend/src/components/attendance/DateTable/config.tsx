@@ -20,7 +20,7 @@ export interface DateTableData {
 
 /**
  * [ DateTable ] 데이터 소스를 반환합니다.
- * @param employees 근로자 데이터 리스트
+ * @param employees 근무자 데이터 리스트
  * @param attendances 출근 기록 데이터 리스트
  * @returns {DateTableData[]} DateTableData[]
  */
@@ -52,7 +52,7 @@ interface ColumnProps {
 
 /**
  * [ DateTable ] 컬럼 데이터를 반환합니다.
- * @param ColumnProps 대상 근로자 데이터, 핸들러
+ * @param ColumnProps 대상 근무자 데이터, 핸들러
  */
 export const getColumns = ({ employees, onClickName }: ColumnProps): ColumnsType<DateTableData> => {
   const positionFilters = [...new Set(employees?.map(employee => employee.position.name))].map(
