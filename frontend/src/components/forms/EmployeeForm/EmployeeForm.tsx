@@ -65,11 +65,11 @@ const EmployeeForm = ({
         <AnimatePresence>
           {formItems.map((item, idx) => {
             const hidden = item.name === 'preset' && !disabledPreset;
-            if (item.name === 'divider') return item.component;
+            if (item.name === 'divider') return <div key={`divider-${idx}`}>{item.component}</div>;
             return (
               !hidden && (
                 <motion.div
-                  key={`item-${idx}`}
+                  key={`item-${item.name}-${idx}`}
                   initial={{ opacity: 0, height: 0 }}
                   animate={{ opacity: 1, height: 'auto' }}
                   exit={{ opacity: 0, height: 0 }}

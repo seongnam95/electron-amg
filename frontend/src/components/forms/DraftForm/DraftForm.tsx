@@ -1,18 +1,21 @@
 import { useState } from 'react';
 
-import { Button, Flex, Form, FormInstance, Select, Space, Typography } from 'antd';
+import { Button, Flex, Form, FormInstance, InputNumber, Select, Space, Typography } from 'antd';
 import dayjs, { Dayjs } from 'dayjs';
 
 import AntDateRangePicker from '~/components/common/DateRangePicker/DateRangePicker';
+import FormatterInput from '~/components/common/FormatterInput';
+import { HintText } from '~/components/dashboard/MonthlyAttendanceTable/styled';
 import { useSoundApp } from '~/hooks/componentHooks/useSoundApp';
 import { DraftCreateBody, DraftData } from '~/types/draft';
+import { SalaryType } from '~/types/employee';
 import { PositionData } from '~/types/position';
 
 import DraftResultBox from './DraftResultBox/DraftResultBox';
 import { DraftFormStyled } from './styled';
 
 export interface DraftFormProps {
-  positions?: PositionData[];
+  positions: PositionData[];
   form?: FormInstance;
   loading?: boolean;
   onSubmit?: (data: DraftCreateBody) => void;
@@ -48,7 +51,22 @@ const DraftForm = ({
     }
   };
 
-  const { Option } = Select;
+  const positionOptions = positions.map(position => ({
+    value: position.id,
+    label: (
+      <Flex align="center" justify="space-between" gap={8} style={{ paddingRight: 6 }}>
+        {position.name}
+        <HintText>{position.standardPay.toLocaleString()}원</HintText>
+      </Flex>
+    ),
+  }));
+
+  const salaryOptions = [
+    { value: 1 as SalaryType, label: '일급' },
+    { value: 2 as SalaryType, label: '주급' },
+    { value: 3 as SalaryType, label: '월급' },
+  ];
+
   return (
     <DraftFormStyled>
       <Space direction="vertical" style={{ width: '100%' }}>
@@ -69,15 +87,7 @@ const DraftForm = ({
             name="position"
             rules={[{ required: true, message: '직위를 선택해주세요.' }]}
           >
-            <Select placeholder="( 직위 선택 )">
-              {positions?.map(pos => {
-                return (
-                  <Option key={pos.id} value={pos.id}>
-                    {pos.name}
-                  </Option>
-                );
-              })}
-            </Select>
+            <Select placeholder="( 직위 선택 )" options={positionOptions} />
           </Form.Item>
 
           <Form.Item
@@ -86,6 +96,17 @@ const DraftForm = ({
             rules={[{ required: true, message: '계약일을 선택해주세요.' }]}
           >
             <AntDateRangePicker fullWidth />
+          </Form.Item>
+
+          <Form.Item label="급여 구분" style={{ margin: 0 }} required>
+            <Flex gap={8}>
+              <Form.Item name="salaryCode">
+                <Select placeholder="( 급여 형태 )" options={salaryOptions} />
+              </Form.Item>
+              <Form.Item name="preset">
+                <FormatterInput placeholder="프리셋" />
+              </Form.Item>
+            </Flex>
           </Form.Item>
 
           <Flex flex={1} style={{ justifyContent: 'end' }}>
