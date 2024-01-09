@@ -29,8 +29,8 @@ const EmployeeInfo = ({ team, employee, unit, documents, loading }: EmployeeInfo
   return (
     <>
       <Descriptions
-        column={1}
         title="상세정보"
+        column={1}
         colon={false}
         contentStyle={{ display: 'inline-block', textAlign: 'right' }}
       >

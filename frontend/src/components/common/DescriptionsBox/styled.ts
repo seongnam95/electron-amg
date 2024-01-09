@@ -5,6 +5,7 @@ import styled from 'styled-components';
 export interface DescriptionsBoxStyledProps extends HTMLAttributes<HTMLDivElement> {
   fullWidth?: boolean;
   justify?: 'center' | 'start' | 'end';
+  fontWeight?: 'normal' | 'bold';
 }
 
 export const DescriptionsBoxStyled = styled.div<DescriptionsBoxStyledProps>`
@@ -26,7 +27,7 @@ export const DescriptionsBoxStyled = styled.div<DescriptionsBoxStyledProps>`
   .description-content {
     color: ${p => p.theme.colors.textColor1};
     font-size: ${p => p.theme.sizes.textLarge};
-    font-weight: bold;
+    font-weight: ${p => (p.fontWeight ? p.fontWeight : 'bold')};
     padding-top: 2px;
   }
 `;

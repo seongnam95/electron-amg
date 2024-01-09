@@ -4,6 +4,8 @@ from schemas.position import PositionResponse
 
 
 class DraftBase(BaseModel):
+    salary_code: int
+    preset: int
     start_period: date
     end_period: date
 

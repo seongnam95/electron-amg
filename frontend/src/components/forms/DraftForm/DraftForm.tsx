@@ -1,18 +1,23 @@
 import { useState } from 'react';
 
-import { Button, Flex, Form, FormInstance, InputNumber, Select, Space, Typography } from 'antd';
+import { Button, Flex, Form, FormInstance, Select, Space, Typography } from 'antd';
 import dayjs, { Dayjs } from 'dayjs';
 
 import AntDateRangePicker from '~/components/common/DateRangePicker/DateRangePicker';
 import FormatterInput from '~/components/common/FormatterInput';
 import { HintText } from '~/components/dashboard/MonthlyAttendanceTable/styled';
-import { useSoundApp } from '~/hooks/componentHooks/useSoundApp';
-import { DraftCreateBody, DraftData } from '~/types/draft';
+import { DraftCreateBody } from '~/types/draft';
 import { SalaryType } from '~/types/employee';
 import { PositionData } from '~/types/position';
 
-import DraftResultBox from './DraftResultBox/DraftResultBox';
 import { DraftFormStyled } from './styled';
+
+interface DraftFormData {
+  positionId: string;
+  period: [Dayjs, Dayjs];
+  salaryCode: SalaryType;
+  preset: number;
+}
 
 export interface DraftFormProps {
   positions: PositionData[];
@@ -27,27 +32,31 @@ const DraftForm = ({
   loading,
   onSubmit,
 }: DraftFormProps) => {
-  const [draft, setDraft] = useState<DraftData | undefined>();
-  const [showResultBox, setShowResultBox] = useState<boolean>(false);
+  const [disabledPreset, setDisabledPreset] = useState<boolean>(true);
 
-  const { soundMessage } = useSoundApp();
   // DatePicker 기본 값 [ 오늘 날짜, 이번달 마지막 날짜 ]
   const currentDate = dayjs();
   const lastDate = currentDate.endOf('month');
   const defaultPickerValue: [Dayjs, Dayjs] = [currentDate, lastDate];
 
-  const handleCopy = (data: string) => {
-    try {
-      const inputElement = document.createElement('input');
+  const handleSubmit = (formData: DraftFormData) => {
+    const { period, salaryCode, preset, positionId } = formData;
+    onSubmit?.({
+      positionId: positionId,
+      salaryCode: salaryCode,
+      preset: preset,
+      startPeriod: period[0].format('YYYY-MM-DD'),
+      endPeriod: period[1].format('YYYY-MM-DD'),
+    });
+  };
 
-      inputElement.value = data;
-      inputElement.select();
-      document.execCommand('copy');
-      document.body.removeChild(inputElement);
-
-      soundMessage.success('클립보드에 저장되었습니다.');
-    } catch (err) {
-      soundMessage.success('클립보드 복사에 실패했습니다.');
+  const handleChange = (formData: DraftFormData) => {
+    if (formData.salaryCode !== undefined) {
+      if (formData.salaryCode === 3) setDisabledPreset(false);
+      else {
+        setDisabledPreset(true);
+        form.setFieldValue('preset', 1);
+      }
     }
   };
 
@@ -79,12 +88,13 @@ const DraftForm = ({
           layout="vertical"
           colon={false}
           autoComplete="off"
-          onFinish={onSubmit}
-          initialValues={{ period: defaultPickerValue }}
+          onFinish={handleSubmit}
+          onValuesChange={handleChange}
+          initialValues={{ salaryCode: 1, period: defaultPickerValue, preset: 1 }}
         >
           <Form.Item
             label="직위 구분"
-            name="position"
+            name="positionId"
             rules={[{ required: true, message: '직위를 선택해주세요.' }]}
           >
             <Select placeholder="( 직위 선택 )" options={positionOptions} />
@@ -100,11 +110,18 @@ const DraftForm = ({
 
           <Form.Item label="급여 구분" style={{ margin: 0 }} required>
             <Flex gap={8}>
-              <Form.Item name="salaryCode">
-                <Select placeholder="( 급여 형태 )" options={salaryOptions} />
+              <Form.Item
+                name="salaryCode"
+                rules={[{ required: true, message: '급여 형태를 선택해주세요.' }]}
+              >
+                <Select
+                  placeholder="( 급여 형태 )"
+                  options={salaryOptions}
+                  style={{ width: '18rem' }}
+                />
               </Form.Item>
               <Form.Item name="preset">
-                <FormatterInput placeholder="프리셋" />
+                <FormatterInput placeholder="프리셋" disabled={disabledPreset} />
               </Form.Item>
             </Flex>
           </Form.Item>
@@ -116,13 +133,6 @@ const DraftForm = ({
           </Flex>
         </Form>
       </Space>
-
-      <DraftResultBox
-        show={showResultBox}
-        draft={draft}
-        onCopy={handleCopy}
-        onClose={() => setShowResultBox(false)}
-      />
     </DraftFormStyled>
   );
 };

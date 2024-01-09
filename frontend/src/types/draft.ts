@@ -1,10 +1,11 @@
-import { Dayjs } from 'dayjs';
-
+import { SalaryType } from './employee';
 import { PositionData } from './position';
 
 /** 그룹 데이터 인터페이스 */
 export interface DraftData {
   id: string;
+  salaryCode: SalaryType;
+  preset: number;
   startPeriod: string;
   endPeriod: string;
   createDate: string;
