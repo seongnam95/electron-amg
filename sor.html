@@ -1,0 +1,327 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="shortcut icon" type="image/x-icon"
+	href="/web-resources/logo/AJ_BI.ico">
+	<!-- <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, target-densityDpi=device-dpi" /> -->
+	<meta name="viewport"
+		content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+	<title>AJ PARK</title> 
+	<script	src="http://code.jquery.com/jquery-1.6.4.min.js"></script>
+
+	<script type="text/javascript"> 
+		$(document).ready(function() {
+			// device check
+			var device = check_device();
+			if (device != '') 
+			{
+				Mode = true;
+				location.href = "/login_m.cs";
+			}
+			//pollMessage('','');
+
+			var userInputId = getCookie("userInputId");
+
+			//console.log(userInputId);
+
+			$("input[name='j_username']").val(userInputId);
+
+			if ($("input[name='j_username']").val() != "") {
+				$("#idSaveCheck").attr("checked", true);
+			}
+
+			var userInputPw = getCookie("userInputPw");
+
+			//console.log(userInputId);
+
+			$("input[name='j_password']").val(userInputPw);
+
+			if ($("input[name='j_password']").val() != "") {
+				$("#pwSaveCheck").attr("checked", true);
+			}
+		});
+
+		$("#idSaveCheck").change(function() {
+			//console.log("check 확인!!");
+			if ($("#idSaveCheck").is(":checked")) {
+				var userInputId = $("input[name='j_username']").val();
+				//console.log("쿠키 저장!!");
+				setCookie("userInputId", userInputId, 365);
+			} else {
+				//console.log("쿠키 삭제!!");
+				deleteCookie("userInputId");
+			}
+		});
+
+		$("input[name='id']").keyup(function() {
+			if ($("#idSaveCheck").is(":checked")) {
+				var userInputId = $("input[name='j_username']").val();
+				setCookie("userInputId", userInputId, 365);
+			}
+		});
+
+		
+		
+		 
+		
+		
+		function OnIDchange() 
+		{
+			//console.log("check 확인!!");
+				 //if ($("#idSaveCheck").is(":checked"))
+				 if(document.getElementById("idSaveCheck").checked)
+				 {
+						var userInputId = $("input[name='j_username']").val();
+						setCookie("userInputId", userInputId, 365);
+					} else {
+						deleteCookie("userInputId");
+					}
+		}
+		
+		
+		function OnPWchange() 
+		{
+
+				//if ($("#pwSaveCheck").is(":checked"))
+				if(document.getElementById("pwSaveCheck").checked)	
+				{
+					var userInputId = $("input[name='j_password']").val();
+					setCookie("userInputPw", userInputId, 365);
+				}
+				
+				else 
+				{
+					deleteCookie("userInputPw");
+				}
+		}
+		
+		/*
+		function OnPWchange() {
+			if ($("#pwSaveCheck").is(":checked")) {
+				var userInputId = $("input[name='j_password']").val();
+				setCookie("userInputPw", userInputId, 365);
+			} else {
+				deleteCookie("userInputPw");
+			}
+		}
+		*/
+		
+		
+		
+		function setCookie(cookieName, value, exdays) {
+			var exdate = new Date();
+			exdate.setDate(exdate.getDate() + exdays);
+			var cookieValue = escape(value)
+					+ ((exdays == null) ? "" : "; expires="
+							+ exdate.toGMTString());
+			document.cookie = cookieName + "=" + cookieValue;
+		}
+
+		function deleteCookie(cookieName) {
+			var expireDate = new Date();
+			expireDate.setDate(expireDate.getDate() - 1);
+			document.cookie = cookieName + "= " + "; expires="
+					+ expireDate.toGMTString();
+		}
+
+		function getCookie(cookieName) {
+			cookieName = cookieName + '=';
+			var cookieData = document.cookie;
+			var start = cookieData.indexOf(cookieName);
+			var cookieValue = '';
+
+			if (start != -1) {
+				start += cookieName.length;
+				var end = cookieData.indexOf(';', start);
+				if (end == -1)
+					end = cookieData.length;
+				cookieValue = cookieData.substring(start, end);
+			}
+			//console.log(cookieValue + '!');
+			return unescape(cookieValue);
+		}
+
+		function check_device() {
+			var mobileKeyWords = new Array('iPhone', 'iPod', 'Android',
+					'Windows CE', 'BlackBerry', 'Symbian', 'Windows Phone',
+					'webOS', 'Opera Mini', 'Opera Mobi', 'POLARIS', 'IEMobile',
+					'lgtelecom', 'LG', 'MOT', 'SAMSUNG', 'nokia',
+					'SonyEricsson');
+			var device_name = '';
+			for ( var word in mobileKeyWords) {
+				if (navigator.userAgent.match(mobileKeyWords[word]) != null) {
+					device_name = mobileKeyWords[word];
+					break;
+				}
+			}
+			return device_name;
+		}
+
+		function onFocusUsername() {
+			/* document.getElementById("j_username").focus(); */
+			document.f.j_username.focus();
+		}
+
+		function onclickSubmit() {
+			//alert("1");
+			OnIDchange();
+			//alert("2");
+			OnPWchange();
+			//alert("3");
+			var frm = document.f;
+			frm.submit();
+			//alert("4");
+		}
+
+		//180808 진남 추가
+		function onclick_JIN_LOG()
+		{
+			var MY_NAME = document.getElementById('name');
+
+			//alert(MY_NAME.value);
+			if(MY_NAME.value.toUpperCase() == "VERSION")
+				{
+				alert("JIN VERSION관리"
+						+ "\n180808 : VERSION 관리 관련 액션 및 폼 추가"
+						+ "\n180810 : 아브뉴프랑, 관리자(ROLE_ADMIN)는 파크옵션 영향 안받게 변경"
+						+ "\n180814 : DayCnt 소스 간결화, 일일사용내역 표출 : 출차했다가 다시 온 차량도 보이게"
+						+ "\n180816 : 할인그룹 관련 수정 : 아예 다 뜯어고침..."
+						+ "\n180821 : TimeList code중복되어 있으면 add 안하도록"
+						+ "\n180821 : 충전에서 저장하면 daycnt monthcnt storecnt 초기화되는거 잡음 하.." 
+						+ "\n180828 : 필립스포츠 커스텀 : 일반상가 : 1번, 스포츠는 여러번 Special 컬럼 만듦"
+						+ "\n180828 : 하루동안 같은차량으로 해놓은거 다 풀음..DB컬럼에 넣을 필요 있음"
+						+ "\n180903 : 디폴트 : 재입차 허용으로 변경된 버전"
+						+ "\n180905 : 위례 푸르지오 작업 ROLE_OFFICETEL 적용은 주석 풀어야 한다 <!-- 오피스텔기능 -->로 검색"
+						+ "\n180905 : 재입차 허용, 불허용 옵션  : =진남플래그_재입차_기존내역유지= <== 변수 이름이다"
+						+ "\n1801001 : ★★ Mapping DB에 MonthGroupCnt, int, NULL허용X 추가 ★★ 화성디지털 스테이션 월별 그룹 할인 기능 추가 !!"
+						+ "\n1801017 : 할인권 표출 순서에 맞게 뿌려주는 기능 구현 / 슈퍼그룹(0)번 활성, 비활성 플래그 추가.."
+						+ "\n1801025 : 선불 충전 0 이하면 적용 안되도록 막는 조건문 추가 : 181025로 검색 "
+						+ "\n1801121 : 리포트에서 출차기준 삭제 / 리포트, 사용자관리에서 ID기준이냐 상호기준이냐 선택하도록 기능 추가 "
+						+ "\n1801122 : 부천베네스타 커스텀마이징, 오피스텔 기능 / 상가 기능 추가 주석 :  <!-- 오피스텔기능 -->, <!-- 상가기능 --> 검색! 추가로 차량 검색 중복 안되게 전부 막음(기간, 차번)"
+						+ "\n1801130 : 동양주차장, USER의 LimitPerStore 관련 수정 , 변경 !!  : LimitPerStore : 상점당 한 차량에 줄 수 있는 개수, 추가로 사용자 관리에서 금일 매수 제한, 금일 차량당 매수 제한 표출 변경"
+						+ "\n1801206 : 청주 서문 CGV 할인권 적용 후 검색화면으로 이동하는 버전 x"
+						+ "\n1801220 : 모바일 취소관련 기존 label -> input type button으로 변경"
+						+ "\n1801226 : 0번 이외 다른 그룹 할인권 들어가면 다른거 막는 버전"
+						+ "\n1801228 : 브라운스톤 레전드 쿼리 변경 버전"
+						+ "\n1801228 : 1D : 1Day, 1C : 1Car");
+				}
+			
+			if(MY_NAME.value.toUpperCase() == "VERSION2")
+			{
+			alert("JIN VERSION관리"
+					+ "\n190109 : 목동파라곤 적용 후 첫페이지"
+					+ "\n190111 : 동탄파라곤 목록 정렬"
+					+ "\n190111 : 샤크존 자기것만 취소"
+					+ "\n190111 : 이레타워(파크옵션), 파크옵션 프로토버전"
+					+ "\n190121 : 이레타워(파크옵션), 브라운스톤 레전드 쿼리 변경"
+					+ "\n190121 : 모바일 이미지 클릭 <p>추가..."
+					+ "\n190125 : 1C 1D 통합 -> dayCnt 살렸다"
+					+ "\n190130 : ParkOption에 DB추가 가능 버전 : 자기권취소, 초기화면 리턴"
+					+ "\n190131 : 리포트 출차기준 살림 : 목동파라곤 요청"
+					+ "\n190306 : 선불/후불 빼버림, admin 생성시 시간차감없앰"
+					+ "\n190426 : 숙박 할인 기능 추가 : 밸류값 0 아니면 +n 시간 만큼 숙박 부여"
+					+ "\n190614 : ★★DM의 리미트퍼카 안쓰는거 => 0"
+					+ "\n파크옵션에 LimitPerCarGroup 부여 및 true"
+					+ "\n191118 : 할인그룹 다른 할인권 전처리에서 막아버림"
+					+ "\n200317 : 에이스테크노8차:NumofUse모든사용자카운팅"
+					+ "\n200619 : ELAND API 기능 추가 : POS 입차정보조회");
+			
+			}
+			
+		}
+		//180808 진남 추가
+	</script>
+</head>
+<body onload="onFocusUsername()">
+	
+	<br />
+	<br />
+	<br />
+	<br />
+	<br />
+	<br />
+	<br />
+	<br />
+	<br />
+	<br />
+	<form id="login" title="login" class="panel"
+		action="login" method="post" name="f">
+		<table align="center" width="30%">
+			<tr>
+				<td colspan="3">
+				<img src=' /web-resources/logo/AJPARK.png' width="100%" />
+				
+				
+				
+				</td>
+			</tr>
+			<tr>
+				<td colspan="3"><br /></td>
+			</tr>
+			<tr>
+				<th><b>아이디: </b></th>
+				
+				<td align="center"><input type="text" id="name" size="29"
+					name="j_username" tabindex="1" style="ime-mode: inactive;" /></td>
+				<td rowspan="2"><input type="button"
+					onclick="javascript:onclickSubmit();" value="로그인" tabindex="3"
+					style="width: 100%; height: 50px" /></td>
+			</tr>
+
+			<tr>
+				<th><b>비밀번호: </b></th>
+				
+				<td align="center"><input type="password" id="pwd" size="30"
+					name="j_password" tabindex="2" style="ime-mode: inactive;"
+					onkeydown="javascript:if(event.keyCode==13){onclickSubmit();}" /></td>
+			</tr>
+		</table>
+		<table align="center">
+			<tr>
+				<th><b>ID저장 </b></th>
+				<td colspan="3"><input type="checkbox" id="idSaveCheck" name="idSaveCheck"></td>&nbsp;&nbsp;&nbsp;
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<th><b>PW저장 </b></th>
+				<td colspan="3"><input type="checkbox" id="pwSaveCheck" name = "pwSaveCheck"></td>
+			</tr>
+
+		</table>
+
+		<table align="center" style="margin-top: 300px">
+			<tr>
+				<th>AJ_N_VERSION : 1.982(200619) <!-- 진남 버전 표기 -->
+				<!-- 1.95부터 세팅시 매핑테이블의 리미트퍼카 안쓰면 0으로 설정해야함!!! -->
+				</th>
+			</tr>
+			<tr>
+				<th><input type="button" value="테스트"
+					onclick="javascript:onclick_JIN_LOG();"
+					style="width: 100%; height: 50px; outline: 0; background-color: transparent; border-color: transparent; border: none; color: #FFFFFF;" />
+
+
+				</th>
+			</tr>
+			<table>
+
+				</form>
+</body>
+
+<br></br>
+<br></br>
+<table align="center" width="100%">
+	<c_rt:if test="true">
+		<c_rt:forEach items="[]" var="notice">
+			<tr align="center">
+				<td><span style="color: blue"><font size=6></font></td>
+			</tr>
+		</c_rt:forEach>
+	</c_rt:if>
+</table>
+
+</html>
