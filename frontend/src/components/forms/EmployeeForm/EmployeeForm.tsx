@@ -4,7 +4,7 @@ import { Button, Divider, Flex, Form, FormInstance } from 'antd';
 import { AnimatePresence, motion } from 'framer-motion';
 
 import Info from '~/components/common/Info';
-import { EmployeeData, EmployeeUpdateBody } from '~/types/employee';
+import { EmployeeData, EmployeeCreateBody } from '~/types/employee';
 import { TeamData } from '~/types/team';
 
 import { getFormConfig } from './config';
@@ -15,7 +15,7 @@ export interface EmployeeFormProps {
   employee?: EmployeeData;
   form?: FormInstance;
   loading?: boolean;
-  onSubmit?: (formData: EmployeeUpdateBody) => void;
+  onSubmit?: (formData: EmployeeCreateBody) => void;
   onCancel?: () => void;
 }
 
@@ -23,7 +23,7 @@ const EmployeeForm = ({
   team,
   employee,
   loading,
-  form = Form.useForm<EmployeeUpdateBody>()[0],
+  form = Form.useForm<EmployeeCreateBody>()[0],
   onSubmit,
   onCancel,
 }: EmployeeFormProps) => {
@@ -31,21 +31,23 @@ const EmployeeForm = ({
     return employee?.salaryCode === 3;
   });
 
-  const handleChange = (_: any, changeValues: EmployeeUpdateBody) => {
+  const handleChange = (_: any, changeValues: EmployeeCreateBody) => {
     if (changeValues.salaryCode === 3) setDisabledPreset(true);
     else setDisabledPreset(false);
   };
 
-  const initValues: EmployeeUpdateBody = {
-    name: employee?.name,
-    phone: employee?.phone,
-    ssn: employee?.ssn,
-    bank: employee?.bank,
-    bankNum: employee?.bankNum,
-    positionId: employee?.positionId,
-    salaryCode: employee?.salaryCode,
-    preset: employee?.preset,
-  };
+  const initValues = employee
+    ? {
+        name: employee.name,
+        phone: employee.phone,
+        ssn: employee.ssn,
+        bank: employee.bank,
+        bankNum: employee.bankNum,
+        positionId: employee.positionId,
+        salaryCode: employee.salaryCode,
+        preset: employee.preset,
+      }
+    : undefined;
 
   const formItems = getFormConfig(team);
   return (

@@ -28,11 +28,12 @@ export interface EmployeeDocument {
   id: string;
   bankBook: string;
   idCard: string;
-  sign: string;
+  signBase64: string;
 }
 
 /** 근무자 생성 API 바디 */
-export type EmployeeCreateBody = Omit<EmployeeData, 'id' | 'attendances'>;
+export type EmployeeCreateBody = Omit<EmployeeData, 'id' | 'position' | 'createDate'> &
+  Omit<EmployeeDocument, 'id'>;
 
 /** 근무자 업데이트 API 바디 */
 export type EmployeeUpdateBody = Partial<EmployeeData>;

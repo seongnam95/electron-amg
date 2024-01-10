@@ -21,8 +21,8 @@ login_success = response.status_code == 200
 
 # 로그인 성공 시 차량 조회
 today = date.today().strftime("%Y-%m-%d")
-print(today)
 if login_success:
     url = "http://ajwsmk.ajpark.kr/discount/carSearch.cs?userID=ws1023&contextPath="
     data = {"carNumber": "1550", "from": today, "fromHH": "00"}
     response = session.post(url=url, data=data)
+    print(response.text)
