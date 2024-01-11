@@ -194,4 +194,13 @@ export const InitGlobalStyled = memo(createGlobalStyle`
     color: ${p => p.theme.colors.textColor2};
     font-size: ${p => p.theme.sizes.textSmall};
   }
+
+  .ant-modal-wrap {
+    .ant-modal-header {
+      margin-bottom: 3.4rem;
+    }
+    .ant-modal-footer {
+      margin-top: 3.4rem;
+    }
+  }
 `);

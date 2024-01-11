@@ -135,8 +135,6 @@ def create_employee_by_team(
     if not position:
         raise HTTPException(status_code=404, detail="존재하지 않는 직위입니다.")
 
-    crud.employee.create_employee(
-        db=db, employee_in=employee_in, team_id=team_id, position_id=position_id
-    )
+    crud.employee.create_employee(db=db, team_id=team_id, employee_in=employee_in)
 
     return BaseResponse(msg="정상 처리되었습니다.")

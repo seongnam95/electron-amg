@@ -4,6 +4,7 @@ import { AxiosError } from 'axios';
 import { useSetRecoilState } from 'recoil';
 
 import {
+  createEmployee,
   fetchEmployeeDocument,
   fetchEmployees,
   removeEmployees,
@@ -79,6 +80,26 @@ export const useEmployeeDocument = ({ employeeId, ...baseOptions }: EmployeeDeta
   });
 
   return { employeeDocument, isLoading, isError };
+};
+
+/**
+ * Update Employee
+ */
+export const useEmployeeCreate = ({
+  teamId,
+  ...baseOptions
+}: EmployeeQueryOptions<EmployeeData>) => {
+  const queryKey: string[] = [import.meta.env.VITE_EMPLOYEE_QUERY_KEY, teamId];
+  const queryClient = useQueryClient();
+
+  const onSettled = () => queryClient.invalidateQueries(queryKey);
+
+  const { mutate, isLoading } = useMutation(queryKey, createEmployee(teamId), {
+    onSettled,
+    ...baseOptions,
+  });
+
+  return { mutate, isLoading };
 };
 
 /**

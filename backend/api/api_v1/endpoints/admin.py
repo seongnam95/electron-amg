@@ -57,9 +57,10 @@ def init_data(db: Session = Depends(deps.get_db)):
         bank_book=px_img,
         sign_base64=px_img,
         salary_code=1,
-        preset=0,
+        preset=1,
         user_id=user.id,
         team_id=team.id,
+        is_virtual=False,
         position_id=positions[0].id,
     )
 
@@ -77,11 +78,12 @@ def init_data(db: Session = Depends(deps.get_db)):
             start_period="2023-12-01",
             end_period="2023-12-31",
             salary_code=1,
-            preset=0,
+            preset=1,
             id_card=px_img,
             bank_book=px_img,
             sign_base64=px_img,
             team_id=team.id,
+            is_virtual=False,
             position_id=position.id,
         )
 

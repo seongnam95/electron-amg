@@ -20,6 +20,7 @@ export interface EmployeeData {
   salaryCode: SalaryType;
   preset: number;
   createDate: string;
+  isVirtual: boolean;
   positionId: string;
   position: PositionData;
 }

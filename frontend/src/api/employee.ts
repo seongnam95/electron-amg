@@ -1,6 +1,11 @@
 import { AxiosResponse } from 'axios';
 
-import { EmployeeData, EmployeeDocument, EmployeeUpdateBody } from '~/types/employee';
+import {
+  EmployeeCreateBody,
+  EmployeeData,
+  EmployeeDocument,
+  EmployeeUpdateBody,
+} from '~/types/employee';
 
 import axiosPrivate from './axios';
 import { BaseResponse, DataListResponse, DataResponse } from './response';
@@ -32,6 +37,20 @@ export const fetchEmployeeDocument =
 
     const { data } = await axiosPrivate.get<DataResponse<EmployeeDocument>>(
       `${endpoint}/${employeeId}/document`,
+    );
+
+    return data.result;
+  };
+
+export const createEmployee =
+  (teamId?: string) =>
+  async (body: EmployeeCreateBody): Promise<EmployeeData> => {
+    const teamEndpoint = import.meta.env.VITE_TEAM_ENDPOINT;
+    const employeeEndpoint = import.meta.env.VITE_EMPLOYEE_ENDPOINT;
+
+    const { data } = await axiosPrivate.post<DataResponse<EmployeeData>>(
+      `${teamEndpoint}/${teamId}/${employeeEndpoint}`,
+      body,
     );
 
     return data.result;

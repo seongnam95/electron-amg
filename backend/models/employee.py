@@ -1,4 +1,13 @@
-from sqlalchemy import Column, ForeignKey, Text, Integer, String, DateTime, Date
+from sqlalchemy import (
+    Boolean,
+    Column,
+    ForeignKey,
+    Text,
+    Integer,
+    String,
+    DateTime,
+    Date,
+)
 from db.base_class import Base
 from datetime import datetime
 from sqlalchemy.orm import relationship
@@ -35,6 +44,7 @@ class Employee(Base):
     salary_code = Column(Integer, nullable=False)  # 급여 종류
     preset = Column(Integer, nullable=False, default=0)  # 급여별 프리셋
 
+    is_virtual = Column(Boolean, nullable=False, default=False)  # 가상 근로자
     create_date = Column(DateTime(timezone=True), nullable=False, default=datetime.now)
 
     # 소속

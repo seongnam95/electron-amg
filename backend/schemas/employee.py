@@ -18,12 +18,11 @@ class EmployeeBase(BaseModel):
     sign_base64: str
     salary_code: int
     preset: int
-    team_id: str
     position_id: str
 
 
 class EmployeeCreate(EmployeeBase):
-    pass
+    is_virtual: Optional[bool] = None
 
 
 class EmployeeUpdate(BaseModel):
@@ -36,7 +35,6 @@ class EmployeeUpdate(BaseModel):
     salary_code: Optional[int] = None
     standard_pay: Optional[int] = None
     position_id: Optional[str] = None
-    team_id: Optional[str] = None
 
     @model_validator(mode="before")
     def check_fields(cls, values: dict):
@@ -65,8 +63,9 @@ class EncryptEmployee(BaseModel):
     sign_base64: str
     salary_code: int
     preset: int
-    position_id: str
+    is_virtual: bool
     create_date: datetime
+    position_id: str
     position: PositionResponse
 
     class Config:
@@ -102,6 +101,7 @@ class EmployeeResponse(BaseModel):
     end_period: date
     salary_code: int
     preset: int
+    is_virtual: bool
     position_id: str
     position: PositionResponse
     create_date: datetime

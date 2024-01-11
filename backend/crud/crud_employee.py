@@ -13,22 +13,32 @@ class CRUDEmployee(CRUDBase[Employee, EmployeeCreate, EmployeeUpdate]):
     # 필드 암호화 및 이미지 저장
     def _encrypt_employee(self, employee_in: EmployeeCreate | EmployeeUpdate) -> dict:
         employee_dict = employee_in.model_dump(exclude_unset=True)
+        print(employee_dict)
 
         for field in list(employee_dict.keys()):
             if field in ["ssn", "bank_num"]:
-                employee_dict[f"{field}_enc"] = encrypt(employee_dict.pop(field))
+                is_empty = employee_dict[field].strip() == ""
+                employee_dict[f"{field}_enc"] = (
+                    "" if is_empty else encrypt(employee_dict[field])
+                )
+                employee_dict.pop(field)
 
             elif field in ["bank_book", "id_card"]:
-                employee_dict[f"{field}_file_nm"] = base64_to_image(
-                    employee_dict.pop(field)
+                is_empty = employee_dict[field].strip() == ""
+                employee_dict[f"{field}_file_nm"] = (
+                    "" if is_empty else base64_to_image(employee_dict[field])
                 )
+                employee_dict.pop(field)
 
         return employee_dict
 
     # 근무자 생성
-    def create_employee(self, db: Session, employee_in: EmployeeCreate) -> Employee:
-        employee_enc_dict = self._encrypt_employee(employee_in)
-        employee_obj = Employee(**employee_enc_dict)
+    def create_employee(
+        self, db: Session, team_id: str, employee_in: EmployeeCreate
+    ) -> Employee:
+        employee_dict_enc = self._encrypt_employee(employee_in)
+
+        employee_obj = Employee(**employee_dict_enc, team_id=team_id)
 
         db.add(employee_obj)
         db.commit()

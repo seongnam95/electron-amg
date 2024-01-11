@@ -13,7 +13,7 @@ import DropdownItem from '~/components/common/DropdownItem';
 import DraftCreateDrawer from '~/components/drawer/DraftCreateDrawer';
 import HistoryDrawer from '~/components/drawer/HistoryDrawer';
 import EmployeeTable from '~/components/employee/EmployeeTable';
-import useCreateEmployee from '~/hooks/componentHooks/useCreateEmployee';
+import useCreateVirtualEmployeeDrawer from '~/hooks/componentHooks/useCreateEmployee';
 import useDraft from '~/hooks/componentHooks/useDraft';
 import { useEmployeeInfoDrawer } from '~/hooks/componentHooks/useEmployeeInfoDrawer';
 import { useSoundApp } from '~/hooks/componentHooks/useSoundApp';
@@ -41,7 +41,7 @@ const EmployeePage = () => {
   const { openDrawer, renderDrawer } = useEmployeeInfoDrawer();
   const { openDrawer: openDraftDrawer, renderDrawer: renderDraftDrawer } = useDraft();
   const { openDrawer: openEmployeeDrawer, renderDrawer: renderEmployeeDrawer } =
-    useCreateEmployee();
+    useCreateVirtualEmployeeDrawer();
   const { removeEmployee } = useRemoveEmployee({
     teamId: team.id,
     onSuccess: () => setSelectedEmployees([]),
