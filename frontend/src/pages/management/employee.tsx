@@ -53,6 +53,8 @@ const EmployeePage = () => {
     enabled: team.existTeam,
   });
 
+  console.log(employees);
+
   const sortedEmployees = employees.sort(
     (a, b) => a.position.sortingIndex - b.position.sortingIndex,
   );

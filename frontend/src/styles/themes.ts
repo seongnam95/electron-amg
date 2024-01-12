@@ -98,7 +98,7 @@ export const antdTheme: ThemeConfig = {
       colorBgElevated: colors.innerBg,
     },
     Descriptions: {
-      padding: 8,
+      padding: 12,
     },
     Empty: {
       colorText: colors.textColor2,

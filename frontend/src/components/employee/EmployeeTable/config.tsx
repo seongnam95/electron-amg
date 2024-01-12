@@ -94,11 +94,14 @@ export const getColumns = ({
       title: '연락처',
       width: 140,
       align: 'center',
-      render: (_, { employee: { phone } }) => (
-        <Button size="small" type="text" onContextMenu={() => onCopy?.(phone)}>
-          {formatPhoneNumber(phone)}
-        </Button>
-      ),
+      render: (_, { employee: { phone } }) => {
+        if (!phone) return;
+        return (
+          <Button size="small" type="text" onContextMenu={() => onCopy?.(phone)}>
+            {formatPhoneNumber(phone)}
+          </Button>
+        );
+      },
     },
     {
       key: 'ssn',
@@ -106,11 +109,14 @@ export const getColumns = ({
       title: '주민등록번호',
       width: 150,
       align: 'center',
-      render: (_, { employee: { ssn } }) => (
-        <Button size="small" type="text" onContextMenu={() => onCopy?.(ssn)}>
-          {formatSSN(ssn)}
-        </Button>
-      ),
+      render: (_, { employee: { ssn } }) => {
+        if (!ssn) return;
+        return (
+          <Button size="small" type="text" onContextMenu={() => onCopy?.(ssn)}>
+            {formatSSN(ssn)}
+          </Button>
+        );
+      },
     },
     {
       key: 'bank',
@@ -120,14 +126,17 @@ export const getColumns = ({
       align: 'center',
       filters: bankFilters,
       onFilter: (value, record) => record.employee.bank === value,
-      render: (_, { employee: { bank, bankNum } }) => (
-        <Button size="small" type="text" onContextMenu={() => onCopy?.(`${bank} ${bankNum}`)}>
-          <Flex justify="space-between" style={{ width: 180, maxWidth: 180 }}>
-            <Tag style={{ width: 50, textAlign: 'center' }}>{bank}</Tag>
-            <span>{bankNum}</span>
-          </Flex>
-        </Button>
-      ),
+      render: (_, { employee: { bank, bankNum } }) => {
+        if (!bank && !bankNum) return;
+        return (
+          <Button size="small" type="text" onContextMenu={() => onCopy?.(`${bank} ${bankNum}`)}>
+            <Flex justify="space-between" style={{ width: 180, maxWidth: 180 }}>
+              <Tag style={{ width: 50, textAlign: 'center' }}>{bank}</Tag>
+              <span>{bankNum}</span>
+            </Flex>
+          </Button>
+        );
+      },
     },
     {
       key: 'salary',

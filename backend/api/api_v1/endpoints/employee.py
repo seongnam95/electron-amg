@@ -125,14 +125,16 @@ def delete_employee(
 def _decrypt_employees(
     employees: Union[models.Employee, List[models.Employee]], schema: SchemaType
 ):
+    # 리스트인지 확인 후 리스트가 아니라면 리스트로 만듬
     isList = isinstance(employees, list)
-
     employees = employees if isList else [employees]
 
+    # Dict로 변환
     employee_dicts = [
         EncryptEmployee.model_validate(employee).model_dump() for employee in employees
     ]
 
+    # 각 Key별 함수 맵핑
     transform_functions = {
         "ssn_enc": decrypt,
         "bank_num_enc": decrypt,
@@ -140,6 +142,7 @@ def _decrypt_employees(
         "id_card_file_nm": image_to_base64,
     }
 
+    # 각 Key별 Key 값 맵핑
     key_transforms = {
         "ssn_enc": "ssn",
         "bank_num_enc": "bank_num",
@@ -149,15 +152,19 @@ def _decrypt_employees(
 
     response_fields = set(schema.model_fields.keys())
 
+    # 복호화
     transformed_data = [
         {
             key_transforms.get(k, k): transform_functions.get(k, lambda x: x)(v)
+            if v is not None and v != ""
+            else v
             for k, v in d.items()
             if k in response_fields or key_transforms.get(k, k) in response_fields
         }
         for d in employee_dicts
     ]
 
+    # 복호화 된 데이터 리스트로 반환
     return (
         [schema(**data) for data in transformed_data]
         if isList
