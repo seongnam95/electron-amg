@@ -1,3 +1,5 @@
+import { Dayjs } from 'dayjs';
+
 import { PositionData } from './position';
 
 export const SALARY = {
@@ -38,3 +40,10 @@ export type EmployeeCreateBody = Omit<EmployeeData, 'id' | 'position' | 'createD
 
 /** 근무자 업데이트 API 바디 */
 export type EmployeeUpdateBody = Partial<EmployeeData>;
+
+export interface VirtualEmployeeFormData {
+  name: string;
+  period: [Dayjs, Dayjs];
+  positionId: string;
+  preset: number;
+}

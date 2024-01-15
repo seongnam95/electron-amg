@@ -7,6 +7,7 @@ const DateRangePicker = generateRangePicker<Dayjs>(dayjsGenerateConfig);
 
 interface AntDateRangePickerProps {
   fullWidth?: boolean;
+  picker?: 'time' | 'date' | 'week' | 'month' | 'quarter' | 'year' | undefined;
   onChange?: (values: RangeValue<Dayjs>, formatString: [string, string]) => void;
 }
 

@@ -1,9 +1,8 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { FaTrashAlt } from 'react-icons/fa';
 
 import { Button, Form, Modal, Tag, Tooltip } from 'antd';
 import dayjs, { Dayjs } from 'dayjs';
-import { useRecoilValue } from 'recoil';
 
 import AttendanceForm from '~/components/forms/AttendanceForm';
 import { AttendanceData, AttendanceUpdateBody } from '~/types/attendance';

@@ -9,9 +9,9 @@ interface AntDatePickerProps {
   value?: Dayjs;
   defaultValue?: Dayjs;
   disabledDate?: any;
-  onChange?: (value: Dayjs | null, dateString: string) => void;
   picker?: 'time' | 'date' | 'week' | 'month' | 'quarter' | 'year' | undefined;
   style?: CSSObject;
+  onChange?: (value: Dayjs | null, dateString: string) => void;
 }
 
 const AntDatePicker = (props: AntDatePickerProps) => {

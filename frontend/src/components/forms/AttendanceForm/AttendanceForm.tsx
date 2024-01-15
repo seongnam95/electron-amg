@@ -17,7 +17,7 @@ import { useRecoilValue } from 'recoil';
 
 import { HintText } from '~/components/dashboard/MonthlyAttendanceTable/styled';
 import { teamStore } from '~/stores/team';
-import { AttendanceUpdateBody } from '~/types/attendance';
+import { AttendanceCreateBody, AttendanceUpdateBody } from '~/types/attendance';
 
 export interface AttendanceFormProps {
   form?: FormInstance;
@@ -27,11 +27,11 @@ export interface AttendanceFormProps {
   extraBtn?: ReactNode;
   cancelBtnText?: string;
   submitBtnText?: string;
-  onSubmit?: (data: AttendanceUpdateBody) => void;
+  onSubmit?: (data: AttendanceCreateBody) => void;
   onCancel?: () => void;
 }
 
-const defaultValues: AttendanceUpdateBody = {
+const defaultValues: AttendanceCreateBody = {
   positionId: 'default',
   preset: 1,
   isPrepaid: false,
@@ -89,10 +89,6 @@ const AttendanceForm = ({
 
         <Form.Item label="직위" name="positionId">
           <Select options={positionOptions} />
-        </Form.Item>
-
-        <Form.Item label="프리셋" name="preset">
-          <InputNumber min={0} max={12} style={{ width: '100%' }} />
         </Form.Item>
 
         <Form.Item label="한줄 메모" name="memo">

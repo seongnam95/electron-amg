@@ -1,5 +1,5 @@
 import { FaBowlFood, FaCircleCheck } from 'react-icons/fa6';
-import { MdEditNote } from 'react-icons/md';
+import { RiMessage3Fill } from 'react-icons/ri';
 
 import { Button, Flex, Tag, Tooltip } from 'antd';
 import { ColumnsType } from 'antd/es/table';
@@ -154,22 +154,6 @@ export const getColumns = ({ employees, onClickName }: ColumnProps): ColumnsType
       },
     },
     {
-      key: 'preset',
-      dataIndex: 'preset',
-      title: '프리셋',
-      width: 90,
-      align: 'center',
-      render: (_, { attendance }) => {
-        if (attendance === undefined || attendance.preset === 1) return null;
-        return (
-          <Flex align="center" justify="center" gap={4}>
-            <HintText>*</HintText>
-            {attendance.preset}
-          </Flex>
-        );
-      },
-    },
-    {
       key: 'memo',
       dataIndex: 'memo',
       title: '메모',
@@ -180,7 +164,7 @@ export const getColumns = ({ employees, onClickName }: ColumnProps): ColumnsType
         return (
           <Flex justify="center">
             <Tooltip title={attendance.memo}>
-              <Button type="text" size="small" icon={<MdEditNote size={20} color="#767676" />} />
+              <RiMessage3Fill size={16} color={colors.iconColor3} />
             </Tooltip>
           </Flex>
         );
