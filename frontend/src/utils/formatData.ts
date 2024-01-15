@@ -1,3 +1,5 @@
+import dayjs from 'dayjs';
+
 export function formatPhoneNumber(phoneNumber: string) {
   const match = phoneNumber.match(/^(\d{3})(\d{4})(\d{4})$/);
   if (match) {
@@ -12,4 +14,8 @@ export function formatSSN(ssn: string) {
     return `${match[1]}-${match[2]}`;
   }
   return ssn;
+}
+
+export function formatDay(day: string, format?: string) {
+  return dayjs(day).format(format ?? 'YY년 M월 D일');
 }

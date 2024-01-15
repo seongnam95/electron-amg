@@ -7,6 +7,7 @@ export interface ReportData<T = any> {
   prepaidCount: number;
   otCount: number;
 
+  incentiveSum: number;
   paySum: number;
   mealCostSum: number;
   otPaySum: number;

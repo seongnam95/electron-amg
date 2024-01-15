@@ -89,20 +89,14 @@ const EmployeePage = () => {
 
   const dropdownMenuItems = [
     {
-      key: 'create-employee',
-      label: (
-        <DropdownItem
-          label="근무자 추가"
-          color={colors.primary}
-          icon={<IoMdPersonAdd size={16} />}
-        />
-      ),
-      onClick: openEmployeeDrawer,
-    },
-    {
       key: 'create-draft',
       label: <DropdownItem label="계약서 생성" icon={<FaFileContract size={14} />} />,
       onClick: openDraftDrawer,
+    },
+    {
+      key: 'create-employee',
+      label: <DropdownItem label="가상 근무자 생성" icon={<IoMdPersonAdd size={16} />} />,
+      onClick: openEmployeeDrawer,
     },
     {
       key: 'refetch',

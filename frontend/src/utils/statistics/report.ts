@@ -6,6 +6,7 @@ import { TeamData } from '~/types/team';
 
 const initStats: ReportData = {
   earnsIncentiveCount: 0,
+  incentiveSum: 0,
   mealCostCount: 0,
   prepaidCount: 0,
   otCount: 0,
@@ -32,11 +33,12 @@ export const getAttendanceStats = (
   pay?: number,
   preset?: number,
 ): ReportData => {
-  if (!team.existTeam || !attendances || attendances.length === 0) return initStats;
   const { mealCost, otPay } = team;
 
   // 인센 포함 합계
   const earnsIncentiveCount = attendances.filter(attendance => attendance.earnsIncentive).length;
+  const incentiveSum =
+    (team.positions.find(pos => pos.isLeader)?.incentivePay ?? 0) * earnsIncentiveCount;
 
   // 총 출근일 수
   const attendanceCount = preset ? preset : attendances.length;
@@ -89,6 +91,7 @@ export const getAttendanceStats = (
     mealCostSum: mealCostSum,
     otPaySum: otPaySum,
     prepaySum: prepaySum,
+    incentiveSum: incentiveSum,
 
     totalPaySum: totalPaySum,
     taxAmount: taxSum,
@@ -114,6 +117,7 @@ export const calculateReportTotal = (reports: ReportData[]): ReportData => {
       mealCostSum: totals.mealCostSum + data.mealCostSum,
       otPaySum: totals.otPaySum + data.otPaySum,
       prepaySum: totals.prepaySum + data.prepaySum,
+      incentiveSum: totals.incentiveSum + data.incentiveSum,
       taxAmount: totals.taxAmount + data.taxAmount,
       totalPaySum: totals.totalPaySum + data.totalPaySum,
       finalPay: totals.finalPay + data.finalPay,
@@ -143,6 +147,9 @@ export const getStatsByEmployee = (
     const earnsIncentiveCount = filteredAttendances.filter(
       attendance => attendance.earnsIncentive,
     ).length;
+
+    const incentiveSum =
+      (team.positions.find(pos => pos.isLeader)?.incentivePay ?? 0) * earnsIncentiveCount;
 
     // 총 출근일 수
     const attendanceCount = filteredAttendances.reduce(
@@ -198,6 +205,7 @@ export const getStatsByEmployee = (
         otCount: otCount,
         prepaidCount: paidCount,
 
+        incentiveSum: incentiveSum,
         paySum: dailyPaySum,
         mealCostSum: mealCostSum,
         otPaySum: otPaySum,
@@ -217,9 +225,11 @@ export const getReportByPositions = (
   attendances: AttendanceData[],
 ) => {
   const { positions } = team;
-  const monthlyEmployees = employees.filter(employee => employee.salaryCode === 3);
-  const monthlyEmployeeIds = monthlyEmployees.map(employee => employee.id);
+  const monthlyEmployees = employees.filter(
+    employee => employee.salaryCode === 3 || employee.isVirtual,
+  );
 
+  const monthlyEmployeeIds = monthlyEmployees.map(employee => employee.id);
   const monthlyEmployeeReportByPosition: ReportData<PositionData>[] = monthlyEmployees.map(
     employee => {
       const filteredAttendances = attendances.filter(

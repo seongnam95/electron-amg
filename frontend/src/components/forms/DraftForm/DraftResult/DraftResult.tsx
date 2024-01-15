@@ -9,6 +9,7 @@ import { useCopyText } from '~/hooks/depository/useCopyText';
 import { colors } from '~/styles/themes';
 import { DraftData } from '~/types/draft';
 import { SALARY } from '~/types/employee';
+import { formatDay } from '~/utils/formatData';
 
 import { DraftResultStyled } from './styled';
 
@@ -48,10 +49,10 @@ const DraftResult = ({ draft }: DraftResultProps) => {
               <Descriptions.Item label="직위">{draft.position.name}</Descriptions.Item>
               <Descriptions.Item label="급여 형태">
                 <Tag>{SALARY[draft.salaryCode]}</Tag>
-                {draft.position.standardPay.toLocaleString()}원
+                {(draft.preset * draft.position.standardPay).toLocaleString()}원
               </Descriptions.Item>
               <Descriptions.Item label="계약 기간">
-                {draft.startPeriod} ~ {draft.endPeriod}
+                {formatDay(draft.startPeriod, 'YY. M. D')} ~ {formatDay(draft.endPeriod)}
               </Descriptions.Item>
             </Descriptions>
           </DescriptionsBox>

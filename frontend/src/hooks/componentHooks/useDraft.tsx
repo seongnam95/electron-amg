@@ -49,29 +49,13 @@ const useDraft = () => {
     <Skeleton.Button active size="small" />
   );
 
-  const RenderTitle = team.existTeam ? (
-    <Flex align="center" gap={10}>
-      <span
-        style={{
-          width: '0.7rem',
-          height: '1.5rem',
-          borderRadius: '0.2rem',
-          backgroundColor: team?.color,
-        }}
-      />
-      {team?.name}
-    </Flex>
-  ) : (
-    <Skeleton.Input active size="small" />
-  );
-
   const renderDrawer = (
     <Drawer
       open={open}
       closable={false}
       onClose={closeDrawer}
       rootClassName="ant-drawer-inline"
-      title={RenderTitle}
+      title="계약서 생성"
       extra={RenderExtra}
       getContainer={() => {
         return document.getElementById('layout') || document.body;
@@ -80,6 +64,7 @@ const useDraft = () => {
       <motion.div key={page} initial={{ x: 40, opacity: 0 }} animate={{ x: 0, opacity: 1 }}>
         {page === 'form' ? (
           <DraftForm
+            team={team}
             loading={isCreateDraftLoading}
             form={form}
             positions={team.positions}

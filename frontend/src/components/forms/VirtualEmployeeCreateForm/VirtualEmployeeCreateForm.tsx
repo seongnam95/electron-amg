@@ -71,8 +71,8 @@ const VirtualEmployeeCreateForm = ({
 
         <Form.Item
           name="period"
-          label={<Info title="가상 근무자가 적용 될 달을 선택합니다.">계약일</Info>}
-          rules={[{ required: true, message: '계약일을 선택해주세요.' }]}
+          label={<Info title="가상 근무자가 적용 될 달을 선택합니다.">유지일</Info>}
+          rules={[{ required: true, message: '유지일을 선택해주세요.' }]}
         >
           <AntDateRangePicker fullWidth picker="month" />
         </Form.Item>
@@ -105,7 +105,7 @@ const VirtualEmployeeCreateForm = ({
           <Descriptions.Item label="대행사 단가">
             {unit?.unitPay.toLocaleString()}원
           </Descriptions.Item>
-          <Descriptions.Item label="합계액">{pay.toLocaleString()}원</Descriptions.Item>
+          <Descriptions.Item label="월 청구액">{pay.toLocaleString()}원</Descriptions.Item>
         </Descriptions>
       </DescriptionsBox>
 

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { FaFlag } from 'react-icons/fa';
 
 import { Button, Flex, Form, FormInstance, Select, Space, Typography } from 'antd';
 import dayjs, { Dayjs } from 'dayjs';
@@ -9,6 +10,7 @@ import { HintText } from '~/components/dashboard/MonthlyAttendanceTable/styled';
 import { DraftCreateBody } from '~/types/draft';
 import { SalaryType } from '~/types/employee';
 import { PositionData } from '~/types/position';
+import { TeamData } from '~/types/team';
 
 import { DraftFormStyled } from './styled';
 
@@ -20,6 +22,7 @@ interface DraftFormData {
 }
 
 export interface DraftFormProps {
+  team: TeamData;
   positions: PositionData[];
   form?: FormInstance;
   loading?: boolean;
@@ -27,6 +30,7 @@ export interface DraftFormProps {
 }
 
 const DraftForm = ({
+  team,
   positions,
   form = Form.useForm<DraftCreateBody>()[0],
   loading,
@@ -78,10 +82,24 @@ const DraftForm = ({
 
   return (
     <DraftFormStyled>
-      <Space direction="vertical" style={{ width: '100%' }}>
-        <Typography.Title className="view-title" level={5}>
-          계약서 폼 생성
-        </Typography.Title>
+      <Space size={28} direction="vertical" style={{ width: '100%' }}>
+        <div style={{ fontSize: 17, display: 'flex', gap: 10, alignItems: 'center' }}>
+          <Flex
+            align="center"
+            justify="center"
+            style={{
+              width: '2.2rem',
+              height: '2.2rem',
+              padding: 6,
+              backgroundColor: team.color,
+              borderRadius: '50%',
+              marginBottom: 2,
+            }}
+          >
+            <FaFlag color={'white'} />
+          </Flex>
+          {team.name}
+        </div>
 
         <Form
           form={form}

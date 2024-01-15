@@ -1,16 +1,13 @@
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 
 import clsx from 'clsx';
 import { motion, LayoutGroup, AnimatePresence } from 'framer-motion';
-import { useRecoilValue } from 'recoil';
-
-import { breadcrumbStore } from '~/stores/breadcrumb';
 
 import { breadcrumbValues } from '../BreadcrumbConfig/config';
 import { SideNavbarStyled } from './styled';
 
 const SideNavbar = () => {
-  const breadcrumb = useRecoilValue(breadcrumbStore);
+  const { pathname } = useLocation();
   const menus = Object.values(breadcrumbValues).filter(item => item.menu);
 
   return (
@@ -19,7 +16,8 @@ const SideNavbar = () => {
         <div className="items">
           <AnimatePresence>
             {menus.map(menu => {
-              const isActive = breadcrumb.some(crumb => crumb.key === menu.key);
+              const isActive = menu.path === pathname;
+
               return (
                 <motion.div
                   key={menu.key}

@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 
-import { Typography, Flex } from 'antd';
+import { Typography, Flex, Skeleton, Empty } from 'antd';
 import dayjs, { Dayjs } from 'dayjs';
 import { useRecoilValue } from 'recoil';
 
@@ -8,32 +8,40 @@ import ColorBar from '~/components/employee/ColorBar';
 import { useAttendanceQuery } from '~/hooks/queryHooks/useAttendanceQuery';
 import { useEmployee } from '~/hooks/queryHooks/useEmployeeQuery';
 import { teamStore } from '~/stores/team';
+import { AttendanceData } from '~/types/attendance';
 import { EmployeeData } from '~/types/employee';
+import { TeamData } from '~/types/team';
 
 import { DailyAttendanceStatsStyled } from './styled';
 
 export interface DailyAttendanceStatsProps {
-  day?: Dayjs;
+  team?: TeamData;
+  employees?: EmployeeData[];
+  attendances?: AttendanceData[];
+  loading?: boolean;
 }
 
 const { Text } = Typography;
-const DailyAttendanceStats = ({ day = dayjs() }: DailyAttendanceStatsProps) => {
-  const team = useRecoilValue(teamStore);
+const DailyAttendanceStats = ({
+  team,
+  employees,
+  attendances,
+  loading,
+}: DailyAttendanceStatsProps) => {
+  if (loading) return <Skeleton active />;
+  else if (!team || !employees || !attendances) return <Empty />;
 
-  const { employees } = useEmployee({ teamId: team.id, enabled: team.existTeam });
-  const { attendances } = useAttendanceQuery({
-    teamId: team.id,
-    day: day,
-    dayType: 'date',
-    enabled: team.existTeam,
-  });
-
-  const reports = useMemo(() => {
-    const newEmployees = employees.reduce((acc, employee) => {
-      const attendancePosition = attendances.find(
+  const stats = useMemo(() => {
+    /**
+     * Attendance 기록에 따라 포지션 변경
+     * : 근무자의 기존 포지션과 출근 당일 포지션이 다를 경우를 대비
+     */
+    const todayEmployees = employees.reduce((acc, employee) => {
+      const filteredAttendances = attendances.find(
         attendance => attendance.employeeId === employee.id,
       );
-      const newPosition = attendancePosition ? attendancePosition.position : employee.position;
+
+      const newPosition = filteredAttendances ? filteredAttendances.position : employee.position;
       acc.push({
         ...employee,
         positionId: newPosition.id,
@@ -42,8 +50,8 @@ const DailyAttendanceStats = ({ day = dayjs() }: DailyAttendanceStatsProps) => {
       return acc;
     }, [] as EmployeeData[]);
 
-    const report = team.positions.map(position => {
-      const totalCount = newEmployees.filter(
+    return team.positions.map(position => {
+      const totalCount = todayEmployees.filter(
         employee => employee.positionId === position.id,
       ).length;
 
@@ -57,14 +65,12 @@ const DailyAttendanceStats = ({ day = dayjs() }: DailyAttendanceStatsProps) => {
         attendanceCount: attendanceCount,
       };
     });
-
-    return report;
   }, [employees, attendances]);
 
   return (
     <DailyAttendanceStatsStyled className="AttendanceDoughnut">
       <Flex vertical style={{ width: '100%' }}>
-        {reports.map(report => {
+        {stats.map(report => {
           return (
             <Flex justify="space-between" key={report.position.id}>
               <Flex className="position-label-wrap" align="center" gap={6}>

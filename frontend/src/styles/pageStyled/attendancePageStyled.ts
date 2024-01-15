@@ -6,19 +6,12 @@ export const AttendancePageStyled = styled.div`
 
   .table-wrap {
     padding: 0 2rem 2rem;
-    height: 100%;
+    height: calc(100% - 7.2rem);
 
     .date-table-container {
       display: flex;
       width: 100%;
       gap: 2rem;
-
-      /* 
-      .attendance-stats-card {
-        position: absolute;
-        right: 0;
-        width: 24rem;
-      } */
     }
   }
 `;

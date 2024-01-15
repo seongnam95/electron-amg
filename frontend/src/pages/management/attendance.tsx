@@ -5,6 +5,7 @@ import { Button, Flex, Segmented, Tooltip } from 'antd';
 import dayjs, { Dayjs } from 'dayjs';
 import { useRecoilValue } from 'recoil';
 
+import DailyOtherStats from '~/components/attendance/DailyOtherStats';
 import DateTable from '~/components/attendance/DateTable';
 import MonthTable from '~/components/attendance/MonthTable';
 import Card from '~/components/common/Card';
@@ -31,13 +32,16 @@ const AttendancePage = () => {
   const [selectedEmployees, setSelectedEmployees] = useState<EmployeeData[]>([]);
   const selectedEmployeeIds = selectedEmployees.map(employee => employee.id);
 
+  // Hooks
   const { employees } = useEmployee({ teamId: team.id });
+  const filteredEmployees = employees.filter(employee => !employee.isVirtual);
   const { attendances, isLoading } = useAttendanceQuery({
     day: selectedDay,
     dayType: viewType,
     teamId: team.id,
   });
 
+  // Modal, Drawer Hooks
   const { openDrawer, renderDrawer } = useEmployeeInfoDrawer();
   const { openModal, renderModal } = useAttendanceModal({
     attendances: attendances,
@@ -47,16 +51,19 @@ const AttendancePage = () => {
     },
   });
 
+  // 날짜 변경 핸들러
   const handleChangeDay = (day: Dayjs | null) => {
     if (day) setSelectedDay(day);
   };
 
+  // 콘텍스트 메뉴 (우클릭) 핸들러
   const handleContextMenu = (_: MouseEvent, employee: EmployeeData, day?: Dayjs) => {
     setIsEditing(true);
     setSelectedEmployees([employee]);
     openModal(day ?? selectedDay, [employee]);
   };
 
+  // 다중 편집 핸들러
   const handleBulkEditClick = () => {
     setIsEditing(true);
     openModal(selectedDay, selectedEmployees);
@@ -87,7 +94,7 @@ const AttendancePage = () => {
         {viewType === 'date' ? (
           <Flex className="date-table-container">
             <DateTable
-              employees={employees}
+              employees={filteredEmployees}
               attendances={attendances}
               selectedEmployeeIds={selectedEmployeeIds}
               disabledSelect={isEditing}
@@ -96,17 +103,19 @@ const AttendancePage = () => {
               onContextMenu={handleContextMenu}
             />
             <Flex vertical gap={20}>
-              <Card title="🙋‍♂️ 출근현황" style={{ width: '24rem' }}>
-                <DailyAttendanceStats day={selectedDay} />
+              <Card title="🙋‍♂️ 출근 현황" style={{ width: '26rem' }}>
+                <DailyAttendanceStats team={team} employees={employees} attendances={attendances} />
               </Card>
-              <Card>d</Card>
+              <Card title="기타 통계" style={{ width: '26rem' }}>
+                <DailyOtherStats team={team} employees={employees} attendances={attendances} />
+              </Card>
             </Flex>
           </Flex>
         ) : (
           <MonthTable
             day={selectedDay}
             loading={isLoading}
-            employees={employees}
+            employees={filteredEmployees}
             attendances={attendances}
             onContextMenu={handleContextMenu}
           />

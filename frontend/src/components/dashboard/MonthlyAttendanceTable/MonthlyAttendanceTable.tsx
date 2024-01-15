@@ -5,7 +5,7 @@ import { teamStore } from '~/stores/team';
 import { AttendanceData } from '~/types/attendance';
 import { EmployeeData } from '~/types/employee';
 import { ReportData } from '~/types/statistics';
-import { getAttendanceStats, getReportByPositions } from '~/utils/statistics/report';
+import { getReportByPositions } from '~/utils/statistics/report';
 
 import { getColumns } from './config';
 import { MonthlyAttendanceTableStyled } from './styled';
@@ -19,7 +19,8 @@ export interface MonthlyAttendanceTableProps {
 const MonthlyAttendanceTable = ({ employees, attendances }: MonthlyAttendanceTableProps) => {
   const team = useRecoilValue(teamStore);
 
-  const reports = getReportByPositions(team, employees, attendances);
+  const filteredEmployees = employees.filter(employee => !employee.isVirtual);
+  const reports = getReportByPositions(team, filteredEmployees, attendances);
 
   const tableProps: TableProps<ReportData> = {
     columns: getColumns(),

@@ -12,13 +12,4 @@ export const EmployeeInfoStyled = styled.div`
     background-color: ${p => p.theme.colors.innerBg};
     padding: 2rem;
   }
-
-  .btn-wrap {
-    background-color: white;
-    padding-top: 2rem;
-    width: calc(100% - 4rem);
-    left: 2rem;
-    bottom: 0;
-    position: absolute;
-  }
 `;
