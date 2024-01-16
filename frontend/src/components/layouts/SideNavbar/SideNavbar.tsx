@@ -1,7 +1,7 @@
-import { useMemo } from 'react';
 import { BsFillPeopleFill } from 'react-icons/bs';
 import { FaBusinessTime } from 'react-icons/fa';
 import { GoHomeFill } from 'react-icons/go';
+import { IoSettingsSharp } from 'react-icons/io5';
 import { Link, useLocation } from 'react-router-dom';
 
 import clsx from 'clsx';
@@ -27,6 +27,13 @@ export const menus = [
     path: '/management/attendance',
     title: '근태관리',
     icon: <FaBusinessTime className="menu-icon" />,
+    menu: true,
+  },
+  {
+    key: 'setting',
+    path: '/management/setting',
+    title: '설정',
+    icon: <IoSettingsSharp className="menu-icon" />,
     menu: true,
   },
 ];

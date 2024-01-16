@@ -9,6 +9,7 @@ import LoginPage from '~/pages/login';
 import AttendancePage from '~/pages/management/attendance';
 import DashboardPage from '~/pages/management/dashboard';
 import EmployeePage from '~/pages/management/employee';
+import SettingPage from '~/pages/setting';
 
 const RouterWrap = () => {
   return (
@@ -21,9 +22,10 @@ const RouterWrap = () => {
           <Route index path="dashboard" element={<DashboardPage />} />
           <Route path="employee" element={<EmployeePage />} />
           <Route path="attendance" element={<AttendancePage />} />
+          <Route path="setting" element={<SettingPage />} />
+          <Route path="*" element={<NotFoundPage />} />
         </Route>
       </Route>
-      <Route path="*" element={<NotFoundPage />} />
     </Routes>
   );
 };
