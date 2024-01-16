@@ -10,13 +10,5 @@ export const MonthlyPayChartStyled = styled.div`
   .bar-wrap {
     position: relative;
     height: 16rem;
-
-    .empty-attendance {
-      position: absolute;
-      left: 50%;
-      top: 40%;
-      transform: translate(-50%, -50%);
-      width: 10rem;
-    }
   }
 `;

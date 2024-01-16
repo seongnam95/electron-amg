@@ -2,8 +2,7 @@ export interface UserData {
   id: string;
   name: string;
   username: string;
-  isAdmin: boolean;
+  isSuperuser: boolean;
   isApproved: boolean;
   isLogin: boolean;
-  hasTeam: boolean;
 }

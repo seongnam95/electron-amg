@@ -1,4 +1,3 @@
-from typing import List
 from fastapi import APIRouter, HTTPException, Depends
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.orm import Session
@@ -71,7 +70,9 @@ def read_all_team(
 
 # 팀 생성 (유저)
 @router.post(
-    "/user/{user_id}/team", response_model=DataResponse[schemas.TeamUnitResponse]
+    "/user/{user_id}/team",
+    response_model=DataResponse[schemas.TeamUnitResponse],
+    status_code=201,
 )
 def create_team_by_user(
     user_id: str, team_in: schemas.TeamCreate, db: Session = Depends(deps.get_db)
@@ -86,7 +87,9 @@ def create_team_by_user(
 
 
 # [ Draft ]계약 초안 생성
-@router.post("/team/{team_id}/draft", response_model=DataResponse[schemas.Draft])
+@router.post(
+    "/team/{team_id}/draft", response_model=DataResponse[schemas.Draft], status_code=201
+)
 def create_draft_by_team(
     team_id: str,
     draft_in: schemas.DraftCreate,
@@ -120,7 +123,7 @@ def read_all_draft_by_team(
 
 
 # [ Employee ] 근무자 생성
-@router.post("/team/{team_id}/employee", response_model=BaseResponse)
+@router.post("/team/{team_id}/employee", response_model=BaseResponse, status_code=201)
 def create_employee_by_team(
     team_id: str,
     employee_in: schemas.EmployeeCreate,

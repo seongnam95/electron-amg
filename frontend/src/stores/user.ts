@@ -8,9 +8,8 @@ export const initUser: UserData = {
   name: '',
   username: '',
   isLogin: false,
-  isAdmin: false,
+  isSuperuser: false,
   isApproved: false,
-  hasTeam: false,
 };
 
 const sessionStorage = typeof window !== 'undefined' ? window.sessionStorage : undefined;

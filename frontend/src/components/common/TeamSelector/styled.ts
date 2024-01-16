@@ -8,7 +8,7 @@ export const TeamSelectorStyled = styled.div`
   .btn-wrap {
     display: flex;
     justify-content: end;
-    width: 20rem;
+    width: 22rem;
   }
 
   .team-label {

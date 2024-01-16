@@ -54,7 +54,7 @@ def get_draft(
 
 
 # 폼 생성
-@router.post("/", response_model=DataResponse[Draft])
+@router.post("/", response_model=DataResponse[Draft], status_code=201)
 def create_draft(
     draft_in: DraftCreate,
     db: Session = Depends(deps.get_db),

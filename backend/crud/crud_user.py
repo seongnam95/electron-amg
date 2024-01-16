@@ -6,9 +6,22 @@ from models import User
 from schemas import UserCreate, UserUpdate
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
+import crud
 
 
 class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
+    def validation_user(self, *, db: Session, user: User):
+        if not user.is_superuser:
+            team_count = (
+                db.query(User).filter(User.id == user.id).filter(User.teams).count()
+            )
+            has_team = True if team_count > 0 else False
+
+            if not user.is_approved:
+                raise HTTPException(status_code=401, detail="비활성화 된 계정입니다.")
+            elif not has_team:
+                raise HTTPException(status_code=401, detail="팀이 할당되지 않았습니다.")
+
     def get_user(self, *, db: Session, username: str) -> User:
         return db.query(self.model).filter(User.username == username).first()
 

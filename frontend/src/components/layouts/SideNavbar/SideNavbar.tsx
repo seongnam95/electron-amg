@@ -1,14 +1,38 @@
+import { useMemo } from 'react';
+import { BsFillPeopleFill } from 'react-icons/bs';
+import { FaBusinessTime } from 'react-icons/fa';
+import { GoHomeFill } from 'react-icons/go';
 import { Link, useLocation } from 'react-router-dom';
 
 import clsx from 'clsx';
 import { motion, LayoutGroup, AnimatePresence } from 'framer-motion';
 
-import { breadcrumbValues } from '../BreadcrumbConfig/config';
 import { SideNavbarStyled } from './styled';
+
+export const menus = [
+  {
+    key: 'dashboard',
+    path: '/management/dashboard',
+    title: '대시보드',
+    icon: <GoHomeFill className="menu-icon" />,
+  },
+  {
+    key: 'employee',
+    path: '/management/employee',
+    title: '근무자 관리',
+    icon: <BsFillPeopleFill className="menu-icon" />,
+  },
+  {
+    key: 'attendance',
+    path: '/management/attendance',
+    title: '근태관리',
+    icon: <FaBusinessTime className="menu-icon" />,
+    menu: true,
+  },
+];
 
 const SideNavbar = () => {
   const { pathname } = useLocation();
-  const menus = Object.values(breadcrumbValues).filter(item => item.menu);
 
   return (
     <SideNavbarStyled className="SideNavbar">

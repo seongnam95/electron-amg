@@ -11,7 +11,7 @@ router = APIRouter()
 
 
 # 유저 생성
-@router.post("/", response_model=BaseResponse)
+@router.post("/", response_model=BaseResponse, status_code=201)
 def create_user(user_in: schemas.UserCreate, db: Session = Depends(deps.get_db)):
     crud.user.create_user(db=db, obj_in=user_in)
     return BaseResponse(msg="정상 처리되었습니다.")

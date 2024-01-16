@@ -1,13 +1,11 @@
 import { useState } from 'react';
 
-import { Descriptions, Divider, Form, Modal } from 'antd';
+import { Form, Modal } from 'antd';
 import dayjs, { Dayjs } from 'dayjs';
 import { useRecoilValue } from 'recoil';
 
-import DescriptionsBox from '~/components/common/DescriptionsBox';
 import VirtualEmployeeCreateForm from '~/components/forms/VirtualEmployeeCreateForm';
 import { teamStore } from '~/stores/team';
-import { colors } from '~/styles/themes';
 import { EmployeeCreateBody } from '~/types/employee';
 
 import { useEmployeeCreate } from '../queryHooks/useEmployeeQuery';

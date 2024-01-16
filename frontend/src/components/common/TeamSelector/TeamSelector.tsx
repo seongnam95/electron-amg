@@ -1,16 +1,13 @@
 import { FaFlag } from 'react-icons/fa';
-import { FaBuildingFlag } from 'react-icons/fa6';
 import { FiChevronDown } from 'react-icons/fi';
 
-import { Dropdown, Flex, Skeleton, Tag } from 'antd';
+import { Button, Dropdown, Flex, Skeleton, Tag } from 'antd';
 import { ItemType } from 'antd/es/menu/hooks/useItems';
 import { useRecoilState, useRecoilValue } from 'recoil';
 
-import ColorBar from '~/components/employee/ColorBar';
 import { useTeamQuery } from '~/hooks/queryHooks/useTeamQuery';
 import { teamStore } from '~/stores/team';
 import { userStore } from '~/stores/user';
-import { TeamData } from '~/types/team';
 
 import { TeamSelectorStyled } from './styled';
 
@@ -20,16 +17,21 @@ import { TeamSelectorStyled } from './styled';
 const TeamSelector = () => {
   const { id, isLogin } = useRecoilValue(userStore);
   const [team, setTeam] = useRecoilState(teamStore);
-  const { teams } = useTeamQuery({ userId: id, enabled: isLogin });
+  const { teams, isLoading } = useTeamQuery({ userId: id, enabled: isLogin });
 
-  const isLoading = team.id === '' || teams === undefined;
-  if (isLoading) return <Skeleton.Button active size="small" style={{ width: '16rem' }} />;
+  const hasNotTeam = team.id === '' || teams === undefined;
+  if (hasNotTeam) return null;
 
   const isMulti = teams ? (teams.length > 1 ? true : false) : false;
 
   const handleChangeTeam = (item: ItemType) => {
     const selectedTeam = teams.find(t => t.id === item?.key?.toString());
-    if (selectedTeam) setTeam(prev => ({ ...prev, selectedTeam }));
+
+    if (selectedTeam)
+      setTeam({
+        ...selectedTeam,
+        existTeam: true,
+      });
   };
 
   const items: Array<ItemType> | undefined = teams?.map(item => {
@@ -62,13 +64,13 @@ const TeamSelector = () => {
     };
   });
 
+  if (isLoading) return <Skeleton.Button active size="small" style={{ width: '16rem' }} />;
   return (
     <TeamSelectorStyled className="TeamSelector">
       {isMulti ? (
         <Dropdown menu={{ items }} trigger={['click']} placement="bottomLeft">
           <div className="btn-wrap">
             <label className="team-label selector">
-              <FiChevronDown style={{ marginLeft: '8px' }} />
               {team.name}
               <Flex
                 align="center"

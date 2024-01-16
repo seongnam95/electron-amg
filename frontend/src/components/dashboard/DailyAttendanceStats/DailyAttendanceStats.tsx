@@ -1,13 +1,8 @@
 import { useMemo } from 'react';
 
 import { Typography, Flex, Skeleton, Empty } from 'antd';
-import dayjs, { Dayjs } from 'dayjs';
-import { useRecoilValue } from 'recoil';
 
 import ColorBar from '~/components/employee/ColorBar';
-import { useAttendanceQuery } from '~/hooks/queryHooks/useAttendanceQuery';
-import { useEmployee } from '~/hooks/queryHooks/useEmployeeQuery';
-import { teamStore } from '~/stores/team';
 import { AttendanceData } from '~/types/attendance';
 import { EmployeeData } from '~/types/employee';
 import { TeamData } from '~/types/team';
@@ -30,13 +25,14 @@ const DailyAttendanceStats = ({
 }: DailyAttendanceStatsProps) => {
   if (loading) return <Skeleton active />;
   else if (!team || !employees || !attendances) return <Empty />;
+  const filteredEmployees = employees.filter(employee => !employee.isVirtual);
 
   const stats = useMemo(() => {
     /**
      * Attendance 기록에 따라 포지션 변경
      * : 근무자의 기존 포지션과 출근 당일 포지션이 다를 경우를 대비
      */
-    const todayEmployees = employees.reduce((acc, employee) => {
+    const todayEmployees = filteredEmployees.reduce((acc, employee) => {
       const filteredAttendances = attendances.find(
         attendance => attendance.employeeId === employee.id,
       );
@@ -65,7 +61,7 @@ const DailyAttendanceStats = ({
         attendanceCount: attendanceCount,
       };
     });
-  }, [employees, attendances]);
+  }, [filteredEmployees, attendances]);
 
   return (
     <DailyAttendanceStatsStyled className="AttendanceDoughnut">
@@ -91,7 +87,7 @@ const DailyAttendanceStats = ({
         <Flex flex={1} gap={24} justify="space-between">
           <Text type="secondary">전체 인원</Text>
           <Flex gap={4} align="center">
-            <Text strong>{employees.length}</Text>
+            <Text strong>{filteredEmployees.length}</Text>
             <Text type="secondary">명</Text>
           </Flex>
         </Flex>

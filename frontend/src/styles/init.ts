@@ -149,8 +149,18 @@ export const InitGlobalStyled = memo(createGlobalStyle`
       height: 100%;
     }
 
-    .ant-table-container{
+    .ant-table-container {
+      height: 100%;
+    }
+    
+    .ant-table-body {
       height: calc(100% - 5rem);
+
+      tr:last-child {
+        .ant-table-cell {
+          border-bottom: none;
+        }
+      }
     }
   }
   

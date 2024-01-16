@@ -2,8 +2,9 @@ import { useState } from 'react';
 import { FaFlag } from 'react-icons/fa';
 import { FaCalendarDays, FaHouseFlag } from 'react-icons/fa6';
 import { FcBarChart } from 'react-icons/fc';
+import { useNavigate } from 'react-router-dom';
 
-import { Flex } from 'antd';
+import { Button, Flex } from 'antd';
 import dayjs, { Dayjs } from 'dayjs';
 import { useRecoilValue } from 'recoil';
 
@@ -12,6 +13,7 @@ import AntDatePicker from '~/components/common/DatePicker/DatePicker';
 import MonthlyAttendanceTable from '~/components/dashboard/MonthlyAttendanceTable';
 import MonthlyPayChart from '~/components/dashboard/MonthlyPayChart';
 import UnitPayList from '~/components/dashboard/UnitPayList';
+import InitTeamCreateMask from '~/components/layouts/InitTeamCreateMask';
 import { useAttendanceQuery } from '~/hooks/queryHooks/useAttendanceQuery';
 import { useEmployee } from '~/hooks/queryHooks/useEmployeeQuery';
 import { teamStore } from '~/stores/team';
@@ -19,6 +21,9 @@ import { DashboardPageStyled } from '~/styles/pageStyled/dashboardPageStyled';
 
 const DashboardPage = () => {
   const team = useRecoilValue(teamStore);
+  const hasNotTeam = team.id === '' || !team.existTeam;
+  const navigate = useNavigate();
+
   const [day, setDay] = useState<Dayjs>(dayjs());
   const { employees } = useEmployee({ teamId: team.id });
   const { attendances } = useAttendanceQuery({
@@ -55,6 +60,7 @@ const DashboardPage = () => {
   return (
     <DashboardPageStyled>
       <Flex className="control-bar" justify="end">
+        <Button onClick={() => navigate('/init')}>팀추가</Button>
         <AntDatePicker picker="month" value={day} onChange={handleChangeDay} />
       </Flex>
 
@@ -73,6 +79,8 @@ const DashboardPage = () => {
           );
         })}
       </div>
+
+      {hasNotTeam && <InitTeamCreateMask />}
     </DashboardPageStyled>
   );
 };

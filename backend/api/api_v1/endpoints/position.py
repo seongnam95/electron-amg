@@ -12,7 +12,9 @@ router = APIRouter()
 
 
 @router.post(
-    "/unit/{unit_id}/position", response_model=DataResponse[schemas.PositionResponse]
+    "/unit/{unit_id}/position",
+    response_model=DataResponse[schemas.PositionResponse],
+    status_code=201,
 )
 def create_position_by_unit(
     unit_id: str,

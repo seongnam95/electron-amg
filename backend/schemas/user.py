@@ -9,7 +9,6 @@ class UserCreate(BaseModel):
     name: str
     username: str
     password: str
-    is_admin: Optional[bool] = None
     is_superuser: Optional[bool] = None
     is_approved: Optional[bool] = None
     employee_id: Optional[str] = None
@@ -17,7 +16,6 @@ class UserCreate(BaseModel):
 
 class UserUpdate(BaseModel):
     password: Optional[str] = None
-    is_admin: Optional[bool] = None
     is_superuser: Optional[bool] = None
     is_approved: Optional[bool] = None
     employee_id: Optional[str] = None
@@ -32,7 +30,6 @@ class User(BaseModel):
     name: str
     username: str
     hashed_password: str
-    is_admin: bool
     is_superuser: bool
     is_approved: bool
     create_date: datetime
@@ -44,9 +41,7 @@ class User(BaseModel):
 class UserResponse(BaseModel):
     id: str
     username: str
-    is_admin: bool
     is_approved: bool
-    has_team: bool
 
     class Config:
         from_attributes = True

@@ -23,10 +23,8 @@ class User(Base):
     username = Column(String, unique=True, nullable=False)  # 계정
     hashed_password = Column(String, nullable=False)  # 비밀번호
 
-    is_admin = Column(Boolean, nullable=False, default=False)  # 어드민 여부 (팀장)
     is_superuser = Column(Boolean, nullable=False, default=False)  # 슈퍼유저 여부
     is_approved = Column(Boolean, nullable=False, default=True)  # 계정 활성화/비활성화
-    has_team = Column(Boolean, nullable=False, default=False)  # 팀 존재 여부
 
     create_date = Column(DateTime(timezone=True), nullable=False, default=datetime.now)
 

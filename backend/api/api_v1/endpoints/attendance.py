@@ -41,7 +41,9 @@ def read_attendances(
 
 
 # 근무로그 생성
-@router.post("/employee/{employee_id}/attendance", response_model=BaseResponse)
+@router.post(
+    "/employee/{employee_id}/attendance", response_model=BaseResponse, status_code=201
+)
 def create_attendance(
     employee_id: str,
     attendance_in: AttendanceCreate,

@@ -40,11 +40,10 @@ def login(form_data: LoginForm, db: Session = Depends(deps.get_db)):
     if not pwd_context.verify(form_data.password, user.hashed_password):
         raise HTTPException(
             status_code=401,
-            detail="아이디 또는 패스워드가 일치하지 않습니다.",
+            detail="패스워드가 일치하지 않습니다.",
         )
 
-    team_count = crud.team.get_team_count_by_user(db=db, user_id=user.id)
-    user.has_team = True if team_count > 0 else False
+    crud.user.validation_user(db=db, user=user)
 
     user_json = jsonable_encoder(schemas.UserResponse.model_validate(user))
 

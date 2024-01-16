@@ -5,7 +5,6 @@ import locale from 'antd/lib/locale/ko_KR';
 import 'dayjs/locale/ko';
 import styled, { ThemeProvider } from 'styled-components';
 
-import BreadcrumbConfig from '~/components/layouts/BreadcrumbConfig';
 import RouterWrap from '~/components/layouts/RouterWrap';
 import Titlebar from '~/components/layouts/Titlebar';
 import { InitGlobalStyled } from '~/styles/init';
@@ -41,7 +40,6 @@ const App = () => {
         <AppStyled id="app">
           <Titlebar />
           <AntApp message={{ maxCount: 1 }} style={{ height: '100%' }}>
-            <BreadcrumbConfig />
             <RouterWrap />
           </AntApp>
         </AppStyled>

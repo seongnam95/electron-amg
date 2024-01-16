@@ -5,6 +5,7 @@ import { MdOutlineAdd } from 'react-icons/md';
 import { Button, Flex, Form, FormInstance, Select, Space } from 'antd';
 import { AnimatePresence, motion } from 'framer-motion';
 
+import { HintText } from '~/components/dashboard/MonthlyAttendanceTable/styled';
 import { PositionCreateBody } from '~/types/position';
 import { UnitData } from '~/types/unit';
 
@@ -13,6 +14,7 @@ import { defaultPositionValues, formItems } from './config';
 export interface PositionFormProps {
   form?: FormInstance<PositionCreateBody>;
   isEditing?: boolean;
+  existLeader?: boolean;
   initValues?: PositionCreateBody;
   unitValues?: UnitData[];
   onCancel?: () => void;
@@ -77,7 +79,16 @@ const PositionForm = ({
     resetForm();
   };
 
-  const unitSelectOptions = unitValues?.map(unit => ({ label: unit.name, value: unit.id }));
+  const unitSelectOptions = unitValues?.map(unit => ({
+    label: (
+      <Flex align="center" justify="space-between" gap={8} style={{ paddingRight: 6 }}>
+        {unit.name}
+        <HintText>{unit.unitPay.toLocaleString()}원</HintText>
+      </Flex>
+    ),
+    value: unit.id,
+  }));
+
   return (
     <Space direction="vertical" size={24}>
       <Form

@@ -39,4 +39,9 @@ export const SideNavbarStyled = styled.div`
       z-index: -1;
     }
   }
+
+  .menu-icon {
+    width: 2.4rem;
+    height: 2.4rem;
+  }
 `;

@@ -1,7 +1,8 @@
 import { useState } from 'react';
+import { AiOutlineClose } from 'react-icons/ai';
 import { useNavigate } from 'react-router-dom';
 
-import { Space, Steps } from 'antd';
+import { Button, Space, Steps } from 'antd';
 import { motion } from 'framer-motion';
 import { useRecoilValue } from 'recoil';
 
@@ -12,6 +13,7 @@ import UnitForm from '~/components/forms/UnitForm';
 import { initUnits } from '~/components/forms/UnitForm/config';
 import { usePositionCreateMutation } from '~/hooks/queryHooks/usePositionQuery';
 import { useTeamCreateMutation } from '~/hooks/queryHooks/useTeamQuery';
+import { teamStore } from '~/stores/team';
 import { userStore } from '~/stores/user';
 import { InitPageStyled } from '~/styles/pageStyled/initPageStyled';
 import { PositionCreateBody } from '~/types/position';
@@ -32,6 +34,8 @@ const InitPage = () => {
   const [teamFormData, setTeamFormData] = useState<TeamCreateBody>(defaultTeamValues);
   const [units, setUnits] = useState<UnitData[]>([]);
 
+  const team = useRecoilValue(teamStore);
+
   const navigate = useNavigate();
 
   const { createTeamMutate, isCreateTeamLoading } = useTeamCreateMutation({
@@ -42,6 +46,8 @@ const InitPage = () => {
   const { createPositionMutate, isCreatePositionLoading } = usePositionCreateMutation({
     userId: id,
   });
+
+  const handleClose = () => navigate('/management/dashboard');
 
   const handlePrevClick = () => {
     if (step !== 0) setStep(prev => prev - 1);
@@ -137,6 +143,16 @@ const InitPage = () => {
           </Card>
         </motion.div>
       </Space>
+
+      {team.existTeam && (
+        <Button
+          className="close-btn"
+          size="large"
+          type="text"
+          icon={<AiOutlineClose />}
+          onClick={handleClose}
+        />
+      )}
     </InitPageStyled>
   );
 };

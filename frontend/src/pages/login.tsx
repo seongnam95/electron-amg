@@ -19,13 +19,11 @@ const LoginPage = () => {
   const { soundMessage } = useSoundApp();
 
   const { loginMutate, isLoginLoading } = useAuth({
-    onSuccess: user => {
-      if (user.hasTeam) navigate('/management/dashboard');
-      else navigate('/init');
-    },
+    onSuccess: () => navigate('/management/dashboard'),
     onError: res => {
       const msg = res.response?.data.msg || '잠시 후 다시 시도해주세요.';
-      soundMessage.error(msg);
+      if (res.response?.status === 401) soundMessage.info(msg);
+      else soundMessage.error(msg);
     },
   });
 

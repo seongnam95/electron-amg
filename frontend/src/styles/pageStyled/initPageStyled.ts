@@ -10,4 +10,10 @@ export const InitPageStyled = styled.div`
     top: 6%;
     transform: translateX(-50%);
   }
+
+  .close-btn {
+    position: fixed;
+    right: 1.4rem;
+    top: calc(1.4rem + ${p => p.theme.sizes.titleBarHeight});
+  }
 `;

@@ -83,11 +83,6 @@ const MonthlyPayChart = ({ day = dayjs(), employees, attendances }: MonthPayroll
     <MonthlyPayChartStyled className="PayStats" ref={wrapRef}>
       <Flex className="bar-wrap">
         <Bar data={chartData} options={chartOptions} />
-        {isEmpty && (
-          <div className="empty-attendance">
-            <Empty description={false} />
-          </div>
-        )}
       </Flex>
       <Flex gap={8} justify="center">
         <DescriptionsBox
